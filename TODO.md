@@ -35,20 +35,20 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 ## Phase 1: 基盤実装
 
 ### 1.1 型定義 (`src/types/index.ts`)
-- [ ] `Coordinates` インターフェース（x, y）
-- [ ] `RingType` 型（'INNER_BULL' | 'OUTER_BULL' | 'TRIPLE' | 'DOUBLE' | 'INNER_SINGLE' | 'OUTER_SINGLE' | 'OUT'）
-- [ ] `TargetType` 型（'SINGLE' | 'DOUBLE' | 'TRIPLE' | 'BULL'）
-- [ ] `Target` インターフェース（type, number, label）
-- [ ] `ThrowResult` インターフェース（target, landingPoint, score, ring, segmentNumber）
-- [ ] `PracticeConfig` インターフェース（全練習設定）
-- [ ] `SessionConfig` インターフェース（mode, questionCount, timeLimit）
-- [ ] `Question` インターフェース（mode, throws, correctAnswer, questionText, startingScore）
-- [ ] `GameState` 型（'setup' | 'practicing' | 'results'）
-- [ ] `Stats` インターフェース（correct, total, currentStreak, bestStreak）
-- [ ] `SessionResult` インターフェース（config, sessionConfig, stats, elapsedTime, completedAt, finishReason）
-- [ ] `BustInfo` インターフェース（isBust, reason）
-- [ ] `QuestionType` 型（'score' | 'remaining' | 'both'）
-- [ ] `JudgmentTiming` 型（'independent' | 'cumulative'）
+- [x] `Coordinates` インターフェース（x, y）
+- [x] `RingType` 型（'INNER_BULL' | 'OUTER_BULL' | 'TRIPLE' | 'DOUBLE' | 'INNER_SINGLE' | 'OUTER_SINGLE' | 'OUT'）
+- [x] `TargetType` 型（'SINGLE' | 'DOUBLE' | 'TRIPLE' | 'BULL'）
+- [x] `Target` インターフェース（type, number, label）
+- [x] `ThrowResult` インターフェース（target, landingPoint, score, ring, segmentNumber）
+- [x] `PracticeConfig` インターフェース（全練習設定）
+- [x] `SessionConfig` インターフェース（mode, questionCount, timeLimit）
+- [x] `Question` インターフェース（mode, throws, correctAnswer, questionText, startingScore）
+- [x] `GameState` 型（'setup' | 'practicing' | 'results'）
+- [x] `Stats` インターフェース（correct, total, currentStreak, bestStreak）
+- [x] `SessionResult` インターフェース（config, sessionConfig, stats, elapsedTime, completedAt, finishReason）
+- [x] `BustInfo` インターフェース（isBust, reason）
+- [x] `QuestionType` 型（'score' | 'remaining' | 'both'）
+- [x] `JudgmentTiming` 型（'independent' | 'cumulative'）
 
 ### 1.2 定数定義 (`src/utils/constants.ts`)
 - [ ] `BOARD_PHYSICAL` オブジェクト（リング半径、スパイダー幅、セグメント配列）
@@ -416,7 +416,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | Phase | 項目数 | 完了数 | 進捗 |
 |-------|--------|--------|------|
 | 0 | 11 | 11 | 100% |
-| 1 | 38 | 0 | 0% |
+| 1 | 38 | 14 | 37% |
 | 2 | 13 | 0 | 0% |
 | 3 | 25 | 0 | 0% |
 | 4 | 7 | 0 | 0% |
@@ -426,4 +426,4 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | 8 | 10 | 0 | 0% |
 | 9 | 15 | 0 | 0% |
 | 10 | 6 | 0 | 0% |
-| **合計** | **173** | **11** | **6%** |
+| **合計** | **173** | **25** | **14%** |
