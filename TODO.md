@@ -63,24 +63,24 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] `SEGMENTS` 配列（[20, 1, 18, 4, 13, ...]）
 
 ### 1.3 座標変換 (`src/utils/coordinateTransform.ts`)
-- [ ] `CoordinateTransform` クラス作成
-- [ ] コンストラクタ（canvasWidth, canvasHeight, boardPhysicalRadius）
-- [ ] `physicalToScreen(x, y)` メソッド
-- [ ] `screenToPhysical(x, y)` メソッド
-- [ ] `physicalDistanceToScreen(distance)` メソッド
-- [ ] `screenDistanceToPhysical(distance)` メソッド
-- [ ] `updateCanvasSize(width, height)` メソッド
-- [ ] `getScale()` ゲッター
-- [ ] `getCenter()` ゲッター
+- [x] `CoordinateTransform` クラス作成
+- [x] コンストラクタ（canvasWidth, canvasHeight, boardPhysicalRadius）
+- [x] `physicalToScreen(x, y)` メソッド
+- [x] `screenToPhysical(x, y)` メソッド
+- [x] `physicalDistanceToScreen(distance)` メソッド
+- [x] `screenDistanceToPhysical(distance)` メソッド
+- [x] `updateCanvasSize(width, height)` メソッド
+- [x] `getScale()` ゲッター
+- [x] `getCenter()` ゲッター
 
 ### 1.4 点数計算 (`src/utils/scoreCalculator.ts`)
-- [ ] `getRing(distance)` 関数 - 距離からリング種類を判定
-- [ ] `getSegmentNumber(angle)` 関数 - 角度からセグメント番号を取得
-- [ ] `calculateScore(ring, segmentNumber)` 関数 - リングとセグメントから点数計算
-- [ ] `coordinateToScore(x, y)` 関数 - 座標から点数を一括計算
-- [ ] `coordinateToScoreDetail(x, y)` 関数 - 点数に加えてリング・セグメント情報も返す
-- [ ] `adjustForSpider(distance, angle)` 関数 - スパイダー境界の調整処理
-- [ ] `getScoreLabel(ring, segmentNumber)` 関数 - "T20", "D16", "BULL" などのラベル生成
+- [x] `getRing(distance)` 関数 - 距離からリング種類を判定
+- [x] `getSegmentNumber(angle)` 関数 - 角度からセグメント番号を取得
+- [x] `calculateScore(ring, segmentNumber)` 関数 - リングとセグメントから点数計算
+- [x] `coordinateToScore(x, y)` 関数 - 座標から点数を一括計算
+- [x] `coordinateToScoreDetail(x, y)` 関数 - 点数に加えてリング・セグメント情報も返す
+- [x] `adjustForSpider(distance, angle)` 関数 - スパイダー境界の調整処理
+- [x] `getScoreLabel(ring, segmentNumber)` 関数 - "T20", "D16", "BULL" などのラベル生成
 
 ### 1.5 入力バリデーション (`src/utils/validation.ts`)
 - [ ] `isValidSingleThrowScore(score)` 関数 - 1投の得点として有効か（0-60, 特定値のみ）
