@@ -1,13 +1,14 @@
 #!/bin/bash
-# サブエージェント実行結果を評価し、implement.md を改善するスクリプト
-# 注意: このスクリプトは「implement」サブエージェントの完了時のみ評価を実行します
+# サブエージェント実行結果を評価し、各エージェント定義を改善するスクリプト
+# 対応エージェント: test-writer, implement, test-runner, review-file, classify-files, plan-fix
 
 # プロジェクトディレクトリ
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(pwd)}"
-IMPLEMENT_MD="$PROJECT_DIR/.claude/agents/implement.md"
 
-# レポート出力ディレクトリ
-REPORT_DIR="$PROJECT_DIR/.claude/reports"
+# ベースディレクトリ
+AGENTS_DIR="$PROJECT_DIR/.claude/agents"
+EVAL_PROMPTS_DIR="$PROJECT_DIR/.claude/evaluation-prompts"
+REPORT_BASE_DIR="$PROJECT_DIR/.claude/reports"
 
 # stdin からJSONを読み取る
 INPUT_JSON=$(cat)
@@ -46,19 +47,31 @@ if [ -n "$PARENT_TRANSCRIPT_PATH" ] && [ -f "$PARENT_TRANSCRIPT_PATH" ]; then
   echo "📋 検出されたサブエージェントタイプ: $SUBAGENT_TYPE"
 fi
 
-# implementサブエージェントかどうか判定
-if [ "$SUBAGENT_TYPE" != "implement" ]; then
-  echo "サブエージェント '$SUBAGENT_TYPE' はimplement以外のため、評価をスキップします。"
+# サブエージェントタイプに応じて評価を実行
+case "$SUBAGENT_TYPE" in
+  test-writer|implement|test-runner|review-file|classify-files|plan-fix)
+    EVAL_PROMPT_FILE="$EVAL_PROMPTS_DIR/${SUBAGENT_TYPE}.md"
+    REPORT_SUBDIR="$REPORT_BASE_DIR/$SUBAGENT_TYPE"
+    TARGET_AGENT_FILE="$AGENTS_DIR/${SUBAGENT_TYPE}.md"
+
+    echo "✅ $SUBAGENT_TYPE サブエージェントを検出。評価を開始します。"
+    ;;
+  *)
+    echo "ℹ️ サブエージェントタイプ '$SUBAGENT_TYPE' は評価対象外です（対応: test-writer, implement, test-runner, review-file, classify-files, plan-fix）"
+    exit 0
+    ;;
+esac
+
+# 評価プロンプトファイルの存在確認
+if [ ! -f "$EVAL_PROMPT_FILE" ]; then
+  echo "⚠️ 評価プロンプトファイルが見つかりません: $EVAL_PROMPT_FILE"
   exit 0
 fi
 
-echo "✅ implementサブエージェントを検出。評価を開始します。"
-
-# ここからimplementサブエージェントと判定された場合のみ実行
 # レポートファイルを作成
-mkdir -p "$REPORT_DIR"
+mkdir -p "$REPORT_SUBDIR"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-REPORT_FILE="$REPORT_DIR/evaluation_${TIMESTAMP}.md"
+REPORT_FILE="$REPORT_SUBDIR/evaluation_${TIMESTAMP}.md"
 
 # ログ関数
 log_report() {
@@ -66,14 +79,15 @@ log_report() {
 }
 
 # レポートヘッダー
-log_report "# サブエージェント評価レポート"
+log_report "# $SUBAGENT_TYPE エージェント評価レポート"
 log_report ""
 log_report "- **実行日時**: $(date '+%Y-%m-%d %H:%M:%S')"
 log_report "- **イベント**: ${HOOK_EVENT:-'(不明)'}"
 log_report "- **セッションID**: ${SESSION_ID:-'(不明)'}"
 log_report "- **サブエージェントタイプ**: ${SUBAGENT_TYPE:-'(JSON未取得)'}"
+log_report "- **対象ファイル**: ${TARGET_AGENT_FILE}"
 log_report ""
-log_report "✅ implementサブエージェントを検出。評価を実行します。"
+log_report "✅ $SUBAGENT_TYPE サブエージェントの評価を実行します。"
 log_report ""
 
 # サブエージェントのトランスクリプトから情報を抽出
@@ -127,26 +141,24 @@ log_report "$(echo "$EVALUATION_INPUT" | head -c 5000)"
 log_report '```'
 log_report ""
 
+# 評価プロンプトを作成（テンプレートと入力を結合）
+echo "📋 評価プロンプトを作成中: $EVAL_PROMPT_FILE"
+
+# 一時ファイルにプロンプトを作成
+TEMP_PROMPT=$(mktemp)
+cat "$EVAL_PROMPT_FILE" | sed 's/{EVALUATION_INPUT}/---サブエージェント情報開始---/' > "$TEMP_PROMPT"
+echo "" >> "$TEMP_PROMPT"
+echo "$EVALUATION_INPUT" >> "$TEMP_PROMPT"
+echo "" >> "$TEMP_PROMPT"
+echo "---サブエージェント情報終了---" >> "$TEMP_PROMPT"
+
 # Claudeに評価を依頼し、結果をキャプチャ
 log_report "## 評価結果"
 log_report ""
 
-EVALUATION_RESULT=$(claude --allowedTools "Edit,Read" -p "以下はimplementサブエージェントの実行情報です。
-
----サブエージェント情報---
-$EVALUATION_INPUT
----情報終了---
-
-このサブエージェントの実行結果を評価してください。
-評価後、$IMPLEMENT_MD の指示内容に改善すべき点があれば、そのファイルに追記してください。
-
-評価観点:
-1. 指示が明確で十分だったか
-2. 成果物の品質は期待通りか
-3. 不足していた指示や、追加すべきガイドラインはないか
-
-改善点がなければ何もしないでください。
-注意: サブエージェント(Task tool)を再帰的に呼び出さないでください。" 2>&1)
+echo "📋 Claude に評価を依頼中..."
+EVALUATION_RESULT=$(cat "$TEMP_PROMPT" | claude --allowedTools "Edit,Read" -p 2>&1)
+rm -f "$TEMP_PROMPT"
 
 log_report "$EVALUATION_RESULT"
 log_report ""
