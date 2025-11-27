@@ -51,16 +51,16 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] `JudgmentTiming` 型（'independent' | 'cumulative'）
 
 ### 1.2 定数定義 (`src/utils/constants.ts`)
-- [ ] `BOARD_PHYSICAL` オブジェクト（リング半径、スパイダー幅、セグメント配列）
-- [ ] `TARGET_RADII` オブジェクト（TRIPLE, DOUBLE, SINGLE_OUTER, BULL）
-- [ ] `DIFFICULTY_PRESETS` オブジェクト（beginner, intermediate, advanced, expert）
-- [ ] `SESSION_QUESTION_COUNTS` 配列（[10, 20, 50, 100]）
-- [ ] `SESSION_TIME_LIMITS` 配列（[3, 5, 10]）
-- [ ] `DART_COLORS` オブジェクト（first, second, third）
-- [ ] `FEEDBACK_ICONS` オブジェクト（correct, incorrect）
-- [ ] `STORAGE_KEY` 定数
-- [ ] `SEGMENT_ANGLE` 定数（Math.PI / 10）
-- [ ] `SEGMENTS` 配列（[20, 1, 18, 4, 13, ...]）
+- [x] `BOARD_PHYSICAL` オブジェクト（リング半径、スパイダー幅、セグメント配列）
+- [x] `TARGET_RADII` オブジェクト（TRIPLE, DOUBLE, SINGLE_OUTER, BULL）
+- [x] `DIFFICULTY_PRESETS` オブジェクト（beginner, intermediate, advanced, expert）
+- [x] `SESSION_QUESTION_COUNTS` 配列（[10, 20, 50, 100]）
+- [x] `SESSION_TIME_LIMITS` 配列（[3, 5, 10]）
+- [x] `DART_COLORS` オブジェクト（first, second, third）
+- [x] `FEEDBACK_ICONS` オブジェクト（correct, incorrect）
+- [x] `STORAGE_KEY` 定数
+- [x] `SEGMENT_ANGLE` 定数（Math.PI / 10）
+- [x] `SEGMENTS` 配列（[20, 1, 18, 4, 13, ...]）
 
 ### 1.3 座標変換 (`src/utils/coordinateTransform.ts`)
 - [ ] `CoordinateTransform` クラス作成
@@ -416,7 +416,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | Phase | 項目数 | 完了数 | 進捗 |
 |-------|--------|--------|------|
 | 0 | 11 | 11 | 100% |
-| 1 | 38 | 14 | 37% |
+| 1 | 38 | 24 | 63% |
 | 2 | 13 | 0 | 0% |
 | 3 | 25 | 0 | 0% |
 | 4 | 7 | 0 | 0% |
@@ -426,4 +426,4 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | 8 | 10 | 0 | 0% |
 | 9 | 15 | 0 | 0% |
 | 10 | 6 | 0 | 0% |
-| **合計** | **173** | **25** | **14%** |
+| **合計** | **173** | **35** | **20%** |
