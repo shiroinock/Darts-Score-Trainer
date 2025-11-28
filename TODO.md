@@ -84,7 +84,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 
 ### 1.5 入力バリデーション (`src/utils/validation.ts`)
 - [x] `isValidSingleThrowScore(score)` 関数 - 1投の得点として有効か（0-60, 特定値のみ）
-- [ ] `isValidRoundScore(score)` 関数 - 1ラウンド(3投)の得点として有効か（0-180）
+- [x] `isValidRoundScore(score)` 関数 - 1ラウンド(3投)の得点として有効か（0-180）
 - [ ] `getValidSingleScores()` 関数 - 1投で取りうる全得点のセットを返す
 - [ ] `isValidRemainingScore(remaining, current)` 関数 - 残り点数として有効か
 
