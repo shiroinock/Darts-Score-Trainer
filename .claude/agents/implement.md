@@ -8,6 +8,14 @@ model: sonnet
 
 親エージェント（Opus）から受け取った設計・仕様に基づいて、コードを実装してください。
 
+## ドメイン知識の参照
+
+**重要**: ダーツの点数に関わる実装を行う場合、必ず `darts-domain` skill を参照してください。
+
+```
+Use the darts-domain skill to load comprehensive darts scoring rules before implementing validation, scoring, or simulation logic.
+```
+
 ## 実装時の注意点
 
 1. **仕様書を参照**: `COMPLETE_SPECIFICATION.md` に詳細な仕様があります
