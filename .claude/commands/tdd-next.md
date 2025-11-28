@@ -8,11 +8,43 @@ TODO.mdから次のタスクを選定し、テストパターン判定に基づ�
 
 ## 実行フロー
 
+### 0. ドメイン知識の参照（ダーツ関連タスクの場合）
+
+タスクがダーツの点数、バリデーション、シミュレーション、スコア計算に関連する場合、必ず `darts-domain` skill を参照してください：
+
+```
+Use the darts-domain skill to load comprehensive darts scoring rules.
+```
+
 ### 1. TODO.mdから次タスクを選定
 
 Read ツールで TODO.md を読み込み、最初の `- [ ]` (pending) タスクを特定します。
 
-### 2. classify-files でテストパターン判定
+### 2. ブランチ作成
+
+タスク内容に基づいて適切な名前でGitブランチを作成します。
+
+**ブランチ命名規則**:
+- **機能追加**: `feature/{機能名}`
+- **バグ修正**: `fix/{修正内容}`
+- **リファクタリング**: `refactor/{対象}`
+- **テスト追加**: `test/{対象}`
+
+**手順**:
+1. 現在のブランチを確認: `git branch --show-current`
+2. mainブランチから新しいブランチを作成:
+   ```bash
+   git checkout main
+   git pull origin main
+   git checkout -b {ブランチ名}
+   ```
+
+**例**:
+- タスク「入力バリデーション: isValidSingleThrowScore」 → `feature/validation-single-throw`
+- タスク「座標変換のバグ修正」 → `fix/coordinate-transform`
+- タスク「ストアのリファクタリング」 → `refactor/game-store`
+
+### 3. classify-files でテストパターン判定
 
 Task ツールで classify-files エージェントを起動し、実装対象ファイルのテストパターンを判定します。
 
@@ -30,13 +62,13 @@ TODO.mdの次タスク「{タスク名}」について、実装対象ファイ�
 5. testFilePath (テストファイルの配置パス)
 ```
 
-### 3. パイプライン選択と実行
+### 4. パイプライン選択と実行
 
 classify-files の判定結果に基づき、適切なパイプラインを**順次実行**します。
 
 **重要**: エージェント間に依存関係があるため、**必ず順次実行**してください。並列実行は不可です。
 
-#### 3-1. テストファーストパイプライン (tddMode: test-first)
+#### 4-1. テストファーストパイプライン (tddMode: test-first)
 
 ```
 1. test-writer エージェント起動
@@ -71,7 +103,7 @@ classify-files の判定結果に基づき、適切なパイプラインを**順
    - 判定: 全テスト成功 → 完了
 ```
 
-#### 3-2. テストレイターパイプライン (tddMode: test-later)
+#### 4-2. テストレイターパイプライン (tddMode: test-later)
 
 ```
 1. implement エージェント起動
@@ -91,13 +123,13 @@ classify-files の判定結果に基づき、適切なパイプラインを**順
 5. (WARN/FAIL の場合) plan-fix → implement → test-runner
 ```
 
-### 4. TODO.md更新
+### 5. TODO.md更新
 
 タスク完了後、TODO.mdを更新します:
 - 完了したタスクを `- [x]` に変更
 - 実装したファイルパスを記録 (必要に応じて)
 
-### 5. レポート生成
+### 6. レポート生成
 
 実行結果をレポートとして出力します:
 

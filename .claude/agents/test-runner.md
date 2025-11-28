@@ -35,6 +35,16 @@ npm test -- --run
 npm test -- --run src/utils/scoreCalculator.test.ts
 ```
 
+**注意**: ファイル名のみでテストを実行する場合は、正確なパスを指定してください：
+```bash
+# 正しい例
+npm test -- --run src/utils/validation.test.ts
+npm test -- --run ./src/utils/validation.test.ts
+
+# 間違った例（動作しない可能性）
+npm test -- validation.test.ts
+```
+
 ### カバレッジ付き実行
 ```bash
 npm run test:coverage -- --run
@@ -218,6 +228,17 @@ npm test -- --run
 実装ファイルが存在しません。implement エージェントが実装を作成する必要があります。
 ```
 
+#### 1.1 インポートエラー: `Failed to resolve import`
+**原因**: インポートしようとしているファイルが存在しない
+
+**診断メッセージ**:
+```
+インポートエラーが発生しました。
+エラー: Failed to resolve import "./validation" from "src/utils/validation.test.ts"
+原因: src/utils/validation.ts ファイルが存在しません。
+これは Red フェーズでは正常な状態です。
+```
+
 #### 2. `TypeError: X is not a function`
 **原因**: 関数として export されていない、または型が違う
 
@@ -303,6 +324,14 @@ npm test -- --run --no-threads
 - 期待との一致（SUCCESS/FAILURE）
 - 失敗したテストの詳細（あれば）
 - 次ステップの提案
+
+### エラーメッセージのパース注意点
+
+テスト出力からエラーメッセージを抽出する際は、以下に注意：
+
+1. **複数行のエラーメッセージ**: エラーメッセージが複数行にわたる場合、すべての行を含める
+2. **スタックトレース**: 最初のエラーメッセージを優先し、必要に応じてスタックトレースの重要部分を含める
+3. **切り詰められたメッセージ**: 「...」や改行で切れているメッセージは、可能な限り完全な形で取得
 
 ## 成功例
 

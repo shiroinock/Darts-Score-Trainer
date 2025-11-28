@@ -24,6 +24,14 @@ TDD (Test-Driven Development) の Red フェーズを担当するエージェン
 - **対象ファイルパス**: テスト対象のファイルパス（例: `src/utils/scoreCalculator.ts`）
 - **配置戦略**: colocated（同階層） or separated（__tests__配下）
 
+## ドメイン知識の参照
+
+**重要**: ダーツの点数に関わる実装やテストを作成する場合、必ず `darts-domain` skill を参照してください。
+
+```
+Use the darts-domain skill to load comprehensive darts scoring rules before creating tests.
+```
+
 ## テストパターン別ガイドライン
 
 ### 1. unit（純粋関数のユニットテスト）

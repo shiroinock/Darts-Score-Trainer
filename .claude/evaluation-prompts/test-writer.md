@@ -6,6 +6,14 @@
 {EVALUATION_INPUT}
 ---情報終了---
 
+## 評価前の準備
+
+**重要**: ダーツの点数に関わるテストの評価を行う場合、必ず `darts-domain` skill を参照してください：
+
+```
+Use the darts-domain skill to load comprehensive darts scoring rules before evaluating test quality.
+```
+
 ## 評価タスク
 
 このサブエージェントの実行結果を評価し、`.claude/agents/test-writer.md` の指示内容に改善すべき点があれば、そのファイルに追記してください。
@@ -13,6 +21,7 @@
 ## 評価観点
 
 ### 1. テストの品質
+- **ドメイン知識の正確性**（ダーツ関連の場合）: 有効/無効な得点が正しく判定されているか
 - テストが適切に失敗しているか（Redフェーズとして正しいか）
 - テストケースがエッジケースを含むか
 - アサーションが明確で理解しやすいか
