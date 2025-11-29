@@ -90,7 +90,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 
 ### 1.6 投擲シミュレーション (`src/utils/throwSimulator.ts`)
 - [x] `generateNormalDistribution(mean, stdDev)` 関数 - Box-Muller法 (src/utils/throwSimulator.ts)
-- [ ] `simulateThrow(targetX, targetY, stdDevMM)` 関数 - 着弾点生成
+- [x] `simulateThrow(targetX, targetY, stdDevMM)` 関数 - 着弾点生成 (src/utils/throwSimulator.ts)
 - [ ] `executeThrow(target, stdDevMM)` 関数 - ターゲットから投擲実行
 
 ### 1.7 ターゲット座標 (`src/utils/targetCoordinates.ts`)

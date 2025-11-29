@@ -92,3 +92,40 @@ model: opus
   ]
 }
 ```
+
+## 統計的テストケースの判定基準
+
+### テスト許容誤差の修正可能判定
+統計的検証を含むテストケースでは、以下の基準で修正可能か判断する：
+
+1. **単一サンプルのテスト**
+   - 3σ範囲外の確率は0.3%（正常な挙動）
+   - 修正可能：テストが確定的な結果を期待している場合
+   - 修正方法：コメントで統計的性質を明記
+
+2. **大量サンプルの平均値テスト**
+   - 標準誤差(SE) = σ/√n を計算
+   - 95%信頼区間 = 平均値 ± 1.96 × SE
+   - 修正可能：許容誤差 < 95%信頼区間の場合
+   - 修正方法：許容誤差を信頼区間の2-3倍に設定
+
+3. **toBeCloseTo()の第2引数設定**
+   ```typescript
+   // 悪い例：厳しすぎる
+   expect(value).toBeCloseTo(expected, 0); // ±0.5の許容誤差
+   
+   // 良い例：統計的に妥当
+   expect(value).toBeCloseTo(expected, 1); // ±5の許容誤差
+   expect(value).toBeCloseTo(expected, 2); // ±50の許容誤差
+   ```
+
+### 推奨される許容誤差の計算式
+```typescript
+// 平均値の検証
+const standardError = stdDev / Math.sqrt(sampleSize);
+const confidenceInterval95 = 1.96 * standardError;
+const recommendedTolerance = Math.max(5, Math.ceil(confidenceInterval95 * 2));
+
+// 分散・標準偏差の検証
+const toleranceRatio = 0.1; // 10%の誤差を許容
+```
