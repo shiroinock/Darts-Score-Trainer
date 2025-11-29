@@ -96,7 +96,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 ### 1.7 ターゲット座標 (`src/utils/targetCoordinates.ts`)
 - [x] `getSegmentAngle(number)` 関数 - セグメント番号から角度 (src/utils/targetCoordinates.ts)
 - [x] `getTargetCoordinates(targetType, number)` 関数 - ターゲットの物理座標 (src/utils/targetCoordinates.ts)
-- [ ] `getAllTargets()` 関数 - 全61ターゲットのリストを生成
+- [x] `getAllTargets()` 関数 - 全61ターゲットのリストを生成 (src/utils/targetCoordinates.ts:110-145)
 
 ### 1.8 01ゲームロジック (`src/utils/gameLogic.ts`)
 - [ ] `checkBust(remainingScore, throwScore, isDouble)` 関数 - バスト判定
