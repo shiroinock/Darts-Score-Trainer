@@ -91,11 +91,11 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 ### 1.6 投擲シミュレーション (`src/utils/throwSimulator.ts`)
 - [x] `generateNormalDistribution(mean, stdDev)` 関数 - Box-Muller法 (src/utils/throwSimulator.ts)
 - [x] `simulateThrow(targetX, targetY, stdDevMM)` 関数 - 着弾点生成 (src/utils/throwSimulator.ts)
-- [ ] `executeThrow(target, stdDevMM)` 関数 - ターゲットから投擲実行
+- [x] `executeThrow(target, stdDevMM)` 関数 - ターゲットから投擲実行 (src/utils/throwSimulator.ts)
 
 ### 1.7 ターゲット座標 (`src/utils/targetCoordinates.ts`)
-- [ ] `getSegmentAngle(number)` 関数 - セグメント番号から角度
-- [ ] `getTargetCoordinates(targetType, number)` 関数 - ターゲットの物理座標
+- [x] `getSegmentAngle(number)` 関数 - セグメント番号から角度 (src/utils/targetCoordinates.ts)
+- [x] `getTargetCoordinates(targetType, number)` 関数 - ターゲットの物理座標 (src/utils/targetCoordinates.ts)
 - [ ] `getAllTargets()` 関数 - 全61ターゲットのリストを生成
 
 ### 1.8 01ゲームロジック (`src/utils/gameLogic.ts`)
@@ -416,7 +416,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | Phase | 項目数 | 完了数 | 進捗 |
 |-------|--------|--------|------|
 | 0 | 11 | 11 | 100% |
-| 1 | 38 | 26 | 68% |
+| 1 | 38 | 29 | 76% |
 | 2 | 13 | 0 | 0% |
 | 3 | 25 | 0 | 0% |
 | 4 | 7 | 0 | 0% |
@@ -426,4 +426,4 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | 8 | 10 | 0 | 0% |
 | 9 | 15 | 0 | 0% |
 | 10 | 6 | 0 | 0% |
-| **合計** | **173** | **37** | **21%** |
+| **合計** | **173** | **40** | **23%** |
