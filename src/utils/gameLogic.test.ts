@@ -846,6 +846,68 @@ describe('gameLogic', () => {
       });
     });
 
+    describe('入力検証 - 非整数値と特殊値', () => {
+      test('残り2.5点（小数）はエラーをスローする', () => {
+        // Arrange
+        const remainingScore = 2.5;
+
+        // Act & Assert
+        expect(() => canFinishWithDouble(remainingScore)).toThrow(
+          '残り点数は整数である必要があります'
+        );
+      });
+
+      test('残り3.14点（小数）はエラーをスローする', () => {
+        // Arrange
+        const remainingScore = 3.14;
+
+        // Act & Assert
+        expect(() => canFinishWithDouble(remainingScore)).toThrow(
+          '残り点数は整数である必要があります'
+        );
+      });
+
+      test('残り20.1点（小数）はエラーをスローする', () => {
+        // Arrange
+        const remainingScore = 20.1;
+
+        // Act & Assert
+        expect(() => canFinishWithDouble(remainingScore)).toThrow(
+          '残り点数は整数である必要があります'
+        );
+      });
+
+      test('NaNはエラーをスローする', () => {
+        // Arrange
+        const remainingScore = NaN;
+
+        // Act & Assert
+        expect(() => canFinishWithDouble(remainingScore)).toThrow(
+          '残り点数は整数である必要があります'
+        );
+      });
+
+      test('Infinityはエラーをスローする', () => {
+        // Arrange
+        const remainingScore = Infinity;
+
+        // Act & Assert
+        expect(() => canFinishWithDouble(remainingScore)).toThrow(
+          '残り点数は整数である必要があります'
+        );
+      });
+
+      test('-Infinityはエラーをスローする', () => {
+        // Arrange
+        const remainingScore = -Infinity;
+
+        // Act & Assert
+        expect(() => canFinishWithDouble(remainingScore)).toThrow(
+          '残り点数は整数である必要があります'
+        );
+      });
+    });
+
     describe('実践的なゲームシナリオ', () => {
       test('残り110点から2本の投擲でフィニッシュ狙い: T20（60点）→残り50点はBULL可能', () => {
         // Arrange
