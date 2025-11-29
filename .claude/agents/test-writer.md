@@ -606,3 +606,48 @@ test('トリプル20付近（r=103mm, θ=90°）を狙う', () => {
 - **TypeScript全般**: `.claude/review-points/typescript.md` の観点を反映
 
 review-perspective-selector skill を使用して、対象ファイルに適用すべき観点を確認することを推奨します。
+
+## 追加ガイドライン（2025-11-30 追記 - drawSegments統合テストの評価に基づく改善）
+
+### ダーツボード定数の使用徹底
+
+物理座標系の定数値を直接記述するのではなく、実装ファイルからインポートして使用することを推奨します：
+
+```typescript
+// ❌ 避けるべき（マジックナンバー）
+const expectedInnerRadius = mockTransform.physicalDistanceToScreen(7.95); // OUTER_BULL_RADIUS
+const expectedOuterRadius = mockTransform.physicalDistanceToScreen(225);  // BOARD_RADIUS
+
+// ✅ 推奨（定数インポート）
+import { OUTER_BULL_RADIUS, BOARD_RADIUS } from '../../components/DartBoard/constants';
+const expectedInnerRadius = mockTransform.physicalDistanceToScreen(OUTER_BULL_RADIUS);
+const expectedOuterRadius = mockTransform.physicalDistanceToScreen(BOARD_RADIUS);
+```
+
+これにより：
+1. 定数値の変更時にテストが自動的に追従する
+2. コメントで値の意味を説明する必要がなくなる
+3. タイポや値の誤りを防げる
+
+### テスト要求の完全性確認
+
+テスト要求に具体的な仕様が含まれている場合、すべての要件をカバーしているか確認してください。例えば、以下の要件がある場合：
+
+> 真上から時計回りに18度ずつ
+
+この要件に対しては以下のテストが必要です：
+1. 最初のセグメントが真上（-π/2）から始まることの検証
+2. セグメント間の角度が18度（π/10）であることの検証
+3. 時計回りであることの検証（角度が増加することの確認）
+
+### セグメント番号配置のテスト
+
+ダーツボードのセグメント番号配置は特定の順序があります。統合テストでは、この順序も検証することを検討してください：
+
+```typescript
+const SEGMENT_NUMBERS = [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5];
+
+test('セグメントが正しい番号順で配置される', () => {
+  // 各セグメントに対応する番号が正しい位置にあることを検証
+});
+```
