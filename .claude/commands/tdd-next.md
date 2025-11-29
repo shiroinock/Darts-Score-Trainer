@@ -89,18 +89,24 @@ classify-files の判定結果に基づき、適切なパイプラインを**順
    - 判定: 全テスト成功 → SUCCESS
 
 5. review-file エージェント起動 (Refactor判断)
+   - review-perspective-selector skill で観点を自動選択
+   - 実装ファイルとテストファイルの両方をレビュー
    - 判定: PASS → 完了
-   - 判定: WARN/FAIL → 次へ
+   - 判定: WARN → ユーザーに確認「修正しますか？(y/n)」
+   - 判定: FAIL → 必須修正（次へ進む）
 
-6. (WARN/FAIL の場合) plan-fix エージェント起動
-   - 修正計画作成
+6. (WARN時にユーザー承認 or FAIL の場合) plan-fix エージェント起動
+   - review-fileの指摘事項に基づき修正計画を作成
+   - 修正内容をユーザーに提示
 
-7. (修正が必要な場合) implement エージェント起動
-   - Refactor実行
+7. (ユーザーが承認した場合) implement エージェント起動
+   - plan-fixの計画に基づいてRefactor実行
+   - テストファイルと実装ファイルの両方を修正可能
 
 8. test-runner エージェント起動
    - 期待する状態: GREEN_EXPECTED
    - 判定: 全テスト成功 → 完了
+   - 判定: 失敗 → 7に戻る（最大3回まで）
 ```
 
 #### 4-2. テストレイターパイプライン (tddMode: test-later)
@@ -110,17 +116,29 @@ classify-files の判定結果に基づき、適切なパイプラインを**順
    - 実装優先
 
 2. test-writer エージェント起動
-   - 実装に基づくテスト作成
+   - 実装に基づくテスト作成（Green状態で作成）
 
 3. test-runner エージェント起動
    - 期待する状態: GREEN_EXPECTED
    - 判定: 全テスト成功 → 次へ
 
 4. review-file エージェント起動
+   - review-perspective-selector skill で観点を自動選択
+   - 実装ファイルとテストファイルの両方をレビュー
    - 判定: PASS → 完了
-   - 判定: WARN/FAIL → 次へ
+   - 判定: WARN → ユーザーに確認「修正しますか？(y/n)」
+   - 判定: FAIL → 必須修正（次へ進む）
 
-5. (WARN/FAIL の場合) plan-fix → implement → test-runner
+5. (WARN時にユーザー承認 or FAIL の場合) plan-fix エージェント起動
+   - review-fileの指摘事項に基づき修正計画を作成
+
+6. (ユーザーが承認した場合) implement エージェント起動
+   - plan-fixの計画に基づいてRefactor実行
+
+7. test-runner エージェント起動
+   - 期待する状態: GREEN_EXPECTED
+   - 判定: 全テスト成功 → 完了
+   - 判定: 失敗 → 6に戻る（最大3回まで）
 ```
 
 ### 5. TODO.md更新
@@ -242,7 +260,7 @@ test-writer の出力:
 {
   "subagent_type": "review-file",
   "model": "haiku",
-  "prompt": "{implFilePath} を {reviewPerspective} 観点でレビューしてください。"
+  "prompt": "まず、review-perspective-selector skill を使用して {implFilePath} に適切なレビュー観点を選択してください。\n\n選択された観点ファイル（.claude/review-points/*.md）を使用してレビューを実施してください。\n\n対象ファイル:\n- 実装: {implFilePath}\n- テスト: {testFilePath}\n\nPASS/WARN/FAILで判定してください。"
 }
 ```
 
