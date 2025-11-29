@@ -108,7 +108,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 ## Phase 2: ボード描画
 
 ### 2.1 ダーツボードレンダラー (`src/components/DartBoard/dartBoardRenderer.ts`)
-- [ ] `drawBoard(p5, transform)` 関数 - ボード全体描画
+- [x] `drawBoard(p5, transform)` 関数 - ボード全体描画 (src/components/DartBoard/dartBoardRenderer.ts:15-29, src/__tests__/integration/dartboard-rendering.test.ts)
 - [ ] `drawSegments(p5, transform)` 関数 - セグメント描画（色分け）
 - [ ] `drawRings(p5, transform)` 関数 - リング描画（トリプル、ダブル）
 - [ ] `drawBull(p5, transform)` 関数 - ブル描画（インナー、アウター）
