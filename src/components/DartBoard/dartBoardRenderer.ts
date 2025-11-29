@@ -5,6 +5,9 @@
 import type p5Types from 'p5';
 import { CoordinateTransform } from '../../utils/coordinateTransform';
 
+/** 背景色（黒） */
+const BACKGROUND_COLOR = 0;
+
 /**
  * ボード全体を描画する（メイン関数）
  * @param p5 p5インスタンス
@@ -12,7 +15,7 @@ import { CoordinateTransform } from '../../utils/coordinateTransform';
  */
 export function drawBoard(p5: p5Types, transform: CoordinateTransform): void {
   // 背景をクリア
-  p5.background(0);
+  p5.background(BACKGROUND_COLOR);
 
   // 描画順序に従って各要素を描画
   drawSegments(p5, transform);
