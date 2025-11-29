@@ -89,7 +89,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] `isValidRemainingScore(remaining, current)` 関数 - 残り点数として有効か (src/utils/validation.ts:158-218)
 
 ### 1.6 投擲シミュレーション (`src/utils/throwSimulator.ts`)
-- [ ] `generateNormalDistribution(mean, stdDev)` 関数 - Box-Muller法
+- [x] `generateNormalDistribution(mean, stdDev)` 関数 - Box-Muller法 (src/utils/throwSimulator.ts)
 - [ ] `simulateThrow(targetX, targetY, stdDevMM)` 関数 - 着弾点生成
 - [ ] `executeThrow(target, stdDevMM)` 関数 - ターゲットから投擲実行
 
