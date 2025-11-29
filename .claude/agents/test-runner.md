@@ -118,6 +118,12 @@ npm run test:coverage -- --run
 
 **条件**: 一部のテストが成功、一部が失敗
 
+**判定**:
+- `期待する状態 = RED_EXPECTED` の場合
+  - 未実装の関数のみ失敗 → ⚠️ **警告（他の関数がすでに実装済み）**
+  - 実装済み関数も失敗 → ❌ **異常（既存コードに問題）**
+- `期待する状態 = GREEN_EXPECTED` の場合 → ❌ **異常（実装不完全）**
+
 **報告内容**:
 ```markdown
 ## テスト結果: PARTIAL
@@ -136,6 +142,31 @@ npm run test:coverage -- --run
 distance === 225 の場合の条件分岐を確認してください（`>` vs `>=`）。
 
 判定: ❌ 実装に問題あり（部分的な成功は不十分）
+```
+
+#### RED_EXPECTED での PARTIAL パターン
+
+**例1: 複数関数のテストで一部のみ失敗**
+```markdown
+## テスト結果: PARTIAL
+
+- 実行: 181 tests
+- 成功: 145 passed (isValidSingleScore, isValidRoundScore)
+- 失敗: 36 failed (isValidRemainingScore)
+
+### 状態判定
+期待する状態: RED_EXPECTED
+実際の状態: PARTIAL（一部実装済み）
+判定: ⚠️ WARNING
+
+### 分析
+すでに実装済みの関数があります：
+- isValidSingleScore: ✅ 実装済み（145テスト成功）
+- isValidRoundScore: ✅ 実装済み（成功）
+- isValidRemainingScore: ❌ 未実装（36テスト失敗）
+
+### 次ステップ
+未実装の isValidRemainingScore のみを実装してください。
 ```
 
 ## 出力形式
@@ -393,3 +424,38 @@ Refactor フェーズに進む準備ができています。
 ---
 
 このガイドラインに従い、正確なテスト実行と状態判定を行ってください。
+
+## テストファイル指定の改善
+
+### ファイル名のみでのテスト実行
+
+複数のテストを効率的に実行する際、ファイル名のみを指定して実行することが可能です：
+
+```bash
+# 基本パターンでも動作する場合がある
+npm test -- validation.test.ts --run
+```
+
+ただし、確実性を保つため、フルパスまたは相対パスを推奨します。
+
+### テストコンテキストの詳細化
+
+テスト結果レポートで、特に新規実装された関数に注目を向けるため、以下の情報を含めてください：
+
+1. **新規実装の強調**: 今回新しく実装された関数のテストグループを明示
+2. **テストグループごとの集計**: 各関数のテストケース数を表示
+3. **実装の完全性**: すべての必要な条件がテストされていることを確認
+
+例：
+```markdown
+### テスト内訳
+
+**src/utils/validation.test.ts**: 181 tests - すべてパス
+
+テストコンテキストの確認：
+- isValidSingleScore テスト群: 75 tests
+- isValidRoundScore テスト群: 70 tests  
+- **isValidRemainingScore テスト群: 36 tests** - 新規実装 ✨
+```
+
+この強調により、どの機能が新規に追加されたかが一目で分かります。
