@@ -101,7 +101,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 ### 1.8 01ゲームロジック (`src/utils/gameLogic.ts`)
 - [x] `checkBust(remainingScore, throwScore, isDouble)` 関数 - バスト判定 (src/utils/gameLogic.ts:1-54, src/utils/gameLogic.test.ts)
 - [x] `canFinishWithDouble(remainingScore)` 関数 - ダブルアウト可能か (src/utils/gameLogic.ts:82-110, src/utils/gameLogic.test.ts)
-- [ ] `isGameFinished(remainingScore)` 関数 - ゲーム終了判定
+- [x] `isGameFinished(remainingScore)` 関数 - ゲーム終了判定 (src/utils/gameLogic.ts:112-130, src/utils/gameLogic.test.ts)
 
 ---
 
