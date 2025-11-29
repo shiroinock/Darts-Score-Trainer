@@ -439,14 +439,27 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 
 ### Phase 2 実装方針変更の詳細
 
+#### 変更理由
 - **変更前**: `drawSegments()`と`drawRings()`で背景色マスク方式を使用
-- **変更後**: `docs/reference/soft-tip-board.js` (54-220行のリング描画)のアプローチに従い、外側→内側へシンプルに重ねる方式
+  - 各セグメント/リングを描画後、背景色で内側をマスクしてリング状に見せる方式
+  - 問題点: マスク処理が複雑で理解しづらい、描画回数が多い
+- **変更後**: `docs/reference/soft-tip-board.js`のアプローチに従い、外側→内側へシンプルに重ねる方式
+  - 各エリアが「その半径の円全体」を描画し、次のエリアが上に重ねることで結果的にリング状になる
+  - 描画順序: ダブルリング（170mm円）→ アウターシングル（162mm円）→ トリプルリング（107mm円）→ インナーシングル（99mm円）→ ブル
+
+#### 変更による改善
+1. **コードの可読性向上**: マスク処理が不要になり、描画ロジックが直感的
+2. **パフォーマンス向上**: 背景色マスクの削除により描画回数削減（各セグメント2回 → 1回）
+3. **保守性向上**:
+   - 参考実装との一貫性により、将来の修正が容易
+   - 共通関数`drawRingSegments()`によりコード重複を削減（4関数で140行 → 共通関数40行 + ラッパー各5行）
+4. **拡張性向上**: 各エリアを独立して制御可能（色変更、エフェクト追加が容易）
+
+#### 実装詳細
 - **参考実装**: `docs/reference/soft-tip-board.js` - p5.jsによるソフトチップボード描画例
   - 実装箇所: 54-94行（ダブルリング）、96-136行（アウターシングル）、138-178行（トリプルリング）、180-220行（インナーシングル）
-  - 対応実装: `src/components/DartBoard/dartBoardRenderer.ts` の drawDoubleRing(), drawOuterSingle(), drawTripleRing(), drawInnerSingle(), drawOuterBull(), drawInnerBull()
+  - 対応実装: `src/components/DartBoard/dartBoardRenderer.ts`
+    - 共通関数: `drawRingSegments()` (47-87行) - 重複コード削減のためのヘルパー関数
+    - ラッパー関数: `drawDoubleRing()`, `drawOuterSingle()`, `drawTripleRing()`, `drawInnerSingle()`
+    - ブル描画: `drawOuterBull()`, `drawInnerBull()`
   - 差異: TypeScript + React + CoordinateTransform による座標系の物理/画面分離
-- **メリット**:
-  - シンプルで理解しやすいコード
-  - パフォーマンス向上（背景色マスクの削除により描画回数削減）
-  - 拡張性の向上（各エリアを独立して制御可能）
-  - 保守性の向上（参考実装との一貫性）

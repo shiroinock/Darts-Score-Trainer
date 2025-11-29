@@ -45,17 +45,24 @@ export function drawBoard(p5: p5Types, transform: CoordinateTransform): void {
 }
 
 /**
- * ダブルリング（170mm円全体）を描画する
- * 20個の扇形を赤/緑交互に描画
+ * リングセグメントを描画する共通関数
+ * 20個の扇形を指定された半径と色パターンで描画
  * @param p5 p5インスタンス
  * @param transform 座標変換インスタンス
+ * @param physicalRadius 物理座標での半径（mm）
+ * @param colors 交互に使用する色（偶数インデックス、奇数インデックス）
  */
-export function drawDoubleRing(p5: p5Types, transform: CoordinateTransform): void {
+function drawRingSegments(
+  p5: p5Types,
+  transform: CoordinateTransform,
+  physicalRadius: number,
+  colors: { even: string; odd: string }
+): void {
   // ボード中心の画面座標を取得
   const center = transform.getCenter();
 
-  // 170mm円の半径（画面座標）
-  const radius = transform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.doubleOuter);
+  // 物理座標から画面座標への変換
+  const radius = transform.physicalDistanceToScreen(physicalRadius);
 
   // 共通の描画設定：noStroke()はループ外で一度だけ呼び出す
   p5.noStroke();
@@ -67,8 +74,8 @@ export function drawDoubleRing(p5: p5Types, transform: CoordinateTransform): voi
     const startAngle = -Math.PI / 2 + (index - 0.5) * SEGMENT_ANGLE;
     const endAngle = startAngle + SEGMENT_ANGLE;
 
-    // 交互に色を変更（偶数: 赤、奇数: 緑）
-    const fillColor = index % 2 === 0 ? RING_COLORS.red : RING_COLORS.green;
+    // 交互に色を変更
+    const fillColor = index % 2 === 0 ? colors.even : colors.odd;
 
     // arc()を使って扇形を描画（PIEモード）
     p5.push();
@@ -76,6 +83,19 @@ export function drawDoubleRing(p5: p5Types, transform: CoordinateTransform): voi
     p5.fill(fillColor);
     p5.arc(0, 0, radius * 2, radius * 2, startAngle, endAngle, p5.PIE);
     p5.pop();
+  });
+}
+
+/**
+ * ダブルリング（170mm円全体）を描画する
+ * 20個の扇形を赤/緑交互に描画
+ * @param p5 p5インスタンス
+ * @param transform 座標変換インスタンス
+ */
+export function drawDoubleRing(p5: p5Types, transform: CoordinateTransform): void {
+  drawRingSegments(p5, transform, BOARD_PHYSICAL.rings.doubleOuter, {
+    even: RING_COLORS.red,
+    odd: RING_COLORS.green
   });
 }
 
@@ -86,31 +106,9 @@ export function drawDoubleRing(p5: p5Types, transform: CoordinateTransform): voi
  * @param transform 座標変換インスタンス
  */
 export function drawOuterSingle(p5: p5Types, transform: CoordinateTransform): void {
-  // ボード中心の画面座標を取得
-  const center = transform.getCenter();
-
-  // 162mm円の半径（画面座標）
-  const radius = transform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.doubleInner);
-
-  // 共通の描画設定：noStroke()はループ外で一度だけ呼び出す
-  p5.noStroke();
-
-  // 20個のセグメントを描画
-  SEGMENTS.forEach((_, index) => {
-    // 開始角度と終了角度を計算
-    // 真上（-π/2）から開始し、時計回りに回転
-    const startAngle = -Math.PI / 2 + (index - 0.5) * SEGMENT_ANGLE;
-    const endAngle = startAngle + SEGMENT_ANGLE;
-
-    // 交互に色を変更（偶数: 黒、奇数: ベージュ）
-    const fillColor = index % 2 === 0 ? SEGMENT_COLORS.black : SEGMENT_COLORS.beige;
-
-    // arc()を使って扇形を描画（PIEモード）
-    p5.push();
-    p5.translate(center.x, center.y);
-    p5.fill(fillColor);
-    p5.arc(0, 0, radius * 2, radius * 2, startAngle, endAngle, p5.PIE);
-    p5.pop();
+  drawRingSegments(p5, transform, BOARD_PHYSICAL.rings.doubleInner, {
+    even: SEGMENT_COLORS.black,
+    odd: SEGMENT_COLORS.beige
   });
 }
 
@@ -121,31 +119,9 @@ export function drawOuterSingle(p5: p5Types, transform: CoordinateTransform): vo
  * @param transform 座標変換インスタンス
  */
 export function drawTripleRing(p5: p5Types, transform: CoordinateTransform): void {
-  // ボード中心の画面座標を取得
-  const center = transform.getCenter();
-
-  // 107mm円の半径（画面座標）
-  const radius = transform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.tripleOuter);
-
-  // 共通の描画設定：noStroke()はループ外で一度だけ呼び出す
-  p5.noStroke();
-
-  // 20個のセグメントを描画
-  SEGMENTS.forEach((_, index) => {
-    // 開始角度と終了角度を計算
-    // 真上（-π/2）から開始し、時計回りに回転
-    const startAngle = -Math.PI / 2 + (index - 0.5) * SEGMENT_ANGLE;
-    const endAngle = startAngle + SEGMENT_ANGLE;
-
-    // 交互に色を変更（偶数: 赤、奇数: 緑）
-    const fillColor = index % 2 === 0 ? RING_COLORS.red : RING_COLORS.green;
-
-    // arc()を使って扇形を描画（PIEモード）
-    p5.push();
-    p5.translate(center.x, center.y);
-    p5.fill(fillColor);
-    p5.arc(0, 0, radius * 2, radius * 2, startAngle, endAngle, p5.PIE);
-    p5.pop();
+  drawRingSegments(p5, transform, BOARD_PHYSICAL.rings.tripleOuter, {
+    even: RING_COLORS.red,
+    odd: RING_COLORS.green
   });
 }
 
@@ -156,31 +132,9 @@ export function drawTripleRing(p5: p5Types, transform: CoordinateTransform): voi
  * @param transform 座標変換インスタンス
  */
 export function drawInnerSingle(p5: p5Types, transform: CoordinateTransform): void {
-  // ボード中心の画面座標を取得
-  const center = transform.getCenter();
-
-  // 99mm円の半径（画面座標）
-  const radius = transform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.tripleInner);
-
-  // 共通の描画設定：noStroke()はループ外で一度だけ呼び出す
-  p5.noStroke();
-
-  // 20個のセグメントを描画
-  SEGMENTS.forEach((_, index) => {
-    // 開始角度と終了角度を計算
-    // 真上（-π/2）から開始し、時計回りに回転
-    const startAngle = -Math.PI / 2 + (index - 0.5) * SEGMENT_ANGLE;
-    const endAngle = startAngle + SEGMENT_ANGLE;
-
-    // 交互に色を変更（偶数: 黒、奇数: ベージュ）
-    const fillColor = index % 2 === 0 ? SEGMENT_COLORS.black : SEGMENT_COLORS.beige;
-
-    // arc()を使って扇形を描画（PIEモード）
-    p5.push();
-    p5.translate(center.x, center.y);
-    p5.fill(fillColor);
-    p5.arc(0, 0, radius * 2, radius * 2, startAngle, endAngle, p5.PIE);
-    p5.pop();
+  drawRingSegments(p5, transform, BOARD_PHYSICAL.rings.tripleInner, {
+    even: SEGMENT_COLORS.black,
+    odd: SEGMENT_COLORS.beige
   });
 }
 
