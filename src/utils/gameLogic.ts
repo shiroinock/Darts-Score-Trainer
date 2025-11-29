@@ -72,3 +72,39 @@ export function checkBust(
     reason: null,
   };
 }
+
+/**
+ * 残り点数がダブルでフィニッシュ可能かを判定する
+ *
+ * @param remainingScore 残り点数
+ * @returns ダブルでフィニッシュ可能ならtrue、不可能ならfalse
+ */
+export function canFinishWithDouble(remainingScore: number): boolean {
+  // 0以下の場合はフィニッシュ不可能
+  if (remainingScore <= 0) {
+    return false;
+  }
+
+  // 1点の場合はフィニッシュ不可能
+  if (remainingScore === 1) {
+    return false;
+  }
+
+  // 奇数の場合はフィニッシュ不可能
+  if (remainingScore % 2 !== 0) {
+    return false;
+  }
+
+  // 50点の場合はBULL（インナーブル）でフィニッシュ可能
+  if (remainingScore === 50) {
+    return true;
+  }
+
+  // 2-40の偶数の場合はD1-D20でフィニッシュ可能
+  if (remainingScore >= 2 && remainingScore <= 40) {
+    return true;
+  }
+
+  // それ以外（40超50未満の偶数、50超の偶数）はフィニッシュ不可能
+  return false;
+}
