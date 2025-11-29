@@ -165,3 +165,13 @@ generateNormalDistribution関数を実装する際、以下の点に注意して
 3. **座標系の厳密な分離**
    - 物理座標（mm）と画面座標（pixel）を混在させない
    - `CoordinateTransform` インスタンスを経由した変換を必須
+
+### ダーツボード描画実装時の注意点
+
+**`dartboard-rendering` スキルを参照してください（`.claude/skills/dartboard-rendering/skill.md`）**
+
+このスキルで定義される重要な実装パターン：
+
+1. **描画順序**: 外側→内側、スパイダーは2ステップに分ける
+2. **セグメント境界の角度**: `(i - 0.5) * SEGMENT_ANGLE` で境界に配置
+3. **座標系の分離**: 物理座標で計算、描画時に画面座標に変換

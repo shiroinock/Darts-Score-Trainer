@@ -37,10 +37,13 @@ export function drawBoard(p5: p5Types, transform: CoordinateTransform): void {
   drawOuterSingle(p5, transform);    // アウターシングル（162mm円全体、黒/ベージュ交互）
   drawTripleRing(p5, transform);     // トリプルリング（107mm円全体、赤/緑交互）
   drawInnerSingle(p5, transform);    // インナーシングル（99mm円全体、黒/ベージュ交互）
+
+  drawSpiderOuter(p5, transform);    // 外側スパイダー（放射線 + リング境界）
+
   drawOuterBull(p5, transform);      // アウターブル（半径7.95mm、緑）
   drawInnerBull(p5, transform);      // インナーブル（半径3.175mm、赤）
 
-  drawSpider(p5, transform);         // スパイダー（ワイヤー境界線）
+  drawSpiderBull(p5, transform);     // ブル用スパイダー（ブル境界の同心円）
   drawNumbers(p5, transform);        // セグメント番号
 }
 
@@ -176,16 +179,102 @@ export function drawInnerBull(p5: p5Types, transform: CoordinateTransform): void
 
 
 /**
- * スパイダー（ワイヤー境界線）を描画する
+ * 外側スパイダー（放射線 + リング境界）を描画する
+ * ブルエリアの色を塗る前に描画することで、色の被りを防ぐ
  * @param p5 p5インスタンス
  * @param transform 座標変換インスタンス
  */
+export function drawSpiderOuter(p5: p5Types, transform: CoordinateTransform): void {
+  // ボード中心の画面座標を取得
+  const center = transform.getCenter();
+
+  // スパイダーの色（シルバー/グレー系）
+  const spiderColor = '#C0C0C0';
+
+  // === 放射線（セグメント境界）: 20本 ===
+  // 物理座標の線幅を画面座標に変換
+  const radialStrokeWidth = transform.physicalDistanceToScreen(BOARD_PHYSICAL.spider.radialWidth);
+  const boardEdgeRadius = transform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.boardEdge);
+
+  p5.stroke(spiderColor);
+  p5.strokeWeight(radialStrokeWidth);
+
+  // 各セグメント境界に放射線を描画（20本）
+  for (let i = 0; i < 20; i++) {
+    // セグメント境界の角度を計算
+    // 真上（-π/2）から時計回りに、各セグメントの境界に配置
+    // (i - 0.5) を使ってセグメント0.5個分ずらすことで境界に配置
+    const angle = -Math.PI / 2 + (i - 0.5) * SEGMENT_ANGLE;
+
+    // 放射線の終点座標を計算（ボード端まで）
+    const endX = center.x + boardEdgeRadius * Math.cos(angle);
+    const endY = center.y + boardEdgeRadius * Math.sin(angle);
+
+    // 中心から外側へ直線を描画
+    p5.line(center.x, center.y, endX, endY);
+  }
+
+  // === リング境界の同心円（ダブル・トリプルの4本）===
+  const circularStrokeWidth = transform.physicalDistanceToScreen(BOARD_PHYSICAL.spider.circularWidth);
+
+  p5.stroke(spiderColor);
+  p5.strokeWeight(circularStrokeWidth);
+  p5.noFill();
+
+  const outerRingRadii = [
+    BOARD_PHYSICAL.rings.doubleOuter,   // ダブル外側: 170mm
+    BOARD_PHYSICAL.rings.doubleInner,   // ダブル内側: 162mm
+    BOARD_PHYSICAL.rings.tripleOuter,   // トリプル外側: 107mm
+    BOARD_PHYSICAL.rings.tripleInner    // トリプル内側: 99mm
+  ];
+
+  outerRingRadii.forEach(physicalRadius => {
+    const screenRadius = transform.physicalDistanceToScreen(physicalRadius);
+    p5.circle(center.x, center.y, screenRadius * 2);
+  });
+}
+
+/**
+ * ブル用スパイダー（ブル境界の同心円）を描画する
+ * アウターブル・インナーブルの色を塗った後に描画することで、正しく境界線が見える
+ * @param p5 p5インスタンス
+ * @param transform 座標変換インスタンス
+ */
+export function drawSpiderBull(p5: p5Types, transform: CoordinateTransform): void {
+  // ボード中心の画面座標を取得
+  const center = transform.getCenter();
+
+  // スパイダーの色（シルバー/グレー系）
+  const spiderColor = '#C0C0C0';
+
+  // === ブル境界の同心円（2本）===
+  const circularStrokeWidth = transform.physicalDistanceToScreen(BOARD_PHYSICAL.spider.circularWidth);
+
+  p5.stroke(spiderColor);
+  p5.strokeWeight(circularStrokeWidth);
+  p5.noFill();
+
+  const bullRingRadii = [
+    BOARD_PHYSICAL.rings.outerBull,     // アウターブル: 7.95mm
+    BOARD_PHYSICAL.rings.innerBull      // インナーブル: 3.175mm
+  ];
+
+  bullRingRadii.forEach(physicalRadius => {
+    const screenRadius = transform.physicalDistanceToScreen(physicalRadius);
+    p5.circle(center.x, center.y, screenRadius * 2);
+  });
+}
+
+/**
+ * スパイダー（ワイヤー境界線）を描画する
+ * 後方互換性のため、外側スパイダーとブル用スパイダーの両方を呼び出す
+ * @param p5 p5インスタンス
+ * @param transform 座標変換インスタンス
+ * @deprecated drawSpiderOuter と drawSpiderBull を個別に呼び出すことを推奨
+ */
 export function drawSpider(p5: p5Types, transform: CoordinateTransform): void {
-  // TODO: ワイヤー（境界線）の描画を実装
-  // 放射線: 20本（セグメント境界）
-  // 同心円: 5本（ダブル外側、ダブル内側、トリプル外側、トリプル内側、アウターブル）
-  void p5;
-  void transform;
+  drawSpiderOuter(p5, transform);
+  drawSpiderBull(p5, transform);
 }
 
 /**

@@ -30,6 +30,7 @@ describe('dartboard-rendering integration', () => {
       stroke: vi.fn(),
       strokeWeight: vi.fn(),
       noStroke: vi.fn(),
+      noFill: vi.fn(),
       arc: vi.fn(),
       circle: vi.fn(),
       line: vi.fn(),
