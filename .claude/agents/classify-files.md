@@ -380,3 +380,61 @@ function determineTestPattern(file: FileInfo): TestPattern {
 - 新しい観点が必要と思われる場合は `suggested_aspects` で提案
 - **テストパターン判定は全ファイルに対して実行**
 - テストファイル（.test.ts, .test.tsx）自体は分類対象外
+
+## 改善履歴
+
+### 2025-11-29: バリデーション関数の判定精度向上
+
+#### 背景
+`isValidRemainingScore(remaining, current)` 関数のテストパターン判定において、以下の改善が必要であることが判明：
+
+1. **関数の特性分析の明確化**
+   - 複数パラメータを持つ純粋関数の判定基準を明確化
+   - ビジネスロジックとバリデーションロジックの区別
+
+2. **ダーツ固有ルールへの対応**
+   - ダブルアウトルールなど、ドメイン固有の知識が必要な関数の扱い
+   - 01ゲーム特有のバスト条件の理解
+
+#### 追加ガイドライン
+
+##### バリデーション関数の判定基準
+```typescript
+// バリデーション関数の特徴
+function isValidationFunction(file: FileInfo, functionName: string): boolean {
+  return (
+    // 関数名がis/has/can/shouldで始まる
+    functionName.match(/^(is|has|can|should)[A-Z]/) &&
+    // 戻り値がboolean
+    hasReturnType(file, functionName, 'boolean') &&
+    // 副作用がない
+    !hasSideEffects(file, functionName)
+  );
+}
+```
+
+##### ドメイン知識を含む関数の扱い
+01ゲーム関連の関数（`isValidRemainingScore`など）は以下の特徴を持つ：
+- **test-first推奨**: ルールが明確に定義されている
+- **仕様駆動**: COMPLETE_SPECIFICATIONに詳細記載
+- **エッジケース重視**: バスト条件、特殊ケースの網羅が重要
+
+##### 判定出力の詳細化
+テストパターン判定時は、以下の情報も含めること：
+```json
+{
+  "testPattern": {
+    "tddMode": "test-first",
+    "pattern": "unit",
+    "placement": "colocated",
+    "rationale": "純粋関数、01ゲームのルールが明確に定義",
+    "testFilePath": "src/utils/validation.test.ts",
+    "testingFocus": [
+      "正常系: 有効な残り点数の判定",
+      "異常系: バスト条件（残り点数超過、1点残り）",
+      "境界値: 0点、最大値、特殊な数値"
+    ],
+    "relatedFunctions": ["isValidSingleThrowScore", "isValidRoundScore"]
+  }
+}
+```

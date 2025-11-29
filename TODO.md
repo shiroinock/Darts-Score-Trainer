@@ -86,7 +86,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] `isValidSingleThrowScore(score)` 関数 - 1投の得点として有効か（0-60, 特定値のみ）
 - [x] `isValidRoundScore(score)` 関数 - 1ラウンド(3投)の得点として有効か（0-180）
 - [x] `getValidSingleScores()` 関数 - 1投で取りうる全得点のセットを返す (src/utils/validation.ts:88-94)
-- [ ] `isValidRemainingScore(remaining, current)` 関数 - 残り点数として有効か
+- [x] `isValidRemainingScore(remaining, current)` 関数 - 残り点数として有効か (src/utils/validation.ts:158-218)
 
 ### 1.6 投擲シミュレーション (`src/utils/throwSimulator.ts`)
 - [ ] `generateNormalDistribution(mean, stdDev)` 関数 - Box-Muller法
@@ -416,7 +416,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | Phase | 項目数 | 完了数 | 進捗 |
 |-------|--------|--------|------|
 | 0 | 11 | 11 | 100% |
-| 1 | 38 | 25 | 66% |
+| 1 | 38 | 26 | 68% |
 | 2 | 13 | 0 | 0% |
 | 3 | 25 | 0 | 0% |
 | 4 | 7 | 0 | 0% |
@@ -426,4 +426,4 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | 8 | 10 | 0 | 0% |
 | 9 | 15 | 0 | 0% |
 | 10 | 6 | 0 | 0% |
-| **合計** | **173** | **36** | **21%** |
+| **合計** | **173** | **37** | **21%** |
