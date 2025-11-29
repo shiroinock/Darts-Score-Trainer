@@ -100,7 +100,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 
 ### 1.8 01ゲームロジック (`src/utils/gameLogic.ts`)
 - [x] `checkBust(remainingScore, throwScore, isDouble)` 関数 - バスト判定 (src/utils/gameLogic.ts:1-54, src/utils/gameLogic.test.ts)
-- [ ] `canFinishWithDouble(remainingScore)` 関数 - ダブルアウト可能か
+- [x] `canFinishWithDouble(remainingScore)` 関数 - ダブルアウト可能か (src/utils/gameLogic.ts:82-110, src/utils/gameLogic.test.ts)
 - [ ] `isGameFinished(remainingScore)` 関数 - ゲーム終了判定
 
 ---
@@ -416,7 +416,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | Phase | 項目数 | 完了数 | 進捗 |
 |-------|--------|--------|------|
 | 0 | 11 | 11 | 100% |
-| 1 | 38 | 29 | 76% |
+| 1 | 38 | 30 | 79% |
 | 2 | 13 | 0 | 0% |
 | 3 | 25 | 0 | 0% |
 | 4 | 7 | 0 | 0% |
@@ -426,4 +426,4 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | 8 | 10 | 0 | 0% |
 | 9 | 15 | 0 | 0% |
 | 10 | 6 | 0 | 0% |
-| **合計** | **173** | **40** | **23%** |
+| **合計** | **173** | **41** | **24%** |

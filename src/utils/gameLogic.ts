@@ -21,17 +21,21 @@ export function checkBust(
   isDouble: boolean
 ): BustInfo {
   // 入力値の妥当性チェック
-  // 残り点数: 正の整数のみ（0以下、浮動小数点はエラー）
-  if (remainingScore <= 0 || !Number.isInteger(remainingScore)) {
+  // 残り点数: 正の整数のみ（NaN、Infinity、浮動小数点、0以下はエラー）
+  if (!Number.isFinite(remainingScore) || !Number.isInteger(remainingScore)) {
+    throw new Error('残り点数は整数である必要があります');
+  }
+
+  if (remainingScore <= 0) {
     throw new Error('残り点数は正の整数である必要があります');
   }
 
-  // 投擲点数: 0以上60以下の整数のみ（負数、61以上、浮動小数点はエラー）
-  if (
-    throwScore < 0 ||
-    throwScore > 60 ||
-    !Number.isInteger(throwScore)
-  ) {
+  // 投擲点数: 0以上60以下の整数のみ（NaN、Infinity、浮動小数点、負数、61以上はエラー）
+  if (!Number.isFinite(throwScore) || !Number.isInteger(throwScore)) {
+    throw new Error('投擲点数は整数である必要があります');
+  }
+
+  if (throwScore < 0 || throwScore > 60) {
     throw new Error('投擲点数は0以上60以下の整数である必要があります');
   }
 
@@ -71,4 +75,41 @@ export function checkBust(
     isBust: false,
     reason: null,
   };
+}
+
+/**
+ * 残り点数がダブルでフィニッシュ可能かを判定する
+ *
+ * @param remainingScore 残り点数（正の整数のみ）
+ * @returns ダブルでフィニッシュ可能ならtrue、不可能ならfalse
+ * @throws {Error} 入力値が不正な場合
+ */
+export function canFinishWithDouble(remainingScore: number): boolean {
+  // 入力値の妥当性チェック
+  if (!Number.isFinite(remainingScore) || !Number.isInteger(remainingScore)) {
+    throw new Error('残り点数は整数である必要があります');
+  }
+
+  // 0以下の場合はフィニッシュ不可能
+  if (remainingScore <= 0) {
+    return false;
+  }
+
+  // 奇数の場合はフィニッシュ不可能（1点を含む）
+  if (remainingScore % 2 !== 0) {
+    return false;
+  }
+
+  // 50点の場合はBULL（インナーブル）でフィニッシュ可能
+  if (remainingScore === 50) {
+    return true;
+  }
+
+  // 2-40の偶数の場合はD1-D20でフィニッシュ可能
+  if (remainingScore >= 2 && remainingScore <= 40) {
+    return true;
+  }
+
+  // それ以外（40超50未満の偶数、50超の偶数）はフィニッシュ不可能
+  return false;
 }
