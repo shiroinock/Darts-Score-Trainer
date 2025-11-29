@@ -283,9 +283,32 @@ export function drawSpider(p5: p5Types, transform: CoordinateTransform): void {
  * @param transform 座標変換インスタンス
  */
 export function drawNumbers(p5: p5Types, transform: CoordinateTransform): void {
-  // TODO: セグメント番号の描画を実装
-  // 配置半径: ダブルリング外側とボード端の中間（約197.5mm）
-  // [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5]
-  void p5;
-  void transform;
+  // ボード中心の画面座標を取得
+  const center = transform.getCenter();
+
+  // 配置半径（物理座標）: ダブルリング外側とボード端の中間
+  const placementRadiusPhysical = (BOARD_PHYSICAL.rings.doubleOuter + BOARD_PHYSICAL.rings.boardEdge) / 2;
+
+  // 物理座標から画面座標への変換
+  const placementRadius = transform.physicalDistanceToScreen(placementRadiusPhysical);
+
+  // テキストの描画設定
+  p5.textAlign(p5.CENTER, p5.CENTER);
+  p5.fill('#FFFFFF'); // 白色で明瞭に
+  p5.noStroke();
+  p5.textSize(20);
+
+  // 20個のセグメント番号を描画
+  SEGMENTS.forEach((number, index) => {
+    // 各セグメントの中央角度を計算
+    // 真上（-π/2）から時計回りに、各セグメントの中央に配置
+    const angle = -Math.PI / 2 + index * SEGMENT_ANGLE;
+
+    // テキストの配置座標を計算
+    const x = center.x + placementRadius * Math.cos(angle);
+    const y = center.y + placementRadius * Math.sin(angle);
+
+    // 番号を描画
+    p5.text(number.toString(), x, y);
+  });
 }
