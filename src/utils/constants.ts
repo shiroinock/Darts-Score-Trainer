@@ -15,8 +15,8 @@
  */
 export const BOARD_PHYSICAL = {
   rings: {
-    innerBull: 3.175,      // mm - インナーブル（50点）の半径
-    outerBull: 7.95,       // mm - アウターブル（25点）の半径
+    innerBull: 6.35,       // mm - インナーブル（50点）の半径（直径12.7mm）
+    outerBull: 16,         // mm - アウターブル（25点）の半径（直径32mm）
     tripleInner: 99,       // mm - トリプルリング内側の半径
     tripleOuter: 107,      // mm - トリプルリング外側の半径
     doubleInner: 162,      // mm - ダブルリング内側の半径
@@ -43,7 +43,7 @@ export const BOARD_PHYSICAL = {
 export const TARGET_RADII = {
   TRIPLE: 103,           // (99 + 107) / 2
   DOUBLE: 166,           // (162 + 170) / 2
-  SINGLE_INNER: 53.475,  // (7.95 + 99) / 2
+  SINGLE_INNER: 57.5,    // (16 + 99) / 2
   SINGLE_OUTER: 134.5,   // (107 + 162) / 2
   BULL: 0                // 中心 (0, 0)
 } as const;

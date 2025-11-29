@@ -36,9 +36,9 @@ describe('scoreCalculator', () => {
         expect(result).toBe('INNER_BULL');
       });
 
-      test('アウターブル内（5mm）はOUTER_BULLを返す', () => {
+      test('アウターブル内（10mm）はOUTER_BULLを返す', () => {
         // Arrange
-        const distance = 5;
+        const distance = 10;
 
         // Act
         const result = getRing(distance);
@@ -49,9 +49,9 @@ describe('scoreCalculator', () => {
     });
 
     describe('境界値 - インナーブル/アウターブル境界', () => {
-      test('ちょうど3.175mmはOUTER_BULLを返す', () => {
+      test('ちょうど6.35mmはOUTER_BULLを返す', () => {
         // Arrange
-        const distance = BOARD_PHYSICAL.rings.innerBull; // 3.175mm
+        const distance = BOARD_PHYSICAL.rings.innerBull; // 6.35mm
 
         // Act
         const result = getRing(distance);
@@ -62,9 +62,9 @@ describe('scoreCalculator', () => {
     });
 
     describe('境界値 - アウターブル/シングル境界', () => {
-      test('ちょうど7.95mmはINNER_SINGLEを返す', () => {
+      test('ちょうど16mmはINNER_SINGLEを返す', () => {
         // Arrange
-        const distance = BOARD_PHYSICAL.rings.outerBull; // 7.95mm
+        const distance = BOARD_PHYSICAL.rings.outerBull; // 16mm
 
         // Act
         const result = getRing(distance);
@@ -280,9 +280,9 @@ describe('scoreCalculator', () => {
         expect(() => getRing(distance)).toThrow();
       });
 
-      test('浮動小数点の距離（3.174mm）はINNER_BULLを返す', () => {
+      test('浮動小数点の距離（6.34mm）はINNER_BULLを返す', () => {
         // Arrange
-        const distance = 3.174;
+        const distance = 6.34;
 
         // Act
         const result = getRing(distance);
@@ -291,9 +291,9 @@ describe('scoreCalculator', () => {
         expect(result).toBe('INNER_BULL');
       });
 
-      test('浮動小数点の距離（3.176mm）はOUTER_BULLを返す', () => {
+      test('浮動小数点の距離（6.36mm）はOUTER_BULLを返す', () => {
         // Arrange
-        const distance = 3.176;
+        const distance = 6.36;
 
         // Act
         const result = getRing(distance);
@@ -696,9 +696,9 @@ describe('scoreCalculator', () => {
         expect(result).toBe(50);
       });
 
-      test('アウターブル内（5, 0）は25点を返す', () => {
+      test('アウターブル内（10, 0）は25点を返す', () => {
         // Arrange
-        const x = 5;
+        const x = 10;
         const y = 0;
 
         // Act

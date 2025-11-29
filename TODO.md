@@ -117,7 +117,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] `drawInnerSingle(p5, transform)` 関数 - インナーシングル描画（99mm円全体、黒/ベージュ交互） (src/components/DartBoard/dartBoardRenderer.ts:158-185)
 - [x] `drawOuterBull(p5, transform)` 関数 - アウターブル描画（緑の円、半径7.95mm） (src/components/DartBoard/dartBoardRenderer.ts:192-203)
 - [x] `drawInnerBull(p5, transform)` 関数 - インナーブル描画（赤の円、半径3.175mm） (src/components/DartBoard/dartBoardRenderer.ts:210-221)
-- [ ] `drawSpider(p5, transform)` 関数 - スパイダー（ワイヤー境界線）描画
+- [x] `drawSpider(p5, transform)` 関数 - スパイダー（ワイヤー境界線）描画 (src/components/DartBoard/dartBoardRenderer.ts:183-223, src/__tests__/integration/dartboard-spider-rendering.test.ts)
   - 放射線: 20本（セグメント境界）
   - 同心円: 5本（ダブル外側、ダブル内側、トリプル外側、トリプル内側、アウターブル）
 - [ ] `drawNumbers(p5, transform)` 関数 - セグメント番号描画
@@ -426,7 +426,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 |-------|--------|--------|------|
 | 0 | 11 | 11 | 100% |
 | 1 | 38 | 30 | 79% |
-| 2 | 12 | 8 | 67% |
+| 2 | 12 | 9 | 75% |
 | 3 | 25 | 0 | 0% |
 | 4 | 7 | 0 | 0% |
 | 5 | 17 | 0 | 0% |
@@ -435,7 +435,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | 8 | 10 | 0 | 0% |
 | 9 | 15 | 0 | 0% |
 | 10 | 6 | 0 | 0% |
-| **合計** | **172** | **49** | **28%** |
+| **合計** | **172** | **50** | **29%** |
 
 ### Phase 2 実装方針変更の詳細
 
