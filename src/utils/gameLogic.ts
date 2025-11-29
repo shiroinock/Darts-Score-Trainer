@@ -21,17 +21,21 @@ export function checkBust(
   isDouble: boolean
 ): BustInfo {
   // 入力値の妥当性チェック
-  // 残り点数: 正の整数のみ（0以下、浮動小数点はエラー）
-  if (remainingScore <= 0 || !Number.isInteger(remainingScore)) {
+  // 残り点数: 正の整数のみ（NaN、Infinity、浮動小数点、0以下はエラー）
+  if (!Number.isFinite(remainingScore) || !Number.isInteger(remainingScore)) {
+    throw new Error('残り点数は整数である必要があります');
+  }
+
+  if (remainingScore <= 0) {
     throw new Error('残り点数は正の整数である必要があります');
   }
 
-  // 投擲点数: 0以上60以下の整数のみ（負数、61以上、浮動小数点はエラー）
-  if (
-    throwScore < 0 ||
-    throwScore > 60 ||
-    !Number.isInteger(throwScore)
-  ) {
+  // 投擲点数: 0以上60以下の整数のみ（NaN、Infinity、浮動小数点、負数、61以上はエラー）
+  if (!Number.isFinite(throwScore) || !Number.isInteger(throwScore)) {
+    throw new Error('投擲点数は整数である必要があります');
+  }
+
+  if (throwScore < 0 || throwScore > 60) {
     throw new Error('投擲点数は0以上60以下の整数である必要があります');
   }
 
