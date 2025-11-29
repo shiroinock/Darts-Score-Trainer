@@ -110,7 +110,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 ### 2.1 ダーツボードレンダラー (`src/components/DartBoard/dartBoardRenderer.ts`)
 - [x] `drawBoard(p5, transform)` 関数 - ボード全体描画 (src/components/DartBoard/dartBoardRenderer.ts:15-29, src/__tests__/integration/dartboard-rendering.test.ts)
 - [x] `drawSegments(p5, transform)` 関数 - セグメント描画（色分け） (src/components/DartBoard/dartBoardRenderer.ts:31-81, src/__tests__/integration/dartboard-rendering.test.ts)
-- [ ] `drawRings(p5, transform)` 関数 - リング描画（トリプル、ダブル）
+- [x] `drawRings(p5, transform)` 関数 - リング描画（トリプル、ダブル） (src/components/DartBoard/dartBoardRenderer.ts:83-149, src/__tests__/integration/dartboard-rendering.test.ts)
 - [ ] `drawBull(p5, transform)` 関数 - ブル描画（インナー、アウター）
 - [ ] `drawSpider(p5, transform)` 関数 - ワイヤー描画
 - [ ] `drawNumbers(p5, transform)` 関数 - セグメント番号描画
@@ -417,7 +417,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 |-------|--------|--------|------|
 | 0 | 11 | 11 | 100% |
 | 1 | 38 | 30 | 79% |
-| 2 | 13 | 1 | 8% |
+| 2 | 13 | 2 | 15% |
 | 3 | 25 | 0 | 0% |
 | 4 | 7 | 0 | 0% |
 | 5 | 17 | 0 | 0% |
@@ -426,4 +426,4 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | 8 | 10 | 0 | 0% |
 | 9 | 15 | 0 | 0% |
 | 10 | 6 | 0 | 0% |
-| **合計** | **173** | **42** | **24%** |
+| **合計** | **173** | **43** | **25%** |

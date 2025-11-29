@@ -319,4 +319,227 @@ describe('dartboard-rendering integration', () => {
       });
     });
   });
+
+  describe('drawRings', () => {
+    describe('正常系 - リング描画の検証', () => {
+      test('トリプルリングとダブルリングが描画される（arc呼び出しが80回）', () => {
+        // Arrange
+        const arcSpy = vi.spyOn(mockP5, 'arc');
+
+        // Act
+        drawRings(mockP5, mockTransform);
+
+        // Assert
+        // 各セグメントでトリプル（外側+内側）とダブル（外側+内側）を描画するため、
+        // 20セグメント × 4 = 80回
+        expect(arcSpy).toHaveBeenCalledTimes(80);
+      });
+
+      test('リングが正しい色（赤と緑の交互）で塗られる', () => {
+        // Arrange
+        const fillSpy = vi.spyOn(mockP5, 'fill');
+
+        // Act
+        drawRings(mockP5, mockTransform);
+
+        // Assert
+        // fill() の呼び出し回数を確認
+        expect(fillSpy).toHaveBeenCalled();
+
+        // 最初のセグメント（偶数インデックス0）は赤
+        expect(fillSpy).toHaveBeenNthCalledWith(1, '#DC143C');
+
+        // 2番目のセグメント（奇数インデックス1）は緑
+        expect(fillSpy).toHaveBeenNthCalledWith(5, '#228B22');
+
+        // 3番目のセグメント（偶数インデックス2）は赤
+        expect(fillSpy).toHaveBeenNthCalledWith(9, '#DC143C');
+
+        // 4番目のセグメント（奇数インデックス3）は緑
+        expect(fillSpy).toHaveBeenNthCalledWith(13, '#228B22');
+      });
+
+      test('トリプルリングの半径が正しい（99-107mm）', () => {
+        // Arrange
+        const arcSpy = vi.spyOn(mockP5, 'arc');
+
+        // 期待される半径（画面座標）
+        const expectedTripleInnerRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.tripleInner);
+        const expectedTripleOuterRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.tripleOuter);
+
+        // Act
+        drawRings(mockP5, mockTransform);
+
+        // Assert
+        // arc() の引数: arc(x, y, width, height, start, stop, mode)
+        // 最初のセグメントのトリプルリング外側の扇形（インデックス0）
+        const firstTripleOuter = arcSpy.mock.calls[0];
+        const tripleOuterWidth = firstTripleOuter[2] as number;
+        const tripleOuterHeight = firstTripleOuter[3] as number;
+        expect(tripleOuterWidth).toBeCloseTo(expectedTripleOuterRadius * 2, 1);
+        expect(tripleOuterHeight).toBeCloseTo(expectedTripleOuterRadius * 2, 1);
+
+        // 最初のセグメントのトリプルリング内側の扇形（インデックス1）
+        const firstTripleInner = arcSpy.mock.calls[1];
+        const tripleInnerWidth = firstTripleInner[2] as number;
+        const tripleInnerHeight = firstTripleInner[3] as number;
+        expect(tripleInnerWidth).toBeCloseTo(expectedTripleInnerRadius * 2, 1);
+        expect(tripleInnerHeight).toBeCloseTo(expectedTripleInnerRadius * 2, 1);
+      });
+
+      test('ダブルリングの半径が正しい（162-170mm）', () => {
+        // Arrange
+        const arcSpy = vi.spyOn(mockP5, 'arc');
+
+        // 期待される半径（画面座標）
+        const expectedDoubleInnerRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.doubleInner);
+        const expectedDoubleOuterRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.doubleOuter);
+
+        // Act
+        drawRings(mockP5, mockTransform);
+
+        // Assert
+        // arc() の引数: arc(x, y, width, height, start, stop, mode)
+        // 最初のセグメントのダブルリング外側の扇形（インデックス2）
+        const firstDoubleOuter = arcSpy.mock.calls[2];
+        const doubleOuterWidth = firstDoubleOuter[2] as number;
+        const doubleOuterHeight = firstDoubleOuter[3] as number;
+        expect(doubleOuterWidth).toBeCloseTo(expectedDoubleOuterRadius * 2, 1);
+        expect(doubleOuterHeight).toBeCloseTo(expectedDoubleOuterRadius * 2, 1);
+
+        // 最初のセグメントのダブルリング内側の扇形（インデックス3）
+        const firstDoubleInner = arcSpy.mock.calls[3];
+        const doubleInnerWidth = firstDoubleInner[2] as number;
+        const doubleInnerHeight = firstDoubleInner[3] as number;
+        expect(doubleInnerWidth).toBeCloseTo(expectedDoubleInnerRadius * 2, 1);
+        expect(doubleInnerHeight).toBeCloseTo(expectedDoubleInnerRadius * 2, 1);
+      });
+
+      test('各セグメントの角度が正しい（18度ずつ）', () => {
+        // Arrange
+        const arcSpy = vi.spyOn(mockP5, 'arc');
+        const expectedAngleDiff = Math.PI / 10; // 18度 = π/10ラジアン
+
+        // Act
+        drawRings(mockP5, mockTransform);
+
+        // Assert
+        // arc() の引数: arc(x, y, width, height, start, stop, mode)
+        // 最初のセグメントのトリプルリング外側の開始角度と終了角度を確認
+        const firstTripleOuter = arcSpy.mock.calls[0];
+        const startAngle1 = firstTripleOuter[4] as number; // インデックス4が開始角度
+        const endAngle1 = firstTripleOuter[5] as number;   // インデックス5が終了角度
+
+        // 角度差が18度（π/10ラジアン）であることを確認
+        expect(endAngle1 - startAngle1).toBeCloseTo(expectedAngleDiff, 5);
+
+        // 2番目のセグメントの開始角度が最初のセグメントの終了角度と一致することを確認
+        const secondTripleOuter = arcSpy.mock.calls[4]; // インデックス4（最初のセグメントの4つのarcをスキップ）
+        const startAngle2 = secondTripleOuter[4] as number;
+
+        expect(startAngle2).toBeCloseTo(endAngle1, 5);
+      });
+
+      test('真上から時計回りに描画される（最初のセグメントは-π/2中心）', () => {
+        // Arrange
+        const arcSpy = vi.spyOn(mockP5, 'arc');
+
+        // Act
+        drawRings(mockP5, mockTransform);
+
+        // Assert
+        // arc() の引数: arc(x, y, width, height, start, stop, mode)
+        // 最初のセグメントの中心角度が-π/2（真上）であることを確認
+        const firstTripleOuter = arcSpy.mock.calls[0];
+        const startAngle = firstTripleOuter[4] as number; // インデックス4が開始角度
+        const endAngle = firstTripleOuter[5] as number;   // インデックス5が終了角度
+        const centerAngle = (startAngle + endAngle) / 2;
+
+        expect(centerAngle).toBeCloseTo(-Math.PI / 2, 5);
+      });
+    });
+
+    describe('正常系 - p5メソッドの呼び出し順序', () => {
+      test('noStroke() がループ外で一度だけ呼び出される（パフォーマンス最適化）', () => {
+        // Arrange
+        const noStrokeSpy = vi.spyOn(mockP5, 'noStroke');
+
+        // Act
+        drawRings(mockP5, mockTransform);
+
+        // Assert
+        // noStroke()はループ外で一度だけ呼ばれる（20回ではなく1回に最適化）
+        expect(noStrokeSpy).toHaveBeenCalledTimes(1);
+      });
+
+      test('push/pop が各セグメントで呼び出される', () => {
+        // Arrange
+        const pushSpy = vi.spyOn(mockP5, 'push');
+        const popSpy = vi.spyOn(mockP5, 'pop');
+
+        // Act
+        drawRings(mockP5, mockTransform);
+
+        // Assert
+        // 各セグメントでpush/popが呼ばれる（20回ずつ）
+        expect(pushSpy).toHaveBeenCalledTimes(20);
+        expect(popSpy).toHaveBeenCalledTimes(20);
+      });
+
+      test('translate が正しい座標で呼び出される', () => {
+        // Arrange
+        const translateSpy = vi.spyOn(mockP5, 'translate');
+        const center = mockTransform.getCenter();
+
+        // Act
+        drawRings(mockP5, mockTransform);
+
+        // Assert
+        // 各セグメントでtranslate()がボード中心座標で呼ばれる（20回）
+        expect(translateSpy).toHaveBeenCalledTimes(20);
+        expect(translateSpy).toHaveBeenCalledWith(center.x, center.y);
+      });
+    });
+
+    describe('境界値 - 異なるキャンバスサイズでの動作', () => {
+      test('小さいキャンバス（200x200）でも正常に描画される', () => {
+        // Arrange
+        const smallTransform = new CoordinateTransform(200, 200, 225);
+        const arcSpy = vi.spyOn(mockP5, 'arc');
+
+        // Act
+        drawRings(mockP5, smallTransform);
+
+        // Assert
+        expect(arcSpy).toHaveBeenCalledTimes(80);
+        expect(() => drawRings(mockP5, smallTransform)).not.toThrow();
+      });
+
+      test('大きいキャンバス（2000x2000）でも正常に描画される', () => {
+        // Arrange
+        const largeTransform = new CoordinateTransform(2000, 2000, 225);
+        const arcSpy = vi.spyOn(mockP5, 'arc');
+
+        // Act
+        drawRings(mockP5, largeTransform);
+
+        // Assert
+        expect(arcSpy).toHaveBeenCalledTimes(80);
+        expect(() => drawRings(mockP5, largeTransform)).not.toThrow();
+      });
+
+      test('横長のキャンバス（1920x600）でも正常に描画される', () => {
+        // Arrange
+        const wideTransform = new CoordinateTransform(1920, 600, 225);
+        const arcSpy = vi.spyOn(mockP5, 'arc');
+
+        // Act
+        drawRings(mockP5, wideTransform);
+
+        // Assert
+        expect(arcSpy).toHaveBeenCalledTimes(80);
+        expect(() => drawRings(mockP5, wideTransform)).not.toThrow();
+      });
+    });
+  });
 });

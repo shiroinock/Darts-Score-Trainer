@@ -15,6 +15,12 @@ const SEGMENT_COLORS = {
   beige: '#D4C5A9'
 } as const;
 
+/** リングの色 */
+const RING_COLORS = {
+  red: '#DC143C',
+  green: '#228B22'
+} as const;
+
 /**
  * ボード全体を描画する（メイン関数）
  * @param p5 p5インスタンス
@@ -78,13 +84,55 @@ export function drawSegments(p5: p5Types, transform: CoordinateTransform): void 
 
 /**
  * リング（トリプル、ダブル）を描画する
- * @param _p5 p5インスタンス
- * @param _transform 座標変換インスタンス
+ * @param p5 p5インスタンス
+ * @param transform 座標変換インスタンス
  */
-export function drawRings(_p5: p5Types, _transform: CoordinateTransform): void {
-  // TODO: トリプルリングとダブルリングの描画を実装
-  // トリプル: 99-107mm（赤と緑）
-  // ダブル: 162-170mm（赤と緑）
+export function drawRings(p5: p5Types, transform: CoordinateTransform): void {
+  // ボード中心の画面座標を取得
+  const center = transform.getCenter();
+
+  // トリプルリングの半径（画面座標）
+  const tripleInnerRadius = transform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.tripleInner);
+  const tripleOuterRadius = transform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.tripleOuter);
+
+  // ダブルリングの半径（画面座標）
+  const doubleInnerRadius = transform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.doubleInner);
+  const doubleOuterRadius = transform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.doubleOuter);
+
+  // 共通の描画設定：noStroke()はループ外で一度だけ呼び出す（パフォーマンス最適化）
+  p5.noStroke();
+
+  // 20個のセグメントを描画
+  SEGMENTS.forEach((_, index) => {
+    // 開始角度と終了角度を計算
+    // 真上（-π/2）から開始し、時計回りに回転
+    const startAngle = -Math.PI / 2 + (index - 0.5) * SEGMENT_ANGLE;
+    const endAngle = startAngle + SEGMENT_ANGLE;
+
+    // 交互に色を変更（偶数: 赤、奇数: 緑）
+    const fillColor = index % 2 === 0 ? RING_COLORS.red : RING_COLORS.green;
+
+    p5.push();
+    p5.translate(center.x, center.y);
+    p5.fill(fillColor);
+
+    // トリプルリング（99-107mm）を描画
+    // 外側の扇形を描画
+    p5.arc(0, 0, tripleOuterRadius * 2, tripleOuterRadius * 2, startAngle, endAngle, p5.PIE);
+    // 内側を背景色でマスク
+    p5.fill(BACKGROUND_COLOR);
+    p5.arc(0, 0, tripleInnerRadius * 2, tripleInnerRadius * 2, startAngle, endAngle, p5.PIE);
+
+    // ダブルリング（162-170mm）を描画
+    p5.fill(fillColor);
+    // 外側の扇形を描画
+    p5.arc(0, 0, doubleOuterRadius * 2, doubleOuterRadius * 2, startAngle, endAngle, p5.PIE);
+    // 内側を背景色でマスク
+    p5.fill(BACKGROUND_COLOR);
+    p5.arc(0, 0, doubleInnerRadius * 2, doubleInnerRadius * 2, startAngle, endAngle, p5.PIE);
+
+    p5.pop();
+  });
 }
 
 /**
