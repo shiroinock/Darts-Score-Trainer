@@ -85,7 +85,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 ### 1.5 入力バリデーション (`src/utils/validation.ts`)
 - [x] `isValidSingleThrowScore(score)` 関数 - 1投の得点として有効か（0-60, 特定値のみ）
 - [x] `isValidRoundScore(score)` 関数 - 1ラウンド(3投)の得点として有効か（0-180）
-- [ ] `getValidSingleScores()` 関数 - 1投で取りうる全得点のセットを返す
+- [x] `getValidSingleScores()` 関数 - 1投で取りうる全得点のセットを返す (src/utils/validation.ts:88-94)
 - [ ] `isValidRemainingScore(remaining, current)` 関数 - 残り点数として有効か
 
 ### 1.6 投擲シミュレーション (`src/utils/throwSimulator.ts`)
@@ -416,7 +416,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | Phase | 項目数 | 完了数 | 進捗 |
 |-------|--------|--------|------|
 | 0 | 11 | 11 | 100% |
-| 1 | 38 | 24 | 63% |
+| 1 | 38 | 25 | 66% |
 | 2 | 13 | 0 | 0% |
 | 3 | 25 | 0 | 0% |
 | 4 | 7 | 0 | 0% |
@@ -426,4 +426,4 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | 8 | 10 | 0 | 0% |
 | 9 | 15 | 0 | 0% |
 | 10 | 6 | 0 | 0% |
-| **合計** | **173** | **35** | **20%** |
+| **合計** | **173** | **36** | **21%** |
