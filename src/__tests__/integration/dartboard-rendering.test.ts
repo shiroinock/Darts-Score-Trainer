@@ -8,9 +8,12 @@ import { CoordinateTransform } from '../../utils/coordinateTransform';
 import { BOARD_PHYSICAL } from '../../utils/constants';
 import {
   drawBoard,
-  drawSegments,
-  drawRings,
-  drawBull,
+  drawDoubleRing,
+  drawOuterSingle,
+  drawTripleRing,
+  drawInnerSingle,
+  drawOuterBull,
+  drawInnerBull,
   drawSpider,
   drawNumbers,
 } from '../../components/DartBoard/dartBoardRenderer';
@@ -116,11 +119,9 @@ describe('dartboard-rendering integration', () => {
   describe('個別描画関数', () => {
     describe('正常系 - スタブ実装の動作確認', () => {
       test.each([
-        ['drawRings', drawRings],
-        ['drawBull', drawBull],
         ['drawSpider', drawSpider],
         ['drawNumbers', drawNumbers],
-      ] as const)('%s がエラーなく呼び出せる', (name, drawFunction) => {
+      ] as const)('%s がエラーなく呼び出せる', (_name, drawFunction) => {
         // Act & Assert
         // スタブ実装なので、エラーが発生しないことのみ確認
         expect(() => drawFunction(mockP5, mockTransform)).not.toThrow();
@@ -128,195 +129,532 @@ describe('dartboard-rendering integration', () => {
     });
   });
 
-  describe('drawSegments', () => {
-    describe('正常系 - セグメント描画の検証', () => {
-      test('20個のセグメントが描画される（arc呼び出しが40回）', () => {
+  // 新実装関数のテスト
+  describe('drawDoubleRing', () => {
+    describe('正常系 - ダブルリング描画の検証', () => {
+      test('20個のセグメントが描画される（arc呼び出しが20回）', () => {
         // Arrange
         const arcSpy = vi.spyOn(mockP5, 'arc');
 
         // Act
-        drawSegments(mockP5, mockTransform);
+        drawDoubleRing(mockP5, mockTransform);
 
         // Assert
-        // 各セグメントで外側と内側の扇形を描画するため、20セグメント × 2 = 40回
-        expect(arcSpy).toHaveBeenCalledTimes(40);
+        expect(arcSpy).toHaveBeenCalledTimes(20);
       });
 
-      test('セグメントが正しい色（黒とベージュの交互）で塗られる', () => {
+      test('偶数インデックスのセグメントは赤色で描画される', () => {
         // Arrange
         const fillSpy = vi.spyOn(mockP5, 'fill');
 
         // Act
-        drawSegments(mockP5, mockTransform);
+        drawDoubleRing(mockP5, mockTransform);
 
         // Assert
-        // fill() の呼び出し回数を確認（各セグメント2回 = 外側 + 内側）
-        expect(fillSpy).toHaveBeenCalled();
-
-        // 最初のセグメント（偶数インデックス0）は黒
-        expect(fillSpy).toHaveBeenNthCalledWith(1, '#000000');
-
-        // 2番目のセグメント（奇数インデックス1）はベージュ
-        expect(fillSpy).toHaveBeenNthCalledWith(3, '#D4C5A9');
-
-        // 3番目のセグメント（偶数インデックス2）は黒
-        expect(fillSpy).toHaveBeenNthCalledWith(5, '#000000');
-
-        // 4番目のセグメント（奇数インデックス3）はベージュ
-        expect(fillSpy).toHaveBeenNthCalledWith(7, '#D4C5A9');
+        // インデックス0, 2, 4, ..., 18 (10個) が赤色
+        const redCalls = fillSpy.mock.calls.filter(call => call[0] === '#DC143C');
+        expect(redCalls.length).toBe(10);
       });
 
-      test('各セグメントの角度が正しい（18度ずつ）', () => {
+      test('奇数インデックスのセグメントは緑色で描画される', () => {
         // Arrange
-        const arcSpy = vi.spyOn(mockP5, 'arc');
-        const expectedAngleDiff = Math.PI / 10; // 18度 = π/10ラジアン
+        const fillSpy = vi.spyOn(mockP5, 'fill');
 
         // Act
-        drawSegments(mockP5, mockTransform);
+        drawDoubleRing(mockP5, mockTransform);
 
         // Assert
-        // arc() の引数: arc(x, y, width, height, start, stop, mode)
-        // 最初のセグメントの開始角度と終了角度を確認
-        const firstOuterArc = arcSpy.mock.calls[0];
-        const startAngle1 = firstOuterArc[4] as number; // インデックス4が開始角度
-        const endAngle1 = firstOuterArc[5] as number;   // インデックス5が終了角度
-
-        // 角度差が18度（π/10ラジアン）であることを確認
-        expect(endAngle1 - startAngle1).toBeCloseTo(expectedAngleDiff, 5);
-
-        // 2番目のセグメントの開始角度が最初のセグメントの終了角度と一致することを確認
-        const secondOuterArc = arcSpy.mock.calls[2]; // インデックス2（内側をスキップ）
-        const startAngle2 = secondOuterArc[4] as number;
-
-        expect(startAngle2).toBeCloseTo(endAngle1, 5);
+        // インデックス1, 3, 5, ..., 19 (10個) が緑色
+        const greenCalls = fillSpy.mock.calls.filter(call => call[0] === '#228B22');
+        expect(greenCalls.length).toBe(10);
       });
 
-      test('内側半径がOUTER_BULL_RADIUS、外側半径がBOARD_RADIUSである', () => {
+      test('arc()の直径が170mm（物理座標）に対応する画面座標値である', () => {
         // Arrange
         const arcSpy = vi.spyOn(mockP5, 'arc');
-
-        // 期待される半径（画面座標）
-        const expectedInnerRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.outerBull);
-        const expectedOuterRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.boardEdge);
+        const expectedRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.doubleOuter);
+        const expectedDiameter = expectedRadius * 2;
 
         // Act
-        drawSegments(mockP5, mockTransform);
+        drawDoubleRing(mockP5, mockTransform);
 
         // Assert
-        // arc() の引数: arc(x, y, width, height, start, stop, mode)
-        // 最初のセグメントの外側の扇形（インデックス0）
-        const firstOuterArc = arcSpy.mock.calls[0];
-        const outerWidth = firstOuterArc[2] as number;   // インデックス2が幅
-        const outerHeight = firstOuterArc[3] as number;  // インデックス3が高さ
-        expect(outerWidth).toBeCloseTo(expectedOuterRadius * 2, 1);
-        expect(outerHeight).toBeCloseTo(expectedOuterRadius * 2, 1);
-
-        // 最初のセグメントの内側の扇形（インデックス1）
-        const firstInnerArc = arcSpy.mock.calls[1];
-        const innerWidth = firstInnerArc[2] as number;
-        const innerHeight = firstInnerArc[3] as number;
-        expect(innerWidth).toBeCloseTo(expectedInnerRadius * 2, 1);
-        expect(innerHeight).toBeCloseTo(expectedInnerRadius * 2, 1);
+        arcSpy.mock.calls.forEach(call => {
+          expect(call[2]).toBeCloseTo(expectedDiameter, 1); // width
+          expect(call[3]).toBeCloseTo(expectedDiameter, 1); // height
+        });
       });
 
-      test('真上から時計回りに描画される（最初のセグメントは-π/2中心）', () => {
+      test('各セグメントの角度差が18度（π/10ラジアン）である', () => {
         // Arrange
         const arcSpy = vi.spyOn(mockP5, 'arc');
+        const expectedAngleDiff = Math.PI / 10;
 
         // Act
-        drawSegments(mockP5, mockTransform);
+        drawDoubleRing(mockP5, mockTransform);
 
         // Assert
-        // arc() の引数: arc(x, y, width, height, start, stop, mode)
-        // 最初のセグメントの中心角度が-π/2（真上）であることを確認
-        const firstOuterArc = arcSpy.mock.calls[0];
-        const startAngle = firstOuterArc[4] as number; // インデックス4が開始角度
-        const endAngle = firstOuterArc[5] as number;   // インデックス5が終了角度
-        const centerAngle = (startAngle + endAngle) / 2;
-
-        expect(centerAngle).toBeCloseTo(-Math.PI / 2, 5);
+        arcSpy.mock.calls.forEach(call => {
+          const startAngle = call[4] as number;
+          const endAngle = call[5] as number;
+          const angleDiff = endAngle - startAngle;
+          expect(angleDiff).toBeCloseTo(expectedAngleDiff, 5);
+        });
       });
-    });
 
-    describe('正常系 - p5メソッドの呼び出し順序', () => {
-      test('noStroke() がループ外で一度だけ呼び出される（パフォーマンス最適化）', () => {
+      test('noStroke()がループ外で1回のみ呼び出される', () => {
         // Arrange
         const noStrokeSpy = vi.spyOn(mockP5, 'noStroke');
 
         // Act
-        drawSegments(mockP5, mockTransform);
+        drawDoubleRing(mockP5, mockTransform);
 
         // Assert
-        // noStroke()はループ外で一度だけ呼ばれる（20回ではなく1回に最適化）
         expect(noStrokeSpy).toHaveBeenCalledTimes(1);
       });
 
-      test('push/pop が各セグメントで呼び出される', () => {
+      test('push()/pop()が各セグメントで呼び出される（20回ずつ）', () => {
         // Arrange
         const pushSpy = vi.spyOn(mockP5, 'push');
         const popSpy = vi.spyOn(mockP5, 'pop');
 
         // Act
-        drawSegments(mockP5, mockTransform);
+        drawDoubleRing(mockP5, mockTransform);
 
         // Assert
-        // 各セグメントでpush/popが呼ばれる（20回ずつ）
         expect(pushSpy).toHaveBeenCalledTimes(20);
         expect(popSpy).toHaveBeenCalledTimes(20);
       });
 
-      test('translate が正しい座標で呼び出される', () => {
+      test('translate()でボード中心に移動してから描画される', () => {
         // Arrange
         const translateSpy = vi.spyOn(mockP5, 'translate');
         const center = mockTransform.getCenter();
 
         // Act
-        drawSegments(mockP5, mockTransform);
+        drawDoubleRing(mockP5, mockTransform);
 
         // Assert
-        // 各セグメントでtranslate()がボード中心座標で呼ばれる（20回）
+        // 各セグメントでtranslate()が呼ばれる（20回）
         expect(translateSpy).toHaveBeenCalledTimes(20);
-        expect(translateSpy).toHaveBeenCalledWith(center.x, center.y);
-      });
-    });
-
-    describe('境界値 - 異なるキャンバスサイズでの動作', () => {
-      test('小さいキャンバス（200x200）でも正常に20セグメント描画される', () => {
-        // Arrange
-        const smallTransform = new CoordinateTransform(200, 200, 225);
-        const arcSpy = vi.spyOn(mockP5, 'arc');
-
-        // Act
-        drawSegments(mockP5, smallTransform);
-
-        // Assert
-        expect(arcSpy).toHaveBeenCalledTimes(40);
-      });
-
-      test('大きいキャンバス（2000x2000）でも正常に20セグメント描画される', () => {
-        // Arrange
-        const largeTransform = new CoordinateTransform(2000, 2000, 225);
-        const arcSpy = vi.spyOn(mockP5, 'arc');
-
-        // Act
-        drawSegments(mockP5, largeTransform);
-
-        // Assert
-        expect(arcSpy).toHaveBeenCalledTimes(40);
-      });
-
-      test('横長のキャンバス（1920x600）でも正常に描画される', () => {
-        // Arrange
-        const wideTransform = new CoordinateTransform(1920, 600, 225);
-        const arcSpy = vi.spyOn(mockP5, 'arc');
-
-        // Act
-        drawSegments(mockP5, wideTransform);
-
-        // Assert
-        expect(arcSpy).toHaveBeenCalledTimes(40);
-        expect(() => drawSegments(mockP5, wideTransform)).not.toThrow();
+        translateSpy.mock.calls.forEach(call => {
+          expect(call[0]).toBe(center.x);
+          expect(call[1]).toBe(center.y);
+        });
       });
     });
   });
+
+  describe('drawOuterSingle', () => {
+    describe('正常系 - アウターシングル描画の検証', () => {
+      test('20個のセグメントが描画される（arc呼び出しが20回）', () => {
+        // Arrange
+        const arcSpy = vi.spyOn(mockP5, 'arc');
+
+        // Act
+        drawOuterSingle(mockP5, mockTransform);
+
+        // Assert
+        expect(arcSpy).toHaveBeenCalledTimes(20);
+      });
+
+      test('偶数インデックスのセグメントは黒色で描画される', () => {
+        // Arrange
+        const fillSpy = vi.spyOn(mockP5, 'fill');
+
+        // Act
+        drawOuterSingle(mockP5, mockTransform);
+
+        // Assert
+        const blackCalls = fillSpy.mock.calls.filter(call => call[0] === '#000000');
+        expect(blackCalls.length).toBe(10);
+      });
+
+      test('奇数インデックスのセグメントはベージュ色で描画される', () => {
+        // Arrange
+        const fillSpy = vi.spyOn(mockP5, 'fill');
+
+        // Act
+        drawOuterSingle(mockP5, mockTransform);
+
+        // Assert
+        const beigeCalls = fillSpy.mock.calls.filter(call => call[0] === '#D4C5A9');
+        expect(beigeCalls.length).toBe(10);
+      });
+
+      test('arc()の直径が162mm（物理座標）に対応する画面座標値である', () => {
+        // Arrange
+        const arcSpy = vi.spyOn(mockP5, 'arc');
+        const expectedRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.doubleInner);
+        const expectedDiameter = expectedRadius * 2;
+
+        // Act
+        drawOuterSingle(mockP5, mockTransform);
+
+        // Assert
+        arcSpy.mock.calls.forEach(call => {
+          expect(call[2]).toBeCloseTo(expectedDiameter, 1);
+          expect(call[3]).toBeCloseTo(expectedDiameter, 1);
+        });
+      });
+
+      test('各セグメントの角度差が18度（π/10ラジアン）である', () => {
+        // Arrange
+        const arcSpy = vi.spyOn(mockP5, 'arc');
+        const expectedAngleDiff = Math.PI / 10;
+
+        // Act
+        drawOuterSingle(mockP5, mockTransform);
+
+        // Assert
+        arcSpy.mock.calls.forEach(call => {
+          const angleDiff = (call[5] as number) - (call[4] as number);
+          expect(angleDiff).toBeCloseTo(expectedAngleDiff, 5);
+        });
+      });
+
+      test('noStroke()がループ外で1回のみ呼び出される', () => {
+        // Arrange
+        const noStrokeSpy = vi.spyOn(mockP5, 'noStroke');
+
+        // Act
+        drawOuterSingle(mockP5, mockTransform);
+
+        // Assert
+        expect(noStrokeSpy).toHaveBeenCalledTimes(1);
+      });
+
+      test('push()/pop()が各セグメントで呼び出される（20回ずつ）', () => {
+        // Arrange
+        const pushSpy = vi.spyOn(mockP5, 'push');
+        const popSpy = vi.spyOn(mockP5, 'pop');
+
+        // Act
+        drawOuterSingle(mockP5, mockTransform);
+
+        // Assert
+        expect(pushSpy).toHaveBeenCalledTimes(20);
+        expect(popSpy).toHaveBeenCalledTimes(20);
+      });
+    });
+  });
+
+  describe('drawTripleRing', () => {
+    describe('正常系 - トリプルリング描画の検証', () => {
+      test('20個のセグメントが描画される（arc呼び出しが20回）', () => {
+        // Arrange
+        const arcSpy = vi.spyOn(mockP5, 'arc');
+
+        // Act
+        drawTripleRing(mockP5, mockTransform);
+
+        // Assert
+        expect(arcSpy).toHaveBeenCalledTimes(20);
+      });
+
+      test('偶数インデックスのセグメントは赤色で描画される', () => {
+        // Arrange
+        const fillSpy = vi.spyOn(mockP5, 'fill');
+
+        // Act
+        drawTripleRing(mockP5, mockTransform);
+
+        // Assert
+        const redCalls = fillSpy.mock.calls.filter(call => call[0] === '#DC143C');
+        expect(redCalls.length).toBe(10);
+      });
+
+      test('奇数インデックスのセグメントは緑色で描画される', () => {
+        // Arrange
+        const fillSpy = vi.spyOn(mockP5, 'fill');
+
+        // Act
+        drawTripleRing(mockP5, mockTransform);
+
+        // Assert
+        const greenCalls = fillSpy.mock.calls.filter(call => call[0] === '#228B22');
+        expect(greenCalls.length).toBe(10);
+      });
+
+      test('arc()の直径が107mm（物理座標）に対応する画面座標値である', () => {
+        // Arrange
+        const arcSpy = vi.spyOn(mockP5, 'arc');
+        const expectedRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.tripleOuter);
+        const expectedDiameter = expectedRadius * 2;
+
+        // Act
+        drawTripleRing(mockP5, mockTransform);
+
+        // Assert
+        arcSpy.mock.calls.forEach(call => {
+          expect(call[2]).toBeCloseTo(expectedDiameter, 1);
+          expect(call[3]).toBeCloseTo(expectedDiameter, 1);
+        });
+      });
+
+      test('各セグメントの角度差が18度（π/10ラジアン）である', () => {
+        // Arrange
+        const arcSpy = vi.spyOn(mockP5, 'arc');
+        const expectedAngleDiff = Math.PI / 10;
+
+        // Act
+        drawTripleRing(mockP5, mockTransform);
+
+        // Assert
+        arcSpy.mock.calls.forEach(call => {
+          const angleDiff = (call[5] as number) - (call[4] as number);
+          expect(angleDiff).toBeCloseTo(expectedAngleDiff, 5);
+        });
+      });
+
+      test('noStroke()がループ外で1回のみ呼び出される', () => {
+        // Arrange
+        const noStrokeSpy = vi.spyOn(mockP5, 'noStroke');
+
+        // Act
+        drawTripleRing(mockP5, mockTransform);
+
+        // Assert
+        expect(noStrokeSpy).toHaveBeenCalledTimes(1);
+      });
+
+      test('push()/pop()が各セグメントで呼び出される（20回ずつ）', () => {
+        // Arrange
+        const pushSpy = vi.spyOn(mockP5, 'push');
+        const popSpy = vi.spyOn(mockP5, 'pop');
+
+        // Act
+        drawTripleRing(mockP5, mockTransform);
+
+        // Assert
+        expect(pushSpy).toHaveBeenCalledTimes(20);
+        expect(popSpy).toHaveBeenCalledTimes(20);
+      });
+    });
+  });
+
+  describe('drawInnerSingle', () => {
+    describe('正常系 - インナーシングル描画の検証', () => {
+      test('20個のセグメントが描画される（arc呼び出しが20回）', () => {
+        // Arrange
+        const arcSpy = vi.spyOn(mockP5, 'arc');
+
+        // Act
+        drawInnerSingle(mockP5, mockTransform);
+
+        // Assert
+        expect(arcSpy).toHaveBeenCalledTimes(20);
+      });
+
+      test('偶数インデックスのセグメントは黒色で描画される', () => {
+        // Arrange
+        const fillSpy = vi.spyOn(mockP5, 'fill');
+
+        // Act
+        drawInnerSingle(mockP5, mockTransform);
+
+        // Assert
+        const blackCalls = fillSpy.mock.calls.filter(call => call[0] === '#000000');
+        expect(blackCalls.length).toBe(10);
+      });
+
+      test('奇数インデックスのセグメントはベージュ色で描画される', () => {
+        // Arrange
+        const fillSpy = vi.spyOn(mockP5, 'fill');
+
+        // Act
+        drawInnerSingle(mockP5, mockTransform);
+
+        // Assert
+        const beigeCalls = fillSpy.mock.calls.filter(call => call[0] === '#D4C5A9');
+        expect(beigeCalls.length).toBe(10);
+      });
+
+      test('arc()の直径が99mm（物理座標）に対応する画面座標値である', () => {
+        // Arrange
+        const arcSpy = vi.spyOn(mockP5, 'arc');
+        const expectedRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.tripleInner);
+        const expectedDiameter = expectedRadius * 2;
+
+        // Act
+        drawInnerSingle(mockP5, mockTransform);
+
+        // Assert
+        arcSpy.mock.calls.forEach(call => {
+          expect(call[2]).toBeCloseTo(expectedDiameter, 1);
+          expect(call[3]).toBeCloseTo(expectedDiameter, 1);
+        });
+      });
+
+      test('各セグメントの角度差が18度（π/10ラジアン）である', () => {
+        // Arrange
+        const arcSpy = vi.spyOn(mockP5, 'arc');
+        const expectedAngleDiff = Math.PI / 10;
+
+        // Act
+        drawInnerSingle(mockP5, mockTransform);
+
+        // Assert
+        arcSpy.mock.calls.forEach(call => {
+          const angleDiff = (call[5] as number) - (call[4] as number);
+          expect(angleDiff).toBeCloseTo(expectedAngleDiff, 5);
+        });
+      });
+
+      test('noStroke()がループ外で1回のみ呼び出される', () => {
+        // Arrange
+        const noStrokeSpy = vi.spyOn(mockP5, 'noStroke');
+
+        // Act
+        drawInnerSingle(mockP5, mockTransform);
+
+        // Assert
+        expect(noStrokeSpy).toHaveBeenCalledTimes(1);
+      });
+
+      test('push()/pop()が各セグメントで呼び出される（20回ずつ）', () => {
+        // Arrange
+        const pushSpy = vi.spyOn(mockP5, 'push');
+        const popSpy = vi.spyOn(mockP5, 'pop');
+
+        // Act
+        drawInnerSingle(mockP5, mockTransform);
+
+        // Assert
+        expect(pushSpy).toHaveBeenCalledTimes(20);
+        expect(popSpy).toHaveBeenCalledTimes(20);
+      });
+    });
+  });
+
+  describe('drawOuterBull', () => {
+    describe('正常系 - アウターブル描画の検証', () => {
+      test('circle()が1回呼び出される', () => {
+        // Arrange
+        const circleSpy = vi.spyOn(mockP5, 'circle');
+
+        // Act
+        drawOuterBull(mockP5, mockTransform);
+
+        // Assert
+        expect(circleSpy).toHaveBeenCalledTimes(1);
+      });
+
+      test('緑色（#228B22）で描画される', () => {
+        // Arrange
+        const fillSpy = vi.spyOn(mockP5, 'fill');
+
+        // Act
+        drawOuterBull(mockP5, mockTransform);
+
+        // Assert
+        expect(fillSpy).toHaveBeenCalledWith('#228B22');
+      });
+
+      test('直径が7.95mm（物理座標）に対応する画面座標値である', () => {
+        // Arrange
+        const circleSpy = vi.spyOn(mockP5, 'circle');
+        const expectedRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.outerBull);
+        const expectedDiameter = expectedRadius * 2;
+
+        // Act
+        drawOuterBull(mockP5, mockTransform);
+
+        // Assert
+        const call = circleSpy.mock.calls[0];
+        expect(call[2]).toBeCloseTo(expectedDiameter, 1);
+      });
+
+      test('ボード中心座標で描画される', () => {
+        // Arrange
+        const circleSpy = vi.spyOn(mockP5, 'circle');
+        const center = mockTransform.getCenter();
+
+        // Act
+        drawOuterBull(mockP5, mockTransform);
+
+        // Assert
+        const call = circleSpy.mock.calls[0];
+        expect(call[0]).toBe(center.x);
+        expect(call[1]).toBe(center.y);
+      });
+
+      test('noStroke()が呼び出される', () => {
+        // Arrange
+        const noStrokeSpy = vi.spyOn(mockP5, 'noStroke');
+
+        // Act
+        drawOuterBull(mockP5, mockTransform);
+
+        // Assert
+        expect(noStrokeSpy).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
+
+  describe('drawInnerBull', () => {
+    describe('正常系 - インナーブル描画の検証', () => {
+      test('circle()が1回呼び出される', () => {
+        // Arrange
+        const circleSpy = vi.spyOn(mockP5, 'circle');
+
+        // Act
+        drawInnerBull(mockP5, mockTransform);
+
+        // Assert
+        expect(circleSpy).toHaveBeenCalledTimes(1);
+      });
+
+      test('赤色（#DC143C）で描画される', () => {
+        // Arrange
+        const fillSpy = vi.spyOn(mockP5, 'fill');
+
+        // Act
+        drawInnerBull(mockP5, mockTransform);
+
+        // Assert
+        expect(fillSpy).toHaveBeenCalledWith('#DC143C');
+      });
+
+      test('直径が3.175mm（物理座標）に対応する画面座標値である', () => {
+        // Arrange
+        const circleSpy = vi.spyOn(mockP5, 'circle');
+        const expectedRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.innerBull);
+        const expectedDiameter = expectedRadius * 2;
+
+        // Act
+        drawInnerBull(mockP5, mockTransform);
+
+        // Assert
+        const call = circleSpy.mock.calls[0];
+        expect(call[2]).toBeCloseTo(expectedDiameter, 1);
+      });
+
+      test('ボード中心座標で描画される', () => {
+        // Arrange
+        const circleSpy = vi.spyOn(mockP5, 'circle');
+        const center = mockTransform.getCenter();
+
+        // Act
+        drawInnerBull(mockP5, mockTransform);
+
+        // Assert
+        const call = circleSpy.mock.calls[0];
+        expect(call[0]).toBe(center.x);
+        expect(call[1]).toBe(center.y);
+      });
+
+      test('noStroke()が呼び出される', () => {
+        // Arrange
+        const noStrokeSpy = vi.spyOn(mockP5, 'noStroke');
+
+        // Act
+        drawInnerBull(mockP5, mockTransform);
+
+        // Assert
+        expect(noStrokeSpy).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
+
 });

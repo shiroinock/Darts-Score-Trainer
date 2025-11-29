@@ -427,7 +427,91 @@ function isEnumerationFunction(file: FileInfo, functionName: string): boolean {
 }
 ```
 
+### 2025-11-30: 描画コンポーネントとテストファイルの扱いの明確化
+
+#### 背景
+`dartBoardRenderer.ts` の分析において、以下の点について改善が必要：
+
+1. **描画専用ファイルのテストパターン判定**
+   - p5.js の描画専用コンポーネントの判定精度向上
+   - 描画関数（drawDoubleRing, drawTripleRing等）の集合体の扱い
+
+2. **テストファイル自体の扱い**
+   - コメントアウトされたテストファイルの適切な分類
+   - テストファイルに観点を適用すべきかの判断基準
+
+#### 追加ガイドライン
+
+##### 描画専用ファイルの判定基準
+```typescript
+// 描画専用ファイルの特徴
+function isRenderingOnlyFile(file: FileInfo): boolean {
+  return (
+    // ファイル名に renderer/render/drawing を含む
+    file.name.match(/(renderer|render|drawing)/i) &&
+    // 複数の draw 関数を含む
+    file.functions.filter(f => f.name.startsWith('draw')).length > 3 &&
+    // p5 インスタンスを使用
+    file.imports.includes('p5') || file.parameters.includes('p: p5')
+  );
+}
+```
+
+##### 描画専用ファイルのテストパターン
+- **必ず test-later + integration**: 視覚的確認が主目的
+- **placement は separated**: 統合テストとして別管理
+- **rationale に「描画専用」を明記**: 判定理由を明確化
+
+##### テストファイルの扱い
+1. **基本方針**: テストファイル（.test.ts, .test.tsx）は分類対象外
+2. **例外**: 以下の場合は分析対象に含める
+   - テストファイル自体に問題がある場合（コメントアウトなど）
+   - テストファイルの移動・リネームがある場合
+3. **観点適用**: テストファイルには通常観点を適用しない
+   - 適用する場合は `uncovered_files` に理由付きで記載
+
+##### 参考ファイル（.js）の扱い
+- **基本方針**: 参考用ファイルは分類対象外
+- **明記方法**: `uncovered_files` に「参考実装ファイル」として記載
+- **観点適用**: しない（TypeScript観点など適用不可）
+
 ## 改善履歴
+
+### 2025-11-30: ファイル名パターンと責務の整合性チェック強化
+
+#### 背景
+実際のサブエージェント実行で、`dartBoardRenderer.ts` を「レンダラーファイル」として正しく分類できていたが、以下の改善点を発見：
+
+1. **ファイル名と内容の整合性確認の重要性**
+   - `renderer` という名前のファイルは描画専用であることが期待される
+   - 実際の関数名（drawXXX）との整合性を確認すべき
+
+2. **testPatternの判定根拠の具体化**
+   - 「描画ロジック中心のため視覚的確認が必要」という根拠は適切
+   - より具体的な判定基準（関数数、p5依存度など）を追加
+
+#### 追加ガイドライン
+
+##### ファイル名パターンによる事前分類
+```typescript
+const fileNamePatterns = {
+  rendering: /(renderer|render|drawing|canvas|board)/i,
+  utility: /(utils?|helper|service)/i,
+  store: /(store|state)/i,
+  hook: /(use[A-Z]|hooks?)/i,
+  component: /(component|view|page)/i,
+  types: /(types?|interface|model)/i,
+  config: /(config|settings?|constants?)/i
+};
+```
+
+##### 責務の一貫性チェック
+ファイル名から期待される責務と実際の内容が一致するか確認：
+- `renderer` → 描画関数が主体であることを確認
+- `calculator` → 計算関数が主体であることを確認
+- `validator` → バリデーション関数が主体であることを確認
+
+不一致の場合は、`notes` フィールドに記載して注意喚起。
 
 ### 2025-11-29: バリデーション関数の判定精度向上
 

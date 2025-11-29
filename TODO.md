@@ -108,15 +108,24 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 ## Phase 2: ボード描画
 
 ### 2.1 ダーツボードレンダラー (`src/components/DartBoard/dartBoardRenderer.ts`)
-- [x] `drawBoard(p5, transform)` 関数 - ボード全体描画 (src/components/DartBoard/dartBoardRenderer.ts:15-29, src/__tests__/integration/dartboard-rendering.test.ts)
-- [x] `drawSegments(p5, transform)` 関数 - セグメント描画（色分け） (src/components/DartBoard/dartBoardRenderer.ts:31-81, src/__tests__/integration/dartboard-rendering.test.ts)
-- [ ] `drawRings(p5, transform)` 関数 - リング描画（トリプル、ダブル）
-- [ ] `drawBull(p5, transform)` 関数 - ブル描画（インナー、アウター）
-- [ ] `drawSpider(p5, transform)` 関数 - ワイヤー描画
+**実装方針変更**: soft-tip-board.jsのアプローチに従い、外側→内側へシンプルに重ねる方式に変更
+
+- [x] `drawBoard(p5, transform)` 関数 - ボード全体描画の順序制御 (src/components/DartBoard/dartBoardRenderer.ts:30-44)
+- [x] `drawDoubleRing(p5, transform)` 関数 - ダブルリング描画（170mm円全体、赤/緑交互） (src/components/DartBoard/dartBoardRenderer.ts:53-80)
+- [x] `drawOuterSingle(p5, transform)` 関数 - アウターシングル描画（162mm円全体、黒/ベージュ交互） (src/components/DartBoard/dartBoardRenderer.ts:88-115)
+- [x] `drawTripleRing(p5, transform)` 関数 - トリプルリング描画（107mm円全体、赤/緑交互） (src/components/DartBoard/dartBoardRenderer.ts:123-150)
+- [x] `drawInnerSingle(p5, transform)` 関数 - インナーシングル描画（99mm円全体、黒/ベージュ交互） (src/components/DartBoard/dartBoardRenderer.ts:158-185)
+- [x] `drawOuterBull(p5, transform)` 関数 - アウターブル描画（緑の円、半径7.95mm） (src/components/DartBoard/dartBoardRenderer.ts:192-203)
+- [x] `drawInnerBull(p5, transform)` 関数 - インナーブル描画（赤の円、半径3.175mm） (src/components/DartBoard/dartBoardRenderer.ts:210-221)
+- [ ] `drawSpider(p5, transform)` 関数 - スパイダー（ワイヤー境界線）描画
+  - 放射線: 20本（セグメント境界）
+  - 同心円: 5本（ダブル外側、ダブル内側、トリプル外側、トリプル内側、アウターブル）
 - [ ] `drawNumbers(p5, transform)` 関数 - セグメント番号描画
+  - 配置半径: ダブルリング外側とボード端の中間（約197.5mm）
+  - セグメント配列: [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5]
 - [ ] `drawDartMarker(p5, transform, coords, color, index)` 関数 - ダーツマーカー描画
 - [ ] `drawLegend(p5, dartCount)` 関数 - 凡例描画（3投時）
-- [ ] ボードの色定義（黒、白、赤、緑など）
+- [x] 色定義（SEGMENT_COLORS, RING_COLORS） (src/components/DartBoard/dartBoardRenderer.ts:13-22)
 
 ### 2.2 P5キャンバスラッパー (`src/components/DartBoard/P5Canvas.tsx`)
 - [ ] react-p5 を使用したコンポーネント作成
@@ -417,7 +426,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 |-------|--------|--------|------|
 | 0 | 11 | 11 | 100% |
 | 1 | 38 | 30 | 79% |
-| 2 | 13 | 1 | 8% |
+| 2 | 12 | 8 | 67% |
 | 3 | 25 | 0 | 0% |
 | 4 | 7 | 0 | 0% |
 | 5 | 17 | 0 | 0% |
@@ -426,4 +435,31 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | 8 | 10 | 0 | 0% |
 | 9 | 15 | 0 | 0% |
 | 10 | 6 | 0 | 0% |
-| **合計** | **173** | **42** | **24%** |
+| **合計** | **172** | **49** | **28%** |
+
+### Phase 2 実装方針変更の詳細
+
+#### 変更理由
+- **変更前**: `drawSegments()`と`drawRings()`で背景色マスク方式を使用
+  - 各セグメント/リングを描画後、背景色で内側をマスクしてリング状に見せる方式
+  - 問題点: マスク処理が複雑で理解しづらい、描画回数が多い
+- **変更後**: `docs/reference/soft-tip-board.js`のアプローチに従い、外側→内側へシンプルに重ねる方式
+  - 各エリアが「その半径の円全体」を描画し、次のエリアが上に重ねることで結果的にリング状になる
+  - 描画順序: ダブルリング（170mm円）→ アウターシングル（162mm円）→ トリプルリング（107mm円）→ インナーシングル（99mm円）→ ブル
+
+#### 変更による改善
+1. **コードの可読性向上**: マスク処理が不要になり、描画ロジックが直感的
+2. **パフォーマンス向上**: 背景色マスクの削除により描画回数削減（各セグメント2回 → 1回）
+3. **保守性向上**:
+   - 参考実装との一貫性により、将来の修正が容易
+   - 共通関数`drawRingSegments()`によりコード重複を削減（4関数で140行 → 共通関数40行 + ラッパー各5行）
+4. **拡張性向上**: 各エリアを独立して制御可能（色変更、エフェクト追加が容易）
+
+#### 実装詳細
+- **参考実装**: `docs/reference/soft-tip-board.js` - p5.jsによるソフトチップボード描画例
+  - 実装箇所: 54-94行（ダブルリング）、96-136行（アウターシングル）、138-178行（トリプルリング）、180-220行（インナーシングル）
+  - 対応実装: `src/components/DartBoard/dartBoardRenderer.ts`
+    - 共通関数: `drawRingSegments()` (47-87行) - 重複コード削減のためのヘルパー関数
+    - ラッパー関数: `drawDoubleRing()`, `drawOuterSingle()`, `drawTripleRing()`, `drawInnerSingle()`
+    - ブル描画: `drawOuterBull()`, `drawInnerBull()`
+  - 差異: TypeScript + React + CoordinateTransform による座標系の物理/画面分離
