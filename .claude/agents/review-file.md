@@ -154,3 +154,30 @@ review-perspective-selector skill を使用して、実装ファイルとテス�
 - `.claude/review-points/typescript.md` - TypeScript型安全性
 - `.claude/review-points/coordinates.md` - 座標系の分離
 - `.claude/review-points/specification.md` - 仕様準拠
+
+## コード規約の遵守
+
+**`code-conventions` スキルを参照してください（`.claude/skills/code-conventions/SKILL.md`）**
+
+このスキルで定義される重要な規約（レビュー実施における検証項目）：
+
+### マジックナンバーの検出
+
+レビュー時に以下を確認：
+- コード内に直接記述されたドメイン知識としてみなせる数値がないか
+- テストファイルに定数インポートがあるか
+- 値の意味をコメントで説明している箇所がないか（定数化すべき箇所の候補）
+
+### パフォーマンス最適化の検査
+
+レビュー時に以下を確認：
+- ループ内で繰り返される共通処理がないか
+- 描画関数で同じp5メソッドが複数回呼ばれていないか
+- 最適化による実行速度向上の可能性
+
+### 座標系の分離検証
+
+レビュー時に以下を確認：
+- 物理座標（mm）と画面座標（pixel）が混在していないか
+- `CoordinateTransform` インスタンスを正しく使用しているか
+- 座標変換が一貫性を持っているか
