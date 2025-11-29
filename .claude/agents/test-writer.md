@@ -579,8 +579,30 @@ test('トリプル20付近（r=103mm, θ=90°）を狙う', () => {
 
 3. **テストの読みやすさ向上**
    - 長い配列の期待値は変数として定義することも検討
-   
+
    ```typescript
    const expectedNumbers = Array.from({length: 20}, (_, i) => i + 1);
    expect(singleNumbers).toEqual(expectedNumbers);
    ```
+
+## テスト作成時の重要な注意事項
+
+### 観点ファイルへの準拠
+テスト作成時は、`.claude/review-points/test-quality.md` の観点に準拠してください。
+
+主な注意事項：
+- **テスト名の正確性**: テスト名は検証内容を正確に反映すること
+- **モックの有効性**: モックが実際に機能することを確認すること
+- **重複の回避**: 同じことを検証する複数のテストを避けること
+- **コメントアウトの理由明記**: アサーションをコメントアウトする場合、理由を明記すること
+
+詳細は `.claude/review-points/test-quality.md` を参照してください。
+
+### プロジェクト固有の検証
+対象ファイルに応じて、適切な観点ファイルの内容を反映したテストを作成してください：
+
+- **座標系を扱うファイル**: `.claude/review-points/coordinates.md` の観点を反映
+- **ドメインロジック**: `.claude/review-points/specification.md` の観点を反映
+- **TypeScript全般**: `.claude/review-points/typescript.md` の観点を反映
+
+review-perspective-selector skill を使用して、対象ファイルに適用すべき観点を確認することを推奨します。

@@ -126,3 +126,31 @@ model: haiku
 - コード全体を読む前に、変更された部分や新規追加部分を特定
 - 関連するテストファイルがある場合は必ず確認
 - 既存の類似関数と比較して一貫性を評価
+
+## テストファイルのレビュー
+
+### レビュー対象の明確化
+実装ファイルだけでなく、**テストファイルも必ずレビュー対象に含めてください**。
+
+- 実装ファイル（例：`src/utils/gameLogic.ts`）
+- テストファイル（例：`src/utils/gameLogic.test.ts`, `src/__tests__/integration/...`）
+
+### テストファイルの観点適用
+テストファイルをレビューする場合、以下の観点を適用してください：
+
+1. **必須観点**:
+   - `test-quality.md` - テスト品質チェック（テスト名、モック、重複等）
+   - `typescript.md` - 型安全性チェック
+
+2. **実装ファイルに応じた観点**:
+   - 実装ファイルに適用される観点（`coordinates.md`, `specification.md` 等）も、対応するテストファイルに適用する
+   - 例：`gameLogic.ts` に `specification.md` が適用される場合、`gameLogic.test.ts` にも同じ観点を適用
+
+### 観点ファイルの参照方法
+review-perspective-selector skill を使用して、実装ファイルとテストファイルの両方に適用すべき観点を自動選択してください。
+
+観点ファイルの例：
+- `.claude/review-points/test-quality.md` - テスト品質
+- `.claude/review-points/typescript.md` - TypeScript型安全性
+- `.claude/review-points/coordinates.md` - 座標系の分離
+- `.claude/review-points/specification.md` - 仕様準拠
