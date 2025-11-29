@@ -239,7 +239,7 @@ describe('dartboard-rendering integration', () => {
     });
 
     describe('正常系 - p5メソッドの呼び出し順序', () => {
-      test('noStroke() が各セグメントで呼び出される', () => {
+      test('noStroke() がループ外で一度だけ呼び出される（パフォーマンス最適化）', () => {
         // Arrange
         const noStrokeSpy = vi.spyOn(mockP5, 'noStroke');
 
@@ -247,8 +247,8 @@ describe('dartboard-rendering integration', () => {
         drawSegments(mockP5, mockTransform);
 
         // Assert
-        // 各セグメントでnoStroke()が呼ばれる（20回）
-        expect(noStrokeSpy).toHaveBeenCalledTimes(20);
+        // noStroke()はループ外で一度だけ呼ばれる（20回ではなく1回に最適化）
+        expect(noStrokeSpy).toHaveBeenCalledTimes(1);
       });
 
       test('push/pop が各セグメントで呼び出される', () => {

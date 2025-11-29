@@ -68,7 +68,7 @@ export function drawSegments(p5: p5Types, transform: CoordinateTransform): void 
     p5.fill(fillColor);
     p5.arc(0, 0, outerRadius * 2, outerRadius * 2, startAngle, endAngle, p5.PIE);
 
-    // 内側の円（ブル部分）を背景色で塗りつぶして除外
+    // ブル部分（OUTER_BULL_RADIUS以内）を背景色でマスクして、セグメント色が表示されないようにする
     p5.fill(BACKGROUND_COLOR);
     p5.arc(0, 0, innerRadius * 2, innerRadius * 2, startAngle, endAngle, p5.PIE);
 
