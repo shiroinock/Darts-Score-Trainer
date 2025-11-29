@@ -5,6 +5,7 @@
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import type p5Types from 'p5';
 import { CoordinateTransform } from '../../utils/coordinateTransform';
+import { BOARD_PHYSICAL } from '../../utils/constants';
 import {
   drawBoard,
   drawSegments,
@@ -195,8 +196,8 @@ describe('dartboard-rendering integration', () => {
         const arcSpy = vi.spyOn(mockP5, 'arc');
 
         // 期待される半径（画面座標）
-        const expectedInnerRadius = mockTransform.physicalDistanceToScreen(7.95); // OUTER_BULL_RADIUS
-        const expectedOuterRadius = mockTransform.physicalDistanceToScreen(225);  // BOARD_RADIUS
+        const expectedInnerRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.outerBull);
+        const expectedOuterRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.boardEdge);
 
         // Act
         drawSegments(mockP5, mockTransform);

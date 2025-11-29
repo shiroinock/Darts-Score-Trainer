@@ -45,6 +45,9 @@ export function drawSegments(p5: p5Types, transform: CoordinateTransform): void 
   const innerRadius = transform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.outerBull);
   const outerRadius = transform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.boardEdge);
 
+  // 共通の描画設定：noStroke()はループ外で一度だけ呼び出す（パフォーマンス最適化）
+  p5.noStroke();
+
   // 20個のセグメントを描画
   SEGMENTS.forEach((_, index) => {
     // 開始角度と終了角度を計算
@@ -56,16 +59,13 @@ export function drawSegments(p5: p5Types, transform: CoordinateTransform): void 
     // 交互に色を変更（偶数: 黒、奇数: ベージュ）
     const fillColor = index % 2 === 0 ? SEGMENT_COLORS.black : SEGMENT_COLORS.beige;
 
-    // p5.jsで扇形を描画
-    p5.fill(fillColor);
-    p5.noStroke();
-
     // arc()を使って扇形を描画
     // PIE モードで内側と外側の半径を指定した円環扇形を描画
     p5.push();
     p5.translate(center.x, center.y);
 
-    // 外側の扇形を描画
+    // 外側の扇形をセグメント色で描画
+    p5.fill(fillColor);
     p5.arc(0, 0, outerRadius * 2, outerRadius * 2, startAngle, endAngle, p5.PIE);
 
     // 内側の円（ブル部分）を背景色で塗りつぶして除外

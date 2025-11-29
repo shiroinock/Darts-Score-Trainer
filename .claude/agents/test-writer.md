@@ -607,11 +607,15 @@ test('トリプル20付近（r=103mm, θ=90°）を狙う', () => {
 
 review-perspective-selector skill を使用して、対象ファイルに適用すべき観点を確認することを推奨します。
 
-## 追加ガイドライン（2025-11-30 追記 - drawSegments統合テストの評価に基づく改善）
+## コード規約の遵守
 
-### ダーツボード定数の使用徹底
+**`code-conventions` スキルを参照してください（`.claude/skills/code-conventions/SKILL.md`）**
 
-物理座標系の定数値を直接記述するのではなく、実装ファイルからインポートして使用することを推奨します：
+このスキルで定義される重要な規約（テスト作成における適用）：
+
+### マジックナンバーの排除
+
+物理座標系の定数値を直接記述するのではなく、実装ファイルからインポートして使用することを必須とします：
 
 ```typescript
 // ❌ 避けるべき（マジックナンバー）
@@ -619,15 +623,16 @@ const expectedInnerRadius = mockTransform.physicalDistanceToScreen(7.95); // OUT
 const expectedOuterRadius = mockTransform.physicalDistanceToScreen(225);  // BOARD_RADIUS
 
 // ✅ 推奨（定数インポート）
-import { OUTER_BULL_RADIUS, BOARD_RADIUS } from '../../components/DartBoard/constants';
-const expectedInnerRadius = mockTransform.physicalDistanceToScreen(OUTER_BULL_RADIUS);
-const expectedOuterRadius = mockTransform.physicalDistanceToScreen(BOARD_RADIUS);
+import { BOARD_PHYSICAL } from '../../utils/constants';
+const expectedInnerRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.outerBull);
+const expectedOuterRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.boardEdge);
 ```
 
 これにより：
 1. 定数値の変更時にテストが自動的に追従する
 2. コメントで値の意味を説明する必要がなくなる
 3. タイポや値の誤りを防げる
+4. ドメイン知識の一元管理が実現される
 
 ### テスト要求の完全性確認
 
