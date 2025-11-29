@@ -438,3 +438,47 @@ function isValidationFunction(file: FileInfo, functionName: string): boolean {
   }
 }
 ```
+
+### 2025-11-29: 統計的アルゴリズム関数の判定基準追加
+
+#### 背景
+`generateNormalDistribution(mean, stdDev)` 関数（Box-Muller法）のテストパターン判定において、統計的アルゴリズムに関する判定基準の明確化が必要。
+
+#### 追加ガイドライン
+
+##### 統計的アルゴリズム関数の判定基準
+```typescript
+// 統計的・数学的アルゴリズム関数の特徴
+function isStatisticalFunction(file: FileInfo, functionName: string): boolean {
+  return (
+    // 関数名に統計・数学用語を含む
+    functionName.match(/(generate|calculate|compute).*(Distribution|Random|Probability|Mean|Deviation|Variance)/) ||
+    // ファイル名が simulator/generator/calculator を含む
+    file.path.match(/(simulator|generator|calculator)\.ts$/) &&
+    // 純粋関数である
+    isPureFunction(file)
+  );
+}
+```
+
+##### 統計的関数のテストパターン判定
+`throwSimulator.ts` のような統計的計算を行う関数：
+- **test-first必須**: アルゴリズムの正確性が重要
+- **統計的検証**: 分布の検証、平均・分散のテストが必要
+- **シード固定テスト**: 再現性のためのテストも考慮
+
+##### 出力形式の完全性確保
+エージェントは必ず完全な JSON 形式で出力すること：
+```json
+{
+  "tddMode": "test-first",
+  "testPattern": "unit",
+  "placement": "colocated",
+  "rationale": "統計的アルゴリズム、数値計算の正確性が重要",
+  "testFilePath": "src/utils/throwSimulator.test.ts",
+  "testingFocus": [
+    "正規分布の生成確認",
+    "平均値・標準偏差の検証",
+    "境界値テスト（極端な標準偏差）"
+  ]
+}
