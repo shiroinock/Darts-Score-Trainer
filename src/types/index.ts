@@ -222,5 +222,5 @@ export interface BustInfo {
   /** バストしたかどうか */
   isBust: boolean;
   /** バストの理由（バストした場合のみ） */
-  reason?: 'over_score' | 'no_double_out';
+  reason: 'over' | 'finish_impossible' | 'double_out_required' | null;
 }

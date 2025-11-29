@@ -99,7 +99,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] `getAllTargets()` 関数 - 全61ターゲットのリストを生成 (src/utils/targetCoordinates.ts:110-145)
 
 ### 1.8 01ゲームロジック (`src/utils/gameLogic.ts`)
-- [ ] `checkBust(remainingScore, throwScore, isDouble)` 関数 - バスト判定
+- [x] `checkBust(remainingScore, throwScore, isDouble)` 関数 - バスト判定 (src/utils/gameLogic.ts:1-54, src/utils/gameLogic.test.ts)
 - [ ] `canFinishWithDouble(remainingScore)` 関数 - ダブルアウト可能か
 - [ ] `isGameFinished(remainingScore)` 関数 - ゲーム終了判定
 
