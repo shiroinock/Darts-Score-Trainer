@@ -529,3 +529,58 @@ test('トリプル20付近（r=103mm, θ=90°）を狙う', () => {
 ```
 
 このような具体的なドメイン知識に基づいたテストケースの設計は継続してください。
+
+## 追加ガイドライン（2025-11-29 追記 - getAllTargets関数のテスト評価に基づく改善）
+
+### 優れたテスト構造の継続
+
+`getAllTargets` 関数のテストで示された以下の良い実践を継続してください：
+
+1. **包括的なテストケース構成**
+   - 正常系
+   - ターゲット構造の検証
+   - 特定のターゲットの存在確認
+   - ラベルフォーマットの検証
+   - エッジケースと境界値
+   - 配列の完全性
+
+2. **明確な日本語でのテスト名**
+   - `test('合計61個のターゲットを返す', ...)`
+   - `test('全ターゲットが一意なlabelを持つ', ...)`
+
+### 改善点と注意事項
+
+1. **ドメイン仕様と実装の不一致への対応**
+   - 仕様書と実装で値が異なる場合（例: BULLのnumber値）、両方の可能性をテストでカバー
+   - または、実装の振る舞いに基づいてテストを記述し、仕様との違いをコメントで説明
+   
+   ```typescript
+   test('BULLのnumberはnullである', () => {
+     // 注: 仕様書では25と記載があるが、実装ではnullとして扱う
+     const bull = targets.find(t => t.type === 'BULL');
+     expect(bull?.number).toBeNull();
+   });
+   ```
+
+2. **不必要な非Null assertion演算子の回避**
+   - filter でデータを絞り込んだ後は、非Null assertion（!）は不要
+   
+   ```typescript
+   // ❌ 避けるべき
+   const numbers = targets.filter(t => t.type === 'SINGLE')
+     .map(t => t.number)
+     .sort((a, b) => a! - b!);
+   
+   // ✅ 推奨
+   const numbers = targets.filter(t => t.type === 'SINGLE')
+     .map(t => t.number as number) // 型アサーション
+     .sort((a, b) => a - b);
+   ```
+
+3. **テストの読みやすさ向上**
+   - 長い配列の期待値は変数として定義することも検討
+   
+   ```typescript
+   const expectedNumbers = Array.from({length: 20}, (_, i) => i + 1);
+   expect(singleNumbers).toEqual(expectedNumbers);
+   ```

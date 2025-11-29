@@ -381,6 +381,52 @@ function determineTestPattern(file: FileInfo): TestPattern {
 - **テストパターン判定は全ファイルに対して実行**
 - テストファイル（.test.ts, .test.tsx）自体は分類対象外
 
+### 2025-11-29: 純粋な列挙関数の判定基準追加
+
+#### 背景
+`getAllTargets()` 関数（全ターゲットリスト生成）のテストパターン判定において、純粋な列挙・リスト生成関数の扱いを明確化する必要がある。
+
+#### 追加ガイドライン
+
+##### 列挙・リスト生成関数の判定基準
+```typescript
+// 列挙・リスト生成関数の特徴
+function isEnumerationFunction(file: FileInfo, functionName: string): boolean {
+  return (
+    // 関数名にget/list/enumerate/allを含む
+    functionName.match(/^(get|list|enumerate).*|.*All.*/) &&
+    // 配列を返す
+    hasReturnType(file, functionName, 'Array') &&
+    // 固定値またはループによる生成
+    isGeneratingFixedSet(file, functionName)
+  );
+}
+```
+
+##### 列挙関数のテストパターン判定
+`getAllTargets()` のような列挙関数の特徴：
+- **test-first推奨**: 期待される出力が仕様から明確
+- **単純なユニットテスト**: 配列の内容と順序を確認
+- **網羅性の確認**: 全要素が含まれているかの検証
+
+##### 判定の具体例
+```json
+{
+  "testPattern": {
+    "tddMode": "test-first",
+    "pattern": "unit",
+    "placement": "colocated",
+    "rationale": "純粋な列挙関数、期待される出力が明確",
+    "testFilePath": "src/utils/targetCoordinates.test.ts",
+    "testingFocus": [
+      "全61ターゲットの存在確認",
+      "ターゲットの順序と構造の検証",
+      "型の一貫性確認"
+    ]
+  }
+}
+```
+
 ## 改善履歴
 
 ### 2025-11-29: バリデーション関数の判定精度向上
