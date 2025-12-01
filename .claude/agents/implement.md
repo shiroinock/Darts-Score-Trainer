@@ -175,3 +175,20 @@ generateNormalDistribution関数を実装する際、以下の点に注意して
 1. **描画順序**: 外側→内側、スパイダーは2ステップに分ける
 2. **セグメント境界の角度**: `(i - 0.5) * SEGMENT_ANGLE` で境界に配置
 3. **座標系の分離**: 物理座標で計算、描画時に画面座標に変換
+
+### 変数名の注意点（drawDartMarker関数実装時に発生したバグ）
+
+描画関数で複数の変数を扱う際は、変数名の混同に注意してください：
+
+```typescript
+// ❌ バグの例：innerRadiusPhysicalを使うべきところでouterRadiusPhysicalを使用
+const innerRadius = transform.physicalDistanceToScreen(outerRadiusPhysical);
+
+// ✅ 正しい実装：正しい変数名を使用
+const innerRadius = transform.physicalDistanceToScreen(innerRadiusPhysical);
+```
+
+**重要**: 特に似た名前の変数（outerRadiusPhysical、innerRadiusPhysical）を扱う場合：
+1. 変数定義時に明確にコメントを付ける
+2. 使用時に正しい変数を参照しているか再確認する
+3. コピー＆ペーストによるミスを防ぐため、各行を個別に実装する
