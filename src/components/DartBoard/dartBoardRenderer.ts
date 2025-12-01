@@ -4,7 +4,7 @@
  */
 import type p5Types from 'p5';
 import { CoordinateTransform } from '../../utils/coordinateTransform';
-import { SEGMENTS, SEGMENT_ANGLE, BOARD_PHYSICAL } from '../../utils/constants';
+import { SEGMENTS, SEGMENT_ANGLE, BOARD_PHYSICAL, DART_MARKER_RADII, DART_MARKER_TEXT_SIZE } from '../../utils/constants';
 
 /** 背景色（黒） */
 const BACKGROUND_COLOR = 0;
@@ -311,4 +311,47 @@ export function drawNumbers(p5: p5Types, transform: CoordinateTransform): void {
     // 番号を描画
     p5.text(number.toString(), x, y);
   });
+}
+
+/**
+ * ダーツマーカー（投擲位置の印）を描画する
+ * @param p5 p5インスタンス
+ * @param transform 座標変換インスタンス
+ * @param coords 物理座標（mm単位）
+ * @param color ダーツの色（例: '#FF6B6B'）
+ * @param index ダーツの番号（0, 1, 2 → 表示は 1, 2, 3）
+ */
+export function drawDartMarker(
+  p5: p5Types,
+  transform: CoordinateTransform,
+  coords: { x: number; y: number },
+  color: string,
+  index: number
+): void {
+  // 物理座標を画面座標に変換
+  const screenPos = transform.physicalToScreen(coords.x, coords.y);
+
+  // マーカーのサイズ（物理座標で定義）
+  const outerRadiusPhysical = DART_MARKER_RADII.outer;
+  const innerRadiusPhysical = DART_MARKER_RADII.inner;
+
+  // 物理座標から画面座標への変換
+  const outerRadius = transform.physicalDistanceToScreen(outerRadiusPhysical);
+  const innerRadius = transform.physicalDistanceToScreen(innerRadiusPhysical);
+
+  // 外側の円（色付き）を描画
+  p5.noStroke();
+  p5.fill(color);
+  p5.circle(screenPos.x, screenPos.y, outerRadius * 2);
+
+  // 内側の円（白）を描画
+  p5.fill('#FFFFFF');
+  p5.circle(screenPos.x, screenPos.y, innerRadius * 2);
+
+  // 番号を描画（index + 1 を表示: 0→1, 1→2, 2→3）
+  p5.textAlign(p5.CENTER, p5.CENTER);
+  p5.fill('#000000'); // 黒色
+  p5.noStroke();
+  p5.textSize(DART_MARKER_TEXT_SIZE);
+  p5.text((index + 1).toString(), screenPos.x, screenPos.y);
 }

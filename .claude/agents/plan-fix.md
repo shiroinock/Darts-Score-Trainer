@@ -46,7 +46,11 @@ model: opus
       "file": "src/main.tsx",
       "line": 6,
       "issue": "非null型アサーションの使用",
-      "fix_instruction": "document.getElementById('root')! を安全なnullチェックに変更。rootElementがnullの場合はエラーをスローする。"
+      "fix_instruction": "document.getElementById('root')! を安全なnullチェックに変更。rootElementがnullの場合はエラーをスローする。",
+      "code_example": {
+        "before": "const root = document.getElementById('root')!;",
+        "after": "const root = document.getElementById('root');\nif (!root) throw new Error('Root element not found');"
+      }
     }
   ],
   "unfixable_issues": [
@@ -55,7 +59,14 @@ model: opus
       "reason": "Phase 1以降の実装タスク"
     }
   ],
-  "summary": "修正可能: 2件, 修正不可能: 3件"
+  "new_files": [
+    {
+      "path": "src/utils/constants.ts",
+      "reason": "定数をまとめるファイルが必要",
+      "content_hint": "export const DART_MARKER_RADII = { outer: 5, inner: 3 };"
+    }
+  ],
+  "summary": "修正可能: 2件, 修正不可能: 3件, 新規ファイル: 1件"
 }
 ```
 
@@ -77,6 +88,13 @@ model: opus
 既存の実装パターンがある場合は、それに準拠する修正を優先する：
 - 例：`isValidSingleThrowScore`のSet使用パターンを`isValidRoundScore`にも適用
 
+### 定数化とマジックナンバー
+- **修正可能**：ハードコードされた数値の定数化
+- **修正指示に含めるべき内容**：
+  - どの定数ファイルに追加するか（既存/新規）
+  - インポート文の追加
+  - 定数の命名規則（UPPER_SNAKE_CASE）
+
 ## 良い修正計画の例
 
 ```json
@@ -87,7 +105,28 @@ model: opus
       "file": "src/utils/validation.ts",
       "line": "45-60",
       "issue": "取りえない値（163, 166等）を有効と判定",
-      "fix_instruction": "isValidSingleThrowScoreと同じパターンで実装。VALID_SCORESから3投の組み合わせを生成し、実現可能な得点のSetを作成。そのSetに含まれるかどうかで判定する。"
+      "fix_instruction": "isValidSingleThrowScoreと同じパターンで実装。VALID_SCORESから3投の組み合わせを生成し、実現可能な得点のSetを作成。そのSetに含まれるかどうかで判定する。",
+      "code_example": {
+        "before": "return score >= 0 && score <= 180;",
+        "after": "const validScores = new Set([...VALID_SCORES]);\nreturn validScores.has(score);"
+      }
+    }
+  ],
+  "new_files": [],
+  "summary": "修正可能: 1件, 修正不可能: 0件"
+}
+```
+
+## 悪い修正計画の例
+
+```json
+{
+  "should_fix": true,
+  "fixable_issues": [
+    {
+      "file": "src/components/Board.tsx",
+      "issue": "コンポーネントが大きすぎる",
+      "fix_instruction": "リファクタリングする"  // 具体性がない
     }
   ]
 }
