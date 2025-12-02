@@ -130,11 +130,11 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] 色定義（SEGMENT_COLORS, RING_COLORS） (src/components/DartBoard/dartBoardRenderer.ts:13-22)
 
 ### 2.2 P5キャンバスラッパー (`src/components/DartBoard/P5Canvas.tsx`)
-- [ ] react-p5 を使用したコンポーネント作成
-- [ ] setup関数の実装
-- [ ] draw関数の実装
-- [ ] windowResized対応
-- [ ] propsでダーツ位置配列を受け取る
+- [x] react-p5 を使用したコンポーネント作成
+- [x] setup関数の実装
+- [x] draw関数の実装
+- [x] windowResized対応
+- [x] propsでダーツ位置配列を受け取る
 
 ### 2.3 DartBoardコンポーネント (`src/components/DartBoard/DartBoard.tsx`)
 - [ ] P5Canvasをラップするコンポーネント
