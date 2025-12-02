@@ -1,7 +1,8 @@
 import Sketch from 'react-p5';
 import type p5Types from 'p5';
 import { CoordinateTransform } from './utils/coordinateTransform';
-import { drawBoard } from './components/DartBoard/dartBoardRenderer';
+import { drawBoard, drawDartMarker } from './components/DartBoard/dartBoardRenderer';
+import { DART_COLORS } from './utils/constants';
 
 function App(): JSX.Element {
   let transform: CoordinateTransform;
@@ -24,6 +25,12 @@ function App(): JSX.Element {
   const draw = (p5: p5Types) => {
     // ダーツボード全体を描画（setup後に1回だけ実行される）
     drawBoard(p5, transform);
+
+    // デモ用: ダーツマーカーを表示
+    // トリプル20を狙った3投をシミュレート
+    drawDartMarker(p5, transform, { x: 0, y: -103 }, DART_COLORS.first, 0);   // 1本目: トリプル20中央
+    drawDartMarker(p5, transform, { x: 8, y: -105 }, DART_COLORS.second, 1);  // 2本目: 少し右にずれる
+    drawDartMarker(p5, transform, { x: -5, y: -100 }, DART_COLORS.third, 2);  // 3本目: 少し左下にずれる
   };
 
   return (

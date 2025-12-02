@@ -4,7 +4,7 @@
  */
 import type p5Types from 'p5';
 import { CoordinateTransform } from '../../utils/coordinateTransform';
-import { SEGMENTS, SEGMENT_ANGLE, BOARD_PHYSICAL, DART_MARKER_RADII, DART_MARKER_TEXT_SIZE } from '../../utils/constants';
+import { SEGMENTS, SEGMENT_ANGLE, BOARD_PHYSICAL, DART_MARKER_RADII, DART_MARKER_TEXT_SIZE, DART_COLORS } from '../../utils/constants';
 
 /** 背景色（黒） */
 const BACKGROUND_COLOR = 0;
@@ -354,4 +354,47 @@ export function drawDartMarker(
   p5.noStroke();
   p5.textSize(DART_MARKER_TEXT_SIZE);
   p5.text((index + 1).toString(), screenPos.x, screenPos.y);
+}
+
+/**
+ * ダーツマーカーの凡例を描画する（3投モード用）
+ * @param p5 p5インスタンス
+ * @param dartCount 表示するダーツの本数（0, 1, 2, 3）
+ */
+export function drawLegend(p5: p5Types, dartCount: number): void {
+  // 表示条件: dartCountが0の場合は何も描画しない
+  if (dartCount === 0) {
+    return;
+  }
+
+  // 配置位置の定数
+  const LEFT_MARGIN = 20;    // px - 左マージン
+  const TOP_MARGIN = 20;     // px - 上マージン
+  const LINE_HEIGHT = 30;    // px - 行間
+  const CIRCLE_DIAMETER = 12; // px - 円の直径
+  const TEXT_OFFSET = 10;     // px - 円とテキストの間隔
+
+  // ダーツの色配列
+  const dartColors = [DART_COLORS.first, DART_COLORS.second, DART_COLORS.third];
+  const dartLabels = ['1本目', '2本目', '3本目'];
+
+  // 共通の描画設定
+  p5.noStroke();
+
+  // dartCountの数だけ凡例を描画（最大3本まで）
+  const count = Math.min(dartCount, dartColors.length);
+  for (let i = 0; i < count; i++) {
+    // Y座標を計算
+    const y = TOP_MARGIN + i * LINE_HEIGHT;
+
+    // 色付き円を描画
+    p5.fill(dartColors[i]);
+    p5.circle(LEFT_MARGIN, y, CIRCLE_DIAMETER);
+
+    // テキストを描画
+    p5.textAlign(p5.LEFT, p5.CENTER);
+    p5.fill('#FFFFFF'); // 白色
+    p5.textSize(16);
+    p5.text(dartLabels[i], LEFT_MARGIN + CIRCLE_DIAMETER / 2 + TEXT_OFFSET, y);
+  }
 }

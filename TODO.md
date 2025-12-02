@@ -126,7 +126,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
   - 角度: セグメント中央、真上（-π/2）から時計回り
   - テキストスタイル: 白色、20px、中央揃え
 - [x] `drawDartMarker(p5, transform, coords, color, index)` 関数 - ダーツマーカー描画 (src/components/DartBoard/dartBoardRenderer.ts:317-361, src/__tests__/integration/dartboard-marker-rendering.test.ts)
-- [ ] `drawLegend(p5, dartCount)` 関数 - 凡例描画（3投時）
+- [x] `drawLegend(p5, dartCount)` 関数 - 凡例描画（3投時） (src/components/DartBoard/dartBoardRenderer.ts:359-400, src/__tests__/integration/dartboard-legend-rendering.test.ts)
 - [x] 色定義（SEGMENT_COLORS, RING_COLORS） (src/components/DartBoard/dartBoardRenderer.ts:13-22)
 
 ### 2.2 P5キャンバスラッパー (`src/components/DartBoard/P5Canvas.tsx`)
