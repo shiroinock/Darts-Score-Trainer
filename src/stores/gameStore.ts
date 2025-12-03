@@ -121,6 +121,7 @@ interface GameStore {
   stats: Stats;
   elapsedTime: number;
   isTimerRunning: boolean;
+  practiceStartTime?: number;
 
   // ============================================================
   // 設定アクション（5個）
@@ -139,7 +140,7 @@ interface GameStore {
   simulateNextThrow: () => void;
   submitAnswer: (answer: number) => void;
   nextQuestion: () => void;
-  endSession: (reason: string) => void;
+  endSession: (reason?: string) => void;
   resetToSetup: () => void;
   handleBust: () => void;
   tick: () => void;
@@ -188,6 +189,7 @@ export const useGameStore = create<GameStore>()(
     stats: { ...initialStats },
     elapsedTime: 0,
     isTimerRunning: false,
+    practiceStartTime: undefined,
 
     // ============================================================
     // 設定アクション
@@ -262,6 +264,7 @@ export const useGameStore = create<GameStore>()(
         state.isTimerRunning = true;
         state.stats = { ...initialStats };
         state.elapsedTime = 0;
+        state.practiceStartTime = Date.now();
         state.displayedDarts = [];
         state.currentThrowIndex = 0;
 
@@ -317,7 +320,13 @@ export const useGameStore = create<GameStore>()(
           questionText = '残り点数は？';
         } else {
           // both: ランダムにscoreかremainingを選択
-          mode = Math.random() < 0.5 ? 'score' : 'remaining';
+          // ただし、remainingScoreが0または未設定の場合は強制的にscoreモードにする
+          if (state.remainingScore <= 0) {
+            mode = 'score';
+          } else {
+            mode = Math.random() < 0.5 ? 'score' : 'remaining';
+          }
+
           if (mode === 'score') {
             correctAnswer = totalScore;
             questionText =
@@ -375,6 +384,10 @@ export const useGameStore = create<GameStore>()(
 
     /**
      * 回答を送信する
+     *
+     * バスト検出時は自動的に残り点数を戻し、統計を更新します。
+     * 呼び出し側でhandleBustを明示的に呼ぶ必要はありません。
+     *
      * @throws {Error} 不正な回答値の場合
      */
     submitAnswer: (answer) => {
@@ -393,19 +406,8 @@ export const useGameStore = create<GameStore>()(
         const correctAnswer = get().getCurrentCorrectAnswer();
         const isCorrect = answer === correctAnswer;
 
-        // 統計情報を更新
-        state.stats.total++;
-        if (isCorrect) {
-          state.stats.correct++;
-          state.stats.currentStreak++;
-          if (state.stats.currentStreak > state.stats.bestStreak) {
-            state.stats.bestStreak = state.stats.currentStreak;
-          }
-        } else {
-          state.stats.currentStreak = 0;
-        }
-
-        // 残り点数モードの場合、残り点数を更新
+        // 残り点数モードの場合、バスト判定を先に実行
+        let isBust = false;
         if (
           state.currentQuestion?.mode === 'remaining' &&
           state.config.questionType !== 'score'
@@ -413,7 +415,6 @@ export const useGameStore = create<GameStore>()(
           const totalScore =
             state.currentQuestion?.throws.reduce((sum, t) => sum + t.score, 0) ||
             0;
-          const newRemaining = state.remainingScore - totalScore;
 
           // バスト判定
           const lastThrow =
@@ -428,12 +429,28 @@ export const useGameStore = create<GameStore>()(
           );
 
           if (bustInfo.isBust) {
-            // バストの場合は残り点数を戻す
-            // ただし、submitAnswer時点ではまだ更新しない
-            // （handleBustを後で呼び出す想定）
+            // バスト検出: 残り点数をラウンド開始時に戻す
+            isBust = true;
+            state.remainingScore = state.roundStartScore;
           } else {
+            // バストでない場合は残り点数を更新
+            const newRemaining = state.remainingScore - totalScore;
             state.remainingScore = newRemaining;
           }
+        }
+
+        // 統計情報を更新
+        state.stats.total++;
+        if (isCorrect && !isBust) {
+          // 正解かつバストでない場合のみ正解数をカウント
+          state.stats.correct++;
+          state.stats.currentStreak++;
+          if (state.stats.currentStreak > state.stats.bestStreak) {
+            state.stats.bestStreak = state.stats.currentStreak;
+          }
+        } else {
+          // 不正解またはバストの場合はストリークをリセット
+          state.stats.currentStreak = 0;
         }
 
         // 問題数モードで最終問題に到達した場合、セッションを終了
@@ -469,7 +486,8 @@ export const useGameStore = create<GameStore>()(
         // ラウンド開始点数を更新
         state.roundStartScore = state.remainingScore;
 
-        // 次の問題を生成準備
+        // 次の問題を生成準備（防御的にcurrentQuestionをリセット）
+        state.currentQuestion = null;
         state.currentThrowIndex = 0;
         state.displayedDarts = [];
       });
@@ -480,12 +498,17 @@ export const useGameStore = create<GameStore>()(
 
     /**
      * セッションを終了する
+     *
+     * @param reason - 終了理由（オプション）
+     * @todo 将来的にSessionResultに記録する機能を実装
      */
-    endSession: (_reason) =>
+    endSession: (reason) =>
       set((state) => {
         state.gameState = 'results';
         state.isTimerRunning = false;
         // reasonは将来的にSessionResultに記録
+        // 現在は未使用だが、将来の拡張のためにパラメータを保持
+        void reason;
       }),
 
     /**
@@ -498,6 +521,7 @@ export const useGameStore = create<GameStore>()(
         state.stats = { ...initialStats };
         state.elapsedTime = 0;
         state.isTimerRunning = false;
+        state.practiceStartTime = undefined;
         state.displayedDarts = [];
         state.currentThrowIndex = 0;
         state.remainingScore = 0;
@@ -519,15 +543,21 @@ export const useGameStore = create<GameStore>()(
       }),
 
     /**
-     * タイマーを1秒進める
+     * タイマーを更新する
+     *
+     * Date.now()を基準に経過時間を計算するため、
+     * setIntervalの精度に依存せず正確な時間計測が可能です。
      */
     tick: () =>
       set((state) => {
-        if (!state.isTimerRunning) {
+        if (!state.isTimerRunning || !state.practiceStartTime) {
           return;
         }
 
-        state.elapsedTime++;
+        // Date.now()を基準に経過時間を計算
+        state.elapsedTime = Math.floor(
+          (Date.now() - state.practiceStartTime) / 1000
+        );
 
         // 時間制限モードでの制限時間チェック
         if (

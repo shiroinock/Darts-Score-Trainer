@@ -53,6 +53,7 @@ describe('gameStore', () => {
         stats: { correct: 0, total: 0, currentStreak: 0, bestStreak: 0 },
         elapsedTime: 0,
         isTimerRunning: false,
+        practiceStartTime: undefined,
       });
     });
   });
@@ -1112,35 +1113,47 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
       expect(result.current.elapsedTime).toBe(0);
 
-      // Act
+      // practiceStartTimeを1秒前に設定
       act(() => {
-      result.current.tick();
+        useGameStore.setState({
+          practiceStartTime: Date.now() - 1000,
+        });
+        result.current.tick();
       });
 
-      // Assert
-      expect(result.current.elapsedTime).toBe(1);
+      // Assert: 約1秒経過
+      expect(result.current.elapsedTime).toBeGreaterThanOrEqual(1);
+      expect(result.current.elapsedTime).toBeLessThanOrEqual(2);
     });
 
     test('複数回呼び出すと累積される', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
 
-      // Act
-      for (let i = 0; i < 5; i++) {
+      // practiceStartTimeを5秒前に設定
       act(() => {
-      result.current.tick();
+        useGameStore.setState({
+          practiceStartTime: Date.now() - 5000,
+        });
       });
+
+      // Act: tick()を複数回呼び出す（Date.now()基準なので結果は同じ）
+      for (let i = 0; i < 5; i++) {
+        act(() => {
+          result.current.tick();
+        });
       }
 
-      // Assert
-      expect(result.current.elapsedTime).toBe(5);
+      // Assert: 約5秒経過
+      expect(result.current.elapsedTime).toBeGreaterThanOrEqual(5);
+      expect(result.current.elapsedTime).toBeLessThanOrEqual(6);
     });
 
     test('タイマーが停止中は増加しない', () => {
@@ -1166,16 +1179,17 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setSessionConfig({ mode: 'time', timeLimit: 3 });
-      result.current.startPractice();
+        result.current.setSessionConfig({ mode: 'time', timeLimit: 3 });
+        result.current.startPractice();
       });
 
-      // Act - 3分 = 180秒
-      for (let i = 0; i < 180; i++) {
+      // Act: practiceStartTimeを3分以上前に設定
       act(() => {
-      result.current.tick();
+        useGameStore.setState({
+          practiceStartTime: Date.now() - 181000, // 181秒前（3分1秒前）
+        });
+        result.current.tick();
       });
-      }
 
       // Assert
       expect(result.current.gameState).toBe('results');
@@ -1497,6 +1511,328 @@ describe('gameStore', () => {
       expect(result.current.config.throwUnit).toBe(3);
       expect(result.current.config.judgmentTiming).toBe('independent');
       expect(result.current.config.questionType).toBe('both');
+    });
+  });
+
+  // ============================================================
+  // 9. レビュー指摘への対応テスト
+  // ============================================================
+  describe('レビュー指摘への対応', () => {
+    // バスト関連テスト（3個）
+    describe('バスト処理の自動リセット', () => {
+      test('submitAnswer内でバスト検出時に残り点数をリセット', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'remaining',
+            startingScore: 50,
+          });
+          result.current.startPractice();
+        });
+
+        const initialRoundStart = result.current.roundStartScore;
+
+        // バストする状況を想定（50点から60点を引いて-10 -> バスト）
+        // currentQuestionを手動で設定してバストを模擬
+        act(() => {
+          useGameStore.setState({
+            currentQuestion: {
+              mode: 'remaining',
+              throws: [
+                { target: { type: 'TRIPLE', number: 20, label: 'T20' }, landingPoint: { x: 0, y: 100 }, score: 60, ring: 'TRIPLE', segmentNumber: 20 },
+              ],
+              correctAnswer: 50, // バスト前の残り点数
+              questionText: '残り点数は？',
+              startingScore: 50,
+            },
+            remainingScore: 50,
+            roundStartScore: 50,
+          });
+        });
+
+        // Act: ユーザーが50と回答（バストを認識できていない）
+        act(() => {
+          result.current.submitAnswer(50);
+        });
+
+        // Assert: バストが自動検出され、残り点数がラウンド開始時に戻っている
+        expect(result.current.remainingScore).toBe(initialRoundStart);
+        expect(result.current.stats.total).toBe(1);
+        expect(result.current.stats.currentStreak).toBe(0);
+      });
+
+      test('バスト時の統計更新（total++、currentStreak=0）', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'remaining',
+            startingScore: 10, // 10点の状態
+          });
+          result.current.startPractice();
+        });
+
+        // 正解を1回先に入れてstreakを作る
+        act(() => {
+          useGameStore.setState({
+            currentQuestion: {
+              mode: 'remaining',
+              throws: [
+                { target: { type: 'INNER_SINGLE', number: 5, label: '5' }, landingPoint: { x: 0, y: 50 }, score: 5, ring: 'INNER_SINGLE', segmentNumber: 5 },
+              ],
+              correctAnswer: 5,
+              questionText: '残り点数は？',
+              startingScore: 10,
+            },
+            remainingScore: 10,
+            roundStartScore: 10,
+            stats: { correct: 0, total: 0, currentStreak: 0, bestStreak: 0 },
+          });
+          result.current.submitAnswer(5);
+        });
+
+        // streakが1になっていることを確認
+        expect(result.current.stats.currentStreak).toBe(1);
+        const remainingAfterFirst = result.current.remainingScore;
+
+        // バストする問題を設定（残り5点から10点投擲でバスト）
+        act(() => {
+          useGameStore.setState({
+            currentQuestion: {
+              mode: 'remaining',
+              throws: [
+                { target: { type: 'INNER_SINGLE', number: 10, label: '10' }, landingPoint: { x: 0, y: 80 }, score: 10, ring: 'INNER_SINGLE', segmentNumber: 10 },
+              ],
+              correctAnswer: remainingAfterFirst, // バスト前の残り点数
+              questionText: '残り点数は？',
+              startingScore: remainingAfterFirst,
+            },
+            roundStartScore: remainingAfterFirst,
+          });
+        });
+
+        // Act: バスト状態で回答送信（ユーザーが回答）
+        act(() => {
+          result.current.submitAnswer(remainingAfterFirst);
+        });
+
+        // Assert: streakがリセットされている
+        expect(result.current.stats.currentStreak).toBe(0);
+        expect(result.current.stats.total).toBeGreaterThanOrEqual(2);
+      });
+
+      test('正常な回答時はバスト処理が実行されない', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'remaining',
+            startingScore: 100,
+          });
+          result.current.startPractice();
+        });
+
+        // 正常な投擲を設定
+        act(() => {
+          useGameStore.setState({
+            currentQuestion: {
+              mode: 'remaining',
+              throws: [
+                { target: { type: 'INNER_SINGLE', number: 20, label: '20' }, landingPoint: { x: 0, y: 100 }, score: 20, ring: 'INNER_SINGLE', segmentNumber: 20 },
+              ],
+              correctAnswer: 80,
+              questionText: '残り点数は？',
+              startingScore: 100,
+            },
+            remainingScore: 100,
+            roundStartScore: 100,
+          });
+        });
+
+        // Act: 正解を送信
+        act(() => {
+          result.current.submitAnswer(80);
+        });
+
+        // Assert: 残り点数が正しく更新されている
+        expect(result.current.remainingScore).toBe(80);
+        expect(result.current.stats.correct).toBe(1);
+        expect(result.current.stats.currentStreak).toBe(1);
+      });
+    });
+
+    // 'both'モード関連テスト（2個）
+    describe('bothモードのバリデーション', () => {
+      test('bothモード + startingScore: null の場合、scoreモードが強制される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'both',
+            startingScore: null, // nullに設定
+          });
+          result.current.startPractice();
+        });
+
+        // Act: 問題を生成（内部でremainingScoreが0）
+        act(() => {
+          result.current.generateQuestion();
+        });
+
+        // Assert: modeがscoreに強制されている
+        expect(result.current.currentQuestion).not.toBeNull();
+        if (result.current.currentQuestion) {
+          expect(result.current.currentQuestion.mode).toBe('score');
+          expect(result.current.currentQuestion.correctAnswer).toBeGreaterThanOrEqual(0);
+        }
+      });
+
+      test('bothモード + remainingScore=0 の場合、scoreモードが強制される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'both',
+            startingScore: 501,
+          });
+          result.current.startPractice();
+        });
+
+        // remainingScoreを手動で0に設定
+        act(() => {
+          useGameStore.setState({
+            remainingScore: 0,
+          });
+        });
+
+        // Act: 問題を生成
+        act(() => {
+          result.current.generateQuestion();
+        });
+
+        // Assert: modeがscoreに強制されている
+        expect(result.current.currentQuestion).not.toBeNull();
+        if (result.current.currentQuestion) {
+          expect(result.current.currentQuestion.mode).toBe('score');
+        }
+      });
+    });
+
+    // nextQuestion関連テスト（1個）
+    describe('nextQuestionでのcurrentQuestionリセット', () => {
+      test('nextQuestion呼び出し前後でcurrentQuestionが明示的にリセットされる', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: null,
+          });
+          result.current.startPractice();
+        });
+
+        // 最初の問題があることを確認
+        expect(result.current.currentQuestion).not.toBeNull();
+        const firstQuestion = result.current.currentQuestion;
+
+        // Act: nextQuestionを呼び出す
+        act(() => {
+          result.current.nextQuestion();
+        });
+
+        // Assert: currentQuestionが新しく生成されている
+        expect(result.current.currentQuestion).not.toBeNull();
+        expect(result.current.currentQuestion).not.toBe(firstQuestion); // 新しい問題
+        expect(result.current.displayedDarts).toHaveLength(1); // 1投モードなので1つ表示
+      });
+    });
+
+    // タイマー関連テスト（2個）
+    describe('タイマー精度の改善', () => {
+      test('tick()がDate.now()を基準に経過時間を計算する', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.startPractice();
+        });
+
+        // practiceStartTimeが設定されていることを確認
+        expect(result.current.isTimerRunning).toBe(true);
+
+        // Act: 少し時間を進める（実際には即座に実行されるが、コンセプトの確認）
+        act(() => {
+          result.current.tick();
+        });
+
+        // Assert: elapsedTimeが0以上（Date.now()基準で計算されている）
+        expect(result.current.elapsedTime).toBeGreaterThanOrEqual(0);
+        expect(result.current.elapsedTime).toBeLessThan(5); // 5秒未満のはず
+      });
+
+      test('時間制限モードでtimeLimit到達時にセッションが終了する', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setSessionConfig({
+            mode: 'time',
+            timeLimit: 3, // 3分
+          });
+          result.current.startPractice();
+        });
+
+        // Act: practiceStartTimeを3分以上前に設定
+        act(() => {
+          useGameStore.setState({
+            practiceStartTime: Date.now() - 181000, // 181秒前（3分1秒前）
+          });
+          result.current.tick();
+        });
+
+        // Assert: セッションが終了している
+        expect(result.current.gameState).toBe('results');
+        expect(result.current.isTimerRunning).toBe(false);
+      });
+    });
+
+    // パラメータ関連テスト（1個）
+    describe('endSessionのreason引数', () => {
+      test('endSession(reason?: string)が型安全に呼び出せる', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.startPractice();
+        });
+
+        // Act & Assert: reasonなしで呼び出せる
+        act(() => {
+          result.current.endSession();
+        });
+        expect(result.current.gameState).toBe('results');
+
+        // Act & Assert: reasonありで呼び出せる
+        act(() => {
+          result.current.resetToSetup();
+          result.current.startPractice();
+          result.current.endSession('user requested');
+        });
+        expect(result.current.gameState).toBe('results');
+      });
     });
   });
 });
