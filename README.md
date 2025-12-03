@@ -1,1 +1,1 @@
-# Darts-Score-Trainer-
+# Darts-Score-Trainer

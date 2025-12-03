@@ -15,7 +15,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] `npm install -D @types/p5 gh-pages` (gh-pagesは0.1で完了)
 
 ### 0.3 設定ファイルの調整
-- [x] `vite.config.ts` に `base: '/Darts-Score-Trainer-/'` を追加
+- [x] `vite.config.ts` に `base: '/Darts-Score-Trainer/'` を追加
 - [x] `package.json` に deploy スクリプトを追加
 - [x] `tsconfig.json` の strict モードを確認
 
