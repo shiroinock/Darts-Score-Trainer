@@ -4,7 +4,7 @@
  */
 import type p5Types from 'p5';
 import { CoordinateTransform } from '../../utils/coordinateTransform';
-import { SEGMENTS, SEGMENT_ANGLE, BOARD_PHYSICAL, DART_MARKER_RADII, DART_MARKER_TEXT_SIZE, DART_COLORS } from '../../utils/constants';
+import { SEGMENTS, SEGMENT_ANGLE, BOARD_PHYSICAL, DART_MARKER_RADII, DART_MARKER_TEXT_SIZE, DART_COLORS, SEGMENT_NUMBER_TEXT_SIZE, LEGEND_LAYOUT, LEGEND_TEXT_SIZE } from '../../utils/constants';
 
 /** 背景色（黒） */
 const BACKGROUND_COLOR = 0;
@@ -296,7 +296,7 @@ export function drawNumbers(p5: p5Types, transform: CoordinateTransform): void {
   p5.textAlign(p5.CENTER, p5.CENTER);
   p5.fill('#FFFFFF'); // 白色で明瞭に
   p5.noStroke();
-  p5.textSize(20);
+  p5.textSize(SEGMENT_NUMBER_TEXT_SIZE);
 
   // 20個のセグメント番号を描画
   SEGMENTS.forEach((number, index) => {
@@ -367,13 +367,6 @@ export function drawLegend(p5: p5Types, dartCount: number): void {
     return;
   }
 
-  // 配置位置の定数
-  const LEFT_MARGIN = 20;    // px - 左マージン
-  const TOP_MARGIN = 20;     // px - 上マージン
-  const LINE_HEIGHT = 30;    // px - 行間
-  const CIRCLE_DIAMETER = 12; // px - 円の直径
-  const TEXT_OFFSET = 10;     // px - 円とテキストの間隔
-
   // ダーツの色配列
   const dartColors = [DART_COLORS.first, DART_COLORS.second, DART_COLORS.third];
   const dartLabels = ['1本目', '2本目', '3本目'];
@@ -385,16 +378,16 @@ export function drawLegend(p5: p5Types, dartCount: number): void {
   const count = Math.min(dartCount, dartColors.length);
   for (let i = 0; i < count; i++) {
     // Y座標を計算
-    const y = TOP_MARGIN + i * LINE_HEIGHT;
+    const y = LEGEND_LAYOUT.topMargin + i * LEGEND_LAYOUT.lineHeight;
 
     // 色付き円を描画
     p5.fill(dartColors[i]);
-    p5.circle(LEFT_MARGIN, y, CIRCLE_DIAMETER);
+    p5.circle(LEGEND_LAYOUT.leftMargin, y, LEGEND_LAYOUT.circleDiameter);
 
     // テキストを描画
     p5.textAlign(p5.LEFT, p5.CENTER);
     p5.fill('#FFFFFF'); // 白色
-    p5.textSize(16);
-    p5.text(dartLabels[i], LEFT_MARGIN + CIRCLE_DIAMETER / 2 + TEXT_OFFSET, y);
+    p5.textSize(LEGEND_TEXT_SIZE);
+    p5.text(dartLabels[i], LEGEND_LAYOUT.leftMargin + LEGEND_LAYOUT.circleDiameter / 2 + LEGEND_LAYOUT.textOffset, y);
   }
 }
