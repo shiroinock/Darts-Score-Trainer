@@ -147,40 +147,40 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 ## Phase 3: 状態管理
 
 ### 3.1 Zustand Store (`src/stores/gameStore.ts`)
-- [ ] 基本状態の定義
-  - [ ] `gameState: GameState`
-  - [ ] `config: PracticeConfig`
-  - [ ] `sessionConfig: SessionConfig`
-  - [ ] `currentQuestion: Question | null`
-  - [ ] `currentThrowIndex: number`（3投モード用）
-  - [ ] `displayedDarts: ThrowResult[]`
-  - [ ] `remainingScore: number`
-  - [ ] `roundStartScore: number`（バスト時のリセット用）
-  - [ ] `stats: Stats`
-  - [ ] `elapsedTime: number`
-  - [ ] `isTimerRunning: boolean`
+- [x] 基本状態の定義
+  - [x] `gameState: GameState`
+  - [x] `config: PracticeConfig`
+  - [x] `sessionConfig: SessionConfig`
+  - [x] `currentQuestion: Question | null`
+  - [x] `currentThrowIndex: number`（3投モード用）
+  - [x] `displayedDarts: ThrowResult[]`
+  - [x] `remainingScore: number`
+  - [x] `roundStartScore: number`（バスト時のリセット用）
+  - [x] `stats: Stats`
+  - [x] `elapsedTime: number`
+  - [x] `isTimerRunning: boolean`
 
-- [ ] 設定アクション
-  - [ ] `setConfig(config: Partial<PracticeConfig>)`
-  - [ ] `setSessionConfig(config: SessionConfig)`
-  - [ ] `selectPreset(presetId: string)`
-  - [ ] `setTarget(target: Target)`
-  - [ ] `setStdDev(stdDevMM: number)`
+- [x] 設定アクション
+  - [x] `setConfig(config: Partial<PracticeConfig>)`
+  - [x] `setSessionConfig(config: SessionConfig)`
+  - [x] `selectPreset(presetId: string)`
+  - [x] `setTarget(target: Target)`
+  - [x] `setStdDev(stdDevMM: number)`
 
-- [ ] ゲームアクション
-  - [ ] `startPractice()` - 練習開始
-  - [ ] `generateQuestion()` - 問題生成
-  - [ ] `simulateNextThrow()` - 次の投擲シミュレーション（プレイヤーモード用）
-  - [ ] `submitAnswer(answer: number)` - 回答送信
-  - [ ] `nextQuestion()` - 次の問題へ
-  - [ ] `endSession(reason: string)` - セッション終了
-  - [ ] `resetToSetup()` - 設定画面に戻る
-  - [ ] `handleBust()` - バスト処理
-  - [ ] `tick()` - タイマー更新
+- [x] ゲームアクション
+  - [x] `startPractice()` - 練習開始
+  - [x] `generateQuestion()` - 問題生成
+  - [x] `simulateNextThrow()` - 次の投擲シミュレーション（プレイヤーモード用）
+  - [x] `submitAnswer(answer: number)` - 回答送信
+  - [x] `nextQuestion()` - 次の問題へ
+  - [x] `endSession(reason: string)` - セッション終了
+  - [x] `resetToSetup()` - 設定画面に戻る
+  - [x] `handleBust()` - バスト処理
+  - [x] `tick()` - タイマー更新
 
-- [ ] 計算プロパティ（getterまたはセレクター）
-  - [ ] `getCurrentCorrectAnswer()` - 現在の問題の正解
-  - [ ] `getAccuracy()` - 正答率
+- [x] 計算プロパティ（getterまたはセレクター）
+  - [x] `getCurrentCorrectAnswer()` - 現在の問題の正解
+  - [x] `getAccuracy()` - 正答率
 
 ### 3.2 localStorage連携 (`src/utils/storage.ts`)
 - [ ] `saveSettings(config)` 関数
@@ -429,7 +429,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | 0 | 11 | 11 | 100% |
 | 1 | 38 | 30 | 79% |
 | 2 | 12 | 12 | 100% |
-| 3 | 25 | 0 | 0% |
+| 3 | 25 | 25 | 100% |
 | 4 | 7 | 0 | 0% |
 | 5 | 17 | 0 | 0% |
 | 6 | 22 | 0 | 0% |
@@ -437,7 +437,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | 8 | 10 | 0 | 0% |
 | 9 | 15 | 0 | 0% |
 | 10 | 6 | 0 | 0% |
-| **合計** | **172** | **53** | **31%** |
+| **合計** | **172** | **78** | **45%** |
 
 ### Phase 2 実装方針変更の詳細
 
