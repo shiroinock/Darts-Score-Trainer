@@ -183,9 +183,9 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
   - [x] `getAccuracy()` - 正答率
 
 ### 3.2 localStorage連携 (`src/utils/storage.ts`)
-- [ ] `saveSettings(config)` 関数
-- [ ] `loadSettings()` 関数
-- [ ] `clearSettings()` 関数
+- [x] `saveSettings(config)` 関数 (src/utils/storage.ts:20-35, src/utils/storage.test.ts:6-143)
+- [x] `loadSettings()` 関数 (src/utils/storage.ts:37-63, src/utils/storage.test.ts:145-282)
+- [x] `clearSettings()` 関数 (src/utils/storage.ts:65-72, src/utils/storage.test.ts:284-327)
 - [ ] zustand の persist ミドルウェア設定（設定のみ保存）
 
 ### 3.3 カスタムフック (`src/hooks/`)
@@ -429,7 +429,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | 0 | 11 | 11 | 100% |
 | 1 | 38 | 30 | 79% |
 | 2 | 12 | 12 | 100% |
-| 3 | 25 | 25 | 100% |
+| 3 | 25 | 28 | 112% |
 | 4 | 7 | 0 | 0% |
 | 5 | 17 | 0 | 0% |
 | 6 | 22 | 0 | 0% |
@@ -437,7 +437,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | 8 | 10 | 0 | 0% |
 | 9 | 15 | 0 | 0% |
 | 10 | 6 | 0 | 0% |
-| **合計** | **172** | **78** | **45%** |
+| **合計** | **172** | **81** | **47%** |
 
 ### Phase 2 実装方針変更の詳細
 
