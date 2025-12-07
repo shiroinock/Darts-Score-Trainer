@@ -5,7 +5,7 @@
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import type p5Types from 'p5';
 import { CoordinateTransform } from '../../utils/coordinateTransform';
-import { BOARD_PHYSICAL, SEGMENT_ANGLE } from '../../utils/constants';
+import { BOARD_PHYSICAL, SEGMENT_ANGLE } from '../../utils/constants/index.js';
 import { drawSpider } from '../../components/DartBoard/dartBoardRenderer';
 
 describe('drawSpider - スパイダー描画の統合テスト', () => {

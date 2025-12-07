@@ -67,22 +67,60 @@ npm run deploy     # ビルドしてGitHub Pagesにデプロイ
 
 プリセット5種: 基礎練習、プレイヤー練習、コーラー基礎、コーラー累積、総合練習
 
-### プロジェクト構成（予定）
+### プロジェクト構成（2025-12-08更新: 1定義1ファイル原則適用後）
 ```
 src/
-├── types/           # TypeScript型定義
+├── types/                          # TypeScript型定義（14ファイル）
+│   ├── Coordinates.ts              # 座標インターフェース
+│   ├── RingType.ts                 # リング種別
+│   ├── Target.ts, ThrowResult.ts   # ターゲット・投擲結果
+│   ├── PracticeConfig.ts           # 練習設定
+│   └── index.ts                    # 再エクスポート
 ├── components/
-│   ├── DartBoard/   # p5.jsキャンバスと描画
-│   ├── Settings/    # 設定UI
-│   ├── Practice/    # クイズ画面、テンキー
-│   └── Results/     # 結果画面
-├── hooks/           # カスタムフック
-├── stores/          # Zustandストア（gameStore.ts）
-└── utils/           # コアロジック
-    ├── coordinateTransform.ts
-    ├── scoreCalculator.ts
-    ├── throwSimulator.ts
-    └── quizGenerator.ts
+│   ├── DartBoard/                  # p5.jsキャンバスと描画
+│   ├── Settings/                   # 設定UI
+│   ├── Practice/                   # クイズ画面、テンキー
+│   └── Results/                    # 結果画面
+├── hooks/                          # カスタムフック
+├── stores/                         # Zustand状態管理
+│   ├── gameStore.ts                # メインストア
+│   ├── config/presets.ts           # プリセット定義
+│   ├── utils/typeGuards.ts         # 型ガード
+│   └── session/initialState.ts     # 初期状態
+└── utils/                          # コアロジック（1関数1ファイル）
+    ├── coordinateTransform.ts      # 座標変換クラス
+    ├── constants/                  # 定数（14ファイル）
+    │   ├── boardPhysical.ts
+    │   ├── segments.ts
+    │   └── index.ts
+    ├── scoreCalculator/            # 得点計算（7関数）
+    │   ├── getRing.ts
+    │   ├── calculateScore.ts
+    │   ├── coordinateToScore.ts
+    │   └── index.ts
+    ├── gameLogic/                  # ゲームロジック（3関数）
+    │   ├── checkBust.ts
+    │   ├── canFinishWithDouble.ts
+    │   └── index.ts
+    ├── validation/                 # 入力検証（4関数）
+    │   ├── isValidSingleThrowScore.ts
+    │   ├── isValidRoundScore.ts
+    │   └── index.ts
+    ├── targetCoordinates/          # ターゲット座標（3関数）
+    │   ├── getSegmentAngle.ts
+    │   ├── getTargetCoordinates.ts
+    │   └── index.ts
+    ├── throwSimulator/             # 投擲シミュレーション（3関数）
+    │   ├── generateNormalDistribution.ts
+    │   ├── simulateThrow.ts
+    │   └── index.ts
+    └── storage/                    # ローカルストレージ（3関数）
+        ├── saveSettings.ts
+        ├── loadSettings.ts
+        └── index.ts
+
+注: 各サブディレクトリには関数ごとの.test.tsファイルも配置
+    （例: scoreCalculator/getRing.test.ts）
 ```
 
 ## 実装上の注意点

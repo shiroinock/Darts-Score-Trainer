@@ -4,7 +4,7 @@
  */
 import type p5Types from 'p5';
 import { CoordinateTransform } from '../../utils/coordinateTransform';
-import { SEGMENTS, SEGMENT_ANGLE, BOARD_PHYSICAL, DART_MARKER_RADII, DART_MARKER_TEXT_SIZE, DART_COLORS, SEGMENT_NUMBER_TEXT_SIZE, LEGEND_LAYOUT, LEGEND_TEXT_SIZE } from '../../utils/constants';
+import { SEGMENTS, SEGMENT_ANGLE, BOARD_PHYSICAL, DART_MARKER_RADII, DART_MARKER_TEXT_SIZE, DART_COLORS, SEGMENT_NUMBER_TEXT_SIZE, LEGEND_LAYOUT, LEGEND_TEXT_SIZE } from '../../utils/constants/index.js';
 
 /** 背景色（黒） */
 const BACKGROUND_COLOR = 0;

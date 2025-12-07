@@ -18,133 +18,16 @@ import type {
   ThrowResult,
   QuestionType,
 } from '../types';
-import { executeThrow } from '../utils/throwSimulator';
-import { checkBust, isGameFinished } from '../utils/gameLogic';
-import { STORAGE_KEY } from '../utils/constants';
-
-/**
- * 定数定義
- */
-const DEFAULT_PRESET_ID = 'preset-basic' as const;
-const PERSIST_VERSION = 0 as const;
-
-/**
- * プリセット定義
- *
- * 5つのプリセット練習設定を定義します。
- */
-const PRESETS: Record<string, PracticeConfig> = {
-  [DEFAULT_PRESET_ID]: {
-    configId: DEFAULT_PRESET_ID,
-    configName: '基礎練習',
-    description: '1投単位で得点を問う基本練習',
-    icon: '📚',
-    throwUnit: 1,
-    questionType: 'score',
-    judgmentTiming: 'independent',
-    startingScore: null,
-    target: { type: 'TRIPLE', number: 20, label: 'T20' },
-    stdDevMM: 15,
-    isPreset: true,
-    createdAt: '2025-01-01T00:00:00.000Z',
-    lastPlayedAt: undefined,
-  },
-  'preset-player': {
-    configId: 'preset-player',
-    configName: 'プレイヤー練習',
-    description: '3投単位で得点を問う練習',
-    icon: '🎯',
-    throwUnit: 3,
-    questionType: 'score',
-    judgmentTiming: 'independent',
-    startingScore: null,
-    target: { type: 'TRIPLE', number: 20, label: 'T20' },
-    stdDevMM: 15,
-    isPreset: true,
-    createdAt: '2025-01-01T00:00:00.000Z',
-    lastPlayedAt: undefined,
-  },
-  'preset-caller-basic': {
-    configId: 'preset-caller-basic',
-    configName: 'コーラー基礎',
-    description: '残り点数を問う基礎練習',
-    icon: '📢',
-    throwUnit: 3,
-    questionType: 'remaining',
-    judgmentTiming: 'independent',
-    startingScore: 501,
-    target: { type: 'TRIPLE', number: 20, label: 'T20' },
-    stdDevMM: 15,
-    isPreset: true,
-    createdAt: '2025-01-01T00:00:00.000Z',
-    lastPlayedAt: undefined,
-  },
-  'preset-caller-cumulative': {
-    configId: 'preset-caller-cumulative',
-    configName: 'コーラー累積',
-    description: '累積での残り点数計算練習',
-    icon: '🎲',
-    throwUnit: 3,
-    questionType: 'remaining',
-    judgmentTiming: 'cumulative',
-    startingScore: 501,
-    target: { type: 'TRIPLE', number: 20, label: 'T20' },
-    stdDevMM: 15,
-    isPreset: true,
-    createdAt: '2025-01-01T00:00:00.000Z',
-    lastPlayedAt: undefined,
-  },
-  'preset-comprehensive': {
-    configId: 'preset-comprehensive',
-    configName: '総合練習',
-    description: '得点と残り点数の両方を問う',
-    icon: '🏆',
-    throwUnit: 3,
-    questionType: 'both',
-    judgmentTiming: 'cumulative',
-    startingScore: 501,
-    target: { type: 'TRIPLE', number: 20, label: 'T20' },
-    stdDevMM: 15,
-    isPreset: true,
-    createdAt: '2025-01-01T00:00:00.000Z',
-    lastPlayedAt: undefined,
-  },
-};
-
-/**
- * 型ガード: persist形式のデータか判定
- */
-const isPersistFormat = (
-  data: unknown
-): data is { state: { config: unknown }; version: number } => {
-  return (
-    data !== null &&
-    typeof data === 'object' &&
-    'state' in data &&
-    data.state !== null &&
-    typeof data.state === 'object' &&
-    'config' in data.state
-  );
-};
-
-/**
- * 型ガード: PracticeConfig形式のデータか判定
- */
-const isPracticeConfigFormat = (data: unknown): data is PracticeConfig => {
-  return (
-    data !== null &&
-    typeof data === 'object' &&
-    !Array.isArray(data) &&
-    'configId' in data
-  );
-};
-
-/**
- * デフォルト設定を取得
- */
-const getDefaultConfig = (): PracticeConfig => {
-  return { ...PRESETS[DEFAULT_PRESET_ID] };
-};
+import { executeThrow } from '../utils/throwSimulator/index.js';
+import { checkBust, isGameFinished } from '../utils/gameLogic/index.js';
+import { STORAGE_KEY } from '../utils/constants/index.js';
+import { PRESETS, getDefaultConfig } from './config/presets.js';
+import {
+  PERSIST_VERSION,
+  isPersistFormat,
+  isPracticeConfigFormat,
+} from './utils/typeGuards.js';
+import { initialStats, initialSessionConfig } from './session/initialState.js';
 
 /**
  * ゲームストアの状態インターフェース
@@ -195,23 +78,6 @@ interface GameStore {
   getAccuracy: () => number;
 }
 
-/**
- * 初期統計情報
- */
-const initialStats: Stats = {
-  correct: 0,
-  total: 0,
-  currentStreak: 0,
-  bestStreak: 0,
-};
-
-/**
- * 初期セッション設定
- */
-const initialSessionConfig: SessionConfig = {
-  mode: 'questions',
-  questionCount: 10,
-};
 
 /**
  * ゲームストアの実装

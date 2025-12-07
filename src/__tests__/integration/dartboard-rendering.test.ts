@@ -5,7 +5,7 @@
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import type p5Types from 'p5';
 import { CoordinateTransform } from '../../utils/coordinateTransform';
-import { BOARD_PHYSICAL } from '../../utils/constants';
+import { BOARD_PHYSICAL } from '../../utils/constants/index.js';
 import {
   drawBoard,
   drawDoubleRing,

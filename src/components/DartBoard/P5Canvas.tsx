@@ -7,7 +7,7 @@ import type p5Types from 'p5';
 import { useRef } from 'react';
 import Sketch from 'react-p5';
 import type { Coordinates } from '../../types';
-import { BOARD_PHYSICAL, DART_COLORS } from '../../utils/constants';
+import { BOARD_PHYSICAL, DART_COLORS } from '../../utils/constants/index.js';
 import { CoordinateTransform } from '../../utils/coordinateTransform';
 import { drawBoard, drawDartMarker, drawLegend } from './dartBoardRenderer';
 

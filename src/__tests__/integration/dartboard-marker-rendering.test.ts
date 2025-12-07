@@ -5,7 +5,7 @@
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import type p5Types from 'p5';
 import { CoordinateTransform } from '../../utils/coordinateTransform';
-import { DART_COLORS, BOARD_PHYSICAL, DART_MARKER_RADII, DART_MARKER_TEXT_SIZE } from '../../utils/constants';
+import { DART_COLORS, BOARD_PHYSICAL, DART_MARKER_RADII, DART_MARKER_TEXT_SIZE } from '../../utils/constants/index.js';
 import { drawDartMarker } from '../../components/DartBoard/dartBoardRenderer';
 
 describe('dartboard-marker-rendering integration', () => {
