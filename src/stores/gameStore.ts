@@ -7,6 +7,7 @@
 
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
+import { persist } from 'zustand/middleware';
 import type {
   GameState,
   PracticeConfig,
@@ -19,6 +20,13 @@ import type {
 } from '../types';
 import { executeThrow } from '../utils/throwSimulator';
 import { checkBust, isGameFinished } from '../utils/gameLogic';
+import { STORAGE_KEY } from '../utils/constants';
+
+/**
+ * 定数定義
+ */
+const DEFAULT_PRESET_ID = 'preset-basic' as const;
+const PERSIST_VERSION = 0 as const;
 
 /**
  * プリセット定義
@@ -26,8 +34,8 @@ import { checkBust, isGameFinished } from '../utils/gameLogic';
  * 5つのプリセット練習設定を定義します。
  */
 const PRESETS: Record<string, PracticeConfig> = {
-  'preset-basic': {
-    configId: 'preset-basic',
+  [DEFAULT_PRESET_ID]: {
+    configId: DEFAULT_PRESET_ID,
     configName: '基礎練習',
     description: '1投単位で得点を問う基本練習',
     icon: '📚',
@@ -104,6 +112,41 @@ const PRESETS: Record<string, PracticeConfig> = {
 };
 
 /**
+ * 型ガード: persist形式のデータか判定
+ */
+const isPersistFormat = (
+  data: unknown
+): data is { state: { config: unknown }; version: number } => {
+  return (
+    data !== null &&
+    typeof data === 'object' &&
+    'state' in data &&
+    data.state !== null &&
+    typeof data.state === 'object' &&
+    'config' in data.state
+  );
+};
+
+/**
+ * 型ガード: PracticeConfig形式のデータか判定
+ */
+const isPracticeConfigFormat = (data: unknown): data is PracticeConfig => {
+  return (
+    data !== null &&
+    typeof data === 'object' &&
+    !Array.isArray(data) &&
+    'configId' in data
+  );
+};
+
+/**
+ * デフォルト設定を取得
+ */
+const getDefaultConfig = (): PracticeConfig => {
+  return { ...PRESETS[DEFAULT_PRESET_ID] };
+};
+
+/**
  * ゲームストアの状態インターフェース
  */
 interface GameStore {
@@ -174,12 +217,13 @@ const initialSessionConfig: SessionConfig = {
  * ゲームストアの実装
  */
 export const useGameStore = create<GameStore>()(
-  immer((set, get) => ({
+  persist(
+    immer((set, get) => ({
     // ============================================================
     // 初期状態
     // ============================================================
     gameState: 'setup',
-    config: { ...PRESETS['preset-basic'] },
+    config: getDefaultConfig(),
     sessionConfig: { ...initialSessionConfig },
     currentQuestion: null,
     currentThrowIndex: 0,
@@ -594,5 +638,74 @@ export const useGameStore = create<GameStore>()(
       }
       return stats.correct / stats.total;
     },
-  }))
+  })),
+    {
+      name: STORAGE_KEY,
+      partialize: (state) => ({ config: state.config }),
+      merge: (persistedState, currentState) => {
+        if (!persistedState) {
+          return currentState;
+        }
+
+        // 型ガードで安全にチェック
+        if (
+          typeof persistedState === 'object' &&
+          persistedState !== null &&
+          'config' in persistedState
+        ) {
+          const config = persistedState.config;
+          if (config && typeof config === 'object') {
+            return {
+              ...currentState,
+              config: {
+                ...currentState.config,
+                ...config,
+              },
+            };
+          }
+        }
+
+        return currentState;
+      },
+      storage: {
+        getItem: (name) => {
+          const str = localStorage.getItem(name);
+          if (!str) return null;
+
+          try {
+            const parsed = JSON.parse(str);
+
+            // persistミドルウェア形式のデータ
+            if (isPersistFormat(parsed)) {
+              return parsed;
+            }
+
+            // storage.ts形式（直接PracticeConfig）のデータ
+            if (isPracticeConfigFormat(parsed)) {
+              return { state: { config: parsed }, version: PERSIST_VERSION };
+            }
+
+            return null;
+          } catch {
+            return null;
+          }
+        },
+        setItem: (name, value) => {
+          try {
+            // persistミドルウェア形式の場合、configのみを保存（storage.tsとの互換性維持）
+            if (isPersistFormat(value)) {
+              localStorage.setItem(name, JSON.stringify(value.state.config));
+            }
+          } catch (error) {
+            // localStorage容量制限やシリアライズエラーを無視
+            // アプリケーションの動作には影響しないため、サイレントに失敗
+            console.warn('Failed to persist config to localStorage:', error);
+          }
+        },
+        removeItem: (name) => {
+          localStorage.removeItem(name);
+        },
+      },
+    }
+  )
 );

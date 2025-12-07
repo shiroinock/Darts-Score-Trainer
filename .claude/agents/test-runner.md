@@ -551,6 +551,62 @@ npm test -- validation.test.ts --run
    これは正常な TDD の進行状態です。executeThrow の実装を進めてください。
    ```
 
+### Zustand persist ミドルウェアのテストパターン
+
+Zustand の persist ミドルウェアに関するテストは、特別な考慮が必要です：
+
+1. **persist 関連テストの識別**
+   - "localStorage" を含むテスト名
+   - "永続化" を含むテスト名
+   - "persist" を含むテスト名
+   - storage.ts との整合性テスト
+
+2. **PARTIAL での判定基準（persist 関連）**
+   - **persist 関連のテストのみが失敗し、その他のテストが成功**している場合：
+     ```markdown
+     ### 状態判定
+     期待する状態: RED_EXPECTED
+     実際の状態: PARTIAL（109成功、9失敗）
+     判定: **INFO** - 部分的な成功（persist関連のみが失敗）
+     
+     ### 診断
+     成功している109個のテストは、以下のカテゴリで全テストが成功しています：
+     - 初期状態の検証: 11 tests
+     - setConfig/setSessionConfig/selectPreset/setTarget/setStdDev: 全て成功
+     - ゲームロジック（generateNextQuestion, recordAnswer など）: 全て成功
+     
+     失敗している9個のテストは全てpersist ミドルウェア関連です：
+     - PracticeConfigの永続化テスト（4個）
+     - 初期化時の設定読み込みテスト（1個）
+     - storage.tsとの整合性テスト（3個）
+     - 部分的な設定更新テスト（1個）
+     
+     これは persist ミドルウェアが未実装のための正常な RED フェーズの状態です。
+     ```
+
+3. **診断メッセージの具体化**
+   ```markdown
+   ### 失敗したテスト詳細
+   
+   persist ミドルウェア関連の9つのテストすべてが失敗しています：
+   
+   #### 1. PracticeConfigの永続化テスト（4個失敗）
+   
+   1. **configの変更がlocalStorageに保存される** (Line 1528)
+      - Error: expected null not to be null
+      - 原因: setConfigでlocal storageに保存されていない
+   
+   2. **selectPresetの呼び出しがlocalStorageに保存される** (Line 1551)
+      - Error: expected null not to be null
+      - 原因: selectPresetでlocal storageに保存されていない
+   
+   [以下同様に具体的に記載]
+   ```
+
+4. **次ステップの明確化**
+   - persist 関連のみの失敗の場合：`zustand の persist ミドルウェアを実装してください`
+   - その他の失敗も含む場合：個別に対応が必要な箇所を明記
+
 ## 統計的テストの取り扱い
 
 ### 統計的性質に基づくテストの判定

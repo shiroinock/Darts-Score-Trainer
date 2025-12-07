@@ -186,7 +186,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] `saveSettings(config)` 関数 (src/utils/storage.ts:20-35, src/utils/storage.test.ts:6-143)
 - [x] `loadSettings()` 関数 (src/utils/storage.ts:37-63, src/utils/storage.test.ts:145-282)
 - [x] `clearSettings()` 関数 (src/utils/storage.ts:65-72, src/utils/storage.test.ts:284-327)
-- [ ] zustand の persist ミドルウェア設定（設定のみ保存）
+- [x] zustand の persist ミドルウェア設定（設定のみ保存） (src/stores/gameStore.ts:8-9,176-211, src/stores/gameStore.test.ts:1510-1991)
 
 ### 3.3 カスタムフック (`src/hooks/`)
 - [ ] `useGameStore.ts` - store のセレクター

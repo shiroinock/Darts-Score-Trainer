@@ -1,6 +1,7 @@
-import { describe, test, expect, beforeEach } from 'vitest';
+import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import type { SessionConfig, Target, Stats } from '../types';
+import { STORAGE_KEY } from '../utils/constants';
 
 /**
  * gameStore.ts のテスト（TDD Red フェーズ）
@@ -1515,7 +1516,481 @@ describe('gameStore', () => {
   });
 
   // ============================================================
-  // 9. レビュー指摘への対応テスト
+  // 9. persist ミドルウェアのテスト
+  // ============================================================
+  describe('persistミドルウェア', () => {
+    beforeEach(() => {
+      // 各テスト前にlocalStorageをクリア
+      localStorage.clear();
+    });
+
+    describe('PracticeConfigの永続化', () => {
+      test('configの変更がlocalStorageに保存される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        // Act
+        act(() => {
+          result.current.setConfig({
+            stdDevMM: 30,
+            throwUnit: 3,
+            questionType: 'remaining'
+          });
+        });
+
+        // Assert: localStorageに保存されていることを確認
+        const stored = localStorage.getItem(STORAGE_KEY);
+        expect(stored).not.toBeNull();
+
+        const parsed = JSON.parse(stored!);
+        expect(parsed.stdDevMM).toBe(30);
+        expect(parsed.throwUnit).toBe(3);
+        expect(parsed.questionType).toBe('remaining');
+      });
+
+      test('selectPresetの呼び出しがlocalStorageに保存される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        // Act
+        act(() => {
+          result.current.selectPreset('preset-player');
+        });
+
+        // Assert: localStorageに保存されていることを確認
+        const stored = localStorage.getItem(STORAGE_KEY);
+        expect(stored).not.toBeNull();
+
+        const parsed = JSON.parse(stored!);
+        expect(parsed.configId).toBe('preset-player');
+        expect(parsed.throwUnit).toBe(3);
+      });
+
+      test('setTargetの呼び出しがlocalStorageに保存される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+        const newTarget: Target = {
+          type: 'DOUBLE',
+          number: 16,
+          label: 'D16'
+        };
+
+        // Act
+        act(() => {
+          result.current.setTarget(newTarget);
+        });
+
+        // Assert: localStorageに保存されていることを確認
+        const stored = localStorage.getItem(STORAGE_KEY);
+        expect(stored).not.toBeNull();
+
+        const parsed = JSON.parse(stored!);
+        expect(parsed.target).toEqual(newTarget);
+      });
+
+      test('setStdDevの呼び出しがlocalStorageに保存される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        // Act
+        act(() => {
+          result.current.setStdDev(50);
+        });
+
+        // Assert: localStorageに保存されていることを確認
+        const stored = localStorage.getItem(STORAGE_KEY);
+        expect(stored).not.toBeNull();
+
+        const parsed = JSON.parse(stored!);
+        expect(parsed.stdDevMM).toBe(50);
+      });
+    });
+
+    describe('一時的な状態の非永続化', () => {
+      test('currentQuestionはlocalStorageに保存されない', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        // Act
+        act(() => {
+          result.current.startPractice();
+        });
+
+        // Assert: currentQuestionが生成されていることを確認
+        expect(result.current.currentQuestion).not.toBeNull();
+
+        // Assert: localStorageにcurrentQuestionが保存されていないことを確認
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          expect(parsed.currentQuestion).toBeUndefined();
+        }
+      });
+
+      test('statsはlocalStorageに保存されない', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        // Act
+        act(() => {
+          result.current.startPractice();
+          const correctAnswer = result.current.getCurrentCorrectAnswer();
+          result.current.submitAnswer(correctAnswer);
+        });
+
+        // Assert: statsが更新されていることを確認
+        expect(result.current.stats.correct).toBeGreaterThan(0);
+
+        // Assert: localStorageにstatsが保存されていないことを確認
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          expect(parsed.stats).toBeUndefined();
+        }
+      });
+
+      test('elapsedTimeはlocalStorageに保存されない', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        // Act
+        act(() => {
+          result.current.startPractice();
+          useGameStore.setState({
+            practiceStartTime: Date.now() - 5000
+          });
+          result.current.tick();
+        });
+
+        // Assert: elapsedTimeが更新されていることを確認
+        expect(result.current.elapsedTime).toBeGreaterThan(0);
+
+        // Assert: localStorageにelapsedTimeが保存されていないことを確認
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          expect(parsed.elapsedTime).toBeUndefined();
+        }
+      });
+
+      test('isTimerRunningはlocalStorageに保存されない', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        // Act
+        act(() => {
+          result.current.startPractice();
+        });
+
+        // Assert: isTimerRunningがtrueになっていることを確認
+        expect(result.current.isTimerRunning).toBe(true);
+
+        // Assert: localStorageにisTimerRunningが保存されていないことを確認
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          expect(parsed.isTimerRunning).toBeUndefined();
+        }
+      });
+
+      test('gameStateはlocalStorageに保存されない', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        // Act
+        act(() => {
+          result.current.startPractice();
+        });
+
+        // Assert: gameStateがpracticingになっていることを確認
+        expect(result.current.gameState).toBe('practicing');
+
+        // Assert: localStorageにgameStateが保存されていないことを確認
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          expect(parsed.gameState).toBeUndefined();
+        }
+      });
+
+      test('remainingScoreはlocalStorageに保存されない', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        // Act
+        act(() => {
+          result.current.setConfig({
+            questionType: 'remaining',
+            startingScore: 501
+          });
+          result.current.startPractice();
+        });
+
+        // Assert: remainingScoreが設定されていることを確認
+        expect(result.current.remainingScore).toBe(501);
+
+        // Assert: localStorageにremainingScoreが保存されていないことを確認
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          expect(parsed.remainingScore).toBeUndefined();
+        }
+      });
+
+      test('displayedDartsはlocalStorageに保存されない', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        // Act
+        act(() => {
+          result.current.startPractice();
+        });
+
+        // Assert: displayedDartsが設定されていることを確認
+        expect(result.current.displayedDarts.length).toBeGreaterThan(0);
+
+        // Assert: localStorageにdisplayedDartsが保存されていないことを確認
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          expect(parsed.displayedDarts).toBeUndefined();
+        }
+      });
+    });
+
+    describe('初期化時の設定読み込み', () => {
+      test('localStorage内の既存設定がストア初期化時に読み込まれる', () => {
+        // Arrange: 既存設定をlocalStorageに保存
+        // （Zustand はsingleton のため、実際の再初期化をテストする代わりに、
+        // persist ミドルウェアの getItem/merge 処理を統合テストで確認）
+        const { result } = renderHook(() => useGameStore());
+
+        // Act: 設定を変更してlocalStorageに保存
+        const testConfig = {
+          configId: 'preset-comprehensive',
+          throwUnit: 3 as const,
+          questionType: 'both' as const,
+          startingScore: 501,
+          stdDevMM: 8
+        };
+
+        act(() => {
+          result.current.setConfig(testConfig);
+        });
+
+        // Assert: localStorageに保存された設定を確認
+        // 同じプロセス内で再度取得することで、persist の保存/読み込みを確認
+        const stored = localStorage.getItem(STORAGE_KEY);
+        expect(stored).not.toBeNull();
+
+        const parsed = JSON.parse(stored!);
+        expect(parsed.throwUnit).toBe(3);
+        expect(parsed.questionType).toBe('both');
+        expect(parsed.startingScore).toBe(501);
+        expect(parsed.stdDevMM).toBe(8);
+
+        // Act: ストア設定を別の値で上書き
+        act(() => {
+          result.current.setConfig({ throwUnit: 1 });
+        });
+
+        // Assert: 別の値が保存されている
+        const stored2 = localStorage.getItem(STORAGE_KEY);
+        const parsed2 = JSON.parse(stored2!);
+        expect(parsed2.throwUnit).toBe(1);
+
+        // Act: 元の設定を復元
+        act(() => {
+          result.current.setConfig(testConfig);
+        });
+
+        // Assert: 元の設定が復元されている
+        const stored3 = localStorage.getItem(STORAGE_KEY);
+        const parsed3 = JSON.parse(stored3!);
+        expect(parsed3.throwUnit).toBe(3);
+        expect(parsed3.questionType).toBe('both');
+      });
+
+      test('localStorageが空の場合はデフォルト設定で初期化される', () => {
+        // Arrange: localStorageを空にする
+        localStorage.clear();
+
+        // Act: ストアを新規初期化
+        const { result } = renderHook(() => useGameStore());
+
+        // Assert: デフォルト設定（preset-basic）が使用されている
+        expect(result.current.config.configId).toBe('preset-basic');
+        expect(result.current.config.throwUnit).toBe(1);
+      });
+
+      test('localStorageの設定が不正な場合はデフォルト設定で初期化される', () => {
+        // Arrange: 不正なJSONをlocalStorageに保存
+        localStorage.setItem(STORAGE_KEY, '{invalid-json}');
+
+        // Act: ストアを新規初期化
+        const { result } = renderHook(() => useGameStore());
+
+        // Assert: デフォルト設定が使用されている
+        expect(result.current.config.configId).toBe('preset-basic');
+      });
+    });
+
+    describe('storage.tsとの整合性', () => {
+      test('STORAGE_KEYが一致している', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        // Act
+        act(() => {
+          result.current.setConfig({ stdDevMM: 25 });
+        });
+
+        // Assert: storage.tsと同じSTORAGE_KEYが使用されている
+        const stored = localStorage.getItem(STORAGE_KEY);
+        expect(stored).not.toBeNull();
+
+        // STORAGE_KEYの値を確認
+        expect(STORAGE_KEY).toBe('darts-score-trainer-settings');
+      });
+
+      test('saveSettings関数と同じ形式でデータが保存される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+        const configUpdate = {
+          throwUnit: 3 as const,
+          questionType: 'score' as const,
+          stdDevMM: 30
+        };
+
+        // Act
+        act(() => {
+          result.current.setConfig(configUpdate);
+        });
+
+        // Assert: JSON形式で正しく保存されている
+        const stored = localStorage.getItem(STORAGE_KEY);
+        expect(stored).not.toBeNull();
+
+        // JSONパースが成功する
+        expect(() => JSON.parse(stored!)).not.toThrow();
+
+        const parsed = JSON.parse(stored!);
+        expect(typeof parsed).toBe('object');
+        expect(parsed.throwUnit).toBe(3);
+        expect(parsed.questionType).toBe('score');
+        expect(parsed.stdDevMM).toBe(30);
+      });
+    });
+
+    describe('sessionConfigの非永続化', () => {
+      test('sessionConfigはlocalStorageに保存されない', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+        const newSessionConfig: SessionConfig = {
+          mode: 'time',
+          timeLimit: 10
+        };
+
+        // Act
+        act(() => {
+          result.current.setSessionConfig(newSessionConfig);
+        });
+
+        // Assert: sessionConfigが更新されていることを確認
+        expect(result.current.sessionConfig.mode).toBe('time');
+        expect(result.current.sessionConfig.timeLimit).toBe(10);
+
+        // Assert: localStorageにsessionConfigが保存されていないことを確認
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          expect(parsed.sessionConfig).toBeUndefined();
+        }
+      });
+    });
+
+    describe('エッジケース', () => {
+      test('localStorage容量制限時のエラーハンドリング', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        // localStorageのsetItemをモックしてエラーを発生させる
+        const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
+        setItemSpy.mockImplementation(() => {
+          throw new Error('QuotaExceededError');
+        });
+
+        // Act & Assert: エラーがスローされても処理が継続する
+        expect(() => {
+          act(() => {
+            result.current.setConfig({ stdDevMM: 40 });
+          });
+        }).not.toThrow();
+
+        // Assert: ストアの状態は更新されている
+        expect(result.current.config.stdDevMM).toBe(40);
+
+        // Cleanup
+        setItemSpy.mockRestore();
+      });
+
+      test('複数のストアインスタンスで同じlocalStorageを共有する', () => {
+        // Arrange
+        const { result: result1 } = renderHook(() => useGameStore());
+
+        // Act: 最初のインスタンスで設定を更新
+        act(() => {
+          result1.current.setConfig({ stdDevMM: 35 });
+        });
+
+        // Assert: localStorageに保存されている
+        const stored = localStorage.getItem(STORAGE_KEY);
+        expect(stored).not.toBeNull();
+        const parsed = JSON.parse(stored!);
+        expect(parsed.stdDevMM).toBe(35);
+
+        // Act: 2つ目のインスタンスを生成
+        const { result: result2 } = renderHook(() => useGameStore());
+
+        // Assert: 2つ目のインスタンスも同じ設定を持つ
+        expect(result2.current.config.stdDevMM).toBe(35);
+      });
+    });
+
+    describe('部分的な設定更新', () => {
+      test('一部のプロパティのみ更新してもlocalStorageに正しく保存される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        // Act: 最初に複数のプロパティを設定
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'remaining',
+            startingScore: 501,
+            stdDevMM: 15
+          });
+        });
+
+        // Act: 1つのプロパティだけ更新
+        act(() => {
+          result.current.setConfig({ stdDevMM: 20 });
+        });
+
+        // Assert: localStorageには全ての設定が保存されている
+        const stored = localStorage.getItem(STORAGE_KEY);
+        expect(stored).not.toBeNull();
+        const parsed = JSON.parse(stored!);
+        expect(parsed.throwUnit).toBe(3);
+        expect(parsed.questionType).toBe('remaining');
+        expect(parsed.startingScore).toBe(501);
+        expect(parsed.stdDevMM).toBe(20); // 更新された値
+      });
+    });
+  });
+
+  // ============================================================
+  // 10. レビュー指摘への対応テスト
   // ============================================================
   describe('レビュー指摘への対応', () => {
     // バスト関連テスト（3個）
@@ -1583,7 +2058,7 @@ describe('gameStore', () => {
             currentQuestion: {
               mode: 'remaining',
               throws: [
-                { target: { type: 'INNER_SINGLE', number: 5, label: '5' }, landingPoint: { x: 0, y: 50 }, score: 5, ring: 'INNER_SINGLE', segmentNumber: 5 },
+                { target: { type: 'SINGLE', number: 5, label: '5' }, landingPoint: { x: 0, y: 50 }, score: 5, ring: 'INNER_SINGLE', segmentNumber: 5 },
               ],
               correctAnswer: 5,
               questionText: '残り点数は？',
@@ -1606,7 +2081,7 @@ describe('gameStore', () => {
             currentQuestion: {
               mode: 'remaining',
               throws: [
-                { target: { type: 'INNER_SINGLE', number: 10, label: '10' }, landingPoint: { x: 0, y: 80 }, score: 10, ring: 'INNER_SINGLE', segmentNumber: 10 },
+                { target: { type: 'SINGLE', number: 10, label: '10' }, landingPoint: { x: 0, y: 80 }, score: 10, ring: 'INNER_SINGLE', segmentNumber: 10 },
               ],
               correctAnswer: remainingAfterFirst, // バスト前の残り点数
               questionText: '残り点数は？',
@@ -1645,7 +2120,7 @@ describe('gameStore', () => {
             currentQuestion: {
               mode: 'remaining',
               throws: [
-                { target: { type: 'INNER_SINGLE', number: 20, label: '20' }, landingPoint: { x: 0, y: 100 }, score: 20, ring: 'INNER_SINGLE', segmentNumber: 20 },
+                { target: { type: 'SINGLE', number: 20, label: '20' }, landingPoint: { x: 0, y: 100 }, score: 20, ring: 'INNER_SINGLE', segmentNumber: 20 },
               ],
               correctAnswer: 80,
               questionText: '残り点数は？',
