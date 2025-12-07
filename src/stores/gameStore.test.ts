@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import type { SessionConfig, Target, Stats } from '../types';
-import { STORAGE_KEY } from '../utils/constants';
+import { STORAGE_KEY } from '../utils/constants/index.js';
 
 /**
  * gameStore.ts のテスト（TDD Red フェーズ）

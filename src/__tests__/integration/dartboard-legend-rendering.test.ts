@@ -4,7 +4,7 @@
  */
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import type p5Types from 'p5';
-import { DART_COLORS } from '../../utils/constants';
+import { DART_COLORS } from '../../utils/constants/index.js';
 import { drawLegend } from '../../components/DartBoard/dartBoardRenderer';
 
 describe('dartboard-legend-rendering integration', () => {

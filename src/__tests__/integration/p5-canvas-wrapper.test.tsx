@@ -6,7 +6,7 @@ import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { render } from '@testing-library/react';
 import { P5Canvas } from '../../components/DartBoard/P5Canvas';
 import type { Coordinates } from '../../types';
-import { BOARD_PHYSICAL, DART_COLORS } from '../../utils/constants';
+import { BOARD_PHYSICAL, DART_COLORS } from '../../utils/constants/index.js';
 
 /**
  * react-p5のSketchコンポーネントのProps型定義
