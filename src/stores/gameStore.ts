@@ -7,6 +7,7 @@
 
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
+import { persist } from 'zustand/middleware';
 import type {
   GameState,
   PracticeConfig,
@@ -19,6 +20,7 @@ import type {
 } from '../types';
 import { executeThrow } from '../utils/throwSimulator';
 import { checkBust, isGameFinished } from '../utils/gameLogic';
+import { STORAGE_KEY } from '../utils/constants';
 
 /**
  * プリセット定義
@@ -171,15 +173,36 @@ const initialSessionConfig: SessionConfig = {
 };
 
 /**
+ * localStorageから設定を読み込む（初期化用）
+ */
+const loadInitialConfig = (): PracticeConfig => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (typeof parsed === 'object' && !Array.isArray(parsed) && parsed !== null) {
+        // storage.ts形式（直接PracticeConfig）またはpersist形式
+        const config = parsed.state?.config || parsed;
+        return { ...PRESETS['preset-basic'], ...config };
+      }
+    }
+  } catch {
+    // JSON.parseエラーやlocalStorage操作エラーは無視
+  }
+  return { ...PRESETS['preset-basic'] };
+};
+
+/**
  * ゲームストアの実装
  */
 export const useGameStore = create<GameStore>()(
-  immer((set, get) => ({
+  persist(
+    immer((set, get) => ({
     // ============================================================
     // 初期状態
     // ============================================================
     gameState: 'setup',
-    config: { ...PRESETS['preset-basic'] },
+    config: loadInitialConfig(),
     sessionConfig: { ...initialSessionConfig },
     currentQuestion: null,
     currentThrowIndex: 0,
@@ -594,5 +617,84 @@ export const useGameStore = create<GameStore>()(
       }
       return stats.correct / stats.total;
     },
-  }))
+  })),
+    {
+      name: STORAGE_KEY,
+      partialize: (state) => ({ config: state.config }),
+      merge: (persistedState, currentState) => {
+        // persistedStateがnullまたはundefinedの場合は、currentStateをそのまま返す
+        if (!persistedState) {
+          return currentState;
+        }
+
+        // persistedStateからconfigを抽出してマージ
+        const typedPersistedState = persistedState as { config?: Partial<PracticeConfig> };
+        if (typedPersistedState.config) {
+          return {
+            ...currentState,
+            config: {
+              ...currentState.config,
+              ...typedPersistedState.config,
+            },
+          };
+        }
+
+        return currentState;
+      },
+      storage: {
+        getItem: (name) => {
+          const str = localStorage.getItem(name);
+          if (!str) return null;
+          try {
+            const parsed = JSON.parse(str) as unknown;
+            // persistミドルウェアのデフォルト形式 { state: {...}, version: 0 } から state.config を抽出
+            // または、storage.tsで保存された形式（直接PracticeConfig）を config にラップ
+            if (
+              parsed &&
+              typeof parsed === 'object' &&
+              'state' in parsed &&
+              parsed.state &&
+              typeof parsed.state === 'object' &&
+              'config' in parsed.state
+            ) {
+              return parsed;
+            } else if (
+              parsed &&
+              typeof parsed === 'object' &&
+              !Array.isArray(parsed) &&
+              'configId' in parsed
+            ) {
+              // storage.tsで保存された形式（直接PracticeConfig）の場合
+              // configIdが存在する場合は、PracticeConfig形式と判定
+              return { state: { config: parsed }, version: 0 };
+            }
+            return null;
+          } catch {
+            return null;
+          }
+        },
+        setItem: (name, value) => {
+          try {
+            // persistミドルウェアはオブジェクト { state: {...}, version: 0 } を直接渡してくる
+            if (
+              value &&
+              typeof value === 'object' &&
+              'state' in value &&
+              value.state &&
+              typeof value.state === 'object' &&
+              'config' in value.state
+            ) {
+              // storage.tsと互換性を持たせるため、configのみを保存
+              localStorage.setItem(name, JSON.stringify(value.state.config));
+            }
+          } catch {
+            // エラーハンドリング: 保存失敗時は何もしない
+          }
+        },
+        removeItem: (name) => {
+          localStorage.removeItem(name);
+        },
+      },
+    }
+  )
 );
