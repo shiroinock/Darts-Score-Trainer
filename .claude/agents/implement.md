@@ -28,10 +28,64 @@ Use the darts-domain skill to load comprehensive darts scoring rules before impl
 
 ## コーディング規約
 
+### 基本規約
 - 関数はできるだけ純粋関数として実装
 - Reactコンポーネントは関数コンポーネントで実装
 - 状態管理はZustandを使用
 - CSSはindex.cssに集約（CSS Modulesは使用しない）
+
+### code-conventions スキルの遵守（必須）
+
+**すべてのTypeScript/JavaScript実装で、code-conventionsスキルを参照してください。**
+
+#### 1. 型安全性の原則
+- **型アサーション（`as`）は避ける** - 型ガードを使用
+- **型ガード関数を作成**する場合は、適切な型注釈を付ける：
+  ```typescript
+  const isPersistFormat = (data: unknown): data is PersistFormat => { /* ... */ };
+  ```
+
+#### 2. マジック文字列/数値の定数化
+- **繰り返し使用される文字列は定数化**する：
+  ```typescript
+  const DEFAULT_PRESET_ID = 'preset-basic' as const;
+  const PERSIST_VERSION = 0 as const;
+  ```
+
+#### 3. エラーハンドリングとロギング
+- **サイレントエラーにもログを残す**：
+  ```typescript
+  try {
+    localStorage.setItem(name, value);
+  } catch (error) {
+    console.warn('Failed to persist config:', error);
+  }
+  ```
+
+#### 4. 重複コードの排除
+- **同じロジックが2回以上出現する場合は関数化**する
+- ヘルパー関数は適切な場所に配置（依存関係を考慮）
+
+#### 5. ヘルパー関数の命名規則
+- 型ガード: `is〜Format`, `is〜Type`
+- 取得: `get〜`, `fetch〜`
+- 変換: `to〜`, `〜To〜`
+- チェック: `has〜`, `can〜`
+
+#### 6. コードの配置順序
+```typescript
+// 1. 定数定義
+const DEFAULT_ID = 'default' as const;
+
+// 2. データ定義（定数使用）
+const DATA = { [DEFAULT_ID]: {...} };
+
+// 3. ヘルパー関数（データ定義後）
+const isValidFormat = (data: unknown): data is Format => { /* ... */ };
+
+// 4. メインロジック（ヘルパー使用）
+export const useStore = create(/* ... */);
+```
 
 ## 初回セットアップ時の注意
 
