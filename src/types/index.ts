@@ -12,6 +12,7 @@ export type { Coordinates } from './Coordinates';
 export type { GameState } from './GameState';
 export type { JudgmentTiming } from './JudgmentTiming';
 export type { PracticeConfig } from './PracticeConfig';
+export type { PresetConfig } from './PresetConfig';
 // 問題・ゲーム状態
 export type { Question } from './Question';
 // 練習設定

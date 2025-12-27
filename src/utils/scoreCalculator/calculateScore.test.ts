@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import type { RingType } from '../../types/index.js';
 import { calculateScore } from './calculateScore.js';
 
 describe('calculateScore', () => {

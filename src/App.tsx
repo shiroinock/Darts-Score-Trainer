@@ -1,4 +1,5 @@
 import { DartBoard } from './components/DartBoard';
+import { PresetSelector } from './components/Settings';
 
 function App(): JSX.Element {
   // デモ用: トリプル20を狙った3投をシミュレート（物理座標、mm単位）
@@ -12,6 +13,7 @@ function App(): JSX.Element {
     <div className="app">
       <h1>Darts Score Trainer</h1>
       <p>ダーツスコア計算練習アプリ</p>
+      <PresetSelector />
       <DartBoard coords={demoCoords} dartCount={3} />
     </div>
   );

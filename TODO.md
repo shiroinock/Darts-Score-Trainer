@@ -232,10 +232,10 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 ## Phase 5: UI（設定画面）
 
 ### 5.1 プリセットセレクター (`src/components/Settings/PresetSelector.tsx`)
-- [ ] 5つのプリセットボタン横並び
-- [ ] アクティブ状態のスタイル
-- [ ] アイコン表示
-- [ ] 説明ツールチップ
+- [x] 5つのプリセットボタン横並び
+- [x] アクティブ状態のスタイル
+- [x] アイコン表示
+- [x] 説明ツールチップ
 
 ### 5.2 セッション設定 (`src/components/Settings/SessionConfigSelector.tsx`)
 - [ ] モード切り替え（問題数 / 時間制限）

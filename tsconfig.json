@@ -24,10 +24,7 @@
   "include": ["src"],
   "exclude": [
     "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "**/__tests__/**"
+    "dist"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

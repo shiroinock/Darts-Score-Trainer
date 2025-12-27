@@ -25,3 +25,116 @@ h1 {
   font-size: 2rem;
   margin-bottom: 1rem;
 }
+
+/* ============================================================ */
+/* PresetSelector Component                                     */
+/* ============================================================ */
+
+.preset-selector {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.preset-selector__title {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #333;
+}
+
+.preset-selector__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+/* モバイル: 1列 */
+@media (max-width: 640px) {
+  .preset-selector__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* タブレット: 2列 */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .preset-selector__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* デスクトップ: 3列（5個なので2-3-0の配置） */
+@media (min-width: 1025px) {
+  .preset-selector__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.preset-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem 1rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 160px;
+  font-family: inherit;
+}
+
+.preset-button:hover {
+  border-color: #4a90e2;
+  background-color: #f0f7ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.preset-button:active {
+  transform: translateY(0);
+}
+
+.preset-button--active {
+  border-color: #4a90e2;
+  background-color: #e6f2ff;
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+}
+
+.preset-button--active:hover {
+  background-color: #d9edff;
+}
+
+.preset-button__icon {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.preset-button__name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+.preset-button__description {
+  font-size: 0.875rem;
+  color: #666;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* タッチデバイス向けの調整 */
+@media (hover: none) {
+  .preset-button {
+    min-height: 140px;
+    padding: 1.25rem 1rem;
+  }
+
+  .preset-button:hover {
+    transform: none;
+  }
+}
