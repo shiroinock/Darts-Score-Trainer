@@ -1,33 +1,33 @@
-import { describe, test, expect, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
+import { beforeEach, describe, expect, test } from 'vitest';
+import { PRESETS } from '../stores/config/presets';
+import { useGameStore } from '../stores/gameStore';
 import type { GameState, Target } from '../types';
 import {
-  useGameState,
   useConfig,
-  useSessionConfig,
   useCurrentQuestion,
-  useStats,
-  useElapsedTime,
-  useIsTimerRunning,
-  useRemainingScore,
   useDisplayedDarts,
+  useElapsedTime,
+  useEndSession,
+  useGameState,
+  useGenerateQuestion,
+  useGetAccuracy,
+  useGetCurrentCorrectAnswer,
+  useIsTimerRunning,
+  useNextQuestion,
+  useRemainingScore,
+  useResetToSetup,
+  useSelectPreset,
+  useSessionConfig,
   useSetConfig,
   useSetSessionConfig,
-  useSelectPreset,
-  useSetTarget,
   useSetStdDev,
-  useStartPractice,
-  useGenerateQuestion,
+  useSetTarget,
   useSimulateNextThrow,
+  useStartPractice,
+  useStats,
   useSubmitAnswer,
-  useNextQuestion,
-  useEndSession,
-  useResetToSetup,
-  useGetCurrentCorrectAnswer,
-  useGetAccuracy,
 } from './useGameStore';
-import { useGameStore } from '../stores/gameStore';
-import { PRESETS } from '../stores/config/presets';
 
 /**
  * useGameStore.ts のテスト

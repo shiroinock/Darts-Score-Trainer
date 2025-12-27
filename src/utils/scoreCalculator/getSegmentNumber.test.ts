@@ -1,4 +1,4 @@
-import { describe, test, expect } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { getSegmentNumber } from './getSegmentNumber.js';
 
 describe('getSegmentNumber', () => {
@@ -62,7 +62,7 @@ describe('getSegmentNumber', () => {
 
     test('1と18の境界（2*π/10ラジアン）は18を返す', () => {
       // Arrange
-      const angle = 2 * Math.PI / 10; // 36度
+      const angle = (2 * Math.PI) / 10; // 36度
 
       // Act
       const result = getSegmentNumber(angle);
@@ -86,7 +86,7 @@ describe('getSegmentNumber', () => {
 
     test('セグメント18の中央（2*π/10 + π/20ラジアン）は18を返す', () => {
       // Arrange
-      const angle = 2 * Math.PI / 10 + Math.PI / 20; // 45度（18の中央）
+      const angle = (2 * Math.PI) / 10 + Math.PI / 20; // 45度（18の中央）
 
       // Act
       const result = getSegmentNumber(angle);
@@ -155,4 +155,3 @@ describe('getSegmentNumber', () => {
     });
   });
 });
-

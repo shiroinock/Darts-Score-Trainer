@@ -1,7 +1,7 @@
-import { describe, test, expect, beforeEach } from 'vitest';
-import { loadSettings, saveSettings } from './index.js';
-import { STORAGE_KEY } from '../constants/index.js';
+import { beforeEach, describe, expect, test } from 'vitest';
 import type { PracticeConfig } from '../../types/index.js';
+import { STORAGE_KEY } from '../constants/index.js';
+import { loadSettings, saveSettings } from './index.js';
 
 const mockConfig: PracticeConfig = {
   configId: 'test-config-001',
@@ -19,7 +19,9 @@ const mockConfig: PracticeConfig = {
   lastPlayedAt: '2025-12-08T12:00:00.000Z',
 };
 
-beforeEach(() => { localStorage.clear(); });
+beforeEach(() => {
+  localStorage.clear();
+});
 
 describe('loadSettings', () => {
   describe('正常系', () => {
@@ -157,4 +159,3 @@ describe('loadSettings', () => {
     });
   });
 });
-

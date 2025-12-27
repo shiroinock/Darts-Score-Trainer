@@ -4,7 +4,7 @@
  * ゲームストアの初期値を定義します。
  */
 
-import type { Stats, SessionConfig } from '../../types';
+import type { SessionConfig, Stats } from '../../types';
 
 /**
  * 初期統計情報

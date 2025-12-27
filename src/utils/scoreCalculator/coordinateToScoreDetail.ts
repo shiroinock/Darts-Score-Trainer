@@ -7,9 +7,9 @@
  */
 
 import type { RingType } from '../../types';
+import { calculateScore } from './calculateScore.js';
 import { getRing } from './getRing.js';
 import { getSegmentNumber } from './getSegmentNumber.js';
-import { calculateScore } from './calculateScore.js';
 
 export function coordinateToScoreDetail(
   x: number,

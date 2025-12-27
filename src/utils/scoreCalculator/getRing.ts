@@ -6,8 +6,8 @@
  * @throws {Error} 負の距離が渡された場合
  */
 
-import { BOARD_PHYSICAL } from '../constants/index.js';
 import type { RingType } from '../../types';
+import { BOARD_PHYSICAL } from '../constants/index.js';
 
 export function getRing(distance: number): RingType {
   // 負の距離はエラー

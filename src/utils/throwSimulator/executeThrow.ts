@@ -14,9 +14,9 @@
  * @throws {Error} - stdDevMMが不正な場合、またはターゲットが無効な場合
  */
 
-import { getTargetCoordinates } from '../targetCoordinates/index.js';
-import { coordinateToScoreDetail } from '../scoreCalculator/index.js';
 import type { Target, ThrowResult } from '../../types/index.js';
+import { coordinateToScoreDetail } from '../scoreCalculator/index.js';
+import { getTargetCoordinates } from '../targetCoordinates/index.js';
 import { simulateThrow } from './simulateThrow.js';
 
 export function executeThrow(target: Target, stdDevMM: number): ThrowResult {

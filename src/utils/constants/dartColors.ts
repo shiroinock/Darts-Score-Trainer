@@ -7,7 +7,7 @@
  * - third: 3本目のダーツ（黄系）
  */
 export const DART_COLORS = {
-  first: '#FF6B6B',   // 1本目: 赤系
-  second: '#4ECDC4',  // 2本目: 青緑系
-  third: '#FFE66D'    // 3本目: 黄系
+  first: '#FF6B6B', // 1本目: 赤系
+  second: '#4ECDC4', // 2本目: 青緑系
+  third: '#FFE66D', // 3本目: 黄系
 } as const;

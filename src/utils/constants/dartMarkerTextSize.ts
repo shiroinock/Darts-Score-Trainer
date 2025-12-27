@@ -3,4 +3,4 @@
  *
  * マーカー上に表示されるダーツ番号（1, 2, 3）のフォントサイズを定義します。
  */
-export const DART_MARKER_TEXT_SIZE = 12;  // px - マーカーの番号テキストサイズ
+export const DART_MARKER_TEXT_SIZE = 12; // px - マーカーの番号テキストサイズ

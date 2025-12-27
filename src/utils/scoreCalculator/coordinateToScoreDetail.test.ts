@@ -1,6 +1,6 @@
-import { describe, test, expect } from 'vitest';
+import { describe, expect, test } from 'vitest';
+import { SEGMENTS } from '../constants/index.js';
 import { coordinateToScore } from './coordinateToScore.js';
-import { BOARD_PHYSICAL, SEGMENTS } from '../constants/index.js';
 import { coordinateToScoreDetail } from './coordinateToScoreDetail.js';
 
 describe('coordinateToScoreDetail', () => {
@@ -99,4 +99,3 @@ describe('coordinateToScoreDetail', () => {
     });
   });
 });
-

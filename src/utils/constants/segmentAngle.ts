@@ -4,4 +4,4 @@
  * ダーツボードは20個のセグメントに分割されており、
  * 各セグメントは18度（π/10ラジアン）の角度を持ちます。
  */
-export const SEGMENT_ANGLE = Math.PI / 10;  // 18度 = π/10ラジアン
+export const SEGMENT_ANGLE = Math.PI / 10; // 18度 = π/10ラジアン

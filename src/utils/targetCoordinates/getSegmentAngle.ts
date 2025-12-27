@@ -13,7 +13,7 @@
  * @throws {Error} 無効なセグメント番号の場合
  */
 
-import { SEGMENTS, SEGMENT_ANGLE } from '../constants/index.js';
+import { SEGMENT_ANGLE, SEGMENTS } from '../constants/index.js';
 
 export function getSegmentAngle(number: number): number {
   // 入力バリデーション

@@ -1,4 +1,4 @@
-import { describe, test, expect } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { simulateThrow } from './simulateThrow.js';
 
 describe('simulateThrow', () => {
@@ -166,8 +166,8 @@ describe('simulateThrow', () => {
       // 標準偏差の計算
       const avgX = samplesX.reduce((sum, v) => sum + v, 0) / sampleSize;
       const avgY = samplesY.reduce((sum, v) => sum + v, 0) / sampleSize;
-      const varianceX = samplesX.reduce((sum, v) => sum + Math.pow(v - avgX, 2), 0) / sampleSize;
-      const varianceY = samplesY.reduce((sum, v) => sum + Math.pow(v - avgY, 2), 0) / sampleSize;
+      const varianceX = samplesX.reduce((sum, v) => sum + (v - avgX) ** 2, 0) / sampleSize;
+      const varianceY = samplesY.reduce((sum, v) => sum + (v - avgY) ** 2, 0) / sampleSize;
       const calculatedStdDevX = Math.sqrt(varianceX);
       const calculatedStdDevY = Math.sqrt(varianceY);
 
@@ -606,4 +606,3 @@ describe('simulateThrow', () => {
     });
   });
 });
-

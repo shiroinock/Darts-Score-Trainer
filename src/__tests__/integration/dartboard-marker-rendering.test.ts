@@ -2,11 +2,17 @@
  * ダーツマーカー描画の統合テスト
  * p5.jsのモック化とスパイを活用して、drawDartMarker関数の呼び出しを検証する
  */
-import { describe, test, expect, vi, beforeEach } from 'vitest';
+
 import type p5Types from 'p5';
-import { CoordinateTransform } from '../../utils/coordinateTransform';
-import { DART_COLORS, BOARD_PHYSICAL, DART_MARKER_RADII, DART_MARKER_TEXT_SIZE } from '../../utils/constants/index.js';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { drawDartMarker } from '../../components/DartBoard/dartBoardRenderer';
+import {
+  BOARD_PHYSICAL,
+  DART_COLORS,
+  DART_MARKER_RADII,
+  DART_MARKER_TEXT_SIZE,
+} from '../../utils/constants/index.js';
+import { CoordinateTransform } from '../../utils/coordinateTransform';
 
 describe('dartboard-marker-rendering integration', () => {
   let mockP5: p5Types;
@@ -363,7 +369,7 @@ describe('dartboard-marker-rendering integration', () => {
         const angle = -Math.PI / 2 + Math.PI / 10; // 真上から18度右
         const coords = {
           x: Math.round(103 * Math.cos(angle)),
-          y: Math.round(103 * Math.sin(angle))
+          y: Math.round(103 * Math.sin(angle)),
         };
         const color = DART_COLORS.first;
         const index = 0;
@@ -556,8 +562,8 @@ describe('dartboard-marker-rendering integration', () => {
       test('異なる3本のダーツを順番に描画できる', () => {
         // Arrange
         const textSpy = vi.spyOn(mockP5, 'text');
-        const coords1 = { x: 0, y: -103 };   // トリプル20
-        const coords2 = { x: 30, y: -100 };  // トリプル20の近く
+        const coords1 = { x: 0, y: -103 }; // トリプル20
+        const coords2 = { x: 30, y: -100 }; // トリプル20の近く
         const coords3 = { x: -30, y: -100 }; // トリプル20の近く
 
         // Act

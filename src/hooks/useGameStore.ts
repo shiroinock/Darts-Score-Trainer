@@ -5,6 +5,7 @@
  * パフォーマンス最適化のため、各セレクターは独立した再レンダリングを行います。
  */
 
+import { useGameStore } from '../stores/gameStore';
 import type {
   GameState,
   PracticeConfig,
@@ -14,7 +15,6 @@ import type {
   Target,
   ThrowResult,
 } from '../types';
-import { useGameStore } from '../stores/gameStore';
 
 // ============================================================
 // 状態セレクター (9個)

@@ -2,11 +2,12 @@
  * セグメント番号描画の統合テスト
  * p5.jsのモック化とスパイを活用して、drawNumbers関数の呼び出しを検証する
  */
-import { describe, test, expect, vi, beforeEach } from 'vitest';
+
 import type p5Types from 'p5';
-import { CoordinateTransform } from '../../utils/coordinateTransform';
-import { BOARD_PHYSICAL, SEGMENTS, SEGMENT_ANGLE } from '../../utils/constants/index.js';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { drawNumbers } from '../../components/DartBoard/dartBoardRenderer';
+import { BOARD_PHYSICAL, SEGMENT_ANGLE, SEGMENTS } from '../../utils/constants/index.js';
+import { CoordinateTransform } from '../../utils/coordinateTransform';
 
 describe('dartboard-numbers-rendering integration', () => {
   let mockP5: p5Types;
@@ -49,7 +50,9 @@ describe('dartboard-numbers-rendering integration', () => {
 
         // Assert
         // SEGMENTSの各番号が文字列として描画されることを確認
-        const expectedNumbers = [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5];
+        const expectedNumbers = [
+          20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5,
+        ];
         textSpy.mock.calls.forEach((call, index) => {
           expect(call[0]).toBe(expectedNumbers[index].toString());
         });
@@ -58,7 +61,8 @@ describe('dartboard-numbers-rendering integration', () => {
       test('配置半径が197.5mm（ダブル外側170mmとボード端225mmの中間）である', () => {
         // Arrange
         const textSpy = vi.spyOn(mockP5, 'text');
-        const expectedPlacementRadius = (BOARD_PHYSICAL.rings.doubleOuter + BOARD_PHYSICAL.rings.boardEdge) / 2;
+        const expectedPlacementRadius =
+          (BOARD_PHYSICAL.rings.doubleOuter + BOARD_PHYSICAL.rings.boardEdge) / 2;
         expect(expectedPlacementRadius).toBe(197.5); // 確認用
 
         const screenRadius = mockTransform.physicalDistanceToScreen(expectedPlacementRadius);
@@ -69,7 +73,7 @@ describe('dartboard-numbers-rendering integration', () => {
 
         // Assert
         // 各番号の配置座標が正しい半径上にあることを確認
-        textSpy.mock.calls.forEach((call, index) => {
+        textSpy.mock.calls.forEach((call, _index) => {
           const x = call[1] as number;
           const y = call[2] as number;
 
@@ -86,7 +90,8 @@ describe('dartboard-numbers-rendering integration', () => {
         // Arrange
         const textSpy = vi.spyOn(mockP5, 'text');
         const center = mockTransform.getCenter();
-        const placementRadius = (BOARD_PHYSICAL.rings.doubleOuter + BOARD_PHYSICAL.rings.boardEdge) / 2;
+        const placementRadius =
+          (BOARD_PHYSICAL.rings.doubleOuter + BOARD_PHYSICAL.rings.boardEdge) / 2;
         const screenRadius = mockTransform.physicalDistanceToScreen(placementRadius);
 
         // Act
@@ -210,7 +215,8 @@ describe('dartboard-numbers-rendering integration', () => {
         // Arrange
         const squareTransform = new CoordinateTransform(800, 800, 225);
         const textSpy = vi.spyOn(mockP5, 'text');
-        const expectedPlacementRadius = (BOARD_PHYSICAL.rings.doubleOuter + BOARD_PHYSICAL.rings.boardEdge) / 2;
+        const expectedPlacementRadius =
+          (BOARD_PHYSICAL.rings.doubleOuter + BOARD_PHYSICAL.rings.boardEdge) / 2;
         const screenRadius = squareTransform.physicalDistanceToScreen(expectedPlacementRadius);
         const center = squareTransform.getCenter();
 
@@ -265,7 +271,7 @@ describe('dartboard-numbers-rendering integration', () => {
         drawNumbers(mockP5, mockTransform);
 
         // Assert
-        const drawnNumbers = textSpy.mock.calls.map(call => parseInt(call[0] as string));
+        const drawnNumbers = textSpy.mock.calls.map((call) => parseInt(call[0] as string, 10));
         SEGMENTS.forEach((number) => {
           expect(drawnNumbers).toContain(number);
         });

@@ -3,9 +3,9 @@ import { DartBoard } from './components/DartBoard';
 function App(): JSX.Element {
   // デモ用: トリプル20を狙った3投をシミュレート（物理座標、mm単位）
   const demoCoords = [
-    { x: 0, y: -103 },   // 1本目: トリプル20中央
-    { x: 8, y: -105 },   // 2本目: 少し右にずれる
-    { x: -5, y: -100 },  // 3本目: 少し左下にずれる
+    { x: 0, y: -103 }, // 1本目: トリプル20中央
+    { x: 8, y: -105 }, // 2本目: 少し右にずれる
+    { x: -5, y: -100 }, // 3本目: 少し左下にずれる
   ];
 
   return (
@@ -14,7 +14,7 @@ function App(): JSX.Element {
       <p>ダーツスコア計算練習アプリ</p>
       <DartBoard coords={demoCoords} dartCount={3} />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

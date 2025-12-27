@@ -1,4 +1,4 @@
-import { describe, test, expect } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { isValidRoundScore } from './isValidRoundScore.js';
 
 describe('isValidRoundScore', () => {
@@ -368,4 +368,3 @@ describe('isValidRoundScore', () => {
     });
   });
 });
-

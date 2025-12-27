@@ -427,7 +427,20 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [ ] 投擲アニメーション
 - [ ] 英語対応（i18n）
 
-### 技術的改善
+### 技術的改善（Biome関連 - PR #44レビュー指摘事項）
+- [ ] CI/CDへの統合（重要度: 高）
+  - GitHub Actionsに`npm run check`を追加
+  - PRごとに自動でリント/フォーマットチェックを実行
+- [ ] ルール設定の厳格化検討（重要度: 中）
+  - `noExplicitAny`: `warn` → `error`への変更を検討
+  - `noExcessiveCognitiveComplexity`: `warn` → `error`への変更を検討
+  - プロジェクトの成熟度を見て段階的に対応
+- [ ] pre-commitフックの追加（重要度: 中）
+  - huskyまたはsimple-git-hooksの導入
+  - コミット前に自動でフォーマットとリントを実行
+  - チーム全体での合意が必要
+
+### 技術的改善（その他）
 - [ ] ユニットテスト追加
 - [ ] E2Eテスト追加
 - [ ] ESLint + Prettier 設定

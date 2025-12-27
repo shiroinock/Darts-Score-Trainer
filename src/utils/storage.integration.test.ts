@@ -1,7 +1,7 @@
-import { describe, test, expect, beforeEach } from 'vitest';
-import { saveSettings, loadSettings, clearSettings } from './storage/index.js';
-import { STORAGE_KEY } from './constants/index.js';
+import { beforeEach, describe, expect, test } from 'vitest';
 import type { PracticeConfig } from '../types/index.js';
+import { STORAGE_KEY } from './constants/index.js';
+import { clearSettings, loadSettings, saveSettings } from './storage/index.js';
 
 const mockConfig: PracticeConfig = {
   configId: 'test-config-001',
@@ -19,7 +19,9 @@ const mockConfig: PracticeConfig = {
   lastPlayedAt: '2025-12-08T12:00:00.000Z',
 };
 
-beforeEach(() => { localStorage.clear(); });
+beforeEach(() => {
+  localStorage.clear();
+});
 
 describe('統合シナリオ', () => {
   test('保存→読み込み→削除→読み込みのフロー', () => {

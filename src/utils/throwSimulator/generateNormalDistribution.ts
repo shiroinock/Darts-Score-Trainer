@@ -7,10 +7,7 @@
  * @throws {Error} stdDev < 0 または NaN/Infinity の場合
  */
 
-export function generateNormalDistribution(
-  mean: number,
-  stdDev: number
-): { x: number; y: number } {
+export function generateNormalDistribution(mean: number, stdDev: number): { x: number; y: number } {
   // 入力検証
   if (!Number.isFinite(mean)) {
     throw new Error('mean must be a finite number');

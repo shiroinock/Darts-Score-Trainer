@@ -1,6 +1,6 @@
-import { describe, test, expect, beforeEach, vi } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
-import type { SessionConfig, Target, Stats } from '../types';
+import { act, renderHook } from '@testing-library/react';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+import type { SessionConfig, Stats, Target } from '../types';
 import { STORAGE_KEY } from '../utils/constants/index.js';
 
 /**
@@ -21,7 +21,7 @@ const initialStats: Stats = {
   correct: 0,
   total: 0,
   currentStreak: 0,
-  bestStreak: 0
+  bestStreak: 0,
 };
 
 describe('gameStore', () => {
@@ -165,7 +165,7 @@ describe('gameStore', () => {
 
       // Act
       act(() => {
-      result.current.setConfig({ stdDevMM: 30 });
+        result.current.setConfig({ stdDevMM: 30 });
       });
 
       // Assert
@@ -179,11 +179,11 @@ describe('gameStore', () => {
 
       // Act
       act(() => {
-      result.current.setConfig({
-      throwUnit: 3,
-      questionType: 'remaining',
-      startingScore: 501
-      });
+        result.current.setConfig({
+          throwUnit: 3,
+          questionType: 'remaining',
+          startingScore: 501,
+        });
       });
 
       // Assert
@@ -199,7 +199,7 @@ describe('gameStore', () => {
 
       // Act
       act(() => {
-      result.current.setConfig({ stdDevMM: 50 });
+        result.current.setConfig({ stdDevMM: 50 });
       });
 
       // Assert
@@ -213,12 +213,12 @@ describe('gameStore', () => {
       const { result } = renderHook(() => useGameStore());
       const newSessionConfig: SessionConfig = {
         mode: 'time',
-        timeLimit: 5
+        timeLimit: 5,
       };
 
       // Act
       act(() => {
-      result.current.setSessionConfig(newSessionConfig);
+        result.current.setSessionConfig(newSessionConfig);
       });
 
       // Assert
@@ -230,12 +230,12 @@ describe('gameStore', () => {
       const { result } = renderHook(() => useGameStore());
       const questionConfig: SessionConfig = {
         mode: 'questions',
-        questionCount: 50
+        questionCount: 50,
       };
 
       // Act
       act(() => {
-      result.current.setSessionConfig(questionConfig);
+        result.current.setSessionConfig(questionConfig);
       });
 
       // Assert
@@ -251,7 +251,7 @@ describe('gameStore', () => {
 
       // Act
       act(() => {
-      result.current.selectPreset('preset-basic');
+        result.current.selectPreset('preset-basic');
       });
 
       // Assert
@@ -265,7 +265,7 @@ describe('gameStore', () => {
 
       // Act
       act(() => {
-      result.current.selectPreset('preset-player');
+        result.current.selectPreset('preset-player');
       });
 
       // Assert
@@ -279,9 +279,9 @@ describe('gameStore', () => {
 
       // Act & Assert
       expect(() => {
-      act(() => {
-      result.current.selectPreset('invalid-preset-id');
-      });
+        act(() => {
+          result.current.selectPreset('invalid-preset-id');
+        });
       }).toThrow();
     });
   });
@@ -293,12 +293,12 @@ describe('gameStore', () => {
       const newTarget: Target = {
         type: 'DOUBLE',
         number: 16,
-        label: 'D16'
+        label: 'D16',
       };
 
       // Act
       act(() => {
-      result.current.setTarget(newTarget);
+        result.current.setTarget(newTarget);
       });
 
       // Assert
@@ -311,12 +311,12 @@ describe('gameStore', () => {
       const bullTarget: Target = {
         type: 'BULL',
         number: null,
-        label: 'BULL'
+        label: 'BULL',
       };
 
       // Act
       act(() => {
-      result.current.setTarget(bullTarget);
+        result.current.setTarget(bullTarget);
       });
 
       // Assert
@@ -332,7 +332,7 @@ describe('gameStore', () => {
 
       // Act
       act(() => {
-      result.current.setStdDev(8);
+        result.current.setStdDev(8);
       });
 
       // Assert
@@ -345,7 +345,7 @@ describe('gameStore', () => {
 
       // Act
       act(() => {
-      result.current.setStdDev(50);
+        result.current.setStdDev(50);
       });
 
       // Assert
@@ -358,9 +358,9 @@ describe('gameStore', () => {
 
       // Act & Assert
       expect(() => {
-      act(() => {
-      result.current.setStdDev(-10);
-      });
+        act(() => {
+          result.current.setStdDev(-10);
+        });
       }).toThrow();
     });
 
@@ -370,9 +370,9 @@ describe('gameStore', () => {
 
       // Act & Assert
       expect(() => {
-      act(() => {
-      result.current.setStdDev(0);
-      });
+        act(() => {
+          result.current.setStdDev(0);
+        });
       }).toThrow();
     });
 
@@ -382,9 +382,9 @@ describe('gameStore', () => {
 
       // Act & Assert
       expect(() => {
-      act(() => {
-      result.current.setStdDev(NaN);
-      });
+        act(() => {
+          result.current.setStdDev(NaN);
+        });
       }).toThrow();
     });
 
@@ -394,9 +394,9 @@ describe('gameStore', () => {
 
       // Act & Assert
       expect(() => {
-      act(() => {
-      result.current.setStdDev(Infinity);
-      });
+        act(() => {
+          result.current.setStdDev(Infinity);
+        });
       }).toThrow();
     });
   });
@@ -412,7 +412,7 @@ describe('gameStore', () => {
 
       // Act
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
 
       // Assert
@@ -425,7 +425,7 @@ describe('gameStore', () => {
 
       // Act
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
 
       // Assert
@@ -438,7 +438,7 @@ describe('gameStore', () => {
 
       // Act
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
 
       // Assert
@@ -449,12 +449,14 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      useGameStore.setState({ stats: { correct: 5, total: 10, currentStreak: 3, bestStreak: 5 } });
+        useGameStore.setState({
+          stats: { correct: 5, total: 10, currentStreak: 3, bestStreak: 5 },
+        });
       });
 
       // Act
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
 
       // Assert
@@ -465,12 +467,12 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      useGameStore.setState({ elapsedTime: 120 });
+        useGameStore.setState({ elapsedTime: 120 });
       });
 
       // Act
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
 
       // Assert
@@ -481,12 +483,12 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setConfig({ questionType: 'remaining', startingScore: 501 });
+        result.current.setConfig({ questionType: 'remaining', startingScore: 501 });
       });
 
       // Act
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
 
       // Assert
@@ -501,7 +503,7 @@ describe('gameStore', () => {
 
       // Act
       act(() => {
-      result.current.generateQuestion();
+        result.current.generateQuestion();
       });
 
       // Assert
@@ -512,12 +514,12 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setConfig({ throwUnit: 1 });
+        result.current.setConfig({ throwUnit: 1 });
       });
 
       // Act
       act(() => {
-      result.current.generateQuestion();
+        result.current.generateQuestion();
       });
 
       // Assert
@@ -528,12 +530,12 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setConfig({ throwUnit: 3 });
+        result.current.setConfig({ throwUnit: 3 });
       });
 
       // Act
       act(() => {
-      result.current.generateQuestion();
+        result.current.generateQuestion();
       });
 
       // Assert
@@ -546,7 +548,7 @@ describe('gameStore', () => {
 
       // Act
       act(() => {
-      result.current.generateQuestion();
+        result.current.generateQuestion();
       });
 
       // Assert
@@ -560,7 +562,7 @@ describe('gameStore', () => {
 
       // Act
       act(() => {
-      result.current.generateQuestion();
+        result.current.generateQuestion();
       });
 
       // Assert
@@ -574,13 +576,13 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setConfig({ throwUnit: 3 });
-      result.current.startPractice();
+        result.current.setConfig({ throwUnit: 3 });
+        result.current.startPractice();
       });
 
       // Act
       act(() => {
-      result.current.simulateNextThrow();
+        result.current.simulateNextThrow();
       });
 
       // Assert
@@ -591,14 +593,14 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setConfig({ throwUnit: 3 });
-      result.current.startPractice();
+        result.current.setConfig({ throwUnit: 3 });
+        result.current.startPractice();
       });
       expect(result.current.currentThrowIndex).toBe(0);
 
       // Act
       act(() => {
-      result.current.simulateNextThrow();
+        result.current.simulateNextThrow();
       });
 
       // Assert
@@ -609,15 +611,15 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setConfig({ throwUnit: 3 });
-      result.current.startPractice();
+        result.current.setConfig({ throwUnit: 3 });
+        result.current.startPractice();
       });
 
       // Act
       act(() => {
-      result.current.simulateNextThrow();
-      result.current.simulateNextThrow();
-      result.current.simulateNextThrow();
+        result.current.simulateNextThrow();
+        result.current.simulateNextThrow();
+        result.current.simulateNextThrow();
       });
 
       // Assert
@@ -629,15 +631,15 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setConfig({ throwUnit: 1 });
-      result.current.startPractice();
+        result.current.setConfig({ throwUnit: 1 });
+        result.current.startPractice();
       });
       // 1投モードではstartPractice時点でdisplayedDartsが1になっている
       expect(result.current.displayedDarts).toHaveLength(1);
 
       // Act - simulateNextThrowを呼んでも何も起こらない
       act(() => {
-      result.current.simulateNextThrow();
+        result.current.simulateNextThrow();
       });
 
       // Assert - displayedDartsは1のまま（変化しない）
@@ -650,13 +652,13 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
       const correctAnswer = result.current.getCurrentCorrectAnswer();
 
       // Act
       act(() => {
-      result.current.submitAnswer(correctAnswer);
+        result.current.submitAnswer(correctAnswer);
       });
 
       // Assert
@@ -670,14 +672,14 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
       const correctAnswer = result.current.getCurrentCorrectAnswer();
       const wrongAnswer = correctAnswer + 10;
 
       // Act
       act(() => {
-      result.current.submitAnswer(wrongAnswer);
+        result.current.submitAnswer(wrongAnswer);
       });
 
       // Assert
@@ -690,16 +692,16 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
 
       // Act
       for (let i = 0; i < 3; i++) {
-      const correctAnswer = result.current.getCurrentCorrectAnswer();
-      act(() => {
-      result.current.submitAnswer(correctAnswer);
-      result.current.nextQuestion();
-      });
+        const correctAnswer = result.current.getCurrentCorrectAnswer();
+        act(() => {
+          result.current.submitAnswer(correctAnswer);
+          result.current.nextQuestion();
+        });
       }
 
       // Assert
@@ -711,22 +713,22 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
 
       // 3回正解
       for (let i = 0; i < 3; i++) {
-      const correctAnswer = result.current.getCurrentCorrectAnswer();
-      act(() => {
-      result.current.submitAnswer(correctAnswer);
-      result.current.nextQuestion();
-      });
+        const correctAnswer = result.current.getCurrentCorrectAnswer();
+        act(() => {
+          result.current.submitAnswer(correctAnswer);
+          result.current.nextQuestion();
+        });
       }
 
       // Act - 不正解
       const correctAnswer = result.current.getCurrentCorrectAnswer();
       act(() => {
-      result.current.submitAnswer(correctAnswer + 10);
+        result.current.submitAnswer(correctAnswer + 10);
       });
 
       // Assert
@@ -738,17 +740,17 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setConfig({
-        questionType: 'remaining',
-        startingScore: 501
-      });
-      result.current.startPractice();
+        result.current.setConfig({
+          questionType: 'remaining',
+          startingScore: 501,
+        });
+        result.current.startPractice();
       });
       const correctAnswer = result.current.getCurrentCorrectAnswer();
 
       // Act
       act(() => {
-      result.current.submitAnswer(correctAnswer);
+        result.current.submitAnswer(correctAnswer);
       });
 
       // Assert
@@ -759,8 +761,8 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setSessionConfig({ mode: 'questions', questionCount: 10 });
-      result.current.startPractice();
+        result.current.setSessionConfig({ mode: 'questions', questionCount: 10 });
+        result.current.startPractice();
       });
 
       // Act - 10問すべてに正解する
@@ -782,14 +784,14 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
 
       // Act & Assert
       expect(() => {
-      act(() => {
-      result.current.submitAnswer(NaN);
-      });
+        act(() => {
+          result.current.submitAnswer(NaN);
+        });
       }).toThrow();
     });
 
@@ -797,14 +799,14 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
 
       // Act & Assert
       expect(() => {
-      act(() => {
-      result.current.submitAnswer(Infinity);
-      });
+        act(() => {
+          result.current.submitAnswer(Infinity);
+        });
       }).toThrow();
     });
 
@@ -812,14 +814,14 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
 
       // Act & Assert
       expect(() => {
-      act(() => {
-      result.current.submitAnswer(-10);
-      });
+        act(() => {
+          result.current.submitAnswer(-10);
+        });
       }).toThrow();
     });
 
@@ -827,14 +829,14 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
 
       // Act & Assert
       expect(() => {
-      act(() => {
-      result.current.submitAnswer(60.5);
-      });
+        act(() => {
+          result.current.submitAnswer(60.5);
+        });
       }).toThrow();
     });
   });
@@ -844,13 +846,13 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
       const firstQuestion = result.current.currentQuestion;
 
       // Act
       act(() => {
-      result.current.nextQuestion();
+        result.current.nextQuestion();
       });
 
       // Assert
@@ -862,16 +864,16 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setConfig({ throwUnit: 3 });
-      result.current.startPractice();
-      result.current.simulateNextThrow();
-      result.current.simulateNextThrow();
+        result.current.setConfig({ throwUnit: 3 });
+        result.current.startPractice();
+        result.current.simulateNextThrow();
+        result.current.simulateNextThrow();
       });
       expect(result.current.currentThrowIndex).toBe(2);
 
       // Act
       act(() => {
-      result.current.nextQuestion();
+        result.current.nextQuestion();
       });
 
       // Assert
@@ -882,16 +884,16 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setConfig({ throwUnit: 3 });
-      result.current.startPractice();
-      result.current.simulateNextThrow();
-      result.current.simulateNextThrow();
+        result.current.setConfig({ throwUnit: 3 });
+        result.current.startPractice();
+        result.current.simulateNextThrow();
+        result.current.simulateNextThrow();
       });
       expect(result.current.displayedDarts.length).toBeGreaterThan(0);
 
       // Act
       act(() => {
-      result.current.nextQuestion();
+        result.current.nextQuestion();
       });
 
       // Assert
@@ -904,12 +906,12 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
 
       // Act
       act(() => {
-      result.current.endSession('manual');
+        result.current.endSession('manual');
       });
 
       // Assert
@@ -920,13 +922,13 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
       expect(result.current.isTimerRunning).toBe(true);
 
       // Act
       act(() => {
-      result.current.endSession('manual');
+        result.current.endSession('manual');
       });
 
       // Assert
@@ -937,12 +939,12 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
 
       // Act
       act(() => {
-      result.current.endSession('completed');
+        result.current.endSession('completed');
       });
 
       // Assert
@@ -953,12 +955,12 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
 
       // Act
       act(() => {
-      result.current.endSession('timeout');
+        result.current.endSession('timeout');
       });
 
       // Assert
@@ -969,12 +971,12 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
 
       // Act
       act(() => {
-      result.current.endSession('game_finished');
+        result.current.endSession('game_finished');
       });
 
       // Assert
@@ -987,13 +989,13 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
       expect(result.current.gameState).toBe('practicing');
 
       // Act
       act(() => {
-      result.current.resetToSetup();
+        result.current.resetToSetup();
       });
 
       // Assert
@@ -1004,13 +1006,13 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
       expect(result.current.currentQuestion).not.toBeNull();
 
       // Act
       act(() => {
-      result.current.resetToSetup();
+        result.current.resetToSetup();
       });
 
       // Assert
@@ -1021,14 +1023,14 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
-      const correctAnswer = result.current.getCurrentCorrectAnswer();
-      result.current.submitAnswer(correctAnswer);
+        result.current.startPractice();
+        const correctAnswer = result.current.getCurrentCorrectAnswer();
+        result.current.submitAnswer(correctAnswer);
       });
 
       // Act
       act(() => {
-      result.current.resetToSetup();
+        result.current.resetToSetup();
       });
 
       // Assert
@@ -1039,13 +1041,13 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
-      useGameStore.setState({ elapsedTime: 60 });
+        result.current.startPractice();
+        useGameStore.setState({ elapsedTime: 60 });
       });
 
       // Act
       act(() => {
-      result.current.resetToSetup();
+        result.current.resetToSetup();
       });
 
       // Assert
@@ -1059,14 +1061,14 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setConfig({ questionType: 'remaining', startingScore: 501 });
-      result.current.startPractice();
-      useGameStore.setState({ roundStartScore: 441, remainingScore: 381 });
+        result.current.setConfig({ questionType: 'remaining', startingScore: 501 });
+        result.current.startPractice();
+        useGameStore.setState({ roundStartScore: 441, remainingScore: 381 });
       });
 
       // Act
       act(() => {
-      result.current.handleBust();
+        result.current.handleBust();
       });
 
       // Assert
@@ -1077,13 +1079,13 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setConfig({ questionType: 'remaining', startingScore: 501 });
-      result.current.startPractice();
+        result.current.setConfig({ questionType: 'remaining', startingScore: 501 });
+        result.current.startPractice();
       });
 
       // Act
       act(() => {
-      result.current.handleBust();
+        result.current.handleBust();
       });
 
       // Assert
@@ -1094,14 +1096,14 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setConfig({ questionType: 'remaining', startingScore: 501 });
-      result.current.startPractice();
+        result.current.setConfig({ questionType: 'remaining', startingScore: 501 });
+        result.current.startPractice();
       });
       const initialTotal = result.current.stats.total;
 
       // Act
       act(() => {
-      result.current.handleBust();
+        result.current.handleBust();
       });
 
       // Assert
@@ -1161,15 +1163,15 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
-      result.current.endSession('manual');
+        result.current.startPractice();
+        result.current.endSession('manual');
       });
       expect(result.current.isTimerRunning).toBe(false);
       const elapsedBefore = result.current.elapsedTime;
 
       // Act
       act(() => {
-      result.current.tick();
+        result.current.tick();
       });
 
       // Assert
@@ -1206,7 +1208,7 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
 
       // Act
@@ -1234,9 +1236,9 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      useGameStore.setState({
-      stats: { correct: 8, total: 10, currentStreak: 2, bestStreak: 5 }
-      });
+        useGameStore.setState({
+          stats: { correct: 8, total: 10, currentStreak: 2, bestStreak: 5 },
+        });
       });
 
       // Act
@@ -1262,9 +1264,9 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      useGameStore.setState({
-      stats: { correct: 10, total: 10, currentStreak: 10, bestStreak: 10 }
-      });
+        useGameStore.setState({
+          stats: { correct: 10, total: 10, currentStreak: 10, bestStreak: 10 },
+        });
       });
 
       // Act
@@ -1283,14 +1285,14 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setConfig({ questionType: 'remaining', startingScore: 501 });
-      result.current.startPractice();
-      useGameStore.setState({ remainingScore: 0 });
+        result.current.setConfig({ questionType: 'remaining', startingScore: 501 });
+        result.current.startPractice();
+        useGameStore.setState({ remainingScore: 0 });
       });
 
       // Act
       act(() => {
-      result.current.nextQuestion();
+        result.current.nextQuestion();
       });
 
       // Assert
@@ -1301,9 +1303,9 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setConfig({ questionType: 'remaining', startingScore: 501 });
-      result.current.startPractice();
-      useGameStore.setState({ remainingScore: 1 });
+        result.current.setConfig({ questionType: 'remaining', startingScore: 501 });
+        result.current.startPractice();
+        useGameStore.setState({ remainingScore: 1 });
       });
 
       // 残り1点はダブル1（2点）でしか上がれないためバスト扱い
@@ -1315,30 +1317,30 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.startPractice();
+        result.current.startPractice();
       });
 
       // 5回正解 → 不正解 → 3回正解
       for (let i = 0; i < 5; i++) {
-      const correctAnswer = result.current.getCurrentCorrectAnswer();
-      act(() => {
-      result.current.submitAnswer(correctAnswer);
-      result.current.nextQuestion();
-      });
+        const correctAnswer = result.current.getCurrentCorrectAnswer();
+        act(() => {
+          result.current.submitAnswer(correctAnswer);
+          result.current.nextQuestion();
+        });
       }
 
       const wrongAnswer = result.current.getCurrentCorrectAnswer() + 10;
       act(() => {
-      result.current.submitAnswer(wrongAnswer);
-      result.current.nextQuestion();
+        result.current.submitAnswer(wrongAnswer);
+        result.current.nextQuestion();
       });
 
       for (let i = 0; i < 3; i++) {
-      const correctAnswer = result.current.getCurrentCorrectAnswer();
-      act(() => {
-      result.current.submitAnswer(correctAnswer);
-      if (i < 2) result.current.nextQuestion();
-      });
+        const correctAnswer = result.current.getCurrentCorrectAnswer();
+        act(() => {
+          result.current.submitAnswer(correctAnswer);
+          if (i < 2) result.current.nextQuestion();
+        });
       }
 
       // Assert
@@ -1352,14 +1354,14 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setSessionConfig({ mode: 'questions', questionCount: 10 });
-      result.current.startPractice();
+        result.current.setSessionConfig({ mode: 'questions', questionCount: 10 });
+        result.current.startPractice();
       });
       const correctAnswer = result.current.getCurrentCorrectAnswer();
 
       // Act - 1問目を回答
       act(() => {
-      result.current.submitAnswer(correctAnswer);
+        result.current.submitAnswer(correctAnswer);
       });
 
       // Assert - まだ9問残っている
@@ -1371,14 +1373,14 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setSessionConfig({ mode: 'questions', questionCount: 100 });
-      result.current.startPractice();
+        result.current.setSessionConfig({ mode: 'questions', questionCount: 100 });
+        result.current.startPractice();
       });
 
       // Act - 1問目を回答
       const correctAnswer = result.current.getCurrentCorrectAnswer();
       act(() => {
-      result.current.submitAnswer(correctAnswer);
+        result.current.submitAnswer(correctAnswer);
       });
 
       // Assert
@@ -1390,8 +1392,8 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setSessionConfig({ mode: 'time', timeLimit: 3 });
-      result.current.startPractice();
+        result.current.setSessionConfig({ mode: 'time', timeLimit: 3 });
+        result.current.startPractice();
       });
 
       // Assert
@@ -1402,8 +1404,8 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setConfig({ questionType: 'remaining', startingScore: 301 });
-      result.current.startPractice();
+        result.current.setConfig({ questionType: 'remaining', startingScore: 301 });
+        result.current.startPractice();
       });
 
       // Assert
@@ -1414,8 +1416,8 @@ describe('gameStore', () => {
       // Arrange
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setConfig({ questionType: 'remaining', startingScore: 701 });
-      result.current.startPractice();
+        result.current.setConfig({ questionType: 'remaining', startingScore: 701 });
+        result.current.startPractice();
       });
 
       // Assert
@@ -1426,7 +1428,7 @@ describe('gameStore', () => {
       // Arrange & Act
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setStdDev(1);
+        result.current.setStdDev(1);
       });
 
       // Assert
@@ -1437,7 +1439,7 @@ describe('gameStore', () => {
       // Arrange & Act
       const { result } = renderHook(() => useGameStore());
       act(() => {
-      result.current.setStdDev(100);
+        result.current.setStdDev(100);
       });
 
       // Assert
@@ -1455,13 +1457,13 @@ describe('gameStore', () => {
 
       // Act
       act(() => {
-      result.current.setConfig({
-      throwUnit: 3,
-      judgmentTiming: 'cumulative',
-      questionType: 'remaining',
-      startingScore: 501
-      });
-      result.current.startPractice();
+        result.current.setConfig({
+          throwUnit: 3,
+          judgmentTiming: 'cumulative',
+          questionType: 'remaining',
+          startingScore: 501,
+        });
+        result.current.startPractice();
       });
 
       // Assert
@@ -1477,13 +1479,13 @@ describe('gameStore', () => {
 
       // Act
       act(() => {
-      result.current.setConfig({
-        throwUnit: 1,
-        judgmentTiming: 'independent',
-        questionType: 'score',
-        startingScore: null
-      });
-      result.current.startPractice();
+        result.current.setConfig({
+          throwUnit: 1,
+          judgmentTiming: 'independent',
+          questionType: 'score',
+          startingScore: null,
+        });
+        result.current.startPractice();
       });
 
       // Assert
@@ -1499,13 +1501,13 @@ describe('gameStore', () => {
 
       // Act
       act(() => {
-      result.current.setConfig({
-      throwUnit: 3,
-      judgmentTiming: 'independent',
-      questionType: 'both',
-      startingScore: 501
-      });
-      result.current.startPractice();
+        result.current.setConfig({
+          throwUnit: 3,
+          judgmentTiming: 'independent',
+          questionType: 'both',
+          startingScore: 501,
+        });
+        result.current.startPractice();
       });
 
       // Assert
@@ -1534,7 +1536,7 @@ describe('gameStore', () => {
           result.current.setConfig({
             stdDevMM: 30,
             throwUnit: 3,
-            questionType: 'remaining'
+            questionType: 'remaining',
           });
         });
 
@@ -1572,7 +1574,7 @@ describe('gameStore', () => {
         const newTarget: Target = {
           type: 'DOUBLE',
           number: 16,
-          label: 'D16'
+          label: 'D16',
         };
 
         // Act
@@ -1657,7 +1659,7 @@ describe('gameStore', () => {
         act(() => {
           result.current.startPractice();
           useGameStore.setState({
-            practiceStartTime: Date.now() - 5000
+            practiceStartTime: Date.now() - 5000,
           });
           result.current.tick();
         });
@@ -1721,7 +1723,7 @@ describe('gameStore', () => {
         act(() => {
           result.current.setConfig({
             questionType: 'remaining',
-            startingScore: 501
+            startingScore: 501,
           });
           result.current.startPractice();
         });
@@ -1771,7 +1773,7 @@ describe('gameStore', () => {
           throwUnit: 3 as const,
           questionType: 'both' as const,
           startingScore: 501,
-          stdDevMM: 8
+          stdDevMM: 8,
         };
 
         act(() => {
@@ -1859,7 +1861,7 @@ describe('gameStore', () => {
         const configUpdate = {
           throwUnit: 3 as const,
           questionType: 'score' as const,
-          stdDevMM: 30
+          stdDevMM: 30,
         };
 
         // Act
@@ -1888,7 +1890,7 @@ describe('gameStore', () => {
         const { result } = renderHook(() => useGameStore());
         const newSessionConfig: SessionConfig = {
           mode: 'time',
-          timeLimit: 10
+          timeLimit: 10,
         };
 
         // Act
@@ -1968,7 +1970,7 @@ describe('gameStore', () => {
             throwUnit: 3,
             questionType: 'remaining',
             startingScore: 501,
-            stdDevMM: 15
+            stdDevMM: 15,
           });
         });
 
@@ -2017,7 +2019,13 @@ describe('gameStore', () => {
             currentQuestion: {
               mode: 'remaining',
               throws: [
-                { target: { type: 'TRIPLE', number: 20, label: 'T20' }, landingPoint: { x: 0, y: 100 }, score: 60, ring: 'TRIPLE', segmentNumber: 20 },
+                {
+                  target: { type: 'TRIPLE', number: 20, label: 'T20' },
+                  landingPoint: { x: 0, y: 100 },
+                  score: 60,
+                  ring: 'TRIPLE',
+                  segmentNumber: 20,
+                },
               ],
               correctAnswer: 50, // バスト前の残り点数
               questionText: '残り点数は？',
@@ -2058,7 +2066,13 @@ describe('gameStore', () => {
             currentQuestion: {
               mode: 'remaining',
               throws: [
-                { target: { type: 'SINGLE', number: 5, label: '5' }, landingPoint: { x: 0, y: 50 }, score: 5, ring: 'INNER_SINGLE', segmentNumber: 5 },
+                {
+                  target: { type: 'SINGLE', number: 5, label: '5' },
+                  landingPoint: { x: 0, y: 50 },
+                  score: 5,
+                  ring: 'INNER_SINGLE',
+                  segmentNumber: 5,
+                },
               ],
               correctAnswer: 5,
               questionText: '残り点数は？',
@@ -2081,7 +2095,13 @@ describe('gameStore', () => {
             currentQuestion: {
               mode: 'remaining',
               throws: [
-                { target: { type: 'SINGLE', number: 10, label: '10' }, landingPoint: { x: 0, y: 80 }, score: 10, ring: 'INNER_SINGLE', segmentNumber: 10 },
+                {
+                  target: { type: 'SINGLE', number: 10, label: '10' },
+                  landingPoint: { x: 0, y: 80 },
+                  score: 10,
+                  ring: 'INNER_SINGLE',
+                  segmentNumber: 10,
+                },
               ],
               correctAnswer: remainingAfterFirst, // バスト前の残り点数
               questionText: '残り点数は？',
@@ -2120,7 +2140,13 @@ describe('gameStore', () => {
             currentQuestion: {
               mode: 'remaining',
               throws: [
-                { target: { type: 'SINGLE', number: 20, label: '20' }, landingPoint: { x: 0, y: 100 }, score: 20, ring: 'INNER_SINGLE', segmentNumber: 20 },
+                {
+                  target: { type: 'SINGLE', number: 20, label: '20' },
+                  landingPoint: { x: 0, y: 100 },
+                  score: 20,
+                  ring: 'INNER_SINGLE',
+                  segmentNumber: 20,
+                },
               ],
               correctAnswer: 80,
               questionText: '残り点数は？',
