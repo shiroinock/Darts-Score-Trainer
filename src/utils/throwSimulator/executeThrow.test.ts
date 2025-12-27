@@ -137,7 +137,7 @@ describe('executeThrow', () => {
       // Arrange
       const target = { type: 'BULL' as const, number: null };
       const stdDevMM = 30;
-      const sampleSize = 100;
+      const sampleSize = 1000;
 
       // Act
       let sumX = 0;
