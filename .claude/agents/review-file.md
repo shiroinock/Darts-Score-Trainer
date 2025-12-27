@@ -573,3 +573,72 @@ JSON出力が不完全になった場合のフォールバック：
 5. JSON形式でレビュー結果を出力
 6. **ここで終了** - 他のタスクには言及しない
 ```
+
+## JSON出力形式の簡潔性向上（2025-12-28追記）
+
+### 問題
+2ファイル（実装＋テスト）のレビュー時にJSON出力が複雑になり、Haikuモデルの出力制限に達しやすい。
+
+### 改善策
+
+#### 1. 2ファイル同時レビュー時の専用形式
+実装ファイルとテストファイルをセットでレビューする場合：
+
+```json
+{
+  "files": {
+    "implementation": "src/utils/quizGenerator.ts",
+    "test": "src/utils/quizGenerator.test.ts"
+  },
+  "result": "PASS",
+  "summary": {
+    "implementation": {
+      "status": "PASS",
+      "key_issues": []
+    },
+    "test": {
+      "status": "PASS", 
+      "key_issues": []
+    }
+  },
+  "critical_findings": [],
+  "notes": "仕様準拠・型安全性・テスト品質すべて問題なし"
+}
+```
+
+#### 2. 問題がある場合の出力例
+```json
+{
+  "files": {
+    "implementation": "src/utils/gameLogic.ts",
+    "test": "src/utils/gameLogic.test.ts"
+  },
+  "result": "WARN",
+  "summary": {
+    "implementation": {
+      "status": "WARN",
+      "key_issues": [
+        {
+          "line": 42,
+          "issue": "マジックナンバー3の使用",
+          "fix": "MIN_THROWS定数として定義"
+        }
+      ]
+    },
+    "test": {
+      "status": "PASS",
+      "key_issues": []
+    }
+  },
+  "critical_findings": [
+    "ドメイン知識を表す数値の定数化が必要"
+  ],
+  "notes": "その他は問題なし"
+}
+```
+
+#### 3. 出力サイズの制限
+- **key_issues**: 各ファイル最大2件まで
+- **critical_findings**: 最大3件まで
+- **各文字列**: 30文字以内
+- **codeフィールド**: 完全に省略
