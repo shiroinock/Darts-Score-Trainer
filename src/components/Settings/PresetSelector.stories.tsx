@@ -1,12 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { PRESETS } from '../../stores/config/presets';
 import { useGameStore } from '../../stores/gameStore';
 import { PresetSelector } from './PresetSelector';
 
 const withMockStore =
   (configId = 'preset-basic') =>
   (Story: React.ComponentType) => {
-    // ストーリー描画前に状態を設定
-    useGameStore.setState({ config: { configId } });
+    // プリセットから完全な設定を取得して状態を設定
+    const config = PRESETS[configId];
+    useGameStore.setState({ config });
     return <Story />;
   };
 
