@@ -36,6 +36,13 @@ const meta = {
     },
   },
   tags: ['autodocs'],
+  decorators: [
+    (Story) => (
+      <div style={{ minWidth: '600px' }}>
+        <Story />
+      </div>
+    ),
+  ],
 } satisfies Meta<typeof SessionConfigSelector>;
 
 export default meta;

@@ -33,7 +33,7 @@ const meta = {
     layout: 'centered',
     docs: {
       story: {
-        height: '300px',
+        height: '400px',
       },
     },
   },

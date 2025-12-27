@@ -4,7 +4,14 @@ import { DartBoard } from './DartBoard';
 const meta = {
   title: 'DartBoard/DartBoard',
   component: DartBoard,
-  parameters: { layout: 'fullscreen' },
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      story: {
+        height: '800px',
+      },
+    },
+  },
   tags: ['autodocs'],
   argTypes: {
     coords: { description: 'ダーツ位置配列（物理座標、mm単位）' },
