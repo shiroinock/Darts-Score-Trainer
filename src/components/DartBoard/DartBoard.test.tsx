@@ -723,4 +723,43 @@ describe('DartBoard', () => {
       expect(width).toBe(760);
     });
   });
+
+  describe('スナップショットテスト', () => {
+    test('デフォルト状態（ダーツなし）のスナップショット', () => {
+      // Arrange
+      const coords: Coordinates[] = [];
+
+      // Act
+      const { container } = render(<DartBoard coords={coords} dartCount={0} />);
+
+      // Assert
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    test('1投のダーツ表示状態のスナップショット', () => {
+      // Arrange
+      const coords: Coordinates[] = [{ x: 0, y: -103 }]; // トリプル20付近
+
+      // Act
+      const { container } = render(<DartBoard coords={coords} dartCount={1} />);
+
+      // Assert
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    test('3投のダーツ表示状態のスナップショット（凡例表示）', () => {
+      // Arrange
+      const coords: Coordinates[] = [
+        { x: 0, y: -103 }, // トリプル20付近
+        { x: 50, y: 50 },
+        { x: -30, y: -30 },
+      ];
+
+      // Act
+      const { container } = render(<DartBoard coords={coords} dartCount={3} />);
+
+      // Assert
+      expect(container.firstChild).toMatchSnapshot();
+    });
+  });
 });

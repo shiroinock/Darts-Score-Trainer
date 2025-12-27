@@ -424,4 +424,14 @@ describe('PresetSelector', () => {
       expect(uniqueNames.size).toBe(configNames.length);
     });
   });
+
+  describe('スナップショットテスト', () => {
+    test('デフォルト状態（基礎練習選択）のスナップショット', () => {
+      // Arrange & Act
+      const { container } = render(<PresetSelector />);
+
+      // Assert
+      expect(container.firstChild).toMatchSnapshot();
+    });
+  });
 });
