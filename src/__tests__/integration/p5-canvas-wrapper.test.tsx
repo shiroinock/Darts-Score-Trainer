@@ -4,6 +4,7 @@
  */
 
 import { render } from '@testing-library/react';
+import type p5Types from 'p5';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { P5Canvas } from '../../components/DartBoard/P5Canvas';
 import type { Coordinates } from '../../types';
@@ -13,16 +14,29 @@ import { BOARD_PHYSICAL, DART_COLORS } from '../../utils/constants/index.js';
  * react-p5のSketchコンポーネントのProps型定義
  */
 interface SketchProps {
-  setup?: (p5: any, canvasParentRef: Element) => void;
-  draw?: (p5: any) => void;
-  windowResized?: (p5: any) => void;
+  setup?: (p5: p5Types, canvasParentRef: Element) => void;
+  draw?: (p5: p5Types) => void;
+  windowResized?: (p5: p5Types) => void;
 }
+
+/**
+ * グローバルスコープに追加されるテスト用のプロパティ
+ */
+declare global {
+  interface Window {
+    __mockP5Instance?: p5Types;
+    __mockWindowResized?: () => void;
+  }
+}
+
+// globalThisにWindow型を適用
+const testGlobal = globalThis as typeof globalThis & Window;
 
 // react-p5のSketchコンポーネントをモック化
 vi.mock('react-p5', () => {
   return {
     default: ({ setup, draw, windowResized }: SketchProps) => {
-      // モックのp5インスタンスを作成
+      // モックのp5インスタンスを作成（型アサーションで完全なp5型として扱う）
       const mockP5 = {
         windowWidth: 800,
         windowHeight: 600,
@@ -46,7 +60,7 @@ vi.mock('react-p5', () => {
         rotate: vi.fn(),
         PIE: 'PIE',
         CENTER: 'CENTER',
-      };
+      } as unknown as p5Types;
 
       // モックのcanvasParentRef
       const mockCanvasParent = document.createElement('div');
@@ -64,11 +78,11 @@ vi.mock('react-p5', () => {
       // windowResized関数を保持しておく
       if (windowResized) {
         // グローバルに保存してテストから呼び出せるようにする
-        (globalThis as any).__mockWindowResized = () => windowResized(mockP5);
+        testGlobal.__mockWindowResized = () => windowResized(mockP5);
       }
 
       // モックのp5インスタンスをグローバルに保存してテストから参照できるようにする
-      (globalThis as any).__mockP5Instance = mockP5;
+      testGlobal.__mockP5Instance = mockP5;
 
       return null; // Reactコンポーネントとしてnullを返す
     },
@@ -94,8 +108,8 @@ describe('p5-canvas-wrapper integration', () => {
     // 各テスト前にモックをクリア
     vi.clearAllMocks();
     // グローバル変数をクリア
-    delete (globalThis as any).__mockP5Instance;
-    delete (globalThis as any).__mockWindowResized;
+    delete testGlobal.__mockP5Instance;
+    delete testGlobal.__mockWindowResized;
   });
 
   describe('正常系 - Sketchコンポーネントのマウント確認', () => {
@@ -143,7 +157,7 @@ describe('p5-canvas-wrapper integration', () => {
       render(<P5Canvas coords={coords} dartCount={0} />);
 
       // Assert
-      const mockP5 = (globalThis as any).__mockP5Instance;
+      const mockP5 = testGlobal.__mockP5Instance!;
       expect(mockP5).toBeDefined();
       expect(mockP5.createCanvas).toHaveBeenCalledTimes(1);
     });
@@ -156,7 +170,7 @@ describe('p5-canvas-wrapper integration', () => {
       render(<P5Canvas coords={coords} dartCount={0} />);
 
       // Assert
-      const mockP5 = (globalThis as any).__mockP5Instance;
+      const mockP5 = testGlobal.__mockP5Instance!;
       expect(mockP5.createCanvas).toHaveBeenCalledWith(800, 600);
     });
 
@@ -170,7 +184,7 @@ describe('p5-canvas-wrapper integration', () => {
       // Assert
       // CoordinateTransformの初期化は間接的に検証
       // createCanvasが呼ばれ、drawBoardが呼ばれることで初期化されていることを確認
-      const mockP5 = (globalThis as any).__mockP5Instance;
+      const mockP5 = testGlobal.__mockP5Instance!;
       expect(mockP5.createCanvas).toHaveBeenCalledWith(800, 600);
       expect(drawBoard).toHaveBeenCalled();
     });
@@ -183,8 +197,9 @@ describe('p5-canvas-wrapper integration', () => {
       render(<P5Canvas coords={coords} dartCount={0} />);
 
       // Assert
-      const mockP5 = (globalThis as any).__mockP5Instance;
-      const createCanvasReturnValue = mockP5.createCanvas.mock.results[0].value;
+      const mockP5 = testGlobal.__mockP5Instance!;
+      const createCanvasMock = mockP5.createCanvas as ReturnType<typeof vi.fn>;
+      const createCanvasReturnValue = createCanvasMock.mock.results[0].value;
       expect(createCanvasReturnValue.parent).toHaveBeenCalledTimes(1);
     });
   });
@@ -209,11 +224,11 @@ describe('p5-canvas-wrapper integration', () => {
       render(<P5Canvas coords={coords} dartCount={0} />);
 
       // Assert
-      const mockP5 = (globalThis as any).__mockP5Instance;
+      const mockP5 = testGlobal.__mockP5Instance;
       expect(drawBoard).toHaveBeenCalledWith(mockP5, expect.any(Object));
 
       // CoordinateTransformインスタンスが渡されていることを確認
-      const transformArg = (drawBoard as any).mock.calls[0][1];
+      const transformArg = vi.mocked(drawBoard).mock.calls[0][1];
       expect(transformArg).toHaveProperty('getCenter');
       expect(transformArg).toHaveProperty('physicalToScreen');
       expect(transformArg).toHaveProperty('physicalDistanceToScreen');
@@ -227,7 +242,7 @@ describe('p5-canvas-wrapper integration', () => {
       render(<P5Canvas coords={coords} dartCount={0} />);
 
       // Assert
-      const mockP5 = (globalThis as any).__mockP5Instance;
+      const mockP5 = testGlobal.__mockP5Instance;
       expect(drawBoard).toHaveBeenCalledWith(mockP5, expect.any(Object));
     });
   });
@@ -239,12 +254,12 @@ describe('p5-canvas-wrapper integration', () => {
       render(<P5Canvas coords={coords} dartCount={0} />);
 
       // Act
-      const windowResizedFn = (globalThis as any).__mockWindowResized;
+      const windowResizedFn = testGlobal.__mockWindowResized!;
       expect(windowResizedFn).toBeDefined();
       windowResizedFn();
 
       // Assert
-      const mockP5 = (globalThis as any).__mockP5Instance;
+      const mockP5 = testGlobal.__mockP5Instance!;
       expect(mockP5.resizeCanvas).toHaveBeenCalledTimes(1);
       expect(mockP5.resizeCanvas).toHaveBeenCalledWith(800, 600);
     });
@@ -255,13 +270,13 @@ describe('p5-canvas-wrapper integration', () => {
       render(<P5Canvas coords={coords} dartCount={0} />);
 
       // Act
-      const windowResizedFn = (globalThis as any).__mockWindowResized;
+      const windowResizedFn = testGlobal.__mockWindowResized!;
       windowResizedFn();
 
       // Assert
       // updateCanvasSizeの呼び出しは間接的に検証
       // resizeCanvasが呼ばれることで、内部でupdateCanvasSizeも呼ばれていることを確認
-      const mockP5 = (globalThis as any).__mockP5Instance;
+      const mockP5 = testGlobal.__mockP5Instance!;
       expect(mockP5.resizeCanvas).toHaveBeenCalled();
     });
 
@@ -271,13 +286,13 @@ describe('p5-canvas-wrapper integration', () => {
       render(<P5Canvas coords={coords} dartCount={0} />);
 
       // Act
-      const windowResizedFn = (globalThis as any).__mockWindowResized;
+      const windowResizedFn = testGlobal.__mockWindowResized!;
       windowResizedFn();
       windowResizedFn();
       windowResizedFn();
 
       // Assert
-      const mockP5 = (globalThis as any).__mockP5Instance;
+      const mockP5 = testGlobal.__mockP5Instance!;
       expect(mockP5.resizeCanvas).toHaveBeenCalledTimes(3);
     });
   });
@@ -333,8 +348,8 @@ describe('p5-canvas-wrapper integration', () => {
       render(<P5Canvas coords={coords} dartCount={2} />);
 
       // Assert
-      const firstCall = (drawDartMarker as any).mock.calls[0];
-      const secondCall = (drawDartMarker as any).mock.calls[1];
+      const firstCall = vi.mocked(drawDartMarker).mock.calls[0];
+      const secondCall = vi.mocked(drawDartMarker).mock.calls[1];
 
       expect(firstCall[2]).toEqual({ x: 10, y: 20 });
       expect(secondCall[2]).toEqual({ x: 30, y: 40 });
@@ -352,9 +367,9 @@ describe('p5-canvas-wrapper integration', () => {
       render(<P5Canvas coords={coords} dartCount={3} />);
 
       // Assert
-      const firstCall = (drawDartMarker as any).mock.calls[0];
-      const secondCall = (drawDartMarker as any).mock.calls[1];
-      const thirdCall = (drawDartMarker as any).mock.calls[2];
+      const firstCall = vi.mocked(drawDartMarker).mock.calls[0];
+      const secondCall = vi.mocked(drawDartMarker).mock.calls[1];
+      const thirdCall = vi.mocked(drawDartMarker).mock.calls[2];
 
       expect(firstCall[3]).toBe(DART_COLORS.first); // 1本目: 赤系
       expect(secondCall[3]).toBe(DART_COLORS.second); // 2本目: 青緑系
@@ -373,9 +388,9 @@ describe('p5-canvas-wrapper integration', () => {
       render(<P5Canvas coords={coords} dartCount={3} />);
 
       // Assert
-      const firstCall = (drawDartMarker as any).mock.calls[0];
-      const secondCall = (drawDartMarker as any).mock.calls[1];
-      const thirdCall = (drawDartMarker as any).mock.calls[2];
+      const firstCall = vi.mocked(drawDartMarker).mock.calls[0];
+      const secondCall = vi.mocked(drawDartMarker).mock.calls[1];
+      const thirdCall = vi.mocked(drawDartMarker).mock.calls[2];
 
       expect(firstCall[4]).toBe(0); // インデックス0
       expect(secondCall[4]).toBe(1); // インデックス1
@@ -465,7 +480,7 @@ describe('p5-canvas-wrapper integration', () => {
       render(<P5Canvas coords={coords} dartCount={3} />);
 
       // Assert
-      const mockP5 = (globalThis as any).__mockP5Instance;
+      const mockP5 = testGlobal.__mockP5Instance;
       expect(drawLegend).toHaveBeenCalledWith(mockP5, 3);
     });
   });
@@ -483,7 +498,7 @@ describe('p5-canvas-wrapper integration', () => {
       render(<P5Canvas coords={coords} dartCount={0} />);
 
       // Assert
-      const mockP5 = (globalThis as any).__mockP5Instance;
+      const mockP5 = testGlobal.__mockP5Instance!;
       expect(mockP5.createCanvas).toHaveBeenCalledWith(originalMockP5Width, originalMockP5Height);
     });
 
@@ -494,11 +509,11 @@ describe('p5-canvas-wrapper integration', () => {
       vi.clearAllMocks(); // 初期描画のモック呼び出しをクリア
 
       // Act
-      const windowResizedFn = (globalThis as any).__mockWindowResized;
+      const windowResizedFn = testGlobal.__mockWindowResized!;
       windowResizedFn();
 
       // Assert
-      const mockP5 = (globalThis as any).__mockP5Instance;
+      const mockP5 = testGlobal.__mockP5Instance!;
       expect(mockP5.resizeCanvas).toHaveBeenCalled();
     });
   });
@@ -512,7 +527,7 @@ describe('p5-canvas-wrapper integration', () => {
       render(<P5Canvas coords={coords} dartCount={0} />);
 
       // Assert
-      const mockP5 = (globalThis as any).__mockP5Instance;
+      const mockP5 = testGlobal.__mockP5Instance;
       expect(drawBoard).toHaveBeenCalledWith(
         mockP5,
         expect.objectContaining({
@@ -532,7 +547,7 @@ describe('p5-canvas-wrapper integration', () => {
       render(<P5Canvas coords={coords} dartCount={1} />);
 
       // Assert
-      const call = (drawDartMarker as any).mock.calls[0];
+      const call = vi.mocked(drawDartMarker).mock.calls[0];
       expect(call.length).toBe(5);
 
       // 引数の型を確認
@@ -555,7 +570,7 @@ describe('p5-canvas-wrapper integration', () => {
       render(<P5Canvas coords={coords} dartCount={3} />);
 
       // Assert
-      const call = (drawLegend as any).mock.calls[0];
+      const call = vi.mocked(drawLegend).mock.calls[0];
       expect(call.length).toBe(2);
       expect(call[0]).toBeDefined(); // p5インスタンス
       expect(call[1]).toBe(3); // dartCount
@@ -589,9 +604,9 @@ describe('p5-canvas-wrapper integration', () => {
       const callOrder: string[] = [];
 
       // モック関数の呼び出し順序を記録
-      (drawBoard as any).mockImplementation(() => callOrder.push('drawBoard'));
-      (drawDartMarker as any).mockImplementation(() => callOrder.push('drawDartMarker'));
-      (drawLegend as any).mockImplementation(() => callOrder.push('drawLegend'));
+      vi.mocked(drawBoard).mockImplementation(() => callOrder.push('drawBoard'));
+      vi.mocked(drawDartMarker).mockImplementation(() => callOrder.push('drawDartMarker'));
+      vi.mocked(drawLegend).mockImplementation(() => callOrder.push('drawLegend'));
 
       // Act
       render(<P5Canvas coords={coords} dartCount={3} />);
@@ -621,7 +636,7 @@ describe('p5-canvas-wrapper integration', () => {
       expect(drawBoard).toHaveBeenCalled();
 
       // drawBoardに渡されたCoordinateTransformインスタンスを取得
-      const transformArg = (drawBoard as any).mock.calls[0][1];
+      const transformArg = vi.mocked(drawBoard).mock.calls[0][1];
 
       // getCenter()が正常に動作することを確認（初期化されている証拠）
       const center = transformArg.getCenter();

@@ -137,7 +137,7 @@ describe('drawSpider - スパイダー描画の統合テスト', () => {
 
       // Assert
       // stroke()が呼ばれ、色が#C0C0C0であることを確認
-      const strokeCalls = strokeSpy.mock.calls.filter((call) => call[0] === '#C0C0C0');
+      const strokeCalls = strokeSpy.mock.calls.filter((call) => String(call[0]) === '#C0C0C0');
       expect(strokeCalls.length).toBeGreaterThan(0);
     });
 
@@ -327,7 +327,7 @@ describe('drawSpider - スパイダー描画の統合テスト', () => {
 
       // Assert
       // stroke()が#C0C0C0で呼ばれていることを確認
-      const strokeCalls = strokeSpy.mock.calls.filter((call) => call[0] === '#C0C0C0');
+      const strokeCalls = strokeSpy.mock.calls.filter((call) => String(call[0]) === '#C0C0C0');
       expect(strokeCalls.length).toBeGreaterThan(0);
     });
 
@@ -435,13 +435,13 @@ describe('drawSpider - スパイダー描画の統合テスト', () => {
       const callOrder: string[] = [];
 
       // モックの呼び出しを記録
-      lineSpy.mockImplementation((..._args) => {
+      lineSpy.mockImplementation(() => {
         callOrder.push('line');
-        return undefined as any;
+        return mockP5;
       });
-      circleSpy.mockImplementation((..._args) => {
+      circleSpy.mockImplementation(() => {
         callOrder.push('circle');
-        return undefined as any;
+        return mockP5;
       });
 
       // Act

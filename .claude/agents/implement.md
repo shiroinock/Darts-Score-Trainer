@@ -246,3 +246,56 @@ const innerRadius = transform.physicalDistanceToScreen(innerRadiusPhysical);
 1. 変数定義時に明確にコメントを付ける
 2. 使用時に正しい変数を参照しているか再確認する
 3. コピー＆ペーストによるミスを防ぐため、各行を個別に実装する
+
+## TypeScriptエラー修正時の注意点（テストファイル）
+
+### モックオブジェクトの型エラー対処法
+
+モックオブジェクトが完全な型を満たせない場合の対処法：
+
+```typescript
+// ✅ 推奨：unknown経由の型アサーション
+const mockP5 = {
+  // 必要最小限のプロパティのみモック
+  createCanvas: vi.fn(),
+  resizeCanvas: vi.fn()
+} as unknown as p5Types;
+
+// ❌ 避ける：すべてのプロパティを実装（430以上のプロパティは現実的でない）
+```
+
+### undefined可能性エラーの対処法
+
+テスト実行時に必ず初期化される変数の場合：
+
+```typescript
+// ✅ 推奨：非null assertion（テストで確実に初期化される場合）
+const mockP5 = testGlobal.__mockP5Instance!;
+
+// または明示的なチェック（より安全）
+expect(testGlobal.__mockP5Instance).toBeDefined();
+const mockP5 = testGlobal.__mockP5Instance!;
+```
+
+### Vitestモック関数の型処理
+
+```typescript
+// ✅ 推奨：ReturnType<typeof vi.fn>でキャスト
+const createCanvasMock = mockP5.createCanvas as ReturnType<typeof vi.fn>;
+const mockResults = createCanvasMock.mock.results;
+
+// ❌ 避ける：any型の使用
+```
+
+### 型エラー修正の原則
+
+1. **型安全性を保ちつつ実用的に対処**
+   - 完全性よりも実用性を優先（テストコードの場合）
+   - 型アサーションは最小限に留める
+
+2. **既存のテストロジックを変更しない**
+   - 型エラーの修正のみ行う
+   - テストの意図や構造は維持する
+
+3. **可読性を維持**
+   - 複雑な型操作より、シンプルで理解しやすい解決策を選ぶ
