@@ -2,6 +2,26 @@ import { describe, expect, test } from 'vitest';
 import type { PracticeConfig } from '../types/PracticeConfig';
 import { findMatchingPreset, generateCustomId, getPresetById, PRACTICE_PRESETS } from './presets';
 
+/**
+ * テスト用のPracticeConfigを生成するヘルパー関数
+ * @param overrides - 上書きするプロパティ
+ * @returns 完全なPracticeConfigオブジェクト
+ */
+function createTestConfig(overrides: Partial<PracticeConfig> = {}): PracticeConfig {
+  return {
+    configId: 'test-config',
+    configName: 'Test Config',
+    throwUnit: 1,
+    questionType: 'score',
+    judgmentTiming: 'independent',
+    startingScore: null,
+    target: { type: 'TRIPLE', number: 20 },
+    stdDevMM: 30,
+    isPreset: false,
+    ...overrides,
+  };
+}
+
 describe('PRACTICE_PRESETS', () => {
   describe('プリセットの存在確認', () => {
     test('basicプリセットが存在する', () => {
@@ -201,15 +221,15 @@ describe('findMatchingPreset', () => {
   describe('正常系', () => {
     test('basicプリセットに合致する設定でbasicを返す', () => {
       // Arrange
-      const config: Partial<PracticeConfig> = {
+      const config = createTestConfig({
         throwUnit: 1,
         questionType: 'score',
         judgmentTiming: 'independent',
         startingScore: null,
-      };
+      });
 
       // Act
-      const result = findMatchingPreset(config as PracticeConfig);
+      const result = findMatchingPreset(config);
 
       // Assert
       expect(result).toBe('basic');
@@ -217,15 +237,15 @@ describe('findMatchingPreset', () => {
 
     test('playerプリセットに合致する設定でplayerを返す', () => {
       // Arrange
-      const config: Partial<PracticeConfig> = {
+      const config = createTestConfig({
         throwUnit: 3,
         questionType: 'remaining',
         judgmentTiming: 'cumulative',
         startingScore: 501,
-      };
+      });
 
       // Act
-      const result = findMatchingPreset(config as PracticeConfig);
+      const result = findMatchingPreset(config);
 
       // Assert
       expect(result).toBe('player');
@@ -233,15 +253,15 @@ describe('findMatchingPreset', () => {
 
     test('callerBasicプリセットに合致する設定でcallerBasicを返す', () => {
       // Arrange
-      const config: Partial<PracticeConfig> = {
+      const config = createTestConfig({
         throwUnit: 3,
         questionType: 'score',
         judgmentTiming: 'independent',
         startingScore: null,
-      };
+      });
 
       // Act
-      const result = findMatchingPreset(config as PracticeConfig);
+      const result = findMatchingPreset(config);
 
       // Assert
       expect(result).toBe('callerBasic');
@@ -249,15 +269,15 @@ describe('findMatchingPreset', () => {
 
     test('callerCumulativeプリセットに合致する設定でcallerCumulativeを返す', () => {
       // Arrange
-      const config: Partial<PracticeConfig> = {
+      const config = createTestConfig({
         throwUnit: 3,
         questionType: 'score',
         judgmentTiming: 'cumulative',
         startingScore: null,
-      };
+      });
 
       // Act
-      const result = findMatchingPreset(config as PracticeConfig);
+      const result = findMatchingPreset(config);
 
       // Assert
       expect(result).toBe('callerCumulative');
@@ -265,15 +285,15 @@ describe('findMatchingPreset', () => {
 
     test('comprehensiveプリセットに合致する設定でcomprehensiveを返す', () => {
       // Arrange
-      const config: Partial<PracticeConfig> = {
+      const config = createTestConfig({
         throwUnit: 3,
         questionType: 'both',
         judgmentTiming: 'cumulative',
         startingScore: 501,
-      };
+      });
 
       // Act
-      const result = findMatchingPreset(config as PracticeConfig);
+      const result = findMatchingPreset(config);
 
       // Assert
       expect(result).toBe('comprehensive');
@@ -283,15 +303,15 @@ describe('findMatchingPreset', () => {
   describe('カスタム設定', () => {
     test('どのプリセットにも合致しない設定でnullを返す', () => {
       // Arrange - throwUnitが1でquestionTypeが'remaining'というプリセットは存在しない
-      const config: Partial<PracticeConfig> = {
+      const config = createTestConfig({
         throwUnit: 1,
         questionType: 'remaining',
         judgmentTiming: 'independent',
         startingScore: 501,
-      };
+      });
 
       // Act
-      const result = findMatchingPreset(config as PracticeConfig);
+      const result = findMatchingPreset(config);
 
       // Assert
       expect(result).toBeNull();
@@ -299,15 +319,15 @@ describe('findMatchingPreset', () => {
 
     test('異なるstartingScore（701）でnullを返す', () => {
       // Arrange - playerと似ているがstartingScoreが701
-      const config: Partial<PracticeConfig> = {
+      const config = createTestConfig({
         throwUnit: 3,
         questionType: 'remaining',
         judgmentTiming: 'cumulative',
         startingScore: 701,
-      };
+      });
 
       // Act
-      const result = findMatchingPreset(config as PracticeConfig);
+      const result = findMatchingPreset(config);
 
       // Assert
       expect(result).toBeNull();
@@ -319,16 +339,16 @@ describe('generateCustomId', () => {
   describe('決定性', () => {
     test('同じ設定で常に同じIDを生成する', () => {
       // Arrange
-      const config: Partial<PracticeConfig> = {
+      const config = createTestConfig({
         throwUnit: 1,
         questionType: 'score',
         judgmentTiming: 'independent',
         startingScore: null,
-      };
+      });
 
       // Act
-      const id1 = generateCustomId(config as PracticeConfig);
-      const id2 = generateCustomId(config as PracticeConfig);
+      const id1 = generateCustomId(config);
+      const id2 = generateCustomId(config);
 
       // Assert
       expect(id1).toBe(id2);
@@ -336,15 +356,15 @@ describe('generateCustomId', () => {
 
     test('IDが"custom-"で始まる', () => {
       // Arrange
-      const config: Partial<PracticeConfig> = {
+      const config = createTestConfig({
         throwUnit: 3,
         questionType: 'both',
         judgmentTiming: 'cumulative',
         startingScore: 501,
-      };
+      });
 
       // Act
-      const id = generateCustomId(config as PracticeConfig);
+      const id = generateCustomId(config);
 
       // Assert
       expect(id).toMatch(/^custom-/);
@@ -354,22 +374,22 @@ describe('generateCustomId', () => {
   describe('識別性', () => {
     test('異なるthrowUnitで異なるIDを生成する', () => {
       // Arrange
-      const config1: Partial<PracticeConfig> = {
+      const config1 = createTestConfig({
         throwUnit: 1,
         questionType: 'score',
         judgmentTiming: 'independent',
         startingScore: null,
-      };
-      const config2: Partial<PracticeConfig> = {
+      });
+      const config2 = createTestConfig({
         throwUnit: 3,
         questionType: 'score',
         judgmentTiming: 'independent',
         startingScore: null,
-      };
+      });
 
       // Act
-      const id1 = generateCustomId(config1 as PracticeConfig);
-      const id2 = generateCustomId(config2 as PracticeConfig);
+      const id1 = generateCustomId(config1);
+      const id2 = generateCustomId(config2);
 
       // Assert
       expect(id1).not.toBe(id2);
@@ -377,22 +397,22 @@ describe('generateCustomId', () => {
 
     test('異なるquestionTypeで異なるIDを生成する', () => {
       // Arrange
-      const config1: Partial<PracticeConfig> = {
+      const config1 = createTestConfig({
         throwUnit: 3,
         questionType: 'score',
         judgmentTiming: 'cumulative',
         startingScore: null,
-      };
-      const config2: Partial<PracticeConfig> = {
+      });
+      const config2 = createTestConfig({
         throwUnit: 3,
         questionType: 'remaining',
         judgmentTiming: 'cumulative',
         startingScore: 501,
-      };
+      });
 
       // Act
-      const id1 = generateCustomId(config1 as PracticeConfig);
-      const id2 = generateCustomId(config2 as PracticeConfig);
+      const id1 = generateCustomId(config1);
+      const id2 = generateCustomId(config2);
 
       // Assert
       expect(id1).not.toBe(id2);
@@ -400,22 +420,22 @@ describe('generateCustomId', () => {
 
     test('異なるjudgmentTimingで異なるIDを生成する', () => {
       // Arrange
-      const config1: Partial<PracticeConfig> = {
+      const config1 = createTestConfig({
         throwUnit: 3,
         questionType: 'score',
         judgmentTiming: 'independent',
         startingScore: null,
-      };
-      const config2: Partial<PracticeConfig> = {
+      });
+      const config2 = createTestConfig({
         throwUnit: 3,
         questionType: 'score',
         judgmentTiming: 'cumulative',
         startingScore: null,
-      };
+      });
 
       // Act
-      const id1 = generateCustomId(config1 as PracticeConfig);
-      const id2 = generateCustomId(config2 as PracticeConfig);
+      const id1 = generateCustomId(config1);
+      const id2 = generateCustomId(config2);
 
       // Assert
       expect(id1).not.toBe(id2);
@@ -423,22 +443,22 @@ describe('generateCustomId', () => {
 
     test('異なるstartingScoreで異なるIDを生成する', () => {
       // Arrange
-      const config1: Partial<PracticeConfig> = {
+      const config1 = createTestConfig({
         throwUnit: 3,
         questionType: 'remaining',
         judgmentTiming: 'cumulative',
         startingScore: 501,
-      };
-      const config2: Partial<PracticeConfig> = {
+      });
+      const config2 = createTestConfig({
         throwUnit: 3,
         questionType: 'remaining',
         judgmentTiming: 'cumulative',
         startingScore: 701,
-      };
+      });
 
       // Act
-      const id1 = generateCustomId(config1 as PracticeConfig);
-      const id2 = generateCustomId(config2 as PracticeConfig);
+      const id1 = generateCustomId(config1);
+      const id2 = generateCustomId(config2);
 
       // Assert
       expect(id1).not.toBe(id2);
@@ -448,15 +468,15 @@ describe('generateCustomId', () => {
   describe('エッジケース', () => {
     test('startingScoreがnullの設定でもIDを生成できる', () => {
       // Arrange
-      const config: Partial<PracticeConfig> = {
+      const config = createTestConfig({
         throwUnit: 1,
         questionType: 'score',
         judgmentTiming: 'independent',
         startingScore: null,
-      };
+      });
 
       // Act
-      const id = generateCustomId(config as PracticeConfig);
+      const id = generateCustomId(config);
 
       // Assert
       expect(id).toBeTruthy();
@@ -465,15 +485,15 @@ describe('generateCustomId', () => {
 
     test('startingScoreが301の設定でIDを生成できる', () => {
       // Arrange
-      const config: Partial<PracticeConfig> = {
+      const config = createTestConfig({
         throwUnit: 3,
         questionType: 'remaining',
         judgmentTiming: 'cumulative',
         startingScore: 301,
-      };
+      });
 
       // Act
-      const id = generateCustomId(config as PracticeConfig);
+      const id = generateCustomId(config);
 
       // Assert
       expect(id).toBeTruthy();
@@ -550,7 +570,7 @@ describe('getPresetById', () => {
       const result = getPresetById('preset-nonexistent');
 
       // Assert
-      expect(result).toBeUndefined();
+      expect(result).toBeNull();
     });
 
     test('custom-で始まるIDでundefinedを返す', () => {
@@ -559,7 +579,7 @@ describe('getPresetById', () => {
       const result = getPresetById('custom-12345');
 
       // Assert
-      expect(result).toBeUndefined();
+      expect(result).toBeNull();
     });
 
     test('空文字列でundefinedを返す', () => {
@@ -567,7 +587,7 @@ describe('getPresetById', () => {
       const result = getPresetById('');
 
       // Assert
-      expect(result).toBeUndefined();
+      expect(result).toBeNull();
     });
   });
 
@@ -577,7 +597,7 @@ describe('getPresetById', () => {
       const result = getPresetById('preset-BASIC');
 
       // Assert
-      expect(result).toBeUndefined();
+      expect(result).toBeNull();
     });
 
     test('PRESET-basicでは取得できない（大文字小文字を区別する）', () => {
@@ -585,7 +605,7 @@ describe('getPresetById', () => {
       const result = getPresetById('PRESET-basic');
 
       // Assert
-      expect(result).toBeUndefined();
+      expect(result).toBeNull();
     });
   });
 });
