@@ -132,6 +132,50 @@ model: opus
 }
 ```
 
+## CI/CD ワークフローの修正計画基準
+
+### GitHub Actions ワークフロー修正の判定
+1. **修正可能な項目**
+   - ジョブの分割・統合
+   - ジョブ間の依存関係（needs）設定
+   - キャッシュ戦略の実装
+   - 並列実行の最適化
+   - fail-fast の設定
+   - タイムアウトの調整
+
+2. **修正計画に含めるべき詳細**
+   - 各ジョブの明確な責務
+   - ジョブ実行順序と依存関係の図解
+   - キャッシュキーの設計
+   - 失敗時の挙動の明確化
+
+3. **ワークフロー修正の具体例**
+   ```yaml
+   # 修正前: 単一ジョブ
+   jobs:
+     test:
+       steps:
+         - biome check
+         - npm test
+         - npm build
+   
+   # 修正後: 責務ごとに分割
+   jobs:
+     lint:
+       name: Biome Check
+       # biome専用のステップ
+     
+     test:
+       name: Run Tests
+       needs: lint  # lintが成功した場合のみ実行
+       # テスト専用のステップ
+     
+     build:
+       name: Build
+       needs: test  # testが成功した場合のみ実行
+       # ビルド専用のステップ
+   ```
+
 ## 出力時の注意事項
 
 ### JSON出力の完全性確保
@@ -330,6 +374,30 @@ const toleranceRatio = 0.1; // 10%の誤差を許容
   "unfixable_issues": [],
   "new_files": [],
   "summary": "修正可能: 4件, 修正不可能: 0件"
+}
+```
+
+**CI/CD ワークフロー修正の出力例:**
+```json
+{
+  "should_fix": true,
+  "fixable_issues": [
+    {
+      "file": ".github/workflows/ci.yml",
+      "line": "1-50",
+      "issue": "単一ジョブで全てのチェックを実行しており、失敗原因の特定が困難",
+      "fix_instruction": "ジョブを lint, test, build の3つに分割。各ジョブに明確な責務を持たせ、needs で依存関係を定義。Node.js依存関係のキャッシュを各ジョブで共有。",
+      "code_example": {
+        "before": "jobs:\n  test:\n    steps:\n      - biome check\n      - npm test\n      - npm build",
+        "after": "jobs:\n  lint:\n    name: 'Lint (Biome)'\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 20\n          cache: 'npm'\n      - run: npm ci\n      - run: npm run biome:check\n\n  test:\n    name: 'Test'\n    needs: lint\n    runs-on: ubuntu-latest\n    # 以下略"
+      },
+      "dependencies": ["npm キャッシュの設定", "ジョブ間の依存関係"],
+      "impact": "CI実行時間は若干増加するが、問題の特定が容易になる"
+    }
+  ],
+  "unfixable_issues": [],
+  "new_files": [],
+  "summary": "修正可能: 1件（3ジョブへの分割）, 修正不可能: 0件"
 }
 ```
 

@@ -6,11 +6,11 @@ export class CoordinateTransform {
   private canvasWidth: number;
   private canvasHeight: number;
   private boardPhysicalRadius: number;
-  private scale: number; // 小さい方の次元のスケール（getScaleで返す）
-  private scaleX: number; // X方向のスケール
-  private scaleY: number; // Y方向のスケール
-  private centerX: number;
-  private centerY: number;
+  private scale: number = 0; // 小さい方の次元のスケール（getScaleで返す）
+  private scaleX: number = 0; // X方向のスケール
+  private scaleY: number = 0; // Y方向のスケール
+  private centerX: number = 0;
+  private centerY: number = 0;
 
   /**
    * コンストラクタ
