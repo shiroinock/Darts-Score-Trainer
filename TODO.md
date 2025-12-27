@@ -432,10 +432,13 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
   - GitHub Actionsに`npm run check`を追加
   - PRごとに自動でリント/フォーマットチェックを実行
   - 実装: `.github/workflows/ci.yml`（3ジョブ構成: biome-check → test → build）
-- [ ] ルール設定の厳格化検討（重要度: 中）
-  - `noExplicitAny`: `warn` → `error`への変更を検討
-  - `noExcessiveCognitiveComplexity`: `warn` → `error`への変更を検討
-  - プロジェクトの成熟度を見て段階的に対応
+- [x] ルール設定の厳格化検討（重要度: 中）
+  - `noExplicitAny`: `warn` → `error`への変更完了（biome.json:33）
+  - `noExcessiveCognitiveComplexity`: `warn` → `error`への変更完了（biome.json:25）
+  - 修正内容:
+    - テストファイルのp5.js型定義を追加（41件のnoExplicitAnyエラー解消）
+    - gameStore.tsの複雑な関数をリファクタリング（2件のnoExcessiveCognitiveComplexityエラー解消）
+    - 全977テストが通過、Biomeチェックもクリーン
 - [ ] pre-commitフックの追加（重要度: 中）
   - huskyまたはsimple-git-hooksの導入
   - コミット前に自動でフォーマットとリントを実行

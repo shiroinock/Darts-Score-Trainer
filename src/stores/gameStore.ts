@@ -26,6 +26,116 @@ import { initialSessionConfig, initialStats } from './session/initialState.js';
 import { isPersistFormat, isPracticeConfigFormat, PERSIST_VERSION } from './utils/typeGuards.js';
 
 /**
+ * 問題モード決定の結果
+ */
+interface QuestionModeResult {
+  mode: QuestionType;
+  correctAnswer: number;
+  questionText: string;
+}
+
+/**
+ * 問題モードを決定する
+ */
+function determineQuestionMode(
+  questionType: PracticeConfig['questionType'],
+  throwUnit: number,
+  totalScore: number,
+  remainingScore: number
+): QuestionModeResult {
+  // スコアモード
+  if (questionType === 'score') {
+    return {
+      mode: 'score',
+      correctAnswer: totalScore,
+      questionText: throwUnit === 1 ? 'この投擲の得点は？' : '3投の合計得点は？',
+    };
+  }
+
+  // 残り点数モード
+  if (questionType === 'remaining') {
+    return {
+      mode: 'remaining',
+      correctAnswer: remainingScore - totalScore,
+      questionText: '残り点数は？',
+    };
+  }
+
+  // 両方モード: ランダムに選択（残り点数が0以下の場合はスコアモード）
+  const mode: QuestionType =
+    remainingScore <= 0 ? 'score' : Math.random() < 0.5 ? 'score' : 'remaining';
+
+  if (mode === 'score') {
+    return {
+      mode: 'score',
+      correctAnswer: totalScore,
+      questionText: throwUnit === 1 ? 'この投擲の得点は？' : '3投の合計得点は？',
+    };
+  }
+
+  return {
+    mode: 'remaining',
+    correctAnswer: remainingScore - totalScore,
+    questionText: '残り点数は？',
+  };
+}
+
+/**
+ * バスト判定と残り点数更新の結果
+ */
+interface BustCheckResult {
+  isBust: boolean;
+  newRemainingScore: number;
+}
+
+/**
+ * バスト判定を行い、残り点数を更新する
+ */
+function checkAndUpdateBust(
+  currentQuestion: Question | null,
+  questionType: PracticeConfig['questionType'],
+  remainingScore: number,
+  roundStartScore: number
+): BustCheckResult {
+  // 残り点数モードでない場合はバストなし
+  if (currentQuestion?.mode !== 'remaining' || questionType === 'score') {
+    return { isBust: false, newRemainingScore: remainingScore };
+  }
+
+  const totalScore = currentQuestion.throws.reduce((sum, t) => sum + t.score, 0);
+  const lastThrow = currentQuestion.throws[currentQuestion.throws.length - 1];
+  const isDouble = lastThrow?.ring === 'DOUBLE';
+  const bustInfo = checkBust(remainingScore, totalScore, isDouble);
+
+  if (bustInfo.isBust) {
+    // バスト: 残り点数をラウンド開始時に戻す
+    return { isBust: true, newRemainingScore: roundStartScore };
+  }
+
+  // バストでない: 残り点数を更新
+  return { isBust: false, newRemainingScore: remainingScore - totalScore };
+}
+
+/**
+ * 統計情報を更新する
+ */
+function updateStats(stats: Stats, isCorrect: boolean, isBust: boolean): void {
+  stats.total++;
+
+  if (isCorrect && !isBust) {
+    // 正解かつバストでない場合のみ正解数をカウント
+    stats.correct++;
+    stats.currentStreak++;
+    if (stats.currentStreak > stats.bestStreak) {
+      stats.bestStreak = stats.currentStreak;
+    }
+  } else {
+    // 不正解またはバストの場合はストリークをリセット
+    stats.currentStreak = 0;
+  }
+}
+
+/**
  * ゲームストアの状態インターフェース
  */
 interface GameStore {
@@ -204,36 +314,13 @@ export const useGameStore = create<GameStore>()(
           // 得点の合計を計算
           const totalScore = throws.reduce((sum, t) => sum + t.score, 0);
 
-          // 問題タイプに応じて正解と問題文を設定
-          let correctAnswer: number;
-          let questionText: string;
-          let mode: QuestionType;
-
-          if (config.questionType === 'score') {
-            mode = 'score';
-            correctAnswer = totalScore;
-            questionText = config.throwUnit === 1 ? 'この投擲の得点は？' : '3投の合計得点は？';
-          } else if (config.questionType === 'remaining') {
-            mode = 'remaining';
-            correctAnswer = state.remainingScore - totalScore;
-            questionText = '残り点数は？';
-          } else {
-            // both: ランダムにscoreかremainingを選択
-            // ただし、remainingScoreが0または未設定の場合は強制的にscoreモードにする
-            if (state.remainingScore <= 0) {
-              mode = 'score';
-            } else {
-              mode = Math.random() < 0.5 ? 'score' : 'remaining';
-            }
-
-            if (mode === 'score') {
-              correctAnswer = totalScore;
-              questionText = config.throwUnit === 1 ? 'この投擲の得点は？' : '3投の合計得点は？';
-            } else {
-              correctAnswer = state.remainingScore - totalScore;
-              questionText = '残り点数は？';
-            }
-          }
+          // 問題モードを決定
+          const { mode, correctAnswer, questionText } = determineQuestionMode(
+            config.questionType,
+            config.throwUnit,
+            totalScore,
+            state.remainingScore
+          );
 
           state.currentQuestion = {
             mode,
@@ -298,45 +385,17 @@ export const useGameStore = create<GameStore>()(
           const correctAnswer = get().getCurrentCorrectAnswer();
           const isCorrect = answer === correctAnswer;
 
-          // 残り点数モードの場合、バスト判定を先に実行
-          let isBust = false;
-          if (
-            state.currentQuestion?.mode === 'remaining' &&
-            state.config.questionType !== 'score'
-          ) {
-            const totalScore =
-              state.currentQuestion?.throws.reduce((sum, t) => sum + t.score, 0) || 0;
-
-            // バスト判定
-            const lastThrow =
-              state.currentQuestion?.throws[state.currentQuestion.throws.length - 1];
-            const isDouble = lastThrow?.ring === 'DOUBLE';
-            const bustInfo = checkBust(state.remainingScore, totalScore, isDouble);
-
-            if (bustInfo.isBust) {
-              // バスト検出: 残り点数をラウンド開始時に戻す
-              isBust = true;
-              state.remainingScore = state.roundStartScore;
-            } else {
-              // バストでない場合は残り点数を更新
-              const newRemaining = state.remainingScore - totalScore;
-              state.remainingScore = newRemaining;
-            }
-          }
+          // バスト判定と残り点数更新
+          const { isBust, newRemainingScore } = checkAndUpdateBust(
+            state.currentQuestion,
+            state.config.questionType,
+            state.remainingScore,
+            state.roundStartScore
+          );
+          state.remainingScore = newRemainingScore;
 
           // 統計情報を更新
-          state.stats.total++;
-          if (isCorrect && !isBust) {
-            // 正解かつバストでない場合のみ正解数をカウント
-            state.stats.correct++;
-            state.stats.currentStreak++;
-            if (state.stats.currentStreak > state.stats.bestStreak) {
-              state.stats.bestStreak = state.stats.currentStreak;
-            }
-          } else {
-            // 不正解またはバストの場合はストリークをリセット
-            state.stats.currentStreak = 0;
-          }
+          updateStats(state.stats, isCorrect, isBust);
 
           // 問題数モードで最終問題に到達した場合、セッションを終了
           if (
