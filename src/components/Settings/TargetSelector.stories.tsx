@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useGameStore } from '../../stores/gameStore';
-import type { Target } from '../../types';
 import { TargetSelector } from './TargetSelector';
 
 const meta = {
