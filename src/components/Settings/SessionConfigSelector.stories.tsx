@@ -1,20 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useGameStore } from '../../stores/gameStore';
 import type { SessionConfig } from '../../types';
 import { SessionConfigSelector } from './SessionConfigSelector';
 
 const withMockStore = (sessionConfig: SessionConfig) => (Story: React.ComponentType) => {
-  const mockUseGameStore = (selector: (state: unknown) => unknown) => {
-    const mockState = {
-      sessionConfig,
-      setSessionConfig: (config: SessionConfig) => console.log('Set config:', config),
-    };
-    return selector(mockState);
-  };
-
-  vi.doMock('../../stores/gameStore', () => ({
-    useGameStore: mockUseGameStore,
-  }));
-
+  // ストーリー描画前に状態を設定
+  useGameStore.setState({ sessionConfig });
   return <Story />;
 };
 

@@ -1,19 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useGameStore } from '../../stores/gameStore';
 import { PresetSelector } from './PresetSelector';
 
 const withMockStore =
   (configId = 'preset-basic') =>
   (Story: React.ComponentType) => {
-    const mockUseGameStore = (selector: (state: unknown) => unknown) => {
-      const mockState = {
-        config: { configId },
-        selectPreset: (id: string) => console.log('Selected:', id),
-      };
-      return selector(mockState);
-    };
-
-    vi.doMock('../../stores/gameStore', () => ({ useGameStore: mockUseGameStore }));
-
+    // ストーリー描画前に状態を設定
+    useGameStore.setState({ config: { configId } });
     return <Story />;
   };
 
