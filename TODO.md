@@ -428,9 +428,10 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [ ] 英語対応（i18n）
 
 ### 技術的改善（Biome関連 - PR #44レビュー指摘事項）
-- [ ] CI/CDへの統合（重要度: 高）
+- [x] CI/CDへの統合（重要度: 高）
   - GitHub Actionsに`npm run check`を追加
   - PRごとに自動でリント/フォーマットチェックを実行
+  - 実装: `.github/workflows/ci.yml`（3ジョブ構成: biome-check → test → build）
 - [ ] ルール設定の厳格化検討（重要度: 中）
   - `noExplicitAny`: `warn` → `error`への変更を検討
   - `noExcessiveCognitiveComplexity`: `warn` → `error`への変更を検討
