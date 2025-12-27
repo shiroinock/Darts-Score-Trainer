@@ -5,3 +5,4 @@
 export { DetailedSettings } from './DetailedSettings';
 export { PresetSelector } from './PresetSelector';
 export { SessionConfigSelector } from './SessionConfigSelector';
+export { TargetSelector } from './TargetSelector';
