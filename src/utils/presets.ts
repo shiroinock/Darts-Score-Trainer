@@ -3,7 +3,17 @@ import type { PracticeConfig } from '../types/PracticeConfig';
 /**
  * プリセット名
  */
-type PresetName = 'basic' | 'player' | 'callerBasic' | 'callerCumulative' | 'comprehensive';
+export type PresetName = 'basic' | 'player' | 'callerBasic' | 'callerCumulative' | 'comprehensive';
+
+/**
+ * デフォルトターゲット（T20）
+ */
+const DEFAULT_TARGET = { type: 'TRIPLE' as const, number: 20 };
+
+/**
+ * デフォルト標準偏差（30mm：中級者レベル）
+ */
+const DEFAULT_STD_DEV_MM = 30;
 
 /**
  * プリセット設定集
@@ -16,8 +26,8 @@ export const PRACTICE_PRESETS: Record<PresetName, PracticeConfig> = {
     questionType: 'score',
     judgmentTiming: 'independent',
     startingScore: null,
-    target: { type: 'TRIPLE', number: 20 },
-    stdDevMM: 30,
+    target: DEFAULT_TARGET,
+    stdDevMM: DEFAULT_STD_DEV_MM,
     isPreset: true,
   },
   player: {
@@ -27,8 +37,8 @@ export const PRACTICE_PRESETS: Record<PresetName, PracticeConfig> = {
     questionType: 'remaining',
     judgmentTiming: 'cumulative',
     startingScore: 501,
-    target: { type: 'TRIPLE', number: 20 },
-    stdDevMM: 30,
+    target: DEFAULT_TARGET,
+    stdDevMM: DEFAULT_STD_DEV_MM,
     isPreset: true,
   },
   callerBasic: {
@@ -38,8 +48,8 @@ export const PRACTICE_PRESETS: Record<PresetName, PracticeConfig> = {
     questionType: 'score',
     judgmentTiming: 'independent',
     startingScore: null,
-    target: { type: 'TRIPLE', number: 20 },
-    stdDevMM: 30,
+    target: DEFAULT_TARGET,
+    stdDevMM: DEFAULT_STD_DEV_MM,
     isPreset: true,
   },
   callerCumulative: {
@@ -49,8 +59,8 @@ export const PRACTICE_PRESETS: Record<PresetName, PracticeConfig> = {
     questionType: 'score',
     judgmentTiming: 'cumulative',
     startingScore: null,
-    target: { type: 'TRIPLE', number: 20 },
-    stdDevMM: 30,
+    target: DEFAULT_TARGET,
+    stdDevMM: DEFAULT_STD_DEV_MM,
     isPreset: true,
   },
   comprehensive: {
@@ -60,8 +70,8 @@ export const PRACTICE_PRESETS: Record<PresetName, PracticeConfig> = {
     questionType: 'both',
     judgmentTiming: 'cumulative',
     startingScore: 501,
-    target: { type: 'TRIPLE', number: 20 },
-    stdDevMM: 30,
+    target: DEFAULT_TARGET,
+    stdDevMM: DEFAULT_STD_DEV_MM,
     isPreset: true,
   },
 };
@@ -106,9 +116,9 @@ export function findMatchingPreset(config: PracticeConfig): PresetName | null {
  * IDからプリセットを取得する
  *
  * @param id - プリセットID（例: 'preset-basic'）
- * @returns 該当するプリセット、なければundefined
+ * @returns 該当するプリセット、なければnull
  */
-export function getPresetById(id: string): PracticeConfig | undefined {
+export function getPresetById(id: string): PracticeConfig | null {
   const presetEntries = Object.entries(PRACTICE_PRESETS) as [PresetName, PracticeConfig][];
 
   for (const [, preset] of presetEntries) {
@@ -117,5 +127,5 @@ export function getPresetById(id: string): PracticeConfig | undefined {
     }
   }
 
-  return undefined;
+  return null;
 }
