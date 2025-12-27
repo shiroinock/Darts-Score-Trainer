@@ -197,11 +197,25 @@ describe('useTimer', () => {
 
 **対象**: `src/components/` の UI コンポーネント
 
-**テスト方針**:
-- `@testing-library/react` を使用
-- ユーザー視点のテスト（実装詳細に依存しない）
-- アクセシビリティ考慮（role, aria属性の活用）
-- ユーザー操作のシミュレーション
+**テスト方針**: セマンティックテストとスナップショットテストを組み合わせる
+
+#### 4-1. セマンティックテスト
+
+**目的**: ユーザー視点での振る舞い・状態変化を検証
+
+**対象**:
+- ステートによる表示分岐
+- 条件付きレンダリング
+- ユーザーインタラクション（クリック、入力など）
+- props による表示内容・動作の変化
+
+**ツール**: React Testing Library
+- `screen.getByRole()` - アクセシビリティロールで要素を取得
+- `screen.getByText()` - テキスト内容で要素を取得
+- `screen.getByLabelText()` - ラベルで要素を取得
+- `screen.queryBy*()` - 存在しない要素の検証用
+
+**配置**: テストファイルの最初の方のdescribeブロック群
 
 **例**:
 ```typescript
@@ -211,37 +225,142 @@ import userEvent from '@testing-library/user-event';
 import { NumPad } from './NumPad';
 
 describe('NumPad', () => {
-  test('数字ボタンをクリックすると入力値が更新される', async () => {
-    // Arrange
-    const user = userEvent.setup();
-    const onSubmit = vi.fn();
-    render(<NumPad onSubmit={onSubmit} />);
+  // セマンティックテスト: 振る舞い・状態の検証
+  describe('ユーザー入力', () => {
+    test('数字ボタンをクリックすると入力値が更新される', async () => {
+      // Arrange
+      const user = userEvent.setup();
+      const onSubmit = vi.fn();
+      render(<NumPad onSubmit={onSubmit} />);
 
-    // Act
-    await user.click(screen.getByRole('button', { name: '1' }));
-    await user.click(screen.getByRole('button', { name: '2' }));
-    await user.click(screen.getByRole('button', { name: '3' }));
+      // Act
+      await user.click(screen.getByRole('button', { name: '1' }));
+      await user.click(screen.getByRole('button', { name: '2' }));
+      await user.click(screen.getByRole('button', { name: '3' }));
 
-    // Assert
-    expect(screen.getByRole('textbox')).toHaveValue('123');
+      // Assert
+      expect(screen.getByRole('textbox')).toHaveValue('123');
+    });
+
+    test('クリアボタンで入力値がリセットされる', async () => {
+      // Arrange
+      const user = userEvent.setup();
+      render(<NumPad onSubmit={vi.fn()} />);
+
+      await user.click(screen.getByRole('button', { name: '9' }));
+      expect(screen.getByRole('textbox')).toHaveValue('9');
+
+      // Act
+      await user.click(screen.getByRole('button', { name: /clear|C/i }));
+
+      // Assert
+      expect(screen.getByRole('textbox')).toHaveValue('');
+    });
   });
 
-  test('クリアボタンで入力値がリセットされる', async () => {
-    // Arrange
-    const user = userEvent.setup();
-    render(<NumPad onSubmit={vi.fn()} />);
+  describe('状態による表示分岐', () => {
+    test('disabled=trueの場合、全てのボタンが無効化される', () => {
+      // Arrange & Act
+      render(<NumPad onSubmit={vi.fn()} disabled />);
 
-    await user.click(screen.getByRole('button', { name: '9' }));
-    expect(screen.getByRole('textbox')).toHaveValue('9');
+      // Assert
+      const buttons = screen.getAllByRole('button');
+      buttons.forEach(button => {
+        expect(button).toBeDisabled();
+      });
+    });
 
-    // Act
-    await user.click(screen.getByRole('button', { name: /clear|C/i }));
+    test('maxLength到達時、さらなる入力が無視される', async () => {
+      // Arrange
+      const user = userEvent.setup();
+      render(<NumPad onSubmit={vi.fn()} maxLength={3} />);
 
-    // Assert
-    expect(screen.getByRole('textbox')).toHaveValue('');
+      // Act
+      await user.click(screen.getByRole('button', { name: '1' }));
+      await user.click(screen.getByRole('button', { name: '2' }));
+      await user.click(screen.getByRole('button', { name: '3' }));
+      await user.click(screen.getByRole('button', { name: '4' })); // 4文字目は無視される
+
+      // Assert
+      expect(screen.getByRole('textbox')).toHaveValue('123');
+    });
+  });
+
+  describe('条件付きレンダリング', () => {
+    test('showSubmitButton=falseの場合、送信ボタンが表示されない', () => {
+      // Arrange & Act
+      render(<NumPad onSubmit={vi.fn()} showSubmitButton={false} />);
+
+      // Assert
+      expect(screen.queryByRole('button', { name: /submit|送信/i })).not.toBeInTheDocument();
+    });
+
+    test('エラーメッセージが指定された場合、エラー表示エリアが表示される', () => {
+      // Arrange & Act
+      const errorMessage = '無効な入力です';
+      render(<NumPad onSubmit={vi.fn()} error={errorMessage} />);
+
+      // Assert
+      expect(screen.getByRole('alert')).toHaveTextContent(errorMessage);
+    });
+  });
+
+  // ... その他のセマンティックテスト
+
+  // スナップショットテストは最後に配置
+  describe('スナップショットテスト', () => {
+    test('基本的なレンダリング結果が一致する', () => {
+      const { container } = render(<NumPad onSubmit={vi.fn()} />);
+      expect(container).toMatchSnapshot();
+    });
+
+    test('初期値ありの場合の見た目が一致する', () => {
+      const { container } = render(<NumPad onSubmit={vi.fn()} initialValue={50} />);
+      expect(container).toMatchSnapshot();
+    });
+
+    test('無効化された状態の見た目が一致する', () => {
+      const { container } = render(<NumPad onSubmit={vi.fn()} disabled />);
+      expect(container).toMatchSnapshot();
+    });
   });
 });
 ```
+
+#### 4-2. スナップショットテスト
+
+**目的**: コンポーネントの構造・見た目の意図しない変更を検知
+
+**対象**:
+- JSX構造の全体像
+- 基本的なレンダリング結果
+- 主要なpropsによる見た目の変化
+
+**ツール**: Vitest の `expect().toMatchSnapshot()`
+
+**配置**: テストファイルの最後の方のdescribeブロック（セマンティックテストの後）
+
+**重要**: プロジェクトの慣習として、スナップショットテストは**最後**に配置します。
+
+#### 4-3. セマンティックとスナップショットの使い分け指針
+
+**セマンティックテストで検証すべきこと（優先）**:
+- ✅ ユーザー操作に対する反応（クリック、入力など）
+- ✅ ステートの変化に伴う表示の変化
+- ✅ propsによる振る舞いの変化（disabled、maxLengthなど）
+- ✅ 条件付きレンダリング（要素の表示/非表示）
+- ✅ コールバック関数の呼び出し
+
+**スナップショットテストで検証すべきこと**:
+- ✅ コンポーネント全体のHTML構造
+- ✅ CSS classの適用状態
+- ✅ 主要なpropsによる見た目のバリエーション
+- ✅ 初期レンダリング結果
+
+**両方を組み合わせる理由**:
+1. **セマンティック**（優先）: ユーザー体験が正しく機能することを保証、意図の検証
+2. **スナップショット**（補完）: 大幅な構造変更を素早く検知、変更検知
+3. プロジェクトの慣習として、セマンティックテストを先に書き、スナップショットテストを最後に配置
 
 ### 5. integration（統合テスト）
 
