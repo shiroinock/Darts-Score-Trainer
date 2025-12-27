@@ -18,7 +18,7 @@ export const useTimer = (): void => {
   const isTimerRunning = useGameStore((state) => state.isTimerRunning);
 
   // タイマーIDを保持するref（クリーンアップ用）
-  const timerIdRef = useRef<number | null>(null);
+  const timerIdRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     // タイマー開始条件:

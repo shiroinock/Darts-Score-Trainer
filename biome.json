@@ -7,7 +7,14 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["src/**", "*.config.ts", "*.config.js", "vite.config.ts", "vitest.config.ts"]
+    "includes": [
+      "src/**",
+      "*.config.ts",
+      "*.config.js",
+      "vite.config.ts",
+      "vitest.config.ts",
+      ".storybook/**"
+    ]
   },
   "formatter": {
     "enabled": true,

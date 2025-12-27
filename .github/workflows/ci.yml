@@ -28,7 +28,6 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    needs: biome-check
 
     steps:
       - name: Checkout repository
@@ -50,7 +49,6 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: test
 
     steps:
       - name: Checkout repository

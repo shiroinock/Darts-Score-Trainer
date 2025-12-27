@@ -238,9 +238,9 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] 説明ツールチップ
 
 ### 5.2 セッション設定 (`src/components/Settings/SessionConfigSelector.tsx`)
-- [ ] モード切り替え（問題数 / 時間制限）
-- [ ] 問題数選択（10, 20, 50, 100）
-- [ ] 時間制限選択（3分, 5分, 10分）
+- [x] モード切り替え（問題数 / 時間制限）
+- [x] 問題数選択（10, 20, 50, 100）
+- [x] 時間制限選択（3分, 5分, 10分）
 
 ### 5.3 詳細設定 (`src/components/Settings/DetailedSettings.tsx`)
 - [ ] 折りたたみUI
