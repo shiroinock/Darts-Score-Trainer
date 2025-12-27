@@ -27,8 +27,22 @@ const withMockStore = (sessionConfig: SessionConfig) => (Story: React.ComponentT
 const meta = {
   title: 'Settings/SessionConfigSelector',
   component: SessionConfigSelector,
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    docs: {
+      story: {
+        height: '400px',
+      },
+    },
+  },
   tags: ['autodocs'],
+  decorators: [
+    (Story) => (
+      <div style={{ minWidth: '600px' }}>
+        <Story />
+      </div>
+    ),
+  ],
 } satisfies Meta<typeof SessionConfigSelector>;
 
 export default meta;

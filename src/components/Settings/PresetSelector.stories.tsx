@@ -29,7 +29,14 @@ const withMockStore =
 const meta = {
   title: 'Settings/PresetSelector',
   component: PresetSelector,
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    docs: {
+      story: {
+        height: '400px',
+      },
+    },
+  },
   tags: ['autodocs'],
 } satisfies Meta<typeof PresetSelector>;
 

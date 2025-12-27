@@ -251,10 +251,10 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] 設定変更時のプリセット自動判定
 
 ### 5.4 ターゲットセレクター (`src/components/Settings/TargetSelector.tsx`)
-- [ ] タイプ選択ボタン（Single, Double, Triple, Bull）
-- [ ] 数字選択グリッド（4x5、セグメント順）
-- [ ] Bull選択時は数字非表示
-- [ ] アクティブ状態のスタイル
+- [x] タイプ選択ボタン（Single, Double, Triple, Bull）
+- [x] 数字選択グリッド（4x5、セグメント順）
+- [x] Bull選択時は数字非表示
+- [x] アクティブ状態のスタイル
 
 ### 5.5 難易度セレクター (`src/components/Settings/DifficultySelector.tsx`)
 - [ ] プリセットボタン（初心者、中級者、上級者、エキスパート）

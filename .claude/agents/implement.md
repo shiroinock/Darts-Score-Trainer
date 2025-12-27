@@ -274,6 +274,32 @@ const innerRadius = transform.physicalDistanceToScreen(innerRadiusPhysical);
 2. 使用時に正しい変数を参照しているか再確認する
 3. コピー＆ペーストによるミスを防ぐため、各行を個別に実装する
 
+## モバイルレスポンシブデザインの実装
+
+### グリッドレイアウトのレスポンシブ対応
+
+モバイルデバイス向けのグリッドレイアウトを実装する際は、以下の点に注意してください：
+
+1. **デスクトップファーストから段階的に調整**
+   ```css
+   /* デスクトップ: 4列 */
+   .grid { grid-template-columns: repeat(4, 1fr); }
+   
+   /* タブレット以下: 3列 */
+   @media (max-width: 768px) {
+     .grid { grid-template-columns: repeat(3, 1fr); }
+   }
+   
+   /* モバイル: さらに細かい調整も検討 */
+   @media (max-width: 480px) {
+     .grid { grid-template-columns: repeat(3, 1fr); /* または2列 */ }
+   }
+   ```
+
+2. **640pxブレークポイントの活用**
+   - プロジェクトで640pxをモバイルのブレークポイントとして使用している場合は、それに合わせる
+   - ただし、コンテンツによっては768pxや480pxなど、より適切なブレークポイントも検討
+
 ## TypeScriptエラー修正時の注意点（テストファイル）
 
 ### モックオブジェクトの型エラー対処法

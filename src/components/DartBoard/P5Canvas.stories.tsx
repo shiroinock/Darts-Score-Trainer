@@ -4,7 +4,14 @@ import { P5Canvas } from './P5Canvas';
 const meta = {
   title: 'DartBoard/P5Canvas',
   component: P5Canvas,
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    docs: {
+      story: {
+        height: '800px',
+      },
+    },
+  },
   tags: ['autodocs'],
   decorators: [
     (Story) => (

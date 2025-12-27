@@ -401,3 +401,149 @@ h1 {
     width: 100%;
   }
 }
+
+/* ============================================================ */
+/* TargetSelector Component                                    */
+/* ============================================================ */
+
+.target-selector {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.target-selector__title {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #333;
+}
+
+.target-selector__section {
+  margin-bottom: 1.5rem;
+}
+
+.target-selector__section:last-child {
+  margin-bottom: 0;
+}
+
+.target-selector__subtitle {
+  font-size: 1.125rem;
+  margin-bottom: 0.75rem;
+  color: #333;
+  font-weight: 600;
+}
+
+/* タイプ選択ボタン */
+.target-selector__type-buttons {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.target-type-button {
+  flex: 1;
+  min-width: 100px;
+  padding: 0.875rem 1.25rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.target-type-button:hover {
+  border-color: #4a90e2;
+  background-color: #f0f7ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.target-type-button:active {
+  transform: translateY(0);
+}
+
+.target-type-button--active {
+  border-color: #4a90e2;
+  background-color: #e6f2ff;
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+}
+
+.target-type-button--active:hover {
+  background-color: #d9edff;
+}
+
+/* 数字選択グリッド（4列×5行） */
+.target-selector__number-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+.target-number-button {
+  padding: 1rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+.target-number-button:hover {
+  border-color: #4a90e2;
+  background-color: #f0f7ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.target-number-button:active {
+  transform: translateY(0);
+}
+
+.target-number-button--active {
+  border-color: #4a90e2;
+  background-color: #e6f2ff;
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+}
+
+.target-number-button--active:hover {
+  background-color: #d9edff;
+}
+
+/* タッチデバイス向けの調整 */
+@media (hover: none) {
+  .target-type-button:hover {
+    transform: none;
+  }
+
+  .target-number-button:hover {
+    transform: none;
+  }
+}
+
+/* モバイル: タイプボタンはスタック配置 */
+@media (max-width: 640px) {
+  .target-selector__type-buttons {
+    flex-direction: column;
+  }
+
+  .target-type-button {
+    min-width: auto;
+    width: 100%;
+  }
+
+  /* 数字グリッドは3列に変更 */
+  .target-selector__number-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

@@ -1,0 +1,1208 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TargetSelector > スナップショットテスト > Bull選択時のスナップショット（数字グリッド非表示） 1`] = `
+<div
+  class="target-selector"
+>
+  <h2
+    class="target-selector__title"
+  >
+    ターゲットを選択
+  </h2>
+  <div
+    class="target-selector__section"
+  >
+    <h3
+      class="target-selector__subtitle"
+    >
+      タイプ
+    </h3>
+    <div
+      class="target-selector__type-buttons"
+    >
+      <button
+        aria-pressed="false"
+        class="target-type-button "
+        title="Singleを選択"
+        type="button"
+      >
+        Single
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-type-button "
+        title="Doubleを選択"
+        type="button"
+      >
+        Double
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-type-button "
+        title="Tripleを選択"
+        type="button"
+      >
+        Triple
+      </button>
+      <button
+        aria-pressed="true"
+        class="target-type-button target-type-button--active"
+        title="Bullを選択"
+        type="button"
+      >
+        Bull
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`TargetSelector > スナップショットテスト > Double + 19選択時のスナップショット 1`] = `
+<div
+  class="target-selector"
+>
+  <h2
+    class="target-selector__title"
+  >
+    ターゲットを選択
+  </h2>
+  <div
+    class="target-selector__section"
+  >
+    <h3
+      class="target-selector__subtitle"
+    >
+      タイプ
+    </h3>
+    <div
+      class="target-selector__type-buttons"
+    >
+      <button
+        aria-pressed="false"
+        class="target-type-button "
+        title="Singleを選択"
+        type="button"
+      >
+        Single
+      </button>
+      <button
+        aria-pressed="true"
+        class="target-type-button target-type-button--active"
+        title="Doubleを選択"
+        type="button"
+      >
+        Double
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-type-button "
+        title="Tripleを選択"
+        type="button"
+      >
+        Triple
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-type-button "
+        title="Bullを選択"
+        type="button"
+      >
+        Bull
+      </button>
+    </div>
+  </div>
+  <div
+    class="target-selector__section"
+  >
+    <h3
+      class="target-selector__subtitle"
+    >
+      数字
+    </h3>
+    <div
+      class="target-selector__number-grid"
+    >
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="20を選択"
+        type="button"
+      >
+        20
+      </button>
+      <button
+        aria-pressed="true"
+        class="target-number-button target-number-button--active"
+        title="19を選択"
+        type="button"
+      >
+        19
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="18を選択"
+        type="button"
+      >
+        18
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="17を選択"
+        type="button"
+      >
+        17
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="16を選択"
+        type="button"
+      >
+        16
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="15を選択"
+        type="button"
+      >
+        15
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="14を選択"
+        type="button"
+      >
+        14
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="13を選択"
+        type="button"
+      >
+        13
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="12を選択"
+        type="button"
+      >
+        12
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="11を選択"
+        type="button"
+      >
+        11
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="10を選択"
+        type="button"
+      >
+        10
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="9を選択"
+        type="button"
+      >
+        9
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="8を選択"
+        type="button"
+      >
+        8
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="7を選択"
+        type="button"
+      >
+        7
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="6を選択"
+        type="button"
+      >
+        6
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="5を選択"
+        type="button"
+      >
+        5
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="4を選択"
+        type="button"
+      >
+        4
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="3を選択"
+        type="button"
+      >
+        3
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="2を選択"
+        type="button"
+      >
+        2
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="1を選択"
+        type="button"
+      >
+        1
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`TargetSelector > スナップショットテスト > Single + 5選択時のスナップショット 1`] = `
+<div
+  class="target-selector"
+>
+  <h2
+    class="target-selector__title"
+  >
+    ターゲットを選択
+  </h2>
+  <div
+    class="target-selector__section"
+  >
+    <h3
+      class="target-selector__subtitle"
+    >
+      タイプ
+    </h3>
+    <div
+      class="target-selector__type-buttons"
+    >
+      <button
+        aria-pressed="true"
+        class="target-type-button target-type-button--active"
+        title="Singleを選択"
+        type="button"
+      >
+        Single
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-type-button "
+        title="Doubleを選択"
+        type="button"
+      >
+        Double
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-type-button "
+        title="Tripleを選択"
+        type="button"
+      >
+        Triple
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-type-button "
+        title="Bullを選択"
+        type="button"
+      >
+        Bull
+      </button>
+    </div>
+  </div>
+  <div
+    class="target-selector__section"
+  >
+    <h3
+      class="target-selector__subtitle"
+    >
+      数字
+    </h3>
+    <div
+      class="target-selector__number-grid"
+    >
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="20を選択"
+        type="button"
+      >
+        20
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="19を選択"
+        type="button"
+      >
+        19
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="18を選択"
+        type="button"
+      >
+        18
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="17を選択"
+        type="button"
+      >
+        17
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="16を選択"
+        type="button"
+      >
+        16
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="15を選択"
+        type="button"
+      >
+        15
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="14を選択"
+        type="button"
+      >
+        14
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="13を選択"
+        type="button"
+      >
+        13
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="12を選択"
+        type="button"
+      >
+        12
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="11を選択"
+        type="button"
+      >
+        11
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="10を選択"
+        type="button"
+      >
+        10
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="9を選択"
+        type="button"
+      >
+        9
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="8を選択"
+        type="button"
+      >
+        8
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="7を選択"
+        type="button"
+      >
+        7
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="6を選択"
+        type="button"
+      >
+        6
+      </button>
+      <button
+        aria-pressed="true"
+        class="target-number-button target-number-button--active"
+        title="5を選択"
+        type="button"
+      >
+        5
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="4を選択"
+        type="button"
+      >
+        4
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="3を選択"
+        type="button"
+      >
+        3
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="2を選択"
+        type="button"
+      >
+        2
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="1を選択"
+        type="button"
+      >
+        1
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`TargetSelector > スナップショットテスト > Single + 20選択時のスナップショット 1`] = `
+<div
+  class="target-selector"
+>
+  <h2
+    class="target-selector__title"
+  >
+    ターゲットを選択
+  </h2>
+  <div
+    class="target-selector__section"
+  >
+    <h3
+      class="target-selector__subtitle"
+    >
+      タイプ
+    </h3>
+    <div
+      class="target-selector__type-buttons"
+    >
+      <button
+        aria-pressed="true"
+        class="target-type-button target-type-button--active"
+        title="Singleを選択"
+        type="button"
+      >
+        Single
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-type-button "
+        title="Doubleを選択"
+        type="button"
+      >
+        Double
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-type-button "
+        title="Tripleを選択"
+        type="button"
+      >
+        Triple
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-type-button "
+        title="Bullを選択"
+        type="button"
+      >
+        Bull
+      </button>
+    </div>
+  </div>
+  <div
+    class="target-selector__section"
+  >
+    <h3
+      class="target-selector__subtitle"
+    >
+      数字
+    </h3>
+    <div
+      class="target-selector__number-grid"
+    >
+      <button
+        aria-pressed="true"
+        class="target-number-button target-number-button--active"
+        title="20を選択"
+        type="button"
+      >
+        20
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="19を選択"
+        type="button"
+      >
+        19
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="18を選択"
+        type="button"
+      >
+        18
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="17を選択"
+        type="button"
+      >
+        17
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="16を選択"
+        type="button"
+      >
+        16
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="15を選択"
+        type="button"
+      >
+        15
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="14を選択"
+        type="button"
+      >
+        14
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="13を選択"
+        type="button"
+      >
+        13
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="12を選択"
+        type="button"
+      >
+        12
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="11を選択"
+        type="button"
+      >
+        11
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="10を選択"
+        type="button"
+      >
+        10
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="9を選択"
+        type="button"
+      >
+        9
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="8を選択"
+        type="button"
+      >
+        8
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="7を選択"
+        type="button"
+      >
+        7
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="6を選択"
+        type="button"
+      >
+        6
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="5を選択"
+        type="button"
+      >
+        5
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="4を選択"
+        type="button"
+      >
+        4
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="3を選択"
+        type="button"
+      >
+        3
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="2を選択"
+        type="button"
+      >
+        2
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="1を選択"
+        type="button"
+      >
+        1
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`TargetSelector > スナップショットテスト > Triple + 1選択時のスナップショット 1`] = `
+<div
+  class="target-selector"
+>
+  <h2
+    class="target-selector__title"
+  >
+    ターゲットを選択
+  </h2>
+  <div
+    class="target-selector__section"
+  >
+    <h3
+      class="target-selector__subtitle"
+    >
+      タイプ
+    </h3>
+    <div
+      class="target-selector__type-buttons"
+    >
+      <button
+        aria-pressed="false"
+        class="target-type-button "
+        title="Singleを選択"
+        type="button"
+      >
+        Single
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-type-button "
+        title="Doubleを選択"
+        type="button"
+      >
+        Double
+      </button>
+      <button
+        aria-pressed="true"
+        class="target-type-button target-type-button--active"
+        title="Tripleを選択"
+        type="button"
+      >
+        Triple
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-type-button "
+        title="Bullを選択"
+        type="button"
+      >
+        Bull
+      </button>
+    </div>
+  </div>
+  <div
+    class="target-selector__section"
+  >
+    <h3
+      class="target-selector__subtitle"
+    >
+      数字
+    </h3>
+    <div
+      class="target-selector__number-grid"
+    >
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="20を選択"
+        type="button"
+      >
+        20
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="19を選択"
+        type="button"
+      >
+        19
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="18を選択"
+        type="button"
+      >
+        18
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="17を選択"
+        type="button"
+      >
+        17
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="16を選択"
+        type="button"
+      >
+        16
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="15を選択"
+        type="button"
+      >
+        15
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="14を選択"
+        type="button"
+      >
+        14
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="13を選択"
+        type="button"
+      >
+        13
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="12を選択"
+        type="button"
+      >
+        12
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="11を選択"
+        type="button"
+      >
+        11
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="10を選択"
+        type="button"
+      >
+        10
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="9を選択"
+        type="button"
+      >
+        9
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="8を選択"
+        type="button"
+      >
+        8
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="7を選択"
+        type="button"
+      >
+        7
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="6を選択"
+        type="button"
+      >
+        6
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="5を選択"
+        type="button"
+      >
+        5
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="4を選択"
+        type="button"
+      >
+        4
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="3を選択"
+        type="button"
+      >
+        3
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="2を選択"
+        type="button"
+      >
+        2
+      </button>
+      <button
+        aria-pressed="true"
+        class="target-number-button target-number-button--active"
+        title="1を選択"
+        type="button"
+      >
+        1
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`TargetSelector > スナップショットテスト > Triple + 20選択時のスナップショット 1`] = `
+<div
+  class="target-selector"
+>
+  <h2
+    class="target-selector__title"
+  >
+    ターゲットを選択
+  </h2>
+  <div
+    class="target-selector__section"
+  >
+    <h3
+      class="target-selector__subtitle"
+    >
+      タイプ
+    </h3>
+    <div
+      class="target-selector__type-buttons"
+    >
+      <button
+        aria-pressed="false"
+        class="target-type-button "
+        title="Singleを選択"
+        type="button"
+      >
+        Single
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-type-button "
+        title="Doubleを選択"
+        type="button"
+      >
+        Double
+      </button>
+      <button
+        aria-pressed="true"
+        class="target-type-button target-type-button--active"
+        title="Tripleを選択"
+        type="button"
+      >
+        Triple
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-type-button "
+        title="Bullを選択"
+        type="button"
+      >
+        Bull
+      </button>
+    </div>
+  </div>
+  <div
+    class="target-selector__section"
+  >
+    <h3
+      class="target-selector__subtitle"
+    >
+      数字
+    </h3>
+    <div
+      class="target-selector__number-grid"
+    >
+      <button
+        aria-pressed="true"
+        class="target-number-button target-number-button--active"
+        title="20を選択"
+        type="button"
+      >
+        20
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="19を選択"
+        type="button"
+      >
+        19
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="18を選択"
+        type="button"
+      >
+        18
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="17を選択"
+        type="button"
+      >
+        17
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="16を選択"
+        type="button"
+      >
+        16
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="15を選択"
+        type="button"
+      >
+        15
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="14を選択"
+        type="button"
+      >
+        14
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="13を選択"
+        type="button"
+      >
+        13
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="12を選択"
+        type="button"
+      >
+        12
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="11を選択"
+        type="button"
+      >
+        11
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="10を選択"
+        type="button"
+      >
+        10
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="9を選択"
+        type="button"
+      >
+        9
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="8を選択"
+        type="button"
+      >
+        8
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="7を選択"
+        type="button"
+      >
+        7
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="6を選択"
+        type="button"
+      >
+        6
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="5を選択"
+        type="button"
+      >
+        5
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="4を選択"
+        type="button"
+      >
+        4
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="3を選択"
+        type="button"
+      >
+        3
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="2を選択"
+        type="button"
+      >
+        2
+      </button>
+      <button
+        aria-pressed="false"
+        class="target-number-button "
+        title="1を選択"
+        type="button"
+      >
+        1
+      </button>
+    </div>
+  </div>
+</div>
+`;
