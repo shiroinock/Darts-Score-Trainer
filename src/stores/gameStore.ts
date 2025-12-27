@@ -6,28 +6,24 @@
  */
 
 import { create } from 'zustand';
-import { immer } from 'zustand/middleware/immer';
 import { persist } from 'zustand/middleware';
+import { immer } from 'zustand/middleware/immer';
 import type {
   GameState,
   PracticeConfig,
-  SessionConfig,
   Question,
-  Target,
-  Stats,
-  ThrowResult,
   QuestionType,
+  SessionConfig,
+  Stats,
+  Target,
+  ThrowResult,
 } from '../types';
-import { executeThrow } from '../utils/throwSimulator/index.js';
-import { checkBust, isGameFinished } from '../utils/gameLogic/index.js';
 import { STORAGE_KEY } from '../utils/constants/index.js';
-import { PRESETS, getDefaultConfig } from './config/presets.js';
-import {
-  PERSIST_VERSION,
-  isPersistFormat,
-  isPracticeConfigFormat,
-} from './utils/typeGuards.js';
-import { initialStats, initialSessionConfig } from './session/initialState.js';
+import { checkBust, isGameFinished } from '../utils/gameLogic/index.js';
+import { executeThrow } from '../utils/throwSimulator/index.js';
+import { getDefaultConfig, PRESETS } from './config/presets.js';
+import { initialSessionConfig, initialStats } from './session/initialState.js';
+import { isPersistFormat, isPracticeConfigFormat, PERSIST_VERSION } from './utils/typeGuards.js';
 
 /**
  * ゲームストアの状態インターフェース
@@ -78,433 +74,404 @@ interface GameStore {
   getAccuracy: () => number;
 }
 
-
 /**
  * ゲームストアの実装
  */
 export const useGameStore = create<GameStore>()(
   persist(
     immer((set, get) => ({
-    // ============================================================
-    // 初期状態
-    // ============================================================
-    gameState: 'setup',
-    config: getDefaultConfig(),
-    sessionConfig: { ...initialSessionConfig },
-    currentQuestion: null,
-    currentThrowIndex: 0,
-    displayedDarts: [],
-    remainingScore: 0,
-    roundStartScore: 0,
-    stats: { ...initialStats },
-    elapsedTime: 0,
-    isTimerRunning: false,
-    practiceStartTime: undefined,
+      // ============================================================
+      // 初期状態
+      // ============================================================
+      gameState: 'setup',
+      config: getDefaultConfig(),
+      sessionConfig: { ...initialSessionConfig },
+      currentQuestion: null,
+      currentThrowIndex: 0,
+      displayedDarts: [],
+      remainingScore: 0,
+      roundStartScore: 0,
+      stats: { ...initialStats },
+      elapsedTime: 0,
+      isTimerRunning: false,
+      practiceStartTime: undefined,
 
-    // ============================================================
-    // 設定アクション
-    // ============================================================
+      // ============================================================
+      // 設定アクション
+      // ============================================================
 
-    /**
-     * 設定を部分更新する
-     */
-    setConfig: (partialConfig) =>
-      set((state) => {
-        state.config = { ...state.config, ...partialConfig };
-      }),
+      /**
+       * 設定を部分更新する
+       */
+      setConfig: (partialConfig) =>
+        set((state) => {
+          state.config = { ...state.config, ...partialConfig };
+        }),
 
-    /**
-     * セッション設定を更新する
-     */
-    setSessionConfig: (config) =>
-      set((state) => {
-        state.sessionConfig = config;
-      }),
+      /**
+       * セッション設定を更新する
+       */
+      setSessionConfig: (config) =>
+        set((state) => {
+          state.sessionConfig = config;
+        }),
 
-    /**
-     * プリセットを選択する
-     * @throws {Error} 存在しないプリセットIDの場合
-     */
-    selectPreset: (presetId) => {
-      const preset = PRESETS[presetId];
-      if (!preset) {
-        throw new Error(`プリセット「${presetId}」が見つかりません`);
-      }
-      set((state) => {
-        state.config = { ...preset };
-      });
-    },
-
-    /**
-     * ターゲットを設定する
-     */
-    setTarget: (target) =>
-      set((state) => {
-        state.config.target = target;
-      }),
-
-    /**
-     * 標準偏差を設定する
-     * @throws {Error} 不正な値の場合
-     */
-    setStdDev: (stdDevMM) => {
-      // バリデーション
-      if (!Number.isFinite(stdDevMM)) {
-        throw new Error('標準偏差は有限の数である必要があります');
-      }
-      if (stdDevMM <= 0) {
-        throw new Error('標準偏差は正の数である必要があります');
-      }
-
-      set((state) => {
-        state.config.stdDevMM = stdDevMM;
-      });
-    },
-
-    // ============================================================
-    // ゲームアクション
-    // ============================================================
-
-    /**
-     * 練習を開始する
-     */
-    startPractice: () => {
-      set((state) => {
-        state.gameState = 'practicing';
-        state.isTimerRunning = true;
-        state.stats = { ...initialStats };
-        state.elapsedTime = 0;
-        state.practiceStartTime = Date.now();
-        state.displayedDarts = [];
-        state.currentThrowIndex = 0;
-
-        // 残り点数モードの場合、remainingScoreを設定
-        if (
-          state.config.questionType === 'remaining' ||
-          state.config.questionType === 'both'
-        ) {
-          state.remainingScore = state.config.startingScore || 0;
-          state.roundStartScore = state.remainingScore;
-        } else {
-          state.remainingScore = 0;
-          state.roundStartScore = 0;
+      /**
+       * プリセットを選択する
+       * @throws {Error} 存在しないプリセットIDの場合
+       */
+      selectPreset: (presetId) => {
+        const preset = PRESETS[presetId];
+        if (!preset) {
+          throw new Error(`プリセット「${presetId}」が見つかりません`);
         }
-      });
+        set((state) => {
+          state.config = { ...preset };
+        });
+      },
 
-      // 最初の問題を生成（set完了後に実行）
-      get().generateQuestion();
-    },
+      /**
+       * ターゲットを設定する
+       */
+      setTarget: (target) =>
+        set((state) => {
+          state.config.target = target;
+        }),
 
-    /**
-     * 新しい問題を生成する
-     */
-    generateQuestion: () =>
-      set((state) => {
-        const { config } = state;
-        const throws: ThrowResult[] = [];
-
-        // 指定された投擲数分のシミュレーションを実行
-        for (let i = 0; i < config.throwUnit; i++) {
-          const throwResult = executeThrow(config.target, config.stdDevMM);
-          throws.push(throwResult);
+      /**
+       * 標準偏差を設定する
+       * @throws {Error} 不正な値の場合
+       */
+      setStdDev: (stdDevMM) => {
+        // バリデーション
+        if (!Number.isFinite(stdDevMM)) {
+          throw new Error('標準偏差は有限の数である必要があります');
+        }
+        if (stdDevMM <= 0) {
+          throw new Error('標準偏差は正の数である必要があります');
         }
 
-        // 得点の合計を計算
-        const totalScore = throws.reduce((sum, t) => sum + t.score, 0);
+        set((state) => {
+          state.config.stdDevMM = stdDevMM;
+        });
+      },
 
-        // 問題タイプに応じて正解と問題文を設定
-        let correctAnswer: number;
-        let questionText: string;
-        let mode: QuestionType;
+      // ============================================================
+      // ゲームアクション
+      // ============================================================
 
-        if (config.questionType === 'score') {
-          mode = 'score';
-          correctAnswer = totalScore;
-          questionText =
-            config.throwUnit === 1
-              ? 'この投擲の得点は？'
-              : '3投の合計得点は？';
-        } else if (config.questionType === 'remaining') {
-          mode = 'remaining';
-          correctAnswer = state.remainingScore - totalScore;
-          questionText = '残り点数は？';
-        } else {
-          // both: ランダムにscoreかremainingを選択
-          // ただし、remainingScoreが0または未設定の場合は強制的にscoreモードにする
-          if (state.remainingScore <= 0) {
-            mode = 'score';
-          } else {
-            mode = Math.random() < 0.5 ? 'score' : 'remaining';
-          }
-
-          if (mode === 'score') {
-            correctAnswer = totalScore;
-            questionText =
-              config.throwUnit === 1
-                ? 'この投擲の得点は？'
-                : '3投の合計得点は？';
-          } else {
-            correctAnswer = state.remainingScore - totalScore;
-            questionText = '残り点数は？';
-          }
-        }
-
-        state.currentQuestion = {
-          mode,
-          throws,
-          correctAnswer,
-          questionText,
-          startingScore:
-            mode === 'remaining' ? state.remainingScore : undefined,
-        };
-
-        // 1投モードの場合は即座にdisplayedDartsに追加
-        if (config.throwUnit === 1) {
-          state.displayedDarts = [...throws];
-          state.currentThrowIndex = 1;
-        } else {
-          // 3投モードの場合はリセット
+      /**
+       * 練習を開始する
+       */
+      startPractice: () => {
+        set((state) => {
+          state.gameState = 'practicing';
+          state.isTimerRunning = true;
+          state.stats = { ...initialStats };
+          state.elapsedTime = 0;
+          state.practiceStartTime = Date.now();
           state.displayedDarts = [];
           state.currentThrowIndex = 0;
-        }
-      }),
 
-    /**
-     * 次のダーツを投擲シミュレーションする（3投モード専用）
-     */
-    simulateNextThrow: () =>
-      set((state) => {
-        const { config, currentQuestion } = state;
-
-        // 1投モードの場合は何もしない
-        if (config.throwUnit === 1) {
-          return;
-        }
-
-        // 現在の問題が存在し、まだ表示していない投擲がある場合
-        if (
-          currentQuestion &&
-          state.currentThrowIndex < currentQuestion.throws.length
-        ) {
-          const nextThrow = currentQuestion.throws[state.currentThrowIndex];
-          state.displayedDarts.push(nextThrow);
-          state.currentThrowIndex++;
-        }
-      }),
-
-    /**
-     * 回答を送信する
-     *
-     * バスト検出時は自動的に残り点数を戻し、統計を更新します。
-     * 呼び出し側でhandleBustを明示的に呼ぶ必要はありません。
-     *
-     * @throws {Error} 不正な回答値の場合
-     */
-    submitAnswer: (answer) => {
-      // バリデーション
-      if (!Number.isFinite(answer)) {
-        throw new Error('回答は有限の数である必要があります');
-      }
-      if (answer < 0) {
-        throw new Error('回答は0以上である必要があります');
-      }
-      if (!Number.isInteger(answer)) {
-        throw new Error('回答は整数である必要があります');
-      }
-
-      set((state) => {
-        const correctAnswer = get().getCurrentCorrectAnswer();
-        const isCorrect = answer === correctAnswer;
-
-        // 残り点数モードの場合、バスト判定を先に実行
-        let isBust = false;
-        if (
-          state.currentQuestion?.mode === 'remaining' &&
-          state.config.questionType !== 'score'
-        ) {
-          const totalScore =
-            state.currentQuestion?.throws.reduce((sum, t) => sum + t.score, 0) ||
-            0;
-
-          // バスト判定
-          const lastThrow =
-            state.currentQuestion?.throws[
-              state.currentQuestion.throws.length - 1
-            ];
-          const isDouble = lastThrow?.ring === 'DOUBLE';
-          const bustInfo = checkBust(
-            state.remainingScore,
-            totalScore,
-            isDouble
-          );
-
-          if (bustInfo.isBust) {
-            // バスト検出: 残り点数をラウンド開始時に戻す
-            isBust = true;
-            state.remainingScore = state.roundStartScore;
+          // 残り点数モードの場合、remainingScoreを設定
+          if (state.config.questionType === 'remaining' || state.config.questionType === 'both') {
+            state.remainingScore = state.config.startingScore || 0;
+            state.roundStartScore = state.remainingScore;
           } else {
-            // バストでない場合は残り点数を更新
-            const newRemaining = state.remainingScore - totalScore;
-            state.remainingScore = newRemaining;
+            state.remainingScore = 0;
+            state.roundStartScore = 0;
           }
-        }
-
-        // 統計情報を更新
-        state.stats.total++;
-        if (isCorrect && !isBust) {
-          // 正解かつバストでない場合のみ正解数をカウント
-          state.stats.correct++;
-          state.stats.currentStreak++;
-          if (state.stats.currentStreak > state.stats.bestStreak) {
-            state.stats.bestStreak = state.stats.currentStreak;
-          }
-        } else {
-          // 不正解またはバストの場合はストリークをリセット
-          state.stats.currentStreak = 0;
-        }
-
-        // 問題数モードで最終問題に到達した場合、セッションを終了
-        if (
-          state.sessionConfig.mode === 'questions' &&
-          state.stats.total >= (state.sessionConfig.questionCount || 0)
-        ) {
-          state.gameState = 'results';
-          state.isTimerRunning = false;
-        }
-      });
-    },
-
-    /**
-     * 次の問題へ進む
-     */
-    nextQuestion: () => {
-      const { config, remainingScore } = get();
-
-      // ゲーム終了判定（残り0点）
-      if (
-        config.questionType === 'remaining' &&
-        isGameFinished(remainingScore)
-      ) {
-        set((state) => {
-          state.gameState = 'results';
-          state.isTimerRunning = false;
         });
-        return;
-      }
 
-      set((state) => {
-        // ラウンド開始点数を更新
-        state.roundStartScore = state.remainingScore;
+        // 最初の問題を生成（set完了後に実行）
+        get().generateQuestion();
+      },
 
-        // 次の問題を生成準備（防御的にcurrentQuestionをリセット）
-        state.currentQuestion = null;
-        state.currentThrowIndex = 0;
-        state.displayedDarts = [];
-      });
+      /**
+       * 新しい問題を生成する
+       */
+      generateQuestion: () =>
+        set((state) => {
+          const { config } = state;
+          const throws: ThrowResult[] = [];
 
-      // 次の問題を生成（set完了後に実行）
-      get().generateQuestion();
-    },
+          // 指定された投擲数分のシミュレーションを実行
+          for (let i = 0; i < config.throwUnit; i++) {
+            const throwResult = executeThrow(config.target, config.stdDevMM);
+            throws.push(throwResult);
+          }
 
-    /**
-     * セッションを終了する
-     *
-     * @param reason - 終了理由（オプション）
-     * @todo 将来的にSessionResultに記録する機能を実装
-     */
-    endSession: (reason) =>
-      set((state) => {
-        state.gameState = 'results';
-        state.isTimerRunning = false;
-        // reasonは将来的にSessionResultに記録
-        // 現在は未使用だが、将来の拡張のためにパラメータを保持
-        void reason;
-      }),
+          // 得点の合計を計算
+          const totalScore = throws.reduce((sum, t) => sum + t.score, 0);
 
-    /**
-     * 設定画面に戻る
-     */
-    resetToSetup: () =>
-      set((state) => {
-        state.gameState = 'setup';
-        state.currentQuestion = null;
-        state.stats = { ...initialStats };
-        state.elapsedTime = 0;
-        state.isTimerRunning = false;
-        state.practiceStartTime = undefined;
-        state.displayedDarts = [];
-        state.currentThrowIndex = 0;
-        state.remainingScore = 0;
-        state.roundStartScore = 0;
-      }),
+          // 問題タイプに応じて正解と問題文を設定
+          let correctAnswer: number;
+          let questionText: string;
+          let mode: QuestionType;
 
-    /**
-     * バスト処理
-     */
-    handleBust: () =>
-      set((state) => {
-        // 残り点数をラウンド開始時に戻す
-        state.remainingScore = state.roundStartScore;
-        // 問題をクリア
-        state.currentQuestion = null;
-        // 統計情報のtotalを増加（不正解扱い）
-        state.stats.total++;
-        state.stats.currentStreak = 0;
-      }),
+          if (config.questionType === 'score') {
+            mode = 'score';
+            correctAnswer = totalScore;
+            questionText = config.throwUnit === 1 ? 'この投擲の得点は？' : '3投の合計得点は？';
+          } else if (config.questionType === 'remaining') {
+            mode = 'remaining';
+            correctAnswer = state.remainingScore - totalScore;
+            questionText = '残り点数は？';
+          } else {
+            // both: ランダムにscoreかremainingを選択
+            // ただし、remainingScoreが0または未設定の場合は強制的にscoreモードにする
+            if (state.remainingScore <= 0) {
+              mode = 'score';
+            } else {
+              mode = Math.random() < 0.5 ? 'score' : 'remaining';
+            }
 
-    /**
-     * タイマーを更新する
-     *
-     * Date.now()を基準に経過時間を計算するため、
-     * setIntervalの精度に依存せず正確な時間計測が可能です。
-     */
-    tick: () =>
-      set((state) => {
-        if (!state.isTimerRunning || !state.practiceStartTime) {
-          return;
+            if (mode === 'score') {
+              correctAnswer = totalScore;
+              questionText = config.throwUnit === 1 ? 'この投擲の得点は？' : '3投の合計得点は？';
+            } else {
+              correctAnswer = state.remainingScore - totalScore;
+              questionText = '残り点数は？';
+            }
+          }
+
+          state.currentQuestion = {
+            mode,
+            throws,
+            correctAnswer,
+            questionText,
+            startingScore: mode === 'remaining' ? state.remainingScore : undefined,
+          };
+
+          // 1投モードの場合は即座にdisplayedDartsに追加
+          if (config.throwUnit === 1) {
+            state.displayedDarts = [...throws];
+            state.currentThrowIndex = 1;
+          } else {
+            // 3投モードの場合はリセット
+            state.displayedDarts = [];
+            state.currentThrowIndex = 0;
+          }
+        }),
+
+      /**
+       * 次のダーツを投擲シミュレーションする（3投モード専用）
+       */
+      simulateNextThrow: () =>
+        set((state) => {
+          const { config, currentQuestion } = state;
+
+          // 1投モードの場合は何もしない
+          if (config.throwUnit === 1) {
+            return;
+          }
+
+          // 現在の問題が存在し、まだ表示していない投擲がある場合
+          if (currentQuestion && state.currentThrowIndex < currentQuestion.throws.length) {
+            const nextThrow = currentQuestion.throws[state.currentThrowIndex];
+            state.displayedDarts.push(nextThrow);
+            state.currentThrowIndex++;
+          }
+        }),
+
+      /**
+       * 回答を送信する
+       *
+       * バスト検出時は自動的に残り点数を戻し、統計を更新します。
+       * 呼び出し側でhandleBustを明示的に呼ぶ必要はありません。
+       *
+       * @throws {Error} 不正な回答値の場合
+       */
+      submitAnswer: (answer) => {
+        // バリデーション
+        if (!Number.isFinite(answer)) {
+          throw new Error('回答は有限の数である必要があります');
+        }
+        if (answer < 0) {
+          throw new Error('回答は0以上である必要があります');
+        }
+        if (!Number.isInteger(answer)) {
+          throw new Error('回答は整数である必要があります');
         }
 
-        // Date.now()を基準に経過時間を計算
-        state.elapsedTime = Math.floor(
-          (Date.now() - state.practiceStartTime) / 1000
-        );
+        set((state) => {
+          const correctAnswer = get().getCurrentCorrectAnswer();
+          const isCorrect = answer === correctAnswer;
 
-        // 時間制限モードでの制限時間チェック
-        if (
-          state.sessionConfig.mode === 'time' &&
-          state.sessionConfig.timeLimit
-        ) {
-          const timeLimit = state.sessionConfig.timeLimit * 60; // 分を秒に変換
-          if (state.elapsedTime >= timeLimit) {
+          // 残り点数モードの場合、バスト判定を先に実行
+          let isBust = false;
+          if (
+            state.currentQuestion?.mode === 'remaining' &&
+            state.config.questionType !== 'score'
+          ) {
+            const totalScore =
+              state.currentQuestion?.throws.reduce((sum, t) => sum + t.score, 0) || 0;
+
+            // バスト判定
+            const lastThrow =
+              state.currentQuestion?.throws[state.currentQuestion.throws.length - 1];
+            const isDouble = lastThrow?.ring === 'DOUBLE';
+            const bustInfo = checkBust(state.remainingScore, totalScore, isDouble);
+
+            if (bustInfo.isBust) {
+              // バスト検出: 残り点数をラウンド開始時に戻す
+              isBust = true;
+              state.remainingScore = state.roundStartScore;
+            } else {
+              // バストでない場合は残り点数を更新
+              const newRemaining = state.remainingScore - totalScore;
+              state.remainingScore = newRemaining;
+            }
+          }
+
+          // 統計情報を更新
+          state.stats.total++;
+          if (isCorrect && !isBust) {
+            // 正解かつバストでない場合のみ正解数をカウント
+            state.stats.correct++;
+            state.stats.currentStreak++;
+            if (state.stats.currentStreak > state.stats.bestStreak) {
+              state.stats.bestStreak = state.stats.currentStreak;
+            }
+          } else {
+            // 不正解またはバストの場合はストリークをリセット
+            state.stats.currentStreak = 0;
+          }
+
+          // 問題数モードで最終問題に到達した場合、セッションを終了
+          if (
+            state.sessionConfig.mode === 'questions' &&
+            state.stats.total >= (state.sessionConfig.questionCount || 0)
+          ) {
             state.gameState = 'results';
             state.isTimerRunning = false;
           }
+        });
+      },
+
+      /**
+       * 次の問題へ進む
+       */
+      nextQuestion: () => {
+        const { config, remainingScore } = get();
+
+        // ゲーム終了判定（残り0点）
+        if (config.questionType === 'remaining' && isGameFinished(remainingScore)) {
+          set((state) => {
+            state.gameState = 'results';
+            state.isTimerRunning = false;
+          });
+          return;
         }
-      }),
 
-    // ============================================================
-    // 計算プロパティ
-    // ============================================================
+        set((state) => {
+          // ラウンド開始点数を更新
+          state.roundStartScore = state.remainingScore;
 
-    /**
-     * 現在の問題の正解を取得する
-     */
-    getCurrentCorrectAnswer: () => {
-      const { currentQuestion } = get();
-      return currentQuestion?.correctAnswer ?? 0;
-    },
+          // 次の問題を生成準備（防御的にcurrentQuestionをリセット）
+          state.currentQuestion = null;
+          state.currentThrowIndex = 0;
+          state.displayedDarts = [];
+        });
 
-    /**
-     * 正答率を計算する
-     */
-    getAccuracy: () => {
-      const { stats } = get();
-      if (stats.total === 0) {
-        return 0;
-      }
-      return stats.correct / stats.total;
-    },
-  })),
+        // 次の問題を生成（set完了後に実行）
+        get().generateQuestion();
+      },
+
+      /**
+       * セッションを終了する
+       *
+       * @param reason - 終了理由（オプション）
+       * @todo 将来的にSessionResultに記録する機能を実装
+       */
+      endSession: (reason) =>
+        set((state) => {
+          state.gameState = 'results';
+          state.isTimerRunning = false;
+          // reasonは将来的にSessionResultに記録
+          // 現在は未使用だが、将来の拡張のためにパラメータを保持
+          void reason;
+        }),
+
+      /**
+       * 設定画面に戻る
+       */
+      resetToSetup: () =>
+        set((state) => {
+          state.gameState = 'setup';
+          state.currentQuestion = null;
+          state.stats = { ...initialStats };
+          state.elapsedTime = 0;
+          state.isTimerRunning = false;
+          state.practiceStartTime = undefined;
+          state.displayedDarts = [];
+          state.currentThrowIndex = 0;
+          state.remainingScore = 0;
+          state.roundStartScore = 0;
+        }),
+
+      /**
+       * バスト処理
+       */
+      handleBust: () =>
+        set((state) => {
+          // 残り点数をラウンド開始時に戻す
+          state.remainingScore = state.roundStartScore;
+          // 問題をクリア
+          state.currentQuestion = null;
+          // 統計情報のtotalを増加（不正解扱い）
+          state.stats.total++;
+          state.stats.currentStreak = 0;
+        }),
+
+      /**
+       * タイマーを更新する
+       *
+       * Date.now()を基準に経過時間を計算するため、
+       * setIntervalの精度に依存せず正確な時間計測が可能です。
+       */
+      tick: () =>
+        set((state) => {
+          if (!state.isTimerRunning || !state.practiceStartTime) {
+            return;
+          }
+
+          // Date.now()を基準に経過時間を計算
+          state.elapsedTime = Math.floor((Date.now() - state.practiceStartTime) / 1000);
+
+          // 時間制限モードでの制限時間チェック
+          if (state.sessionConfig.mode === 'time' && state.sessionConfig.timeLimit) {
+            const timeLimit = state.sessionConfig.timeLimit * 60; // 分を秒に変換
+            if (state.elapsedTime >= timeLimit) {
+              state.gameState = 'results';
+              state.isTimerRunning = false;
+            }
+          }
+        }),
+
+      // ============================================================
+      // 計算プロパティ
+      // ============================================================
+
+      /**
+       * 現在の問題の正解を取得する
+       */
+      getCurrentCorrectAnswer: () => {
+        const { currentQuestion } = get();
+        return currentQuestion?.correctAnswer ?? 0;
+      },
+
+      /**
+       * 正答率を計算する
+       */
+      getAccuracy: () => {
+        const { stats } = get();
+        if (stats.total === 0) {
+          return 0;
+        }
+        return stats.correct / stats.total;
+      },
+    })),
     {
       name: STORAGE_KEY,
       partialize: (state) => ({ config: state.config }),

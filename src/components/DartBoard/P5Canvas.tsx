@@ -45,11 +45,7 @@ export function P5Canvas({ coords, dartCount }: P5CanvasProps): JSX.Element {
 
     // CoordinateTransformインスタンスの初期化
     // BOARD_PHYSICAL.rings.boardEdge (225mm) がボードの物理半径
-    transformRef.current = new CoordinateTransform(
-      width,
-      height,
-      BOARD_PHYSICAL.rings.boardEdge
-    );
+    transformRef.current = new CoordinateTransform(width, height, BOARD_PHYSICAL.rings.boardEdge);
   };
 
   /**

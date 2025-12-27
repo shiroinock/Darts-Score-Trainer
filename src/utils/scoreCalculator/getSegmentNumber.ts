@@ -12,7 +12,7 @@
  * @returns セグメント番号（1-20）
  */
 
-import { SEGMENTS, SEGMENT_ANGLE } from '../constants/index.js';
+import { SEGMENT_ANGLE, SEGMENTS } from '../constants/index.js';
 
 export function getSegmentNumber(angle: number): number {
   // 角度を正規化（-π〜πの範囲に収める）

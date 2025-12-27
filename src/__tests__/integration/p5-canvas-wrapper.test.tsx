@@ -2,8 +2,9 @@
  * P5Canvasコンポーネントの統合テスト
  * react-p5とp5.jsを使用したReactコンポーネントの動作を検証する
  */
-import { describe, test, expect, vi, beforeEach } from 'vitest';
+
 import { render } from '@testing-library/react';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { P5Canvas } from '../../components/DartBoard/P5Canvas';
 import type { Coordinates } from '../../types';
 import { BOARD_PHYSICAL, DART_COLORS } from '../../utils/constants/index.js';
@@ -82,7 +83,11 @@ vi.mock('../../components/DartBoard/dartBoardRenderer', () => ({
 }));
 
 // モジュールをインポート（モック化された後）
-import { drawBoard, drawDartMarker, drawLegend } from '../../components/DartBoard/dartBoardRenderer';
+import {
+  drawBoard,
+  drawDartMarker,
+  drawLegend,
+} from '../../components/DartBoard/dartBoardRenderer';
 
 describe('p5-canvas-wrapper integration', () => {
   beforeEach(() => {
@@ -116,9 +121,9 @@ describe('p5-canvas-wrapper integration', () => {
     test('3投分のダーツ座標を渡してもレンダリングに成功する', () => {
       // Arrange
       const coords: Coordinates[] = [
-        { x: 0, y: -103 },     // トリプル20付近
-        { x: 50, y: 50 },      // 適当な位置
-        { x: -30, y: -30 },    // 適当な位置
+        { x: 0, y: -103 }, // トリプル20付近
+        { x: 50, y: 50 }, // 適当な位置
+        { x: -30, y: -30 }, // 適当な位置
       ];
 
       // Act
@@ -292,7 +297,7 @@ describe('p5-canvas-wrapper integration', () => {
     test('1本のダーツが渡された場合、drawDartMarkerが1回呼ばれる', () => {
       // Arrange
       const coords: Coordinates[] = [
-        { x: 0, y: -103 },  // トリプル20付近
+        { x: 0, y: -103 }, // トリプル20付近
       ];
 
       // Act
@@ -305,9 +310,9 @@ describe('p5-canvas-wrapper integration', () => {
     test('3本のダーツが渡された場合、drawDartMarkerが3回呼ばれる', () => {
       // Arrange
       const coords: Coordinates[] = [
-        { x: 0, y: -103 },     // トリプル20付近
-        { x: 50, y: 50 },      // 適当な位置
-        { x: -30, y: -30 },    // 適当な位置
+        { x: 0, y: -103 }, // トリプル20付近
+        { x: 50, y: 50 }, // 適当な位置
+        { x: -30, y: -30 }, // 適当な位置
       ];
 
       // Act
@@ -351,9 +356,9 @@ describe('p5-canvas-wrapper integration', () => {
       const secondCall = (drawDartMarker as any).mock.calls[1];
       const thirdCall = (drawDartMarker as any).mock.calls[2];
 
-      expect(firstCall[3]).toBe(DART_COLORS.first);   // 1本目: 赤系
+      expect(firstCall[3]).toBe(DART_COLORS.first); // 1本目: 赤系
       expect(secondCall[3]).toBe(DART_COLORS.second); // 2本目: 青緑系
-      expect(thirdCall[3]).toBe(DART_COLORS.third);   // 3本目: 黄系
+      expect(thirdCall[3]).toBe(DART_COLORS.third); // 3本目: 黄系
     });
 
     test('drawDartMarkerに正しいダーツインデックスが渡される', () => {
@@ -508,12 +513,15 @@ describe('p5-canvas-wrapper integration', () => {
 
       // Assert
       const mockP5 = (globalThis as any).__mockP5Instance;
-      expect(drawBoard).toHaveBeenCalledWith(mockP5, expect.objectContaining({
-        getCenter: expect.any(Function),
-        physicalToScreen: expect.any(Function),
-        physicalDistanceToScreen: expect.any(Function),
-        updateCanvasSize: expect.any(Function),
-      }));
+      expect(drawBoard).toHaveBeenCalledWith(
+        mockP5,
+        expect.objectContaining({
+          getCenter: expect.any(Function),
+          physicalToScreen: expect.any(Function),
+          physicalDistanceToScreen: expect.any(Function),
+          updateCanvasSize: expect.any(Function),
+        })
+      );
     });
 
     test('drawDartMarker()に正しい5つの引数が渡される', () => {
@@ -528,11 +536,11 @@ describe('p5-canvas-wrapper integration', () => {
       expect(call.length).toBe(5);
 
       // 引数の型を確認
-      expect(call[0]).toBeDefined();                       // p5インスタンス
-      expect(call[1]).toHaveProperty('getCenter');         // CoordinateTransform
-      expect(call[2]).toEqual({ x: 10, y: 20 });           // 座標
-      expect(typeof call[3]).toBe('string');               // 色
-      expect(typeof call[4]).toBe('number');               // インデックス
+      expect(call[0]).toBeDefined(); // p5インスタンス
+      expect(call[1]).toHaveProperty('getCenter'); // CoordinateTransform
+      expect(call[2]).toEqual({ x: 10, y: 20 }); // 座標
+      expect(typeof call[3]).toBe('string'); // 色
+      expect(typeof call[4]).toBe('number'); // インデックス
     });
 
     test('drawLegend()にp5インスタンスとdartCountが渡される', () => {
@@ -549,8 +557,8 @@ describe('p5-canvas-wrapper integration', () => {
       // Assert
       const call = (drawLegend as any).mock.calls[0];
       expect(call.length).toBe(2);
-      expect(call[0]).toBeDefined();           // p5インスタンス
-      expect(call[1]).toBe(3);                  // dartCount
+      expect(call[0]).toBeDefined(); // p5インスタンス
+      expect(call[1]).toBe(3); // dartCount
     });
   });
 

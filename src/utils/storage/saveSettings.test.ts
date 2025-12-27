@@ -1,7 +1,7 @@
-import { describe, test, expect, beforeEach } from 'vitest';
-import { saveSettings } from './saveSettings.js';
-import { STORAGE_KEY } from '../constants/index.js';
+import { beforeEach, describe, expect, test } from 'vitest';
 import type { PracticeConfig } from '../../types/index.js';
+import { STORAGE_KEY } from '../constants/index.js';
+import { saveSettings } from './saveSettings.js';
 
 const mockConfig: PracticeConfig = {
   configId: 'test-config-001',
@@ -19,7 +19,9 @@ const mockConfig: PracticeConfig = {
   lastPlayedAt: '2025-12-08T12:00:00.000Z',
 };
 
-beforeEach(() => { localStorage.clear(); });
+beforeEach(() => {
+  localStorage.clear();
+});
 
 describe('saveSettings', () => {
   describe('正常系', () => {
@@ -91,7 +93,9 @@ describe('saveSettings', () => {
 
       // Act & Assert
       expect(() => saveSettings(emptyConfig as Partial<PracticeConfig>)).toThrow(TypeError);
-      expect(() => saveSettings(emptyConfig as Partial<PracticeConfig>)).toThrow('config must not be an empty object');
+      expect(() => saveSettings(emptyConfig as Partial<PracticeConfig>)).toThrow(
+        'config must not be an empty object'
+      );
     });
 
     test('nullを保存しようとするとTypeErrorをスローする', () => {
@@ -99,8 +103,12 @@ describe('saveSettings', () => {
       const nullConfig: null = null;
 
       // Act & Assert
-      expect(() => saveSettings(nullConfig as unknown as Partial<PracticeConfig>)).toThrow(TypeError);
-      expect(() => saveSettings(nullConfig as unknown as Partial<PracticeConfig>)).toThrow('config must not be null or undefined');
+      expect(() => saveSettings(nullConfig as unknown as Partial<PracticeConfig>)).toThrow(
+        TypeError
+      );
+      expect(() => saveSettings(nullConfig as unknown as Partial<PracticeConfig>)).toThrow(
+        'config must not be null or undefined'
+      );
     });
 
     test('配列を保存しようとするとTypeErrorをスローする', () => {
@@ -109,7 +117,9 @@ describe('saveSettings', () => {
 
       // Act & Assert
       expect(() => saveSettings(arrayConfig as Partial<PracticeConfig>)).toThrow(TypeError);
-      expect(() => saveSettings(arrayConfig as Partial<PracticeConfig>)).toThrow('config must be an object, not an array');
+      expect(() => saveSettings(arrayConfig as Partial<PracticeConfig>)).toThrow(
+        'config must be an object, not an array'
+      );
     });
 
     test('その他の型（プリミティブ）を保存しようとするとTypeErrorをスローする', () => {
@@ -119,14 +129,26 @@ describe('saveSettings', () => {
       const booleanConfig = true;
 
       // Act & Assert
-      expect(() => saveSettings(stringConfig as unknown as Partial<PracticeConfig>)).toThrow(TypeError);
-      expect(() => saveSettings(stringConfig as unknown as Partial<PracticeConfig>)).toThrow('config must be an object');
+      expect(() => saveSettings(stringConfig as unknown as Partial<PracticeConfig>)).toThrow(
+        TypeError
+      );
+      expect(() => saveSettings(stringConfig as unknown as Partial<PracticeConfig>)).toThrow(
+        'config must be an object'
+      );
 
-      expect(() => saveSettings(numberConfig as unknown as Partial<PracticeConfig>)).toThrow(TypeError);
-      expect(() => saveSettings(numberConfig as unknown as Partial<PracticeConfig>)).toThrow('config must be an object');
+      expect(() => saveSettings(numberConfig as unknown as Partial<PracticeConfig>)).toThrow(
+        TypeError
+      );
+      expect(() => saveSettings(numberConfig as unknown as Partial<PracticeConfig>)).toThrow(
+        'config must be an object'
+      );
 
-      expect(() => saveSettings(booleanConfig as unknown as Partial<PracticeConfig>)).toThrow(TypeError);
-      expect(() => saveSettings(booleanConfig as unknown as Partial<PracticeConfig>)).toThrow('config must be an object');
+      expect(() => saveSettings(booleanConfig as unknown as Partial<PracticeConfig>)).toThrow(
+        TypeError
+      );
+      expect(() => saveSettings(booleanConfig as unknown as Partial<PracticeConfig>)).toThrow(
+        'config must be an object'
+      );
     });
   });
 });

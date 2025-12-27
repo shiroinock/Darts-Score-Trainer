@@ -1,4 +1,4 @@
-import { describe, test, expect } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { coordinateToScore } from './coordinateToScore.js';
 
 describe('coordinateToScore', () => {
@@ -149,8 +149,8 @@ describe('coordinateToScore', () => {
       // Arrange
       const x = 73;
       const y = -73;
-      const distance = Math.sqrt(x * x + y * y); // 約103mm（トリプルリング）
-      const angle = Math.atan2(y, x); // 約-45度（20と1の間）
+      const _distance = Math.sqrt(x * x + y * y); // 約103mm（トリプルリング）
+      const _angle = Math.atan2(y, x); // 約-45度（20と1の間）
 
       // Act
       const result = coordinateToScore(x, y);
@@ -192,4 +192,3 @@ describe('coordinateToScore', () => {
     });
   });
 });
-

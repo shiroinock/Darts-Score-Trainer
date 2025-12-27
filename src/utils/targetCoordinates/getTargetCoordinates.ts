@@ -7,14 +7,11 @@
  * @throws {Error} 無効な入力の場合
  */
 
+import type { Coordinates, TargetType } from '../../types/index.js';
 import { TARGET_RADII } from '../constants/index.js';
-import type { TargetType, Coordinates } from '../../types/index.js';
 import { getSegmentAngle } from './getSegmentAngle.js';
 
-export function getTargetCoordinates(
-  targetType: TargetType,
-  number: number | null
-): Coordinates {
+export function getTargetCoordinates(targetType: TargetType, number: number | null): Coordinates {
   // BULLの場合
   if (targetType === 'BULL') {
     if (number !== null) {

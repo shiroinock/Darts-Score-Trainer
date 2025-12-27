@@ -1,6 +1,6 @@
-import { describe, test, expect } from 'vitest';
-import { getAllTargets } from './getAllTargets.js';
+import { describe, expect, test } from 'vitest';
 import type { Target } from '../../types/index.js';
+import { getAllTargets } from './getAllTargets.js';
 
 describe('getAllTargets', () => {
   describe('正常系', () => {
@@ -22,7 +22,9 @@ describe('getAllTargets', () => {
 
       // 全てのセグメント番号（1-20）が含まれることを確認
       const singleNumbers = singleTargets.map((t) => t.number).sort((a, b) => a! - b!);
-      expect(singleNumbers).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
+      expect(singleNumbers).toEqual([
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+      ]);
     });
 
     test('DOUBLE 1-20を20個含む', () => {
@@ -35,7 +37,9 @@ describe('getAllTargets', () => {
 
       // 全てのセグメント番号（1-20）が含まれることを確認
       const doubleNumbers = doubleTargets.map((t) => t.number).sort((a, b) => a! - b!);
-      expect(doubleNumbers).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
+      expect(doubleNumbers).toEqual([
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+      ]);
     });
 
     test('TRIPLE 1-20を20個含む', () => {
@@ -48,7 +52,9 @@ describe('getAllTargets', () => {
 
       // 全てのセグメント番号（1-20）が含まれることを確認
       const tripleNumbers = tripleTargets.map((t) => t.number).sort((a, b) => a! - b!);
-      expect(tripleNumbers).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
+      expect(tripleNumbers).toEqual([
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+      ]);
     });
 
     test('BULLを1個含む', () => {

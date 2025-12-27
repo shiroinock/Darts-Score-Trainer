@@ -3,4 +3,4 @@
  *
  * ダーツボード周辺に表示されるセグメント番号（20, 1, 18...）のフォントサイズを定義します。
  */
-export const SEGMENT_NUMBER_TEXT_SIZE = 20;  // px - セグメント番号のテキストサイズ
+export const SEGMENT_NUMBER_TEXT_SIZE = 20; // px - セグメント番号のテキストサイズ

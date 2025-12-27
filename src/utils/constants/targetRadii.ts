@@ -9,9 +9,9 @@
  * - BULL: ブルの中心（原点）
  */
 export const TARGET_RADII = {
-  TRIPLE: 103,           // (99 + 107) / 2
-  DOUBLE: 166,           // (162 + 170) / 2
-  SINGLE_INNER: 57.5,    // (16 + 99) / 2
-  SINGLE_OUTER: 134.5,   // (107 + 162) / 2
-  BULL: 0                // 中心 (0, 0)
+  TRIPLE: 103, // (99 + 107) / 2
+  DOUBLE: 166, // (162 + 170) / 2
+  SINGLE_INNER: 57.5, // (16 + 99) / 2
+  SINGLE_OUTER: 134.5, // (107 + 162) / 2
+  BULL: 0, // 中心 (0, 0)
 } as const;

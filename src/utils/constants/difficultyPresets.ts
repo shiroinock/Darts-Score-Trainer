@@ -7,18 +7,18 @@
 export const DIFFICULTY_PRESETS = {
   beginner: {
     label: '初心者',
-    stdDevMM: 50         // 初心者レベルの標準偏差（広い散らばり）
+    stdDevMM: 50, // 初心者レベルの標準偏差（広い散らばり）
   },
   intermediate: {
     label: '中級者',
-    stdDevMM: 30         // 中級者レベルの標準偏差
+    stdDevMM: 30, // 中級者レベルの標準偏差
   },
   advanced: {
     label: '上級者',
-    stdDevMM: 15         // 上級者レベルの標準偏差
+    stdDevMM: 15, // 上級者レベルの標準偏差
   },
   expert: {
     label: 'エキスパート',
-    stdDevMM: 8          // エキスパートレベルの標準偏差（狭い散らばり）
-  }
+    stdDevMM: 8, // エキスパートレベルの標準偏差（狭い散らばり）
+  },
 } as const;

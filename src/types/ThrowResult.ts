@@ -1,6 +1,6 @@
-import type { Target } from './Target';
 import type { Coordinates } from './Coordinates';
 import type { RingType } from './RingType';
+import type { Target } from './Target';
 
 /**
  * 投擲結果

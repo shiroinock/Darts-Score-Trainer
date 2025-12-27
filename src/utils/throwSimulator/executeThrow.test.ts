@@ -1,6 +1,5 @@
-import { describe, test, expect } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { executeThrow } from './executeThrow.js';
-import type { Target } from '../../types/index.js';
 
 describe('executeThrow', () => {
   describe('正常系', () => {
@@ -346,7 +345,7 @@ describe('executeThrow', () => {
       // Assert
       // T20座標: (0, -103)付近
       expect(Math.abs(result.landingPoint.x - 0)).toBeLessThan(1);
-      expect(Math.abs(result.landingPoint.y - (-103))).toBeLessThan(1);
+      expect(Math.abs(result.landingPoint.y - -103)).toBeLessThan(1);
     });
   });
 
@@ -461,4 +460,3 @@ describe('executeThrow', () => {
     });
   });
 });
-

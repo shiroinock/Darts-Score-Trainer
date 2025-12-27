@@ -2,15 +2,20 @@
  * DartBoardコンポーネントのテスト
  * レスポンシブサイズ計算、レイアウト構造、P5Canvasへのprops転送を検証
  */
-import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, act } from '@testing-library/react';
-import { DartBoard } from './DartBoard';
+
+import { act, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import type { Coordinates } from '../../types';
+import { DartBoard } from './DartBoard';
 
 // P5Canvasコンポーネントをモック化
 vi.mock('./P5Canvas', () => ({
   P5Canvas: ({ coords, dartCount }: { coords: Coordinates[]; dartCount: number }) => (
-    <div data-testid="mock-p5-canvas" data-coords={JSON.stringify(coords)} data-dart-count={dartCount}>
+    <div
+      data-testid="mock-p5-canvas"
+      data-coords={JSON.stringify(coords)}
+      data-dart-count={dartCount}
+    >
       Mock P5Canvas
     </div>
   ),

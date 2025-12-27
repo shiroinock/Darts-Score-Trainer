@@ -1,4 +1,4 @@
-import { describe, test, expect } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { isGameFinished } from './isGameFinished.js';
 
 describe('isGameFinished', () => {
@@ -124,9 +124,7 @@ describe('isGameFinished', () => {
       const remainingScore = NaN;
 
       // Act & Assert
-      expect(() => isGameFinished(remainingScore)).toThrow(
-        '残り点数は整数である必要があります'
-      );
+      expect(() => isGameFinished(remainingScore)).toThrow('残り点数は整数である必要があります');
     });
 
     test('Infinityはエラーをスローする', () => {
@@ -134,9 +132,7 @@ describe('isGameFinished', () => {
       const remainingScore = Infinity;
 
       // Act & Assert
-      expect(() => isGameFinished(remainingScore)).toThrow(
-        '残り点数は整数である必要があります'
-      );
+      expect(() => isGameFinished(remainingScore)).toThrow('残り点数は整数である必要があります');
     });
 
     test('-Infinityはエラーをスローする', () => {
@@ -144,9 +140,7 @@ describe('isGameFinished', () => {
       const remainingScore = -Infinity;
 
       // Act & Assert
-      expect(() => isGameFinished(remainingScore)).toThrow(
-        '残り点数は整数である必要があります'
-      );
+      expect(() => isGameFinished(remainingScore)).toThrow('残り点数は整数である必要があります');
     });
 
     test('浮動小数点（0.5）はエラーをスローする', () => {
@@ -154,9 +148,7 @@ describe('isGameFinished', () => {
       const remainingScore = 0.5;
 
       // Act & Assert
-      expect(() => isGameFinished(remainingScore)).toThrow(
-        '残り点数は整数である必要があります'
-      );
+      expect(() => isGameFinished(remainingScore)).toThrow('残り点数は整数である必要があります');
     });
 
     test('浮動小数点（1.5）はエラーをスローする', () => {
@@ -164,9 +156,7 @@ describe('isGameFinished', () => {
       const remainingScore = 1.5;
 
       // Act & Assert
-      expect(() => isGameFinished(remainingScore)).toThrow(
-        '残り点数は整数である必要があります'
-      );
+      expect(() => isGameFinished(remainingScore)).toThrow('残り点数は整数である必要があります');
     });
 
     test('浮動小数点（50.1）はエラーをスローする', () => {
@@ -174,9 +164,7 @@ describe('isGameFinished', () => {
       const remainingScore = 50.1;
 
       // Act & Assert
-      expect(() => isGameFinished(remainingScore)).toThrow(
-        '残り点数は整数である必要があります'
-      );
+      expect(() => isGameFinished(remainingScore)).toThrow('残り点数は整数である必要があります');
     });
 
     test('負の値（-1）はエラーをスローする', () => {

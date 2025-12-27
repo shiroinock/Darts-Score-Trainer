@@ -1,9 +1,9 @@
-function setup(){
+function _setup() {
   createCanvas(750, 750);
   background(100);
 }
 
-function draw(){
+function _draw() {
   strokeWeight(4.5);
 
   // var surround = color(10, 10, 10);
@@ -22,7 +22,7 @@ function draw(){
 
   var rate = 1 / 10;
   var diff = PI * rate;
-  var start = PI * 1 / 20;
+  var start = (PI * 1) / 20;
   var end1 = start + diff;
   var end2 = end1 + diff;
   var end3 = end2 + diff;
@@ -73,7 +73,7 @@ function draw(){
   fill(green);
   arc(375, 375, 393, 393, end9, end10, PIE);
   fill(red);
-  arc(375, 375, 393, 393, end10, end11, PIE)
+  arc(375, 375, 393, 393, end10, end11, PIE);
   fill(green);
   arc(375, 375, 393, 393, end11, end12, PIE);
   fill(red);
@@ -94,7 +94,7 @@ function draw(){
   arc(375, 375, 393, 393, end19, end20, PIE);
 
   // アウターシングル
-  fill(black)
+  fill(black);
   arc(375, 375, 354, 354, start, end1, PIE);
   fill(white);
   arc(375, 375, 354, 354, end1, end2, PIE);
@@ -220,7 +220,7 @@ function draw(){
   arc(375, 375, 212, 212, end19, end20, PIE);
 
   // アウターブル
-  fill(red)
+  fill(red);
   ellipse(375, 375, 44, 44);
 
   noStroke();
@@ -232,33 +232,33 @@ function draw(){
   // ナンバー表記
   fill(255, 255, 255);
   textSize(36);
-  textFont("Arial");
+  textFont('Arial');
   textAlign(CENTER, CENTER);
-  text("20", 375, 150);
-  text("1", 446, 159);
-  text("18", 510, 193);
-  text("4", 560, 243);
-  text("13", 592, 308);
-  text("6", 604, 377);
-  text("10", 592, 447);
-  text("15", 560, 513);
-  text("2", 510, 563);
-  text("17", 446, 596);
-  text("3", 375, 607);
-  text("19", 305, 596);
-  text("7", 241, 563);
-  text("16", 189, 513);
-  text("8", 157, 447);
-  text("11", 147, 377);
-  text("14", 157, 308);
-  text("9", 189, 243);
-  text("12", 241, 193);
-  text("5", 305, 159);
+  text('20', 375, 150);
+  text('1', 446, 159);
+  text('18', 510, 193);
+  text('4', 560, 243);
+  text('13', 592, 308);
+  text('6', 604, 377);
+  text('10', 592, 447);
+  text('15', 560, 513);
+  text('2', 510, 563);
+  text('17', 446, 596);
+  text('3', 375, 607);
+  text('19', 305, 596);
+  text('7', 241, 563);
+  text('16', 189, 513);
+  text('8', 157, 447);
+  text('11', 147, 377);
+  text('14', 157, 308);
+  text('9', 189, 243);
+  text('12', 241, 193);
+  text('5', 305, 159);
 
-//   [...new Array(20)].forEach((_, i) => {
-//   const _rad = i / 20 * PI * 2; // 角度を求める
-//   const x = 230 * cos(_rad) + 375; // x座標を求める
-//   const y = 230 * sin(_rad) + 375; // y座標を求める
-//   ellipse(x, y, 10, 10); // 円を描画する
-// })
+  //   [...new Array(20)].forEach((_, i) => {
+  //   const _rad = i / 20 * PI * 2; // 角度を求める
+  //   const x = 230 * cos(_rad) + 375; // x座標を求める
+  //   const y = 230 * sin(_rad) + 375; // y座標を求める
+  //   ellipse(x, y, 10, 10); // 円を描画する
+  // })
 }

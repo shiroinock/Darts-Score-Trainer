@@ -31,10 +31,5 @@ export const isPersistFormat = (
  * 型ガード: PracticeConfig形式のデータか判定
  */
 export const isPracticeConfigFormat = (data: unknown): data is PracticeConfig => {
-  return (
-    data !== null &&
-    typeof data === 'object' &&
-    !Array.isArray(data) &&
-    'configId' in data
-  );
+  return data !== null && typeof data === 'object' && !Array.isArray(data) && 'configId' in data;
 };

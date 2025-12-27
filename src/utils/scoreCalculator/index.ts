@@ -5,10 +5,10 @@
  * すべての座標は物理座標（mm単位）で処理されます。
  */
 
-export { getRing } from './getRing.js';
-export { getSegmentNumber } from './getSegmentNumber.js';
+export { adjustForSpider } from './adjustForSpider.js';
 export { calculateScore } from './calculateScore.js';
 export { coordinateToScore } from './coordinateToScore.js';
 export { coordinateToScoreDetail } from './coordinateToScoreDetail.js';
-export { adjustForSpider } from './adjustForSpider.js';
+export { getRing } from './getRing.js';
 export { getScoreLabel } from './getScoreLabel.js';
+export { getSegmentNumber } from './getSegmentNumber.js';

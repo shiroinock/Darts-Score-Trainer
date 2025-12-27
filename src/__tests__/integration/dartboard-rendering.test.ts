@@ -2,21 +2,22 @@
  * ダーツボード描画の統合テスト
  * p5.jsのモック化とスパイを活用して、描画関数の呼び出しを検証する
  */
-import { describe, test, expect, vi, beforeEach } from 'vitest';
+
 import type p5Types from 'p5';
-import { CoordinateTransform } from '../../utils/coordinateTransform';
-import { BOARD_PHYSICAL } from '../../utils/constants/index.js';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   drawBoard,
   drawDoubleRing,
-  drawOuterSingle,
-  drawTripleRing,
-  drawInnerSingle,
-  drawOuterBull,
   drawInnerBull,
-  drawSpider,
+  drawInnerSingle,
   drawNumbers,
+  drawOuterBull,
+  drawOuterSingle,
+  drawSpider,
+  drawTripleRing,
 } from '../../components/DartBoard/dartBoardRenderer';
+import { BOARD_PHYSICAL } from '../../utils/constants/index.js';
+import { CoordinateTransform } from '../../utils/coordinateTransform';
 
 describe('dartboard-rendering integration', () => {
   let mockP5: p5Types;
@@ -64,7 +65,6 @@ describe('dartboard-rendering integration', () => {
         // - drawSegments → drawRings → drawBull → drawSpider → drawNumbers の順序で呼び出されること
       });
     });
-
 
     describe('正常系 - 複数回の呼び出し', () => {
       test('drawBoard を複数回呼び出しても正常に動作する', () => {
@@ -153,7 +153,7 @@ describe('dartboard-rendering integration', () => {
 
         // Assert
         // インデックス0, 2, 4, ..., 18 (10個) が赤色
-        const redCalls = fillSpy.mock.calls.filter(call => call[0] === '#DC143C');
+        const redCalls = fillSpy.mock.calls.filter((call) => call[0] === '#DC143C');
         expect(redCalls.length).toBe(10);
       });
 
@@ -166,21 +166,23 @@ describe('dartboard-rendering integration', () => {
 
         // Assert
         // インデックス1, 3, 5, ..., 19 (10個) が緑色
-        const greenCalls = fillSpy.mock.calls.filter(call => call[0] === '#228B22');
+        const greenCalls = fillSpy.mock.calls.filter((call) => call[0] === '#228B22');
         expect(greenCalls.length).toBe(10);
       });
 
       test('arc()の直径が170mm（物理座標）に対応する画面座標値である', () => {
         // Arrange
         const arcSpy = vi.spyOn(mockP5, 'arc');
-        const expectedRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.doubleOuter);
+        const expectedRadius = mockTransform.physicalDistanceToScreen(
+          BOARD_PHYSICAL.rings.doubleOuter
+        );
         const expectedDiameter = expectedRadius * 2;
 
         // Act
         drawDoubleRing(mockP5, mockTransform);
 
         // Assert
-        arcSpy.mock.calls.forEach(call => {
+        arcSpy.mock.calls.forEach((call) => {
           expect(call[2]).toBeCloseTo(expectedDiameter, 1); // width
           expect(call[3]).toBeCloseTo(expectedDiameter, 1); // height
         });
@@ -195,7 +197,7 @@ describe('dartboard-rendering integration', () => {
         drawDoubleRing(mockP5, mockTransform);
 
         // Assert
-        arcSpy.mock.calls.forEach(call => {
+        arcSpy.mock.calls.forEach((call) => {
           const startAngle = call[4] as number;
           const endAngle = call[5] as number;
           const angleDiff = endAngle - startAngle;
@@ -238,7 +240,7 @@ describe('dartboard-rendering integration', () => {
         // Assert
         // 各セグメントでtranslate()が呼ばれる（20回）
         expect(translateSpy).toHaveBeenCalledTimes(20);
-        translateSpy.mock.calls.forEach(call => {
+        translateSpy.mock.calls.forEach((call) => {
           expect(call[0]).toBe(center.x);
           expect(call[1]).toBe(center.y);
         });
@@ -267,7 +269,7 @@ describe('dartboard-rendering integration', () => {
         drawOuterSingle(mockP5, mockTransform);
 
         // Assert
-        const blackCalls = fillSpy.mock.calls.filter(call => call[0] === '#000000');
+        const blackCalls = fillSpy.mock.calls.filter((call) => call[0] === '#000000');
         expect(blackCalls.length).toBe(10);
       });
 
@@ -279,21 +281,23 @@ describe('dartboard-rendering integration', () => {
         drawOuterSingle(mockP5, mockTransform);
 
         // Assert
-        const beigeCalls = fillSpy.mock.calls.filter(call => call[0] === '#D4C5A9');
+        const beigeCalls = fillSpy.mock.calls.filter((call) => call[0] === '#D4C5A9');
         expect(beigeCalls.length).toBe(10);
       });
 
       test('arc()の直径が162mm（物理座標）に対応する画面座標値である', () => {
         // Arrange
         const arcSpy = vi.spyOn(mockP5, 'arc');
-        const expectedRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.doubleInner);
+        const expectedRadius = mockTransform.physicalDistanceToScreen(
+          BOARD_PHYSICAL.rings.doubleInner
+        );
         const expectedDiameter = expectedRadius * 2;
 
         // Act
         drawOuterSingle(mockP5, mockTransform);
 
         // Assert
-        arcSpy.mock.calls.forEach(call => {
+        arcSpy.mock.calls.forEach((call) => {
           expect(call[2]).toBeCloseTo(expectedDiameter, 1);
           expect(call[3]).toBeCloseTo(expectedDiameter, 1);
         });
@@ -308,7 +312,7 @@ describe('dartboard-rendering integration', () => {
         drawOuterSingle(mockP5, mockTransform);
 
         // Assert
-        arcSpy.mock.calls.forEach(call => {
+        arcSpy.mock.calls.forEach((call) => {
           const angleDiff = (call[5] as number) - (call[4] as number);
           expect(angleDiff).toBeCloseTo(expectedAngleDiff, 5);
         });
@@ -361,7 +365,7 @@ describe('dartboard-rendering integration', () => {
         drawTripleRing(mockP5, mockTransform);
 
         // Assert
-        const redCalls = fillSpy.mock.calls.filter(call => call[0] === '#DC143C');
+        const redCalls = fillSpy.mock.calls.filter((call) => call[0] === '#DC143C');
         expect(redCalls.length).toBe(10);
       });
 
@@ -373,21 +377,23 @@ describe('dartboard-rendering integration', () => {
         drawTripleRing(mockP5, mockTransform);
 
         // Assert
-        const greenCalls = fillSpy.mock.calls.filter(call => call[0] === '#228B22');
+        const greenCalls = fillSpy.mock.calls.filter((call) => call[0] === '#228B22');
         expect(greenCalls.length).toBe(10);
       });
 
       test('arc()の直径が107mm（物理座標）に対応する画面座標値である', () => {
         // Arrange
         const arcSpy = vi.spyOn(mockP5, 'arc');
-        const expectedRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.tripleOuter);
+        const expectedRadius = mockTransform.physicalDistanceToScreen(
+          BOARD_PHYSICAL.rings.tripleOuter
+        );
         const expectedDiameter = expectedRadius * 2;
 
         // Act
         drawTripleRing(mockP5, mockTransform);
 
         // Assert
-        arcSpy.mock.calls.forEach(call => {
+        arcSpy.mock.calls.forEach((call) => {
           expect(call[2]).toBeCloseTo(expectedDiameter, 1);
           expect(call[3]).toBeCloseTo(expectedDiameter, 1);
         });
@@ -402,7 +408,7 @@ describe('dartboard-rendering integration', () => {
         drawTripleRing(mockP5, mockTransform);
 
         // Assert
-        arcSpy.mock.calls.forEach(call => {
+        arcSpy.mock.calls.forEach((call) => {
           const angleDiff = (call[5] as number) - (call[4] as number);
           expect(angleDiff).toBeCloseTo(expectedAngleDiff, 5);
         });
@@ -455,7 +461,7 @@ describe('dartboard-rendering integration', () => {
         drawInnerSingle(mockP5, mockTransform);
 
         // Assert
-        const blackCalls = fillSpy.mock.calls.filter(call => call[0] === '#000000');
+        const blackCalls = fillSpy.mock.calls.filter((call) => call[0] === '#000000');
         expect(blackCalls.length).toBe(10);
       });
 
@@ -467,21 +473,23 @@ describe('dartboard-rendering integration', () => {
         drawInnerSingle(mockP5, mockTransform);
 
         // Assert
-        const beigeCalls = fillSpy.mock.calls.filter(call => call[0] === '#D4C5A9');
+        const beigeCalls = fillSpy.mock.calls.filter((call) => call[0] === '#D4C5A9');
         expect(beigeCalls.length).toBe(10);
       });
 
       test('arc()の直径が99mm（物理座標）に対応する画面座標値である', () => {
         // Arrange
         const arcSpy = vi.spyOn(mockP5, 'arc');
-        const expectedRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.tripleInner);
+        const expectedRadius = mockTransform.physicalDistanceToScreen(
+          BOARD_PHYSICAL.rings.tripleInner
+        );
         const expectedDiameter = expectedRadius * 2;
 
         // Act
         drawInnerSingle(mockP5, mockTransform);
 
         // Assert
-        arcSpy.mock.calls.forEach(call => {
+        arcSpy.mock.calls.forEach((call) => {
           expect(call[2]).toBeCloseTo(expectedDiameter, 1);
           expect(call[3]).toBeCloseTo(expectedDiameter, 1);
         });
@@ -496,7 +504,7 @@ describe('dartboard-rendering integration', () => {
         drawInnerSingle(mockP5, mockTransform);
 
         // Assert
-        arcSpy.mock.calls.forEach(call => {
+        arcSpy.mock.calls.forEach((call) => {
           const angleDiff = (call[5] as number) - (call[4] as number);
           expect(angleDiff).toBeCloseTo(expectedAngleDiff, 5);
         });
@@ -555,7 +563,9 @@ describe('dartboard-rendering integration', () => {
       test('直径が7.95mm（物理座標）に対応する画面座標値である', () => {
         // Arrange
         const circleSpy = vi.spyOn(mockP5, 'circle');
-        const expectedRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.outerBull);
+        const expectedRadius = mockTransform.physicalDistanceToScreen(
+          BOARD_PHYSICAL.rings.outerBull
+        );
         const expectedDiameter = expectedRadius * 2;
 
         // Act
@@ -620,7 +630,9 @@ describe('dartboard-rendering integration', () => {
       test('直径が3.175mm（物理座標）に対応する画面座標値である', () => {
         // Arrange
         const circleSpy = vi.spyOn(mockP5, 'circle');
-        const expectedRadius = mockTransform.physicalDistanceToScreen(BOARD_PHYSICAL.rings.innerBull);
+        const expectedRadius = mockTransform.physicalDistanceToScreen(
+          BOARD_PHYSICAL.rings.innerBull
+        );
         const expectedDiameter = expectedRadius * 2;
 
         // Act
@@ -657,5 +669,4 @@ describe('dartboard-rendering integration', () => {
       });
     });
   });
-
 });

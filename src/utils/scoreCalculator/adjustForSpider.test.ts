@@ -1,4 +1,4 @@
-import { describe, test, expect } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { adjustForSpider } from './adjustForSpider.js';
 
 describe('adjustForSpider', () => {
@@ -59,4 +59,3 @@ describe('adjustForSpider', () => {
     });
   });
 });
-

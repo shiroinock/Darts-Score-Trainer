@@ -1,5 +1,5 @@
-import { describe, test, expect } from 'vitest';
-import { BOARD_PHYSICAL, SEGMENTS } from '../constants/index.js';
+import { describe, expect, test } from 'vitest';
+import { BOARD_PHYSICAL } from '../constants/index.js';
 import { getRing } from './getRing.js';
 
 describe('getRing', () => {
@@ -293,4 +293,3 @@ describe('getRing', () => {
     });
   });
 });
-

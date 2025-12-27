@@ -1,5 +1,5 @@
-import type { QuestionType } from './QuestionType';
 import type { JudgmentTiming } from './JudgmentTiming';
+import type { QuestionType } from './QuestionType';
 import type { Target } from './Target';
 
 /**

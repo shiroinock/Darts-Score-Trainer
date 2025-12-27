@@ -3,8 +3,18 @@
  * p5.jsを使用してダーツボード全体を描画する
  */
 import type p5Types from 'p5';
-import { CoordinateTransform } from '../../utils/coordinateTransform';
-import { SEGMENTS, SEGMENT_ANGLE, BOARD_PHYSICAL, DART_MARKER_RADII, DART_MARKER_TEXT_SIZE, DART_COLORS, SEGMENT_NUMBER_TEXT_SIZE, LEGEND_LAYOUT, LEGEND_TEXT_SIZE } from '../../utils/constants/index.js';
+import {
+  BOARD_PHYSICAL,
+  DART_COLORS,
+  DART_MARKER_RADII,
+  DART_MARKER_TEXT_SIZE,
+  LEGEND_LAYOUT,
+  LEGEND_TEXT_SIZE,
+  SEGMENT_ANGLE,
+  SEGMENT_NUMBER_TEXT_SIZE,
+  SEGMENTS,
+} from '../../utils/constants/index.js';
+import type { CoordinateTransform } from '../../utils/coordinateTransform';
 
 /** 背景色（黒） */
 const BACKGROUND_COLOR = 0;
@@ -12,13 +22,13 @@ const BACKGROUND_COLOR = 0;
 /** セグメントの色 */
 const SEGMENT_COLORS = {
   black: '#000000',
-  beige: '#D4C5A9'
+  beige: '#D4C5A9',
 } as const;
 
 /** リングの色 */
 const RING_COLORS = {
   red: '#DC143C',
-  green: '#228B22'
+  green: '#228B22',
 } as const;
 
 /**
@@ -33,18 +43,18 @@ export function drawBoard(p5: p5Types, transform: CoordinateTransform): void {
   p5.background(BACKGROUND_COLOR);
 
   // 外側から内側へシンプルに重ねる
-  drawDoubleRing(p5, transform);     // ダブルリング（170mm円全体、赤/緑交互）
-  drawOuterSingle(p5, transform);    // アウターシングル（162mm円全体、黒/ベージュ交互）
-  drawTripleRing(p5, transform);     // トリプルリング（107mm円全体、赤/緑交互）
-  drawInnerSingle(p5, transform);    // インナーシングル（99mm円全体、黒/ベージュ交互）
+  drawDoubleRing(p5, transform); // ダブルリング（170mm円全体、赤/緑交互）
+  drawOuterSingle(p5, transform); // アウターシングル（162mm円全体、黒/ベージュ交互）
+  drawTripleRing(p5, transform); // トリプルリング（107mm円全体、赤/緑交互）
+  drawInnerSingle(p5, transform); // インナーシングル（99mm円全体、黒/ベージュ交互）
 
-  drawSpiderOuter(p5, transform);    // 外側スパイダー（放射線 + リング境界）
+  drawSpiderOuter(p5, transform); // 外側スパイダー（放射線 + リング境界）
 
-  drawOuterBull(p5, transform);      // アウターブル（半径7.95mm、緑）
-  drawInnerBull(p5, transform);      // インナーブル（半径3.175mm、赤）
+  drawOuterBull(p5, transform); // アウターブル（半径7.95mm、緑）
+  drawInnerBull(p5, transform); // インナーブル（半径3.175mm、赤）
 
-  drawSpiderBull(p5, transform);     // ブル用スパイダー（ブル境界の同心円）
-  drawNumbers(p5, transform);        // セグメント番号
+  drawSpiderBull(p5, transform); // ブル用スパイダー（ブル境界の同心円）
+  drawNumbers(p5, transform); // セグメント番号
 }
 
 /**
@@ -98,7 +108,7 @@ function drawRingSegments(
 export function drawDoubleRing(p5: p5Types, transform: CoordinateTransform): void {
   drawRingSegments(p5, transform, BOARD_PHYSICAL.rings.doubleOuter, {
     even: RING_COLORS.red,
-    odd: RING_COLORS.green
+    odd: RING_COLORS.green,
   });
 }
 
@@ -111,7 +121,7 @@ export function drawDoubleRing(p5: p5Types, transform: CoordinateTransform): voi
 export function drawOuterSingle(p5: p5Types, transform: CoordinateTransform): void {
   drawRingSegments(p5, transform, BOARD_PHYSICAL.rings.doubleInner, {
     even: SEGMENT_COLORS.black,
-    odd: SEGMENT_COLORS.beige
+    odd: SEGMENT_COLORS.beige,
   });
 }
 
@@ -124,7 +134,7 @@ export function drawOuterSingle(p5: p5Types, transform: CoordinateTransform): vo
 export function drawTripleRing(p5: p5Types, transform: CoordinateTransform): void {
   drawRingSegments(p5, transform, BOARD_PHYSICAL.rings.tripleOuter, {
     even: RING_COLORS.red,
-    odd: RING_COLORS.green
+    odd: RING_COLORS.green,
   });
 }
 
@@ -137,7 +147,7 @@ export function drawTripleRing(p5: p5Types, transform: CoordinateTransform): voi
 export function drawInnerSingle(p5: p5Types, transform: CoordinateTransform): void {
   drawRingSegments(p5, transform, BOARD_PHYSICAL.rings.tripleInner, {
     even: SEGMENT_COLORS.black,
-    odd: SEGMENT_COLORS.beige
+    odd: SEGMENT_COLORS.beige,
   });
 }
 
@@ -177,7 +187,6 @@ export function drawInnerBull(p5: p5Types, transform: CoordinateTransform): void
   p5.circle(center.x, center.y, radius * 2);
 }
 
-
 /**
  * 外側スパイダー（放射線 + リング境界）を描画する
  * ブルエリアの色を塗る前に描画することで、色の被りを防ぐ
@@ -215,20 +224,22 @@ export function drawSpiderOuter(p5: p5Types, transform: CoordinateTransform): vo
   }
 
   // === リング境界の同心円（ダブル・トリプルの4本）===
-  const circularStrokeWidth = transform.physicalDistanceToScreen(BOARD_PHYSICAL.spider.circularWidth);
+  const circularStrokeWidth = transform.physicalDistanceToScreen(
+    BOARD_PHYSICAL.spider.circularWidth
+  );
 
   p5.stroke(spiderColor);
   p5.strokeWeight(circularStrokeWidth);
   p5.noFill();
 
   const outerRingRadii = [
-    BOARD_PHYSICAL.rings.doubleOuter,   // ダブル外側: 170mm
-    BOARD_PHYSICAL.rings.doubleInner,   // ダブル内側: 162mm
-    BOARD_PHYSICAL.rings.tripleOuter,   // トリプル外側: 107mm
-    BOARD_PHYSICAL.rings.tripleInner    // トリプル内側: 99mm
+    BOARD_PHYSICAL.rings.doubleOuter, // ダブル外側: 170mm
+    BOARD_PHYSICAL.rings.doubleInner, // ダブル内側: 162mm
+    BOARD_PHYSICAL.rings.tripleOuter, // トリプル外側: 107mm
+    BOARD_PHYSICAL.rings.tripleInner, // トリプル内側: 99mm
   ];
 
-  outerRingRadii.forEach(physicalRadius => {
+  outerRingRadii.forEach((physicalRadius) => {
     const screenRadius = transform.physicalDistanceToScreen(physicalRadius);
     p5.circle(center.x, center.y, screenRadius * 2);
   });
@@ -248,18 +259,20 @@ export function drawSpiderBull(p5: p5Types, transform: CoordinateTransform): voi
   const spiderColor = '#C0C0C0';
 
   // === ブル境界の同心円（2本）===
-  const circularStrokeWidth = transform.physicalDistanceToScreen(BOARD_PHYSICAL.spider.circularWidth);
+  const circularStrokeWidth = transform.physicalDistanceToScreen(
+    BOARD_PHYSICAL.spider.circularWidth
+  );
 
   p5.stroke(spiderColor);
   p5.strokeWeight(circularStrokeWidth);
   p5.noFill();
 
   const bullRingRadii = [
-    BOARD_PHYSICAL.rings.outerBull,     // アウターブル: 7.95mm
-    BOARD_PHYSICAL.rings.innerBull      // インナーブル: 3.175mm
+    BOARD_PHYSICAL.rings.outerBull, // アウターブル: 7.95mm
+    BOARD_PHYSICAL.rings.innerBull, // インナーブル: 3.175mm
   ];
 
-  bullRingRadii.forEach(physicalRadius => {
+  bullRingRadii.forEach((physicalRadius) => {
     const screenRadius = transform.physicalDistanceToScreen(physicalRadius);
     p5.circle(center.x, center.y, screenRadius * 2);
   });
@@ -287,7 +300,8 @@ export function drawNumbers(p5: p5Types, transform: CoordinateTransform): void {
   const center = transform.getCenter();
 
   // 配置半径（物理座標）: ダブルリング外側とボード端の中間
-  const placementRadiusPhysical = (BOARD_PHYSICAL.rings.doubleOuter + BOARD_PHYSICAL.rings.boardEdge) / 2;
+  const placementRadiusPhysical =
+    (BOARD_PHYSICAL.rings.doubleOuter + BOARD_PHYSICAL.rings.boardEdge) / 2;
 
   // 物理座標から画面座標への変換
   const placementRadius = transform.physicalDistanceToScreen(placementRadiusPhysical);
@@ -388,6 +402,10 @@ export function drawLegend(p5: p5Types, dartCount: number): void {
     p5.textAlign(p5.LEFT, p5.CENTER);
     p5.fill('#FFFFFF'); // 白色
     p5.textSize(LEGEND_TEXT_SIZE);
-    p5.text(dartLabels[i], LEGEND_LAYOUT.leftMargin + LEGEND_LAYOUT.circleDiameter / 2 + LEGEND_LAYOUT.textOffset, y);
+    p5.text(
+      dartLabels[i],
+      LEGEND_LAYOUT.leftMargin + LEGEND_LAYOUT.circleDiameter / 2 + LEGEND_LAYOUT.textOffset,
+      y
+    );
   }
 }

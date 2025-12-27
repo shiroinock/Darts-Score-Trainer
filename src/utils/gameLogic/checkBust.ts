@@ -10,11 +10,7 @@
 
 import type { BustInfo } from '../../types';
 
-export function checkBust(
-  remainingScore: number,
-  throwScore: number,
-  isDouble: boolean
-): BustInfo {
+export function checkBust(remainingScore: number, throwScore: number, isDouble: boolean): BustInfo {
   // 入力値の妥当性チェック
   // 残り点数: 正の整数のみ（NaN、Infinity、浮動小数点、0以下はエラー）
   if (!Number.isFinite(remainingScore) || !Number.isInteger(remainingScore)) {

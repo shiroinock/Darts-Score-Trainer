@@ -2,10 +2,11 @@
  * ダーツ凡例描画の統合テスト
  * p5.jsのモック化とスパイを活用して、drawLegend関数の呼び出しを検証する
  */
-import { describe, test, expect, vi, beforeEach } from 'vitest';
+
 import type p5Types from 'p5';
-import { DART_COLORS } from '../../utils/constants/index.js';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { drawLegend } from '../../components/DartBoard/dartBoardRenderer';
+import { DART_COLORS } from '../../utils/constants/index.js';
 
 describe('dartboard-legend-rendering integration', () => {
   let mockP5: p5Types;
@@ -374,11 +375,11 @@ describe('dartboard-legend-rendering integration', () => {
 
         // Assert
         // 各ダーツの y座標が増加していることを確認
-        const circleYs = circleSpy.mock.calls.map(call => call[1]);
+        const circleYs = circleSpy.mock.calls.map((call) => call[1]);
         expect(circleYs[0]).toBeLessThan(circleYs[1] as number);
         expect(circleYs[1]).toBeLessThan(circleYs[2] as number);
 
-        const textYs = textSpy.mock.calls.map(call => call[2]);
+        const textYs = textSpy.mock.calls.map((call) => call[2]);
         expect(textYs[0]).toBeLessThan(textYs[1] as number);
         expect(textYs[1]).toBeLessThan(textYs[2] as number);
       });

@@ -12,9 +12,9 @@
  * @returns 点数
  */
 
+import { calculateScore } from './calculateScore.js';
 import { getRing } from './getRing.js';
 import { getSegmentNumber } from './getSegmentNumber.js';
-import { calculateScore } from './calculateScore.js';
 
 export function coordinateToScore(x: number, y: number): number {
   const distance = Math.sqrt(x * x + y * y);

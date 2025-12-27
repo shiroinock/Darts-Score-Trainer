@@ -1,4 +1,4 @@
-import { describe, test, expect } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { generateNormalDistribution } from './generateNormalDistribution.js';
 
 describe('generateNormalDistribution', () => {
@@ -103,8 +103,8 @@ describe('generateNormalDistribution', () => {
       // 標準偏差の計算
       const avgX = samplesX.reduce((sum, v) => sum + v, 0) / sampleSize;
       const avgY = samplesY.reduce((sum, v) => sum + v, 0) / sampleSize;
-      const varianceX = samplesX.reduce((sum, v) => sum + Math.pow(v - avgX, 2), 0) / sampleSize;
-      const varianceY = samplesY.reduce((sum, v) => sum + Math.pow(v - avgY, 2), 0) / sampleSize;
+      const varianceX = samplesX.reduce((sum, v) => sum + (v - avgX) ** 2, 0) / sampleSize;
+      const varianceY = samplesY.reduce((sum, v) => sum + (v - avgY) ** 2, 0) / sampleSize;
       const calculatedStdDevX = Math.sqrt(varianceX);
       const calculatedStdDevY = Math.sqrt(varianceY);
 
@@ -171,7 +171,7 @@ describe('generateNormalDistribution', () => {
     test('中級者レベル（stdDev=30mm）で散らばりを生成する', () => {
       // Arrange
       const targetX = 100; // トリプル20付近を狙う（仮想座標）
-      const targetY = 0;
+      const _targetY = 0;
       const stdDev = 30; // 中級者
 
       // Act
@@ -262,7 +262,7 @@ describe('generateNormalDistribution', () => {
       // Assert
       // 平均の差が mean の差にほぼ等しい（許容誤差±5mm）
       // toBeCloseTo の第2引数なしでデフォルト許容誤差を使用
-      expect(Math.abs((avg2 - avg1) - (mean2 - mean1))).toBeLessThan(5);
+      expect(Math.abs(avg2 - avg1 - (mean2 - mean1))).toBeLessThan(5);
     });
 
     test('stdDev を2倍にすると分布の広がりが2倍になる', () => {
@@ -285,14 +285,14 @@ describe('generateNormalDistribution', () => {
       // 標準偏差の計算
       const avg1 = samples1.reduce((sum, v) => sum + v, 0) / sampleSize;
       const avg2 = samples2.reduce((sum, v) => sum + v, 0) / sampleSize;
-      const variance1 = samples1.reduce((sum, v) => sum + Math.pow(v - avg1, 2), 0) / sampleSize;
-      const variance2 = samples2.reduce((sum, v) => sum + Math.pow(v - avg2, 2), 0) / sampleSize;
+      const variance1 = samples1.reduce((sum, v) => sum + (v - avg1) ** 2, 0) / sampleSize;
+      const variance2 = samples2.reduce((sum, v) => sum + (v - avg2) ** 2, 0) / sampleSize;
       const calculatedStdDev1 = Math.sqrt(variance1);
       const calculatedStdDev2 = Math.sqrt(variance2);
 
       // Assert
       // 標準偏差の比が2に近いことを確認（許容誤差±0.5）
-      expect(Math.abs((calculatedStdDev2 / calculatedStdDev1) - 2)).toBeLessThan(0.5);
+      expect(Math.abs(calculatedStdDev2 / calculatedStdDev1 - 2)).toBeLessThan(0.5);
     });
   });
 
@@ -443,4 +443,3 @@ describe('generateNormalDistribution', () => {
     });
   });
 });
-
