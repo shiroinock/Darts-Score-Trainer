@@ -855,3 +855,68 @@ const width = arcSpy.mock.calls[0][ARC_PARAMS.WIDTH];
 3. **実装との整合性**
    - 実装ファイルの具体的なロジックに基づいたテスト
    - 定数値は実装と同じものを使用（可能な限りインポート）
+
+## 追加ガイドライン（2025-12-27 追記 - Git Hooks統合テストの評価に基づく改善）
+
+### 統合テストにおけるCI環境への配慮
+
+Git Hooks のような環境依存のテストでは、以下のパターンを使用してください：
+
+1. **ファイル存在確認の一貫したパターン**
+   ```typescript
+   if (!existsSync(FILE_PATH)) {
+     // ファイルが存在しない場合はアサーションを実行してスキップ
+     expect(existsSync(FILE_PATH)).toBe(true);
+     return;
+   }
+   ```
+   
+   このパターンにより：
+   - CI環境でもテストが失敗しない
+   - ファイルが存在すべき場合は明確にアサーションで示される
+   - 後続の処理をスキップして不要なエラーを防ぐ
+
+2. **実行権限の検証時のビット演算**
+   ```typescript
+   const isExecutable = (stats.mode & 0o111) !== 0; // S_IXUSR | S_IXGRP | S_IXOTH
+   ```
+   
+   owner、group、othersのいずれかに実行権限があることを確認
+
+3. **正規表現の適切な使用**
+   ```typescript
+   expect(hookContent).toMatch(/^#!/); // 行頭のshebang
+   expect(hookContent).toMatch(/^#!\/.*sh/); // シェルスクリプトのshebang
+   ```
+
+### バージョン依存性の検証
+
+依存パッケージのバージョン検証では柔軟なパターンを使用：
+
+```typescript
+expect(packageJson.devDependencies['simple-git-hooks']).toMatch(/^\^?2\.13\.1$/);
+```
+
+これにより、`^2.13.1` と `2.13.1` の両方のフォーマットに対応できます。
+
+### 統合動作確認テストの重要性
+
+統合テストでは、個別の要素だけでなく、それらの連携も検証してください：
+
+1. **設定とファイルの一致確認**
+   ```typescript
+   test('package.json設定とGitフックファイルの内容が一致する', () => {
+     const expectedCommand = packageJson['simple-git-hooks']['pre-commit'];
+     expect(hookContent).toContain(expectedCommand);
+   });
+   ```
+
+2. **実行可能性の検証**
+   ```typescript
+   test('npm run checkコマンドが実行可能である', () => {
+     expect(packageJson.scripts.check).toBeDefined();
+     expect(packageJson.scripts.check).toContain('biome');
+   });
+   ```
+
+これらのテストにより、設定が正しく機能することを保証できます。

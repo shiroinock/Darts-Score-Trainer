@@ -439,10 +439,11 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
     - テストファイルのp5.js型定義を追加（41件のnoExplicitAnyエラー解消）
     - gameStore.tsの複雑な関数をリファクタリング（2件のnoExcessiveCognitiveComplexityエラー解消）
     - 全977テストが通過、Biomeチェックもクリーン
-- [ ] pre-commitフックの追加（重要度: 中）
-  - huskyまたはsimple-git-hooksの導入
-  - コミット前に自動でフォーマットとリントを実行
-  - チーム全体での合意が必要
+- [x] pre-commitフックの追加（重要度: 中）
+  - simple-git-hooks v2.13.1を導入
+  - コミット前に`npm run check`を自動実行
+  - Biomeチェックに違反するコードはコミットブロック
+  - 実装: package.json (prepare script + simple-git-hooks設定)
 
 ### 技術的改善（その他）
 - [ ] ユニットテスト追加
