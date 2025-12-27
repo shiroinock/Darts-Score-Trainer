@@ -202,7 +202,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] zustand の persist ミドルウェア設定（設定のみ保存） (src/stores/gameStore.ts:8-9,176-211, src/stores/gameStore.test.ts:1510-1991)
 
 ### 3.3 カスタムフック (`src/hooks/`)
-- [ ] `useGameStore.ts` - store のセレクター
+- [x] `useGameStore.ts` - store のセレクター (src/hooks/useGameStore.ts, src/hooks/useGameStore.test.ts)
 - [ ] `useTimer.ts` - タイマー管理（setInterval）
 - [ ] `usePracticeSession.ts` - 練習セッションロジック
 - [ ] `useKeyboardInput.ts` - キーボードショートカット（0-9, Enter, Backspace, Escape）

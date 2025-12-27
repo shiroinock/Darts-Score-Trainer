@@ -334,3 +334,66 @@ const toleranceRatio = 0.1; // 10%の誤差を許容
 ```
 
 このJSON出力がそのまま次のエージェントに渡されます。
+
+### JSON出力の確実性向上
+
+#### 出力前の最終確認
+1. **JSON構造の完全性**
+   - 全ての開き括弧に対応する閉じ括弧があること
+   - 最後のオブジェクト/配列が正しく閉じられていること
+   - カンマの配置が正しいこと（最後の要素にカンマがない）
+
+2. **必須フィールドの確認**
+   - `should_fix`: boolean型
+   - `fixable_issues`: 配列（空でも可）
+   - `unfixable_issues`: 配列（空でも可）
+   - `summary`: 文字列
+
+3. **出力方法のベストプラクティス**
+   - JSON全体を一度に生成し、段階的に出力しない
+   - 長大なJSONでも必ず最後まで出力する
+   - 出力途中で思考や説明を挟まない
+
+#### 問題別の修正指示テンプレート
+
+##### import/exportソート問題
+```json
+{
+  "file": "ファイルパス",
+  "line": "行番号",
+  "issue": "import文のソート順序違反",
+  "fix_instruction": "biomeのルールに従い、import文を以下の順序でソート: 1) 外部ライブラリ 2) 内部モジュール 3) 相対パス。各グループ内はアルファベット順。",
+  "code_example": {
+    "before": "import { vi } from 'vitest';\nimport { renderHook } from '@testing-library/react';",
+    "after": "import { renderHook } from '@testing-library/react';\nimport { vi } from 'vitest';"
+  }
+}
+```
+
+##### マジック文字列・数値の定数化
+```json
+{
+  "file": "ファイルパス",
+  "line": "行番号範囲",
+  "issue": "マジック文字列/数値の使用",
+  "fix_instruction": "定数ファイルを作成または既存の定数ファイルに追加し、定数をインポートして使用する。定数名はUPPER_SNAKE_CASEで命名。",
+  "code_example": {
+    "before": "selectPreset('preset-basic')",
+    "after": "// 定数ファイルに追加\nexport const PRESET_IDS = {\n  BASIC: 'preset-basic',\n  PLAYER: 'preset-player'\n} as const;\n\n// 使用箇所\nimport { PRESET_IDS } from '../constants';\nselectPreset(PRESET_IDS.BASIC)"
+  }
+}
+```
+
+##### エラーメッセージ検証の詳細化
+```json
+{
+  "file": "ファイルパス",
+  "line": "行番号",
+  "issue": "エラーメッセージ検証が不十分",
+  "fix_instruction": "エラーがスローされることだけでなく、具体的なエラーメッセージも検証する。toThrowErrorに期待するメッセージを追加。",
+  "code_example": {
+    "before": "expect(() => selectPreset('invalid')).toThrow();",
+    "after": "expect(() => selectPreset('invalid')).toThrow('指定されたプリセットが見つかりません: invalid');"
+  }
+}
+```
