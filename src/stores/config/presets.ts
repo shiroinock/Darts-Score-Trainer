@@ -4,7 +4,7 @@
  * 5つの練習設定プリセットを定義します。
  */
 
-import type { PracticeConfig } from '../../types';
+import type { PresetConfig } from '../../types';
 
 /**
  * デフォルトプリセットID
@@ -14,7 +14,7 @@ export const DEFAULT_PRESET_ID = 'preset-basic' as const;
 /**
  * プリセット練習設定
  */
-export const PRESETS: Record<string, PracticeConfig> = {
+export const PRESETS: Record<string, PresetConfig> = {
   [DEFAULT_PRESET_ID]: {
     configId: DEFAULT_PRESET_ID,
     configName: '基礎練習',
@@ -95,6 +95,6 @@ export const PRESETS: Record<string, PracticeConfig> = {
 /**
  * デフォルト設定を取得
  */
-export const getDefaultConfig = (): PracticeConfig => {
+export const getDefaultConfig = (): PresetConfig => {
   return { ...PRESETS[DEFAULT_PRESET_ID] };
 };
