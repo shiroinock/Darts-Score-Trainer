@@ -223,9 +223,9 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] `getPresetById(id)` 関数
 
 ### 4.2 クイズジェネレーター (`src/utils/quizGenerator.ts`)
-- [ ] `generateQuestion(config, remainingScore)` 関数
-- [ ] `generateQuestionText(config, throwIndex, isCumulative)` 関数
-- [ ] `calculateCorrectAnswer(throws, config, throwIndex, previousRemaining)` 関数
+- [x] `generateQuestion(config, remainingScore)` 関数
+- [x] `generateQuestionText(config, throwIndex, isCumulative)` 関数
+- [x] `calculateCorrectAnswer(throws, config, throwIndex, previousRemaining)` 関数
 
 ---
 
