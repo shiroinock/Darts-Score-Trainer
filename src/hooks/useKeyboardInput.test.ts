@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { useKeyboardInput } from './useKeyboardInput';
+import { type KeyboardCallbacks, useKeyboardInput } from './useKeyboardInput';
 
 /**
  * useKeyboardInput.ts のテスト
@@ -15,14 +15,6 @@ import { useKeyboardInput } from './useKeyboardInput';
  * - コンポーネントアンマウント時のリスナー削除
  * - callbacksが更新された場合のリスナー再登録
  */
-
-// コールバック型定義
-interface KeyboardCallbacks {
-  onDigit?: (digit: number) => void;
-  onEnter?: () => void;
-  onBackspace?: () => void;
-  onEscape?: () => void;
-}
 
 describe('useKeyboardInput', () => {
   let callbacks: KeyboardCallbacks;
@@ -526,6 +518,90 @@ describe('useKeyboardInput', () => {
 
       // Assert
       expect(inputLog).toEqual([1, 2, 3, 'Escape']);
+    });
+  });
+
+  // ============================================================
+  // 正常系: event.preventDefault()の呼び出し
+  // ============================================================
+  describe('正常系: event.preventDefault()の呼び出し', () => {
+    test('数字キー処理時にpreventDefaultが呼ばれる', () => {
+      // Arrange
+      renderHook(() => useKeyboardInput(callbacks));
+      const event = new KeyboardEvent('keydown', { key: '1' });
+      const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
+
+      // Act
+      act(() => {
+        window.dispatchEvent(event);
+      });
+
+      // Assert
+      expect(preventDefaultSpy).toHaveBeenCalled();
+      expect(callbacks.onDigit).toHaveBeenCalledWith(1);
+    });
+
+    test('Enterキー処理時にpreventDefaultが呼ばれる', () => {
+      // Arrange
+      renderHook(() => useKeyboardInput(callbacks));
+      const event = new KeyboardEvent('keydown', { key: 'Enter' });
+      const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
+
+      // Act
+      act(() => {
+        window.dispatchEvent(event);
+      });
+
+      // Assert
+      expect(preventDefaultSpy).toHaveBeenCalled();
+      expect(callbacks.onEnter).toHaveBeenCalled();
+    });
+
+    test('Backspaceキー処理時にpreventDefaultが呼ばれる', () => {
+      // Arrange
+      renderHook(() => useKeyboardInput(callbacks));
+      const event = new KeyboardEvent('keydown', { key: 'Backspace' });
+      const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
+
+      // Act
+      act(() => {
+        window.dispatchEvent(event);
+      });
+
+      // Assert
+      expect(preventDefaultSpy).toHaveBeenCalled();
+      expect(callbacks.onBackspace).toHaveBeenCalled();
+    });
+
+    test('Escapeキー処理時にpreventDefaultが呼ばれる', () => {
+      // Arrange
+      renderHook(() => useKeyboardInput(callbacks));
+      const event = new KeyboardEvent('keydown', { key: 'Escape' });
+      const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
+
+      // Act
+      act(() => {
+        window.dispatchEvent(event);
+      });
+
+      // Assert
+      expect(preventDefaultSpy).toHaveBeenCalled();
+      expect(callbacks.onEscape).toHaveBeenCalled();
+    });
+
+    test('無視すべきキーではpreventDefaultが呼ばれない', () => {
+      // Arrange
+      renderHook(() => useKeyboardInput(callbacks));
+      const event = new KeyboardEvent('keydown', { key: 'a' });
+      const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
+
+      // Act
+      act(() => {
+        window.dispatchEvent(event);
+      });
+
+      // Assert
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
     });
   });
 });

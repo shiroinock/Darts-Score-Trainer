@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 /**
  * キーボード入力コールバック
@@ -44,6 +44,14 @@ export interface KeyboardCallbacks {
  * ```
  */
 export const useKeyboardInput = (callbacks: KeyboardCallbacks): void => {
+  // コールバックをrefで保持してイベントリスナーの再登録を防ぐ
+  const callbacksRef = useRef(callbacks);
+
+  // callbacksが変更されたらrefを更新
+  useEffect(() => {
+    callbacksRef.current = callbacks;
+  }, [callbacks]);
+
   useEffect(() => {
     // キーボードイベントハンドラ
     const handleKeyDown = (event: KeyboardEvent): void => {
@@ -51,26 +59,30 @@ export const useKeyboardInput = (callbacks: KeyboardCallbacks): void => {
 
       // 数字キー（0-9）の処理
       if (key >= '0' && key <= '9') {
+        event.preventDefault();
         const digit = parseInt(key, 10);
-        callbacks.onDigit?.(digit);
+        callbacksRef.current.onDigit?.(digit);
         return;
       }
 
       // Enterキーの処理
       if (key === 'Enter') {
-        callbacks.onEnter?.();
+        event.preventDefault();
+        callbacksRef.current.onEnter?.();
         return;
       }
 
       // Backspaceキーの処理
       if (key === 'Backspace') {
-        callbacks.onBackspace?.();
+        event.preventDefault();
+        callbacksRef.current.onBackspace?.();
         return;
       }
 
       // Escapeキーの処理
       if (key === 'Escape') {
-        callbacks.onEscape?.();
+        event.preventDefault();
+        callbacksRef.current.onEscape?.();
         return;
       }
 
@@ -80,9 +92,9 @@ export const useKeyboardInput = (callbacks: KeyboardCallbacks): void => {
     // イベントリスナーを登録
     window.addEventListener('keydown', handleKeyDown);
 
-    // クリーンアップ: コンポーネントアンマウント時またはcallbacks更新時にリスナーを削除
+    // クリーンアップ: コンポーネントアンマウント時にリスナーを削除
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [callbacks]);
+  }, []); // 空配列：マウント時のみ登録
 };
