@@ -812,4 +812,32 @@ describe('SessionConfigSelector', () => {
       });
     });
   });
+
+  describe('スナップショットテスト', () => {
+    test('問題数モードのスナップショット（10問選択）', () => {
+      // Arrange
+      mockSessionConfig.mode = 'questions';
+      mockSessionConfig.questionCount = 10;
+      delete (mockSessionConfig as { timeLimit?: number }).timeLimit;
+
+      // Act
+      const { container } = render(<SessionConfigSelector />);
+
+      // Assert
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    test('時間制限モードのスナップショット（3分選択）', () => {
+      // Arrange
+      mockSessionConfig.mode = 'time';
+      mockSessionConfig.timeLimit = 3;
+      delete (mockSessionConfig as { questionCount?: number }).questionCount;
+
+      // Act
+      const { container } = render(<SessionConfigSelector />);
+
+      // Assert
+      expect(container.firstChild).toMatchSnapshot();
+    });
+  });
 });
