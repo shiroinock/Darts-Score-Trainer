@@ -612,3 +612,50 @@ function isStatisticalFunction(file: FileInfo, functionName: string): boolean {
     "境界値テスト（極端な標準偏差）"
   ]
 }
+```
+
+### 2025-12-27: プリセット関数の判定基準追加
+
+#### 背景
+`src/utils/presets.ts` のテストパターン判定において、プリセット定義と関連ユーティリティ関数の判定基準を明確化する必要がある。
+
+#### 追加ガイドライン
+
+##### プリセット関連関数の判定基準
+```typescript
+// プリセット関連関数の特徴
+function isPresetFunction(file: FileInfo, functionName: string): boolean {
+  return (
+    // ファイルパスにpresetを含む
+    file.path.includes('preset') &&
+    // プリセット関連の関数名
+    functionName.match(/(find|get|generate).*Preset|generateCustomId/) &&
+    // 純粋関数である
+    isPureFunction(file)
+  );
+}
+```
+
+##### プリセット関数のテストパターン判定
+`presets.ts` のようなプリセット定義・検索関数：
+- **test-first推奨**: プリセット定義は仕様から明確
+- **網羅的なテスト**: 全プリセットパターンのマッチング確認
+- **エッジケース**: カスタム設定、部分一致、不一致の検証
+
+##### 判定の具体例
+```json
+{
+  "testPattern": {
+    "tddMode": "test-first",
+    "pattern": "unit",
+    "placement": "colocated",
+    "rationale": "プリセット定義と検索ロジック、仕様が明確",
+    "testFilePath": "src/utils/presets.test.ts",
+    "testingFocus": [
+      "全5種類のプリセット定義の確認",
+      "findMatchingPreset の正確なマッチング",
+      "generateCustomId の一意性確保",
+      "getPresetById の取得確認"
+    ]
+  }
+}

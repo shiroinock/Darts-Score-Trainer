@@ -953,3 +953,41 @@ Error: Failed to resolve import "./storage" from "src/utils/storage.test.ts". Di
    ### 次ステップ
    implement エージェントが `src/hooks/useTimer.ts` を実装してください。
    ```
+
+## エラーメッセージの切り詰め確認
+
+### 最終レポート作成前のチェックリスト
+
+エラーメッセージが途中で切れていないか、以下の点を必ず確認してください：
+
+1. **エラーメッセージの完全性確認**
+   - エラーメッセージに含まれるファイルパスが完全に表示されているか
+   - インポートパスの引用符が閉じられているか
+   - エラーメッセージの末尾が自然に終わっているか（"..." で切れていないか）
+
+2. **特にインポートエラーの場合**
+   - 例: `Failed to resolve import "./presets" from "src/utils/presets.test.ts"`
+   - インポートパスとテストファイルパスの両方が完全に表示されていることを確認
+   - ファイルパスに改行が入ってメッセージが途切れていないか確認
+
+3. **推奨事項**
+   - エラーメッセージをそのまま報告せず、重要な情報（ファイル名、エラータイプ）を抽出して簡潔に報告
+   - 長いエラーメッセージは要約し、詳細はコードブロックで囲む
+   - バックスラッシュや引用符は適切にエスケープ
+
+### エラーメッセージの報告例（推奨形式）
+
+```markdown
+### エラー詳細
+
+インポートエラーが発生しました：
+
+```
+Error: Failed to resolve import "./presets" from "src/utils/presets.test.ts". Did the file exist?
+```
+
+- **インポート元**: `src/utils/presets.test.ts`
+- **インポート先**: `./presets` (src/utils/presets.ts)
+- **原因**: 実装ファイルが存在しません
+- **診断**: RED_EXPECTED の場合は正常な状態です
+```

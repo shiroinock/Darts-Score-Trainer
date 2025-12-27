@@ -212,15 +212,15 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 ## Phase 4: 問題生成
 
 ### 4.1 プリセット定義 (`src/utils/presets.ts`)
-- [ ] `PRACTICE_PRESETS` オブジェクト（5種類）
-  - [ ] basic（基礎練習）
-  - [ ] player（プレイヤー練習）
-  - [ ] callerBasic（コーラー基礎）
-  - [ ] callerCumulative（コーラー累積）
-  - [ ] comprehensive（総合練習）
-- [ ] `findMatchingPreset(config)` 関数
-- [ ] `generateCustomId(config)` 関数
-- [ ] `getPresetById(id)` 関数
+- [x] `PRACTICE_PRESETS` オブジェクト（5種類）
+  - [x] basic（基礎練習）
+  - [x] player（プレイヤー練習）
+  - [x] callerBasic（コーラー基礎）
+  - [x] callerCumulative（コーラー累積）
+  - [x] comprehensive（総合練習）
+- [x] `findMatchingPreset(config)` 関数
+- [x] `generateCustomId(config)` 関数
+- [x] `getPresetById(id)` 関数
 
 ### 4.2 クイズジェネレーター (`src/utils/quizGenerator.ts`)
 - [ ] `generateQuestion(config, remainingScore)` 関数
@@ -461,14 +461,14 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | 1 | 39 | 39 | 100% |
 | 2 | 12 | 12 | 100% |
 | 3 | 28 | 31 | 111% |
-| 4 | 7 | 0 | 0% |
+| 4 | 7 | 4 | 57% |
 | 5 | 17 | 0 | 0% |
 | 6 | 22 | 0 | 0% |
 | 7 | 9 | 0 | 0% |
 | 8 | 10 | 0 | 0% |
 | 9 | 15 | 0 | 0% |
 | 10 | 6 | 0 | 0% |
-| **合計** | **176** | **93** | **53%** |
+| **合計** | **176** | **97** | **55%** |
 
 ### Phase 2 実装方針変更の詳細
 
