@@ -459,8 +459,11 @@ describe('gameStore', () => {
         result.current.startPractice();
       });
 
-      // Assert
-      expect(result.current.stats).toEqual(initialStats);
+      // Assert: correct、total、currentStreakはリセットされるが、bestStreakは保持される
+      expect(result.current.stats).toEqual({
+        ...initialStats,
+        bestStreak: 5, // 既存のbestStreakを保持
+      });
     });
 
     test('経過時間がリセットされる', () => {

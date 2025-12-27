@@ -339,6 +339,62 @@ test('トリプルリング中心（r=103mm）は物理座標で検証', () => {
 ❌ **テストをスキップしない**: `test.skip()` や `describe.skip()` は使用禁止
 ❌ **過度なモック**: 可能な限り実際のコードを使用し、外部依存のみモック化
 
+## 追加ガイドライン（2025-12-27 追記 - usePracticeSession.test.tsの評価に基づく改善）
+
+### ダーツドメインの制約を考慮したテスト値
+
+ダーツの得点に関わるテストでは、有効な値の範囲を考慮してください：
+
+1. **有効な得点範囲の考慮**
+   ```typescript
+   // ❌ 避けるべき（ダーツでは不可能な値）
+   const wrongAnswer = correctAnswer + 100; // 180を超える可能性
+   
+   // ✅ 推奨（確実に異なる有効な値）
+   const wrongAnswer = correctAnswer === 20 ? 19 : 20; // 別の有効な値
+   // または
+   const wrongAnswer = 0; // ミスを表す0点
+   ```
+
+2. **得点検証時のアサーション**
+   ```typescript
+   test('getCurrentCorrectAnswer()は有効な得点を返す', () => {
+     const correctAnswer = useGameStore.getState().getCurrentCorrectAnswer();
+     
+     // ダーツの有効な得点範囲（0-180）であることを検証
+     expect(correctAnswer).toBeGreaterThanOrEqual(0);
+     expect(correctAnswer).toBeLessThanOrEqual(180);
+     
+     // 特定の無効な値でないことを検証
+     expect([23, 29, 31, 35, 37, 41, 43, 44, 46, 47, 49, 52, 53, 55, 56, 58, 59])
+       .not.toContain(correctAnswer);
+   });
+   ```
+
+3. **モック値の設定時の注意**
+   ```typescript
+   // モック関数が返す値も有効な得点範囲内に
+   const mockGetCurrentCorrectAnswer = vi.fn().mockReturnValue(60); // T20
+   ```
+
+### 統合テスト作成時の実装詳細への配慮
+
+フックのテストでは、実装が使用するストア関数を正確に理解してテストを作成：
+
+1. **存在しない関数の仮定を避ける**
+   ```typescript
+   // テスト作成前に、実際にストアに存在する関数を確認
+   // generateQuestion, getCurrentCorrectAnswer, simulateNextThrow など
+   ```
+
+2. **状態遷移の正確な理解**
+   ```typescript
+   // startPractice() が実際にどのような状態変更を行うか理解してテスト
+   // - gameState を 'practicing' に変更
+   // - タイマーを開始
+   // - 最初の問題を生成
+   ```
+
 ## 成功例
 
 ### 良いテスト
