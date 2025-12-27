@@ -27,12 +27,10 @@ import {
   useGetAccuracy,
 } from './useGameStore';
 import { useGameStore } from '../stores/gameStore';
+import { PRESETS } from '../stores/config/presets';
 
 /**
- * useGameStore.ts のテスト（TDD Red フェーズ）
- *
- * このテストは実装前に作成されているため、すべて失敗（RED状態）します。
- * 実装後にテストが成功（GREEN状態）に変わることを期待します。
+ * useGameStore.ts のテスト
  *
  * テストパターン: hook（React カスタムフック）
  * 配置戦略: colocated（src/hooks/useGameStore.test.ts）
@@ -54,21 +52,7 @@ describe('useGameStore hooks', () => {
     act(() => {
       useGameStore.setState({
         gameState: 'setup',
-        config: {
-          configId: PRESET_BASIC,
-          configName: '基礎練習',
-          description: '1投単位で得点を問う基本練習',
-          icon: '📚',
-          throwUnit: 1,
-          questionType: 'score',
-          judgmentTiming: 'independent',
-          startingScore: null,
-          target: { type: 'TRIPLE', number: 20, label: 'T20' },
-          stdDevMM: 15,
-          isPreset: true,
-          createdAt: '2025-01-01T00:00:00.000Z',
-          lastPlayedAt: undefined,
-        },
+        config: PRESETS[PRESET_BASIC],
         sessionConfig: { mode: 'questions', questionCount: 10 },
         currentQuestion: null,
         currentThrowIndex: 0,
