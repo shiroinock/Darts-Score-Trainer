@@ -204,7 +204,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 ### 3.3 カスタムフック (`src/hooks/`)
 - [x] `useGameStore.ts` - store のセレクター (src/hooks/useGameStore.ts, src/hooks/useGameStore.test.ts)
 - [x] `useTimer.ts` - タイマー管理（setInterval） (src/hooks/useTimer.ts, src/hooks/useTimer.test.ts)
-- [ ] `usePracticeSession.ts` - 練習セッションロジック
+- [x] `usePracticeSession.ts` - 練習セッションロジック (src/hooks/usePracticeSession.ts, src/hooks/usePracticeSession.test.ts)
 - [ ] `useKeyboardInput.ts` - キーボードショートカット（0-9, Enter, Backspace, Escape）
 
 ---

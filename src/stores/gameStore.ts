@@ -275,9 +275,11 @@ export const useGameStore = create<GameStore>()(
        */
       startPractice: () => {
         set((state) => {
+          const previousBestStreak = state.stats.bestStreak; // 既存のbestStreakを保持
+
           state.gameState = 'practicing';
           state.isTimerRunning = true;
-          state.stats = { ...initialStats };
+          state.stats = { ...initialStats, bestStreak: previousBestStreak };
           state.elapsedTime = 0;
           state.practiceStartTime = Date.now();
           state.displayedDarts = [];
@@ -480,6 +482,7 @@ export const useGameStore = create<GameStore>()(
           state.currentQuestion = null;
           // 統計情報のtotalを増加（不正解扱い）
           state.stats.total++;
+          // currentStreakをリセット（bestStreakは保持）
           state.stats.currentStreak = 0;
         }),
 
