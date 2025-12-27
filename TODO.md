@@ -205,7 +205,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] `useGameStore.ts` - store のセレクター (src/hooks/useGameStore.ts, src/hooks/useGameStore.test.ts)
 - [x] `useTimer.ts` - タイマー管理（setInterval） (src/hooks/useTimer.ts, src/hooks/useTimer.test.ts)
 - [x] `usePracticeSession.ts` - 練習セッションロジック (src/hooks/usePracticeSession.ts, src/hooks/usePracticeSession.test.ts)
-- [ ] `useKeyboardInput.ts` - キーボードショートカット（0-9, Enter, Backspace, Escape）
+- [x] `useKeyboardInput.ts` - キーボードショートカット（0-9, Enter, Backspace, Escape） (src/hooks/useKeyboardInput.ts, src/hooks/useKeyboardInput.test.ts)
 
 ---
 

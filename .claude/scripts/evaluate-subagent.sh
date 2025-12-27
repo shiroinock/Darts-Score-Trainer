@@ -47,6 +47,18 @@ if [ -n "$PARENT_TRANSCRIPT_PATH" ] && [ -f "$PARENT_TRANSCRIPT_PATH" ]; then
   echo "📋 検出されたサブエージェントタイプ: $SUBAGENT_TYPE"
 fi
 
+# エージェントトランスクリプトの存在確認（早期スキップ）
+if [ -z "$AGENT_TRANSCRIPT_PATH" ] || [ ! -f "$AGENT_TRANSCRIPT_PATH" ]; then
+  echo "ℹ️ サブエージェントトランスクリプトが存在しないため、評価をスキップします"
+  exit 0
+fi
+
+# トランスクリプトが空でないか確認
+if [ ! -s "$AGENT_TRANSCRIPT_PATH" ]; then
+  echo "ℹ️ サブエージェントトランスクリプトが空のため、評価をスキップします"
+  exit 0
+fi
+
 # サブエージェントタイプに応じて評価を実行
 case "$SUBAGENT_TYPE" in
   test-writer|implement|test-runner|review-file|classify-files|plan-fix)
