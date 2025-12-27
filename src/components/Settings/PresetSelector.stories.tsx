@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { fn } from '@storybook/test';
 import { PresetSelector } from './PresetSelector';
 
 const withMockStore =
@@ -8,12 +7,11 @@ const withMockStore =
     const mockUseGameStore = (selector: (state: unknown) => unknown) => {
       const mockState = {
         config: { configId },
-        selectPreset: fn((id) => console.log('Selected:', id)),
+        selectPreset: (id: string) => console.log('Selected:', id),
       };
       return selector(mockState);
     };
 
-    // @ts-expect-error - モジュールモック
     vi.doMock('../../stores/gameStore', () => ({ useGameStore: mockUseGameStore }));
 
     return <Story />;

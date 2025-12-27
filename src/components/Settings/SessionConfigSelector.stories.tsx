@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { fn } from '@storybook/test';
 import type { SessionConfig } from '../../types';
 import { SessionConfigSelector } from './SessionConfigSelector';
 
@@ -7,12 +6,11 @@ const withMockStore = (sessionConfig: SessionConfig) => (Story: React.ComponentT
   const mockUseGameStore = (selector: (state: unknown) => unknown) => {
     const mockState = {
       sessionConfig,
-      setSessionConfig: fn((config) => console.log('Set config:', config)),
+      setSessionConfig: (config: SessionConfig) => console.log('Set config:', config),
     };
     return selector(mockState);
   };
 
-  // @ts-expect-error - モジュールモック
   vi.doMock('../../stores/gameStore', () => ({
     useGameStore: mockUseGameStore,
   }));

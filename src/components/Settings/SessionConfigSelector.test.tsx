@@ -10,9 +10,13 @@ import { SessionConfigSelector } from './SessionConfigSelector';
 
 // useGameStoreのモック
 const mockSetSessionConfig = vi.fn();
-const mockSessionConfig = {
-  mode: 'questions' as const,
-  questionCount: 10 as const,
+const mockSessionConfig: {
+  mode: 'questions' | 'time';
+  questionCount?: 10 | 20 | 50 | 100;
+  timeLimit?: 3 | 5 | 10;
+} = {
+  mode: 'questions',
+  questionCount: 10,
 };
 
 vi.mock('../../stores/gameStore', () => ({
