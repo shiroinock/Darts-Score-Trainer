@@ -8,21 +8,28 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { SessionConfigSelector } from './SessionConfigSelector';
 
-// useGameStoreのモック
-const mockSetSessionConfig = vi.fn();
-const mockSessionConfig: {
+// モック用の型定義
+type MockSessionConfig = {
   mode: 'questions' | 'time';
   questionCount?: 10 | 20 | 50 | 100;
   timeLimit?: 3 | 5 | 10;
-} = {
+};
+
+// セッション設定モックのファクトリー関数
+const createMockSessionConfig = (overrides?: Partial<MockSessionConfig>): MockSessionConfig => ({
   mode: 'questions',
   questionCount: 10,
-};
+  ...overrides,
+});
+
+// useGameStoreのモック
+const mockSetSessionConfig = vi.fn();
+let mockSessionConfig: MockSessionConfig = createMockSessionConfig();
 
 vi.mock('../../stores/gameStore', () => ({
   useGameStore: (
     selector: (state: {
-      sessionConfig: typeof mockSessionConfig;
+      sessionConfig: MockSessionConfig;
       setSessionConfig: (config: unknown) => void;
     }) => unknown
   ) => {
@@ -38,10 +45,8 @@ describe('SessionConfigSelector', () => {
   beforeEach(() => {
     // 各テスト前にモックをクリア
     vi.clearAllMocks();
-    // デフォルト状態に戻す
-    mockSessionConfig.mode = 'questions';
-    mockSessionConfig.questionCount = 10;
-    delete (mockSessionConfig as { timeLimit?: number }).timeLimit;
+    // デフォルト状態に戻す（ファクトリー関数で新しいオブジェクトを生成）
+    mockSessionConfig = createMockSessionConfig();
   });
 
   describe('レンダリング', () => {

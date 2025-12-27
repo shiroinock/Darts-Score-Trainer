@@ -1,15 +1,29 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { PRESETS } from '../../stores/config/presets';
+import { useEffect } from 'react';
+import { getDefaultConfig, PRESETS } from '../../stores/config/presets';
 import { useGameStore } from '../../stores/gameStore';
 import { PresetSelector } from './PresetSelector';
 
 const withMockStore =
   (configId = 'preset-basic') =>
   (Story: React.ComponentType) => {
-    // プリセットから完全な設定を取得して状態を設定
-    const config = PRESETS[configId];
-    useGameStore.setState({ config });
-    return <Story />;
+    // 状態設定とクリーンアップを行うラッパーコンポーネント
+    function StoryWrapper() {
+      useEffect(() => {
+        // マウント時に特定のプリセットを設定
+        const config = PRESETS[configId];
+        useGameStore.setState({ config });
+
+        // アンマウント時にデフォルト設定に戻す
+        return () => {
+          useGameStore.setState({ config: getDefaultConfig() });
+        };
+      }, [configId]);
+
+      return <Story />;
+    }
+
+    return <StoryWrapper />;
   };
 
 const meta = {

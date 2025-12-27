@@ -27,12 +27,12 @@ export function SessionConfigSelector(): JSX.Element {
     if (mode === 'questions') {
       setSessionConfig({
         mode: 'questions',
-        questionCount: sessionConfig.questionCount || 10,
+        questionCount: sessionConfig.questionCount ?? 10,
       });
     } else {
       setSessionConfig({
         mode: 'time',
-        timeLimit: sessionConfig.timeLimit || 3,
+        timeLimit: sessionConfig.timeLimit ?? 3,
       });
     }
   };

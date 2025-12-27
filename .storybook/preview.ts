@@ -1,9 +1,10 @@
 import type { Preview } from '@storybook/react-vite';
 import '../src/index.css';
 
-// p5.jsグローバルモック
+// p5.jsグローバルモック（ブラウザ/Node環境対応）
+const globalObj = typeof window !== 'undefined' ? window : global;
 // @ts-expect-error - グローバル変数の定義
-global.p5 = () => {};
+globalObj.p5 = class P5Mock {};
 
 const preview: Preview = {
   parameters: {
