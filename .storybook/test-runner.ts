@@ -9,7 +9,6 @@ const config: TestRunnerConfig = {
     // スナップショットテスト
     const image = await page.screenshot();
     expect(image).toMatchImageSnapshot({
-      customSnapshotsDir: `${context.parameters.fileName}/__snapshots__`,
       customSnapshotIdentifier: context.id,
       failureThreshold: 0.01,
       failureThresholdType: 'percent',
