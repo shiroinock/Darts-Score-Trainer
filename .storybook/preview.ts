@@ -37,6 +37,13 @@ const preview: Preview = {
         },
       },
     },
+    docs: {
+      story: {
+        // DocsページでストーリーをiFrame内でレンダリング
+        // これによりZustandストアの状態が各ストーリー間で分離される
+        inline: false,
+      },
+    },
   },
 };
 
