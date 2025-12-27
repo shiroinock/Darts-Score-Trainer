@@ -487,7 +487,7 @@ describe('TargetSelector', () => {
       const { container } = render(<TargetSelector />);
 
       // Assert
-      const numberGrid = container.querySelector('.target-selector__number-grid');
+      const numberGrid = container.querySelector<HTMLElement>('.target-selector__number-grid');
       expect(numberGrid).toBeInTheDocument();
 
       const numberButtons = within(numberGrid!).getAllByRole('button');
