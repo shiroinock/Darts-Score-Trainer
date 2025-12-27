@@ -28,6 +28,3 @@ storybook-static
 
 # Test coverage
 coverage
-
-# Snapshot tests
-**/__snapshots__
