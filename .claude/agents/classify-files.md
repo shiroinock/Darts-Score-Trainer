@@ -659,3 +659,44 @@ function isPresetFunction(file: FileInfo, functionName: string): boolean {
     ]
   }
 }
+
+### 2025-12-28: 設定UIコンポーネントのテストパターン判定強化
+
+#### 背景
+`DetailedSettings.tsx` のテストパターン判定において、複雑な条件付きレンダリングと状態管理を持つ設定UIコンポーネントの判定基準を明確化する必要がある。特に、出力が途中で切れてしまう問題も確認された。
+
+#### 追加ガイドライン
+
+##### 設定UIコンポーネントの判定基準
+```typescript
+// 設定UIコンポーネントの特徴
+function isSettingsUIComponent(file: FileInfo): boolean {
+  return (
+    // ファイルパスにsettings/configを含む
+    file.path.match(/\/(settings|config).*\.tsx$/) &&
+    // フォーム要素（ラジオボタン、セレクトボックスなど）を含む
+    hasFormElements(file) &&
+    // 状態管理ストアと連携
+    usesStateManagement(file) &&
+    // 条件付きレンダリングを含む
+    hasConditionalRendering(file)
+  );
+}
+```
+
+##### 設定UIコンポーネントのテストパターン判定
+`DetailedSettings.tsx` のような複雑な設定UIコンポーネント：
+- **test-later必須**: UIの視覚的確認と相互作用のテストが必要
+- **componentパターン**: React Testing Libraryでのユーザインタラクションテスト
+- **統合的なテスト**: 状態管理との連携、条件付きレンダリングの確認
+
+##### 出力形式の簡潔化と完全性の確保
+テストパターン判定の出力は、以下の形式で簡潔にまとめること：
+```json
+{
+  "tddMode": "test-later",
+  "testPattern": "component",
+  "placement": "colocated",
+  "rationale": "複雑なUI相互作用と条件付きレンダリング、視覚的確認が必要",
+  "testFilePath": "src/components/Settings/DetailedSettings.test.tsx"
+}
