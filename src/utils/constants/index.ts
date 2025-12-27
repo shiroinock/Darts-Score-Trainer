@@ -24,3 +24,5 @@ export { SESSION_TIME_LIMITS } from './sessionTimeLimits.js';
 // ストレージ
 export { STORAGE_KEY } from './storageKey.js';
 export { TARGET_RADII } from './targetRadii.js';
+// タイマー
+export { TIMER_INTERVAL_MS } from './timerInterval.js';

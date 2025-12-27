@@ -4,6 +4,10 @@ import { afterEach, vi } from 'vitest';
 
 // 各テスト後にクリーンアップ
 afterEach(() => {
+  // フェイクタイマーをクリア（cleanup前に実行）
+  vi.clearAllTimers();
+  // モックとスパイをクリア
+  vi.clearAllMocks();
   cleanup();
 });
 
