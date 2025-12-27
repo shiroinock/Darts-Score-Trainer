@@ -76,10 +76,11 @@ export function generateQuestion(config: PracticeConfig, remainingScore: number 
   const isCumulative = config.judgmentTiming === 'cumulative';
 
   // 問題文を生成（最初の投擲の問題文を使用）
-  const questionText = generateQuestionText(config, 0, isCumulative);
+  const FIRST_THROW_INDEX = 0;
+  const questionText = generateQuestionText(config, FIRST_THROW_INDEX, isCumulative);
 
   // 正解を計算（最初の投擲の正解を使用）
-  const correctAnswer = calculateCorrectAnswer(throws, config, 0, remainingScore);
+  const correctAnswer = calculateCorrectAnswer(throws, config, FIRST_THROW_INDEX, remainingScore);
 
   // Questionオブジェクトを構築
   const question: Question = {
@@ -256,10 +257,8 @@ export function calculateCorrectAnswer(
 
   // 残り点数モード
   if (config.questionType === 'remaining') {
-    if (previousRemaining === null) {
-      throw new Error('previousRemaining is required for remaining mode');
-    }
-    return calculateRemainingModeAnswer(throws, throwIndex, previousRemaining, isCumulative);
+    // previousRemainingは既にLine 247-248で検証済み
+    return calculateRemainingModeAnswer(throws, throwIndex, previousRemaining!, isCumulative);
   }
 
   // bothモード（得点を返す）
