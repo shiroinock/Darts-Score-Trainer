@@ -11,9 +11,6 @@ const config: StorybookConfig = {
     '@storybook/addon-onboarding',
   ],
   framework: '@storybook/react-vite',
-  docs: {
-    autodocs: 'tag',
-  },
   viteFinal: async (config) => {
     // エイリアス設定（vitest.config.tsと同じ）
     config.resolve = {
