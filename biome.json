@@ -6,8 +6,8 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignoreUnknown": false,
-    "includes": ["**", "!**/node_modules", "!**/dist", "!**/build", "!**/.vite", "!**/coverage"]
+    "ignoreUnknown": true,
+    "includes": ["src/**", "*.config.ts", "*.config.js", "vite.config.ts", "vitest.config.ts"]
   },
   "formatter": {
     "enabled": true,
