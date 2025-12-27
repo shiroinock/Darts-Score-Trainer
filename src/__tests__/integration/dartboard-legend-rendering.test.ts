@@ -337,12 +337,31 @@ describe('dartboard-legend-rendering integration', () => {
         // Arrange
         const callOrder: string[] = [];
 
-        mockP5.noStroke = vi.fn(() => callOrder.push('noStroke'));
-        mockP5.fill = vi.fn(() => callOrder.push('fill'));
-        mockP5.circle = vi.fn(() => callOrder.push('circle'));
-        mockP5.textAlign = vi.fn(() => callOrder.push('textAlign'));
-        mockP5.textSize = vi.fn(() => callOrder.push('textSize'));
-        mockP5.text = vi.fn(() => callOrder.push('text'));
+        mockP5.noStroke = vi.fn(() => {
+          callOrder.push('noStroke');
+          return mockP5;
+        });
+        mockP5.fill = vi.fn(() => {
+          callOrder.push('fill');
+          return mockP5;
+        });
+        mockP5.circle = vi.fn(() => {
+          callOrder.push('circle');
+          return mockP5;
+        });
+        mockP5.textAlign = vi.fn(() => {
+          callOrder.push('textAlign');
+          return mockP5;
+        });
+        mockP5.textSize = vi.fn((size?: number) => {
+          callOrder.push('textSize');
+          if (size === undefined) return 12;
+          return mockP5;
+        }) as p5Types['textSize'];
+        mockP5.text = vi.fn(() => {
+          callOrder.push('text');
+          return mockP5;
+        });
 
         // Act
         drawLegend(mockP5, 1);

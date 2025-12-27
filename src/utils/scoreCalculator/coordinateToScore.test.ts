@@ -149,8 +149,7 @@ describe('coordinateToScore', () => {
       // Arrange
       const x = 73;
       const y = -73;
-      const _distance = Math.sqrt(x * x + y * y); // 約103mm（トリプルリング）
-      const _angle = Math.atan2(y, x); // 約-45度（20と1の間）
+      // 距離約103mm（トリプルリング）、角度約-45度（20と1の間）
 
       // Act
       const result = coordinateToScore(x, y);
