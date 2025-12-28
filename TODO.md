@@ -376,11 +376,11 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 ## Phase 8: 統合
 
 ### 8.1 App.tsx
-- [ ] GameStateに応じた画面切り替え
-  - [ ] setup → SettingsPanel
-  - [ ] practicing → PracticeScreen
-  - [ ] results → ResultsScreen
-- [ ] 初期設定のロード（localStorage）
+- [x] GameStateに応じた画面切り替え (src/App.tsx, src/App.test.tsx)
+  - [x] setup → SettingsPanel
+  - [x] practicing → PracticeScreen
+  - [x] results → ResultsScreen
+- [x] 初期設定のロード（localStorage）（gameStore.ts の persist ミドルウェアで実装済み）
 
 ### 8.2 スタイリング (`src/styles/index.css`)
 - [ ] CSS変数定義（色、フォントサイズ、スペーシング）
