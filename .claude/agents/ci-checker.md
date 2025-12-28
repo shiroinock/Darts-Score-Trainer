@@ -1,4 +1,5 @@
 ---
+name: ci-checker
 description: GitHub Actions CI相当のチェックをローカルで実行し、全て成功したことを確認するエージェント
 allowed-tools: Task
 model: haiku
