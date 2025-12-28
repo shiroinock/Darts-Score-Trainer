@@ -1,6 +1,6 @@
 ---
 description: GitHub Actions CI相当のチェックをローカルで実行し、全て成功したことを確認するエージェント
-allowed-tools: Bash, Skill
+allowed-tools: Task
 model: haiku
 ---
 
@@ -26,25 +26,54 @@ TDDパイプライン完了後、PR作成前にローカルでCI相当のチェ�
 - **test-check**: 300秒（5分）- 全テストスイートの実行
 - **build-check**: 180秒（3分）- TypeScript コンパイル + Vite ビルド
 
-タイムアウトを超過した場合、該当するチェックは失敗として扱われます。
+### タイムアウト時の振る舞い
+
+タイムアウトを超過した場合、該当するチェックは **FAILED** として扱われます（SKIPPEDではありません）。
+
+1. **タイムアウト発生時の処理**
+   - サブエージェントの実行が強制的に終了されます
+   - 該当するチェックは失敗として記録されます
+   - 他のサブエージェントは並列実行を継続します
+
+2. **エラーメッセージ**
+   ```
+   ❌ Tests failed
+
+   Error: Task timed out after 300000ms (5 minutes)
+
+   Possible causes:
+   - Too many tests running
+   - Infinite loop in test code
+   - External service timeout (if tests depend on external APIs)
+
+   Debugging steps:
+   1. Run tests locally: npm run test:run
+   2. Check for slow tests: npm run test:run -- --reporter=verbose
+   3. Increase timeout if necessary (in .claude/agents/ci-checker.md)
+   ```
+
+3. **タイムアウト調整が必要な場合**
+   - プロジェクトの成長に伴い、テストの実行時間が増加する可能性があります
+   - タイムアウト値は `.claude/agents/ci-checker.md` の Step 2 で調整できます
+   - 推奨: タイムアウトを増やす前に、テストのパフォーマンスを確認してください
+
+### タイムアウトの妥当性
+
+現在の設定値は以下の根拠に基づいています：
+
+- **Biome check（2分）**: 通常は5-10秒で完了。2分は十分な余裕
+- **Test（5分）**: 現在約1,700テストで1-2分。5分は成長を見込んだ余裕
+- **Build（3分）**: 通常は30-60秒で完了。3分は十分な余裕
 
 ## 実装手順
 
-### Step 1: local-ci スキルの参照
-
-まず、`local-ci` スキルを参照して、最新の実行手順を確認します：
-
-```
-Use the Skill tool to reference local-ci skill.
-```
-
-### Step 2: 開始メッセージ
+### Step 1: 開始メッセージ
 
 ```
 🔍 Running CI checks locally (in parallel)...
 ```
 
-### Step 3: 3つのサブエージェントを並列起動
+### Step 2: 3つのサブエージェントを並列起動
 
 **単一のメッセージで**3つのサブエージェントを並列起動します：
 
@@ -80,7 +109,7 @@ Task({
 
 **重要**: これら3つのTaskツール呼び出しを1つのメッセージで実行することで、真の並列実行が実現されます。
 
-### Step 4: 結果の集計
+### Step 3: 結果の集計
 
 各サブエージェントの結果を確認し、成功・失敗を記録します：
 
@@ -96,7 +125,7 @@ Task({
   - ✅ 成功: `Build: ✓`
   - ❌ 失敗: `Build: ✗` + エラー内容
 
-### Step 5: サマリー表示
+### Step 4: サマリー表示
 
 **全て成功した場合**:
 
@@ -216,6 +245,110 @@ Fix the issues above and re-run the checks.
 ### 検証済みの安全性
 - GitHub Actions CI でも同様の並列実行を行っており、問題は発生していません
 - Vitest、TypeScript、Biome は全て並列実行に対応した設計になっています
+
+## 並列実行時の出力分離
+
+3つのサブエージェント（biome-check、test-check、build-check）は並列実行されますが、各エージェントの出力は適切に分離されます。
+
+### 出力分離の仕組み
+
+1. **サブエージェントの独立性**
+   - 各サブエージェントは独立したプロセスとして実行されます
+   - 各エージェントの標準出力は個別にキャプチャされます
+   - TaskOutputツールを使用して、各エージェントの完了後に出力を取得します
+
+2. **出力の集約**
+   - ci-checkerエージェントは、全てのサブエージェントの完了を待ちます
+   - 各サブエージェントの出力を個別に取得し、整形して表示します
+   - 出力順序は常に一定（Biome → Test → Build）
+
+3. **大量出力への対応**
+   - test-checkエージェントは大量の出力を生成する可能性があります
+   - 各エージェントの出力は完全にキャプチャされ、混在しません
+   - 失敗時のみ詳細な出力を表示し、成功時はサマリーのみ表示します
+
+### 出力例
+
+#### 全て成功した場合
+```
+🔍 Running CI checks locally (in parallel)...
+
+📋 Biome check
+✅ Biome check passed
+
+🧪 Running tests
+✅ Tests passed (1,736 tests)
+
+🏗️  Building project
+✅ Build passed
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ All CI checks passed!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Summary:
+  - Biome check: ✓
+  - Tests: ✓ (1,736 tests passed)
+  - Build: ✓
+
+🎉 Ready to create a pull request!
+```
+
+#### 一部失敗した場合
+```
+🔍 Running CI checks locally (in parallel)...
+
+📋 Biome check
+✅ Biome check passed
+
+🧪 Running tests
+❌ Tests failed
+
+[テストエラー出力]
+Test Files:  1 failed | 45 passed (46)
+     Tests:  1 failed | 1735 passed (1736)
+
+FAIL  src/utils/validation.test.ts
+  ● isValidRemainingScore › should return false for negative scores
+    expect(received).toBe(expected)
+    Expected: false
+    Received: true
+
+🏗️  Building project
+❌ Build failed
+
+[ビルドエラー出力]
+src/types/Question.ts:5:3 - error TS2322: Type 'number | undefined' is not assignable to type 'number'.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+❌ CI checks failed
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Summary:
+  - Biome check: ✓
+  - Tests: ✗
+  - Build: ✗
+
+Failed checks:
+  - Tests: 1 test failed in src/utils/validation.test.ts
+  - Build: Type error in src/types/Question.ts:5:3
+
+Fix the issues above and re-run the checks.
+```
+
+### 実装上の注意点
+
+1. **TaskOutputツールの使用**
+   - 各サブエージェントの出力を取得するために、TaskOutputツールを使用します
+   - block=trueを指定して、サブエージェントの完了を待ちます
+
+2. **エラーメッセージの整形**
+   - 長いエラーメッセージは適切に切り詰めます
+   - 重要な情報（ファイル名、行番号、エラー内容）を抽出します
+
+3. **一貫した出力順序**
+   - サブエージェントの完了順序にかかわらず、常に Biome → Test → Build の順で表示します
+   - ユーザーが結果を理解しやすくします
 
 ## tdd-next からの呼び出し例
 

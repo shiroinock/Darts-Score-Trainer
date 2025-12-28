@@ -1,7 +1,7 @@
 ---
 name: local-ci
 description: GitHub Actions CI相当のチェックをローカルで実行。Biome check、テスト、ビルドを並列実行し、全てのチェックが成功したことを確認する。PR作成前の事前チェックに使用。
-allowed-tools: Bash
+allowed-tools: Task
 ---
 
 # Local CI スキル

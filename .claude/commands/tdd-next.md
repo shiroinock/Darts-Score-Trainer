@@ -130,35 +130,41 @@ classify-files の判定結果に基づき、適切なパイプラインを**順
    - テストを通す最小限の実装
    - テストファイルパスと実装ファイルパスを渡す
 
-4. ci-checker エージェント起動 (Green確認 + CI全体チェック)
-   - Biome check、Test、Build を並列実行
-   - 判定: 全て成功 → 次へ
-   - 判定: 失敗 → 全ての問題を報告し、plan-fix へ
+4. test-runner エージェント起動 (Green確認)
+   - 期待する状態: GREEN_EXPECTED
+   - 実装したファイルに関連するテストのみ実行（局所的影響を検出）
+   - 判定: 全テスト成功 → 次へ
+   - 判定: 失敗 → plan-fixへ
 
-5. (ci-checker が成功した場合) review-file エージェント起動 (Refactor判断)
+5. ci-checker エージェント起動 (CI全体チェック)
+   - Biome check、Test（全テスト）、Build を並列実行（全体的影響を検出）
+   - 判定: 全て成功 → 次へ
+   - 判定: 失敗 → plan-fixへ
+
+6. (ci-checker が成功した場合) review-file エージェント起動 (Refactor判断)
    - review-perspective-selector skill で観点を自動選択
    - 実装ファイルとテストファイルの両方をレビュー
    - 判定: PASS → 完了
    - 判定: WARN → ユーザーに確認「修正しますか？(y/n)」
    - 判定: FAIL → 必須修正（次へ進む）
 
-6. (ci-checker が失敗 or WARN時にユーザー承認 or FAIL の場合) plan-fix エージェント起動
-   - ci-checker の失敗内容 または review-file の指摘事項に基づき修正計画を作成
+7. (test-runner/ci-checker が失敗 or WARN時にユーザー承認 or FAIL の場合) plan-fix エージェント起動
+   - test-runner/ci-checker の失敗内容 または review-file の指摘事項に基づき修正計画を作成
    - 修正内容をユーザーに提示
 
-7. (ユーザーが承認した場合) implement エージェント起動
+8. (ユーザーが承認した場合) implement エージェント起動
    - plan-fixの計画に基づいて修正実行
    - テストファイルと実装ファイルの両方を修正可能
 
-8. ci-checker エージェント起動
+9. ci-checker エージェント起動
    - Biome check、Test、Build を並列実行
    - 判定: 全て成功 → 次へ
-   - 判定: 失敗 → 6に戻る（最大3回まで）
+   - 判定: 失敗 → 7に戻る（最大3回まで）
 
-9. review-file エージェント起動（再レビュー）
+10. review-file エージェント起動（再レビュー）
    - 修正後のコードを再度レビュー
    - 判定: PASS → 完了
-   - 判定: WARN/FAIL → 6に戻る（最大3回まで）
+   - 判定: WARN/FAIL → 7に戻る（最大3回まで）
 ```
 
 #### 4-2. テストレイターパイプライン (tddMode: test-later)
@@ -170,33 +176,39 @@ classify-files の判定結果に基づき、適切なパイプラインを**順
 2. test-writer エージェント起動
    - 実装に基づくテスト作成（Green状態で作成）
 
-3. ci-checker エージェント起動 (Green確認 + CI全体チェック)
-   - Biome check、Test、Build を並列実行
-   - 判定: 全て成功 → 次へ
-   - 判定: 失敗 → 全ての問題を報告し、plan-fix へ
+3. test-runner エージェント起動 (Green確認)
+   - 期待する状態: GREEN_EXPECTED
+   - 実装したファイルに関連するテストのみ実行（局所的影響を検出）
+   - 判定: 全テスト成功 → 次へ
+   - 判定: 失敗 → plan-fixへ
 
-4. (ci-checker が成功した場合) review-file エージェント起動
+4. ci-checker エージェント起動 (CI全体チェック)
+   - Biome check、Test（全テスト）、Build を並列実行（全体的影響を検出）
+   - 判定: 全て成功 → 次へ
+   - 判定: 失敗 → plan-fixへ
+
+5. (ci-checker が成功した場合) review-file エージェント起動
    - review-perspective-selector skill で観点を自動選択
    - 実装ファイルとテストファイルの両方をレビュー
    - 判定: PASS → 完了
    - 判定: WARN → ユーザーに確認「修正しますか？(y/n)」
    - 判定: FAIL → 必須修正（次へ進む）
 
-5. (ci-checker が失敗 or WARN時にユーザー承認 or FAIL の場合) plan-fix エージェント起動
-   - ci-checker の失敗内容 または review-file の指摘事項に基づき修正計画を作成
+6. (test-runner/ci-checker が失敗 or WARN時にユーザー承認 or FAIL の場合) plan-fix エージェント起動
+   - test-runner/ci-checker の失敗内容 または review-file の指摘事項に基づき修正計画を作成
 
-6. (ユーザーが承認した場合) implement エージェント起動
+7. (ユーザーが承認した場合) implement エージェント起動
    - plan-fixの計画に基づいて修正実行
 
-7. ci-checker エージェント起動
+8. ci-checker エージェント起動
    - Biome check、Test、Build を並列実行
    - 判定: 全て成功 → 次へ
-   - 判定: 失敗 → 5に戻る（最大3回まで）
+   - 判定: 失敗 → 6に戻る（最大3回まで）
 
-8. review-file エージェント起動（再レビュー）
+9. review-file エージェント起動（再レビュー）
    - 修正後のコードを再度レビュー
    - 判定: PASS → 完了
-   - 判定: WARN/FAIL → 5に戻る（最大3回まで）
+   - 判定: WARN/FAIL → 6に戻る（最大3回まで）
 ```
 
 ### 5. TODO.md更新
