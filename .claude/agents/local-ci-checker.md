@@ -649,17 +649,6 @@ Fix the issues above and re-run the checks.
    - サブエージェントの完了順序にかかわらず、常に Biome → Test → Build の順で表示します
    - ユーザーが結果を理解しやすくします
 
-## tdd-next からの呼び出し例
-
-```javascript
-{
-  "subagent_type": "ci-checker",
-  "model": "haiku",
-  "description": "Run local CI checks in parallel",
-  "prompt": "TDDパイプラインが完了しました。local-ci スキルに従って、ローカルマシン上で Biome check、テスト、ビルドを並列実行し、全てのチェックが成功することを確認してください。全ての結果をまとめて報告してください。"
-}
-```
-
 ## 注意事項
 
 - remote CI と完全に同じ環境ではないため、local CI で成功しても remote CI で失敗する可能性はある

@@ -1,0 +1,37 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`App > スナップショットテスト > practicing状態のレンダリング結果が一致する 1`] = `
+<div
+  class="app"
+>
+  <div
+    data-testid="practice-screen"
+  >
+    PracticeScreen
+  </div>
+</div>
+`;
+
+exports[`App > スナップショットテスト > results状態のレンダリング結果が一致する 1`] = `
+<div
+  class="app"
+>
+  <div
+    data-testid="results-screen"
+  >
+    ResultsScreen
+  </div>
+</div>
+`;
+
+exports[`App > スナップショットテスト > setup状態のレンダリング結果が一致する 1`] = `
+<div
+  class="app"
+>
+  <div
+    data-testid="settings-panel"
+  >
+    SettingsPanel
+  </div>
+</div>
+`;

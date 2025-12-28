@@ -730,3 +730,72 @@ function isSettingsUIComponent(file: FileInfo): boolean {
   "rationale": "複雑なUI相互作用と条件付きレンダリング、視覚的確認が必要",
   "testFilePath": "src/components/Settings/DetailedSettings.test.tsx"
 }
+```
+
+### 2025-12-29: ルートコンポーネントのテストパターン判定とエージェントの汎用性改善
+
+#### 背景
+`App.tsx` のテストパターン判定において、以下の問題が確認された：
+1. ルートコンポーネント（純粋な画面切り替えロジック）の判定基準が不明確
+2. エージェントが特定のタスクに特化した出力をしてしまい、汎用的な分類ができていない
+3. レビュー観点のマッピングが行われなかった
+
+#### 追加ガイドライン
+
+##### ルートコンポーネントの判定基準
+```typescript
+// ルートコンポーネントの特徴
+function isRootComponent(file: FileInfo): boolean {
+  return (
+    // App.tsx または index.tsx
+    file.name.match(/^(App|index)\.tsx$/) &&
+    // 条件付きレンダリングで画面を切り替える
+    hasConditionalScreenRendering(file) &&
+    // ビジネスロジックを含まない
+    !hasBusinessLogic(file) &&
+    // 主に他のコンポーネントを組み合わせるだけ
+    isComposingComponents(file)
+  );
+}
+```
+
+##### ルートコンポーネントのテストパターン判定
+`App.tsx` のような純粋なルートコンポーネント：
+- **test-later推奨**: シンプルなUI切り替えのため、実装後の確認で十分
+- **componentパターン**: 各画面の表示条件をテスト
+- **colocated配置**: 同階層にテストファイルを配置
+
+##### 汎用的な分類の徹底
+エージェントは以下の情報を**常に**含めること：
+1. **ファイル分類情報**: type, description, applicable_aspects
+2. **テストパターン情報**: tddMode, pattern, placement, rationale, testFilePath
+3. **レビュー観点マッピング**: matrix, summary
+
+特定のタスク（単一ファイルのテストパターン判定など）を求められた場合でも、classify-filesエージェントとしての本来の機能を忘れずに、完全な分類情報を出力すること。
+
+##### 判定の具体例
+```json
+{
+  "files": [{
+    "path": "src/App.tsx",
+    "type": "component",
+    "description": "ルートコンポーネント、画面切り替え",
+    "applicable_aspects": ["typescript"],
+    "testPattern": {
+      "tddMode": "test-later",
+      "pattern": "component",
+      "placement": "colocated",
+      "rationale": "純粋なUI分岐ロジック、ビジネスロジックなし",
+      "testFilePath": "src/App.test.tsx"
+    }
+  }],
+  "matrix": {
+    "typescript": ["src/App.tsx"]
+  },
+  "summary": {
+    "total_files": 1,
+    "total_reviews": 1,
+    "aspects_used": ["typescript"]
+  }
+}
+```
