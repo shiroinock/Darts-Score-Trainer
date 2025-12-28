@@ -6,4 +6,6 @@
 
 export { canFinishWithDouble } from './canFinishWithDouble.js';
 export { checkBust } from './checkBust.js';
+export { checkBustFromThrows } from './checkBustFromThrows.js';
+export { isDoubleRing } from './isDoubleRing.js';
 export { isGameFinished } from './isGameFinished.js';

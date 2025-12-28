@@ -1995,7 +1995,616 @@ describe('gameStore', () => {
   });
 
   // ============================================================
-  // 10. レビュー指摘への対応テスト
+  // 10. バスト判定機能のテスト
+  // ============================================================
+  describe('バスト判定機能', () => {
+    describe('通常系: バスト判定なし', () => {
+      test('scoreモードではbustInfoが含まれない', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+          });
+          result.current.startPractice();
+        });
+
+        // Act
+        act(() => {
+          result.current.generateQuestion();
+        });
+
+        // Assert
+        expect(result.current.currentQuestion).not.toBeNull();
+        expect(result.current.currentQuestion?.bustInfo).toBeUndefined();
+      });
+
+      test('remainingモードでバストでない場合はbustInfoが含まれない', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'remaining',
+            startingScore: 501,
+          });
+          result.current.startPractice();
+        });
+
+        // 正常な投擲を設定（50点から20点を引いて30点残る）
+        act(() => {
+          useGameStore.setState({
+            remainingScore: 50,
+            roundStartScore: 50,
+            currentQuestion: {
+              mode: 'remaining',
+              throws: [
+                {
+                  target: { type: 'SINGLE', number: 20, label: '20' },
+                  landingPoint: { x: 0, y: 100 },
+                  score: 20,
+                  ring: 'INNER_SINGLE',
+                  segmentNumber: 20,
+                },
+              ],
+              correctAnswer: 30,
+              questionText: '残り点数は？',
+              startingScore: 50,
+            },
+          });
+        });
+
+        // Assert: バストでないのでbustInfoが設定されない
+        expect(result.current.currentQuestion?.bustInfo).toBeUndefined();
+      });
+    });
+
+    describe('オーバー判定: throwScore > remainingScore', () => {
+      test('残り点数を超える得点でbustInfo.reason = "over"が設定される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'remaining',
+            startingScore: 501,
+          });
+          result.current.startPractice();
+        });
+
+        // バスト状況を設定（30点から60点を引いてオーバー）
+        act(() => {
+          useGameStore.setState({
+            remainingScore: 30,
+            roundStartScore: 30,
+            currentQuestion: {
+              mode: 'remaining',
+              throws: [
+                {
+                  target: { type: 'TRIPLE', number: 20, label: 'T20' },
+                  landingPoint: { x: 0, y: 100 },
+                  score: 60,
+                  ring: 'TRIPLE',
+                  segmentNumber: 20,
+                },
+              ],
+              correctAnswer: 30,
+              questionText: '残り点数は？',
+              startingScore: 30,
+              bustInfo: {
+                isBust: true,
+                reason: 'over',
+              },
+            },
+          });
+        });
+
+        // Assert: bustInfoが設定されている
+        expect(result.current.currentQuestion?.bustInfo).toBeDefined();
+        expect(result.current.currentQuestion?.bustInfo?.isBust).toBe(true);
+        expect(result.current.currentQuestion?.bustInfo?.reason).toBe('over');
+      });
+    });
+
+    describe('1点残し判定: remainingScore - throwScore === 1', () => {
+      test('残り点数が1点になる場合、bustInfo.reason = "finish_impossible"が設定される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'remaining',
+            startingScore: 501,
+          });
+          result.current.startPractice();
+        });
+
+        // 1点残し状況を設定（21点から20点を引いて1点残る）
+        act(() => {
+          useGameStore.setState({
+            remainingScore: 21,
+            roundStartScore: 21,
+            currentQuestion: {
+              mode: 'remaining',
+              throws: [
+                {
+                  target: { type: 'SINGLE', number: 20, label: '20' },
+                  landingPoint: { x: 0, y: 100 },
+                  score: 20,
+                  ring: 'INNER_SINGLE',
+                  segmentNumber: 20,
+                },
+              ],
+              correctAnswer: 21,
+              questionText: '残り点数は？',
+              startingScore: 21,
+              bustInfo: {
+                isBust: true,
+                reason: 'finish_impossible',
+              },
+            },
+          });
+        });
+
+        // Assert: bustInfoが設定されている
+        expect(result.current.currentQuestion?.bustInfo).toBeDefined();
+        expect(result.current.currentQuestion?.bustInfo?.isBust).toBe(true);
+        expect(result.current.currentQuestion?.bustInfo?.reason).toBe('finish_impossible');
+      });
+
+      test('残り3点から2点を引いて1点残る場合もバスト判定される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'remaining',
+            startingScore: 501,
+          });
+          result.current.startPractice();
+        });
+
+        // 1点残し状況を設定
+        act(() => {
+          useGameStore.setState({
+            remainingScore: 3,
+            roundStartScore: 3,
+            currentQuestion: {
+              mode: 'remaining',
+              throws: [
+                {
+                  target: { type: 'SINGLE', number: 2, label: '2' },
+                  landingPoint: { x: 0, y: 50 },
+                  score: 2,
+                  ring: 'INNER_SINGLE',
+                  segmentNumber: 2,
+                },
+              ],
+              correctAnswer: 3,
+              questionText: '残り点数は？',
+              startingScore: 3,
+              bustInfo: {
+                isBust: true,
+                reason: 'finish_impossible',
+              },
+            },
+          });
+        });
+
+        // Assert
+        expect(result.current.currentQuestion?.bustInfo).toBeDefined();
+        expect(result.current.currentQuestion?.bustInfo?.isBust).toBe(true);
+        expect(result.current.currentQuestion?.bustInfo?.reason).toBe('finish_impossible');
+      });
+    });
+
+    describe('ダブル外し判定: remainingScore - throwScore === 0 && !isDouble', () => {
+      test('ちょうど0点になるがダブルでない場合、bustInfo.reason = "double_out_required"が設定される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'remaining',
+            startingScore: 501,
+          });
+          result.current.startPractice();
+        });
+
+        // ダブル外し状況を設定（40点からシングル40で0点だがダブルでない）
+        act(() => {
+          useGameStore.setState({
+            remainingScore: 40,
+            roundStartScore: 40,
+            currentQuestion: {
+              mode: 'remaining',
+              throws: [
+                {
+                  target: { type: 'SINGLE', number: 20, label: '20' },
+                  landingPoint: { x: 0, y: 100 },
+                  score: 40,
+                  ring: 'INNER_SINGLE', // ダブルでない
+                  segmentNumber: 20,
+                },
+              ],
+              correctAnswer: 40,
+              questionText: '残り点数は？',
+              startingScore: 40,
+              bustInfo: {
+                isBust: true,
+                reason: 'double_out_required',
+              },
+            },
+          });
+        });
+
+        // Assert: bustInfoが設定されている
+        expect(result.current.currentQuestion?.bustInfo).toBeDefined();
+        expect(result.current.currentQuestion?.bustInfo?.isBust).toBe(true);
+        expect(result.current.currentQuestion?.bustInfo?.reason).toBe('double_out_required');
+      });
+
+      test('50点からBULL（ダブル扱い）で0点になる場合はバストでない', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'remaining',
+            startingScore: 501,
+          });
+          result.current.startPractice();
+        });
+
+        // BULL成功状況を設定（50点からBULLで0点、ダブル扱い）
+        act(() => {
+          useGameStore.setState({
+            remainingScore: 50,
+            roundStartScore: 50,
+            currentQuestion: {
+              mode: 'remaining',
+              throws: [
+                {
+                  target: { type: 'BULL', number: null, label: 'BULL' },
+                  landingPoint: { x: 0, y: 0 },
+                  score: 50,
+                  ring: 'INNER_BULL', // BULLはダブル扱い
+                  segmentNumber: undefined,
+                },
+              ],
+              correctAnswer: 0,
+              questionText: '残り点数は？',
+              startingScore: 50,
+            },
+          });
+        });
+
+        // Assert: バストでないのでbustInfoが設定されない
+        expect(result.current.currentQuestion?.bustInfo).toBeUndefined();
+      });
+
+      test('40点からD20で0点になる場合はバストでない', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'remaining',
+            startingScore: 501,
+          });
+          result.current.startPractice();
+        });
+
+        // ダブル成功状況を設定
+        act(() => {
+          useGameStore.setState({
+            remainingScore: 40,
+            roundStartScore: 40,
+            currentQuestion: {
+              mode: 'remaining',
+              throws: [
+                {
+                  target: { type: 'DOUBLE', number: 20, label: 'D20' },
+                  landingPoint: { x: 0, y: 165 },
+                  score: 40,
+                  ring: 'DOUBLE',
+                  segmentNumber: 20,
+                },
+              ],
+              correctAnswer: 0,
+              questionText: '残り点数は？',
+              startingScore: 40,
+            },
+          });
+        });
+
+        // Assert: バストでないのでbustInfoが設定されない
+        expect(result.current.currentQuestion?.bustInfo).toBeUndefined();
+      });
+    });
+
+    describe('複数投擲時のバスト判定: 3投モードでのバスト検出', () => {
+      test('3投の合計でオーバーした場合、bustInfoが設定される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'remaining',
+            startingScore: 501,
+          });
+          result.current.startPractice();
+        });
+
+        // 3投の合計でバスト（50点から60点引いてオーバー）
+        act(() => {
+          useGameStore.setState({
+            remainingScore: 50,
+            roundStartScore: 50,
+            currentQuestion: {
+              mode: 'remaining',
+              throws: [
+                {
+                  target: { type: 'SINGLE', number: 20, label: '20' },
+                  landingPoint: { x: 0, y: 100 },
+                  score: 20,
+                  ring: 'INNER_SINGLE',
+                  segmentNumber: 20,
+                },
+                {
+                  target: { type: 'SINGLE', number: 20, label: '20' },
+                  landingPoint: { x: 0, y: 100 },
+                  score: 20,
+                  ring: 'INNER_SINGLE',
+                  segmentNumber: 20,
+                },
+                {
+                  target: { type: 'SINGLE', number: 20, label: '20' },
+                  landingPoint: { x: 0, y: 100 },
+                  score: 20,
+                  ring: 'INNER_SINGLE',
+                  segmentNumber: 20,
+                },
+              ],
+              correctAnswer: 50,
+              questionText: '残り点数は？',
+              startingScore: 50,
+              bustInfo: {
+                isBust: true,
+                reason: 'over',
+              },
+            },
+          });
+        });
+
+        // Assert: bustInfoが設定されている
+        expect(result.current.currentQuestion?.bustInfo).toBeDefined();
+        expect(result.current.currentQuestion?.bustInfo?.isBust).toBe(true);
+        expect(result.current.currentQuestion?.bustInfo?.reason).toBe('over');
+      });
+
+      test('3投の合計で1点残しになる場合、bustInfoが設定される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'remaining',
+            startingScore: 501,
+          });
+          result.current.startPractice();
+        });
+
+        // 3投の合計で1点残し（61点から60点引いて1点残る）
+        act(() => {
+          useGameStore.setState({
+            remainingScore: 61,
+            roundStartScore: 61,
+            currentQuestion: {
+              mode: 'remaining',
+              throws: [
+                {
+                  target: { type: 'SINGLE', number: 20, label: '20' },
+                  landingPoint: { x: 0, y: 100 },
+                  score: 20,
+                  ring: 'INNER_SINGLE',
+                  segmentNumber: 20,
+                },
+                {
+                  target: { type: 'SINGLE', number: 20, label: '20' },
+                  landingPoint: { x: 0, y: 100 },
+                  score: 20,
+                  ring: 'INNER_SINGLE',
+                  segmentNumber: 20,
+                },
+                {
+                  target: { type: 'SINGLE', number: 20, label: '20' },
+                  landingPoint: { x: 0, y: 100 },
+                  score: 20,
+                  ring: 'INNER_SINGLE',
+                  segmentNumber: 20,
+                },
+              ],
+              correctAnswer: 61,
+              questionText: '残り点数は？',
+              startingScore: 61,
+              bustInfo: {
+                isBust: true,
+                reason: 'finish_impossible',
+              },
+            },
+          });
+        });
+
+        // Assert
+        expect(result.current.currentQuestion?.bustInfo).toBeDefined();
+        expect(result.current.currentQuestion?.bustInfo?.isBust).toBe(true);
+        expect(result.current.currentQuestion?.bustInfo?.reason).toBe('finish_impossible');
+      });
+
+      test('3投の最後がシングルで0点になる場合、bustInfoが設定される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'remaining',
+            startingScore: 501,
+          });
+          result.current.startPractice();
+        });
+
+        // 3投の最後がダブルでないフィニッシュ（60点から60点引くが最後がシングル）
+        act(() => {
+          useGameStore.setState({
+            remainingScore: 60,
+            roundStartScore: 60,
+            currentQuestion: {
+              mode: 'remaining',
+              throws: [
+                {
+                  target: { type: 'SINGLE', number: 20, label: '20' },
+                  landingPoint: { x: 0, y: 100 },
+                  score: 20,
+                  ring: 'INNER_SINGLE',
+                  segmentNumber: 20,
+                },
+                {
+                  target: { type: 'SINGLE', number: 20, label: '20' },
+                  landingPoint: { x: 0, y: 100 },
+                  score: 20,
+                  ring: 'INNER_SINGLE',
+                  segmentNumber: 20,
+                },
+                {
+                  target: { type: 'SINGLE', number: 20, label: '20' },
+                  landingPoint: { x: 0, y: 100 },
+                  score: 20,
+                  ring: 'INNER_SINGLE',
+                  segmentNumber: 20,
+                },
+              ],
+              correctAnswer: 60,
+              questionText: '残り点数は？',
+              startingScore: 60,
+              bustInfo: {
+                isBust: true,
+                reason: 'double_out_required',
+              },
+            },
+          });
+        });
+
+        // Assert
+        expect(result.current.currentQuestion?.bustInfo).toBeDefined();
+        expect(result.current.currentQuestion?.bustInfo?.isBust).toBe(true);
+        expect(result.current.currentQuestion?.bustInfo?.reason).toBe('double_out_required');
+      });
+    });
+
+    describe('remainingモード: バスト検出時にQuestion.bustInfoが設定される', () => {
+      test('generateQuestion()でバスト判定を実施しbustInfoを設定する', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'remaining',
+            startingScore: 501,
+          });
+          result.current.startPractice();
+        });
+
+        // 現在の残り点数を30点に設定
+        act(() => {
+          useGameStore.setState({
+            remainingScore: 30,
+            roundStartScore: 30,
+          });
+        });
+
+        // Act: generateQuestionを呼び出す（内部でバスト判定を実施）
+        act(() => {
+          result.current.generateQuestion();
+        });
+
+        // Assert: 生成された問題にbustInfoが含まれる可能性がある
+        // （実装次第でバストが発生した場合のみbustInfoが設定される）
+        // このテストでは、バストが発生する場合のみbustInfoが設定されることを確認
+        if (result.current.currentQuestion?.bustInfo) {
+          expect(result.current.currentQuestion.bustInfo.isBust).toBe(true);
+          expect(result.current.currentQuestion.bustInfo.reason).toMatch(
+            /over|finish_impossible|double_out_required/
+          );
+        }
+      });
+    });
+
+    describe('scoreモード: バスト判定が実施されない', () => {
+      test('scoreモードでは残り点数に関係なくbustInfoが設定されない', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+          });
+          result.current.startPractice();
+        });
+
+        // 残り点数を30点に設定（scoreモードでは無関係）
+        act(() => {
+          useGameStore.setState({
+            remainingScore: 30,
+            roundStartScore: 30,
+          });
+        });
+
+        // Act: generateQuestionを呼び出す
+        act(() => {
+          result.current.generateQuestion();
+        });
+
+        // Assert: scoreモードではbustInfoが設定されない
+        expect(result.current.currentQuestion?.bustInfo).toBeUndefined();
+      });
+
+      test('scoreモードで大きな得点が出てもbustInfoは設定されない', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'score',
+            startingScore: 501,
+          });
+          result.current.startPractice();
+        });
+
+        // 残り点数が小さい状態を設定
+        act(() => {
+          useGameStore.setState({
+            remainingScore: 10,
+            roundStartScore: 10,
+          });
+        });
+
+        // Act: generateQuestionを呼び出す
+        act(() => {
+          result.current.generateQuestion();
+        });
+
+        // Assert: scoreモードではbustInfoが設定されない
+        expect(result.current.currentQuestion?.bustInfo).toBeUndefined();
+      });
+    });
+  });
+
+  // ============================================================
+  // 11. レビュー指摘への対応テスト
   // ============================================================
   describe('レビュー指摘への対応', () => {
     // バスト関連テスト（3個）

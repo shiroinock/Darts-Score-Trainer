@@ -9,6 +9,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import type {
+  BustInfo,
   GameState,
   PracticeConfig,
   Question,
@@ -20,7 +21,7 @@ import type {
 } from '../types';
 import { DEFAULT_TARGET, MIN_SCORE, STORAGE_KEY } from '../utils/constants/index.js';
 import { getOptimalTarget } from '../utils/dartStrategy/getOptimalTarget.js';
-import { checkBust, isGameFinished } from '../utils/gameLogic/index.js';
+import { checkBust, isDoubleRing, isGameFinished } from '../utils/gameLogic/index.js';
 import { executeThrow } from '../utils/throwSimulator/index.js';
 import { getDefaultConfig, PRESETS } from './config/presets.js';
 import { initialSessionConfig, initialStats } from './session/initialState.js';
@@ -137,6 +138,49 @@ function updateStats(stats: Stats, isCorrect: boolean, isBust: boolean): void {
 }
 
 /**
+ * 投擲シミュレーション結果
+ */
+interface SimulationResult {
+  throws: ThrowResult[];
+  bustInfo: BustInfo | undefined;
+}
+
+/**
+ * 指定された投擲数分のシミュレーションを実行し、バスト判定も行う
+ */
+function simulateThrows(
+  config: PracticeConfig,
+  remainingScore: number,
+  shouldCheckBust: boolean
+): SimulationResult {
+  const throws: ThrowResult[] = [];
+  let bustInfo: BustInfo | undefined;
+  let currentRemaining = remainingScore;
+
+  for (let i = 0; i < config.throwUnit; i++) {
+    const throwsRemaining = config.throwUnit - i;
+    const target =
+      config.target ?? getOptimalTarget(currentRemaining, throwsRemaining) ?? DEFAULT_TARGET;
+    const throwResult = executeThrow(target, config.stdDevMM);
+    throws.push(throwResult);
+
+    // バスト判定（remainingモードのみ、最初のバストのみ記録）
+    if (shouldCheckBust && !bustInfo) {
+      const isDouble = isDoubleRing(throwResult.ring);
+      const checkResult = checkBust(currentRemaining, throwResult.score, isDouble);
+      if (checkResult.isBust) {
+        bustInfo = checkResult;
+      }
+    }
+
+    // 残り点数を更新（次の投擲のターゲット決定用）
+    currentRemaining = Math.max(MIN_SCORE, currentRemaining - throwResult.score);
+  }
+
+  return { throws, bustInfo };
+}
+
+/**
  * ゲームストアの状態インターフェース
  */
 interface GameStore {
@@ -188,6 +232,7 @@ interface GameStore {
 /**
  * ゲームストアの実装
  */
+
 export const useGameStore = create<GameStore>()(
   persist(
     immer((set, get) => ({
@@ -305,26 +350,17 @@ export const useGameStore = create<GameStore>()(
       generateQuestion: () =>
         set((state) => {
           const { config } = state;
-          const throws: ThrowResult[] = [];
 
-          // 指定された投擲数分のシミュレーションを実行
-          let currentRemaining = state.remainingScore; // シミュレーション用の残り点数
-          for (let i = 0; i < config.throwUnit; i++) {
-            // 残り本数を計算
-            const throwsRemaining = config.throwUnit - i;
+          // バスト判定が必要かどうかを事前に判定
+          // remainingScoreが0以下の場合はバスト判定不要（ゲーム終了）
+          const shouldCheckBust = config.questionType !== 'score' && state.remainingScore > 0;
 
-            // ターゲットを決定: 手動選択 > 自動選択 > デフォルト(T20)
-            const target =
-              config.target ??
-              getOptimalTarget(currentRemaining, throwsRemaining) ??
-              DEFAULT_TARGET;
-
-            const throwResult = executeThrow(target, config.stdDevMM);
-            throws.push(throwResult);
-
-            // シミュレーション用の残り点数を更新（次の投擲のターゲット決定用）
-            currentRemaining = Math.max(MIN_SCORE, currentRemaining - throwResult.score);
-          }
+          // 投擲シミュレーションを実行
+          const { throws, bustInfo: simulatedBustInfo } = simulateThrows(
+            config,
+            state.remainingScore,
+            shouldCheckBust
+          );
 
           // 得点の合計を計算
           const totalScore = throws.reduce((sum, t) => sum + t.score, 0);
@@ -337,12 +373,16 @@ export const useGameStore = create<GameStore>()(
             state.remainingScore
           );
 
+          // scoreモードの場合はbustInfoをクリア
+          const bustInfo = mode === 'score' ? undefined : simulatedBustInfo;
+
           state.currentQuestion = {
             mode,
             throws,
             correctAnswer,
             questionText,
             startingScore: mode === 'remaining' ? state.remainingScore : undefined,
+            bustInfo,
           };
 
           // 1投モードの場合は即座にdisplayedDartsに追加

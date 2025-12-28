@@ -1,3 +1,32 @@
+:root {
+  /* バスト表示のカラー */
+  --color-bust-bg-start: #fff3e6;
+  --color-bust-bg-end: #ffe6e6;
+  --color-bust-border: #ff9800;
+  --color-bust-title: #d84315;
+  --color-bust-message: #666;
+
+  /* バスト表示のフォントサイズ */
+  --font-size-bust-icon: 2.5rem;
+  --font-size-bust-icon-mobile: 2rem;
+  --font-size-bust-title: 1.5rem;
+  --font-size-bust-title-mobile: 1.25rem;
+  --font-size-bust-message: 1.125rem;
+  --font-size-bust-message-mobile: 1rem;
+
+  /* バスト表示のスペーシング */
+  --spacing-bust-padding: 1.5rem;
+  --spacing-bust-padding-mobile: 1rem;
+  --spacing-bust-gap: 1rem;
+  --spacing-bust-gap-mobile: 0.75rem;
+  --spacing-bust-content-gap: 0.5rem;
+  --spacing-bust-margin-top: 1rem;
+
+  /* バスト表示のボーダー */
+  --border-bust-width: 2px;
+  --border-bust-radius: 12px;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -1385,6 +1414,43 @@ h1 {
   color: #e67e00;
 }
 
+/* バスト表示 */
+.feedback__bust {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-bust-gap);
+  padding: var(--spacing-bust-padding);
+  background: linear-gradient(135deg, var(--color-bust-bg-start) 0%, var(--color-bust-bg-end) 100%);
+  border: var(--border-bust-width) solid var(--color-bust-border);
+  border-radius: var(--border-bust-radius);
+  margin-top: var(--spacing-bust-margin-top);
+}
+
+.feedback__bust-icon {
+  font-size: var(--font-size-bust-icon);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.feedback__bust-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-bust-content-gap);
+}
+
+.feedback__bust-title {
+  font-size: var(--font-size-bust-title);
+  font-weight: 700;
+  color: var(--color-bust-title);
+}
+
+.feedback__bust-message {
+  font-size: var(--font-size-bust-message);
+  color: var(--color-bust-message);
+  line-height: 1.5;
+}
+
 /* 次へボタン */
 .feedback__next-button {
   width: 100%;
@@ -1487,6 +1553,23 @@ h1 {
 
   .feedback__streak-text {
     font-size: 1rem;
+  }
+
+  .feedback__bust {
+    padding: var(--spacing-bust-padding-mobile);
+    gap: var(--spacing-bust-gap-mobile);
+  }
+
+  .feedback__bust-icon {
+    font-size: var(--font-size-bust-icon-mobile);
+  }
+
+  .feedback__bust-title {
+    font-size: var(--font-size-bust-title-mobile);
+  }
+
+  .feedback__bust-message {
+    font-size: var(--font-size-bust-message-mobile);
   }
 
   .feedback__next-button {

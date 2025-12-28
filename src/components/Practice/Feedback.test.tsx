@@ -474,6 +474,164 @@ describe('Feedback', () => {
     });
   });
 
+  describe('バスト表示', () => {
+    it('バスト（残り点数超過）時にアイコンとメッセージが表示される', () => {
+      useGameStore.setState({
+        currentQuestion: {
+          ...createMockQuestionRemaining(TEST_CONSTANTS.SCORE.REMAINING_40, 60),
+          bustInfo: {
+            isBust: true,
+            reason: 'over',
+          },
+        },
+        remainingScore: TEST_CONSTANTS.SCORE.REMAINING_40,
+        config: createMockConfig({
+          questionType: 'remaining',
+          startingScore: TEST_CONSTANTS.SCORE.STARTING_501,
+        }),
+      });
+
+      const { container } = render(<Feedback userAnswer={20} isCorrect={false} />);
+
+      // バスト表示要素が存在する
+      const bustElement = container.querySelector('.feedback__bust');
+      expect(bustElement).toBeInTheDocument();
+
+      // アイコンが表示される
+      expect(screen.getByText('⚠️')).toBeInTheDocument();
+
+      // タイトル「バスト！」が表示される
+      expect(screen.getByText('バスト！')).toBeInTheDocument();
+
+      // メッセージ「残り点数を超えています」が表示される
+      expect(screen.getByText('残り点数を超えています')).toBeInTheDocument();
+    });
+
+    it('バスト（残り1点）時にアイコンとメッセージが表示される', () => {
+      useGameStore.setState({
+        currentQuestion: {
+          ...createMockQuestionRemaining(2, 1),
+          bustInfo: {
+            isBust: true,
+            reason: 'finish_impossible',
+          },
+        },
+        remainingScore: 1,
+        config: createMockConfig({
+          questionType: 'remaining',
+          startingScore: TEST_CONSTANTS.SCORE.STARTING_501,
+        }),
+      });
+
+      const { container } = render(<Feedback userAnswer={1} isCorrect={false} />);
+
+      // バスト表示要素が存在する
+      const bustElement = container.querySelector('.feedback__bust');
+      expect(bustElement).toBeInTheDocument();
+
+      // アイコンが表示される
+      expect(screen.getByText('⚠️')).toBeInTheDocument();
+
+      // タイトル「バスト！」が表示される
+      expect(screen.getByText('バスト！')).toBeInTheDocument();
+
+      // メッセージ「残り1点では上がれません」が表示される
+      expect(screen.getByText('残り1点では上がれません')).toBeInTheDocument();
+    });
+
+    it('バスト（ダブルアウト未達成）時にアイコンとメッセージが表示される', () => {
+      useGameStore.setState({
+        currentQuestion: {
+          ...createMockQuestionRemaining(TEST_CONSTANTS.SCORE.REMAINING_40, 40),
+          bustInfo: {
+            isBust: true,
+            reason: 'double_out_required',
+          },
+        },
+        remainingScore: TEST_CONSTANTS.SCORE.REMAINING_40,
+        config: createMockConfig({
+          questionType: 'remaining',
+          startingScore: TEST_CONSTANTS.SCORE.STARTING_501,
+        }),
+      });
+
+      const { container } = render(<Feedback userAnswer={0} isCorrect={false} />);
+
+      // バスト表示要素が存在する
+      const bustElement = container.querySelector('.feedback__bust');
+      expect(bustElement).toBeInTheDocument();
+
+      // アイコンが表示される
+      expect(screen.getByText('⚠️')).toBeInTheDocument();
+
+      // タイトル「バスト！」が表示される
+      expect(screen.getByText('バスト！')).toBeInTheDocument();
+
+      // メッセージ「ダブルで上がる必要があります」が表示される
+      expect(screen.getByText('ダブルで上がる必要があります')).toBeInTheDocument();
+    });
+
+    it('バストでない場合は表示されない', () => {
+      useGameStore.setState({
+        currentQuestion: {
+          ...createMockQuestionSingleThrow(),
+          bustInfo: {
+            isBust: false,
+            reason: null,
+          },
+        },
+        remainingScore: TEST_CONSTANTS.SCORE.REMAINING_100,
+      });
+
+      const { container } = render(<Feedback userAnswer={60} isCorrect={true} />);
+
+      // バスト表示要素が存在しない
+      const bustElement = container.querySelector('.feedback__bust');
+      expect(bustElement).not.toBeInTheDocument();
+
+      // バスト関連のテキストも表示されない
+      expect(screen.queryByText('⚠️')).not.toBeInTheDocument();
+      expect(screen.queryByText('バスト！')).not.toBeInTheDocument();
+    });
+
+    it('bustInfoが存在しない場合は表示されない', () => {
+      useGameStore.setState({
+        currentQuestion: createMockQuestionSingleThrow(),
+        remainingScore: TEST_CONSTANTS.SCORE.REMAINING_100,
+      });
+
+      const { container } = render(<Feedback userAnswer={60} isCorrect={true} />);
+
+      // バスト表示要素が存在しない
+      const bustElement = container.querySelector('.feedback__bust');
+      expect(bustElement).not.toBeInTheDocument();
+    });
+
+    it('CSS class名 feedback__bust が適用される', () => {
+      useGameStore.setState({
+        currentQuestion: {
+          ...createMockQuestionRemaining(TEST_CONSTANTS.SCORE.REMAINING_40, 60),
+          bustInfo: {
+            isBust: true,
+            reason: 'over',
+          },
+        },
+        remainingScore: TEST_CONSTANTS.SCORE.REMAINING_40,
+        config: createMockConfig({
+          questionType: 'remaining',
+          startingScore: TEST_CONSTANTS.SCORE.STARTING_501,
+        }),
+      });
+
+      const { container } = render(<Feedback userAnswer={20} isCorrect={false} />);
+
+      // .feedback__bust クラスが適用されている
+      const bustElement = container.querySelector('.feedback__bust');
+      expect(bustElement).toBeInTheDocument();
+      expect(bustElement?.classList.contains('feedback__bust')).toBe(true);
+    });
+  });
+
   describe('スナップショットテスト', () => {
     it('正解時（連続正解あり）の見た目が一致する', () => {
       useGameStore.setState({
@@ -551,6 +709,69 @@ describe('Feedback', () => {
       });
 
       const { container } = render(<Feedback userAnswer={0} isCorrect={true} />);
+
+      expect(container).toMatchSnapshot();
+    });
+
+    it('バスト（残り点数超過）時の見た目が一致する', () => {
+      useGameStore.setState({
+        currentQuestion: {
+          ...createMockQuestionRemaining(TEST_CONSTANTS.SCORE.REMAINING_40, 60),
+          bustInfo: {
+            isBust: true,
+            reason: 'over',
+          },
+        },
+        remainingScore: TEST_CONSTANTS.SCORE.REMAINING_40,
+        config: createMockConfig({
+          questionType: 'remaining',
+          startingScore: TEST_CONSTANTS.SCORE.STARTING_501,
+        }),
+      });
+
+      const { container } = render(<Feedback userAnswer={20} isCorrect={false} />);
+
+      expect(container).toMatchSnapshot();
+    });
+
+    it('バスト（残り1点）時の見た目が一致する', () => {
+      useGameStore.setState({
+        currentQuestion: {
+          ...createMockQuestionRemaining(2, 1),
+          bustInfo: {
+            isBust: true,
+            reason: 'finish_impossible',
+          },
+        },
+        remainingScore: 1,
+        config: createMockConfig({
+          questionType: 'remaining',
+          startingScore: TEST_CONSTANTS.SCORE.STARTING_501,
+        }),
+      });
+
+      const { container } = render(<Feedback userAnswer={1} isCorrect={false} />);
+
+      expect(container).toMatchSnapshot();
+    });
+
+    it('バスト（ダブルアウト未達成）時の見た目が一致する', () => {
+      useGameStore.setState({
+        currentQuestion: {
+          ...createMockQuestionRemaining(TEST_CONSTANTS.SCORE.REMAINING_40, 40),
+          bustInfo: {
+            isBust: true,
+            reason: 'double_out_required',
+          },
+        },
+        remainingScore: TEST_CONSTANTS.SCORE.REMAINING_40,
+        config: createMockConfig({
+          questionType: 'remaining',
+          startingScore: TEST_CONSTANTS.SCORE.STARTING_501,
+        }),
+      });
+
+      const { container } = render(<Feedback userAnswer={0} isCorrect={false} />);
 
       expect(container).toMatchSnapshot();
     });

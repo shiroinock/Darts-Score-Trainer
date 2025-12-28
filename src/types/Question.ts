@@ -1,3 +1,4 @@
+import type { BustInfo } from './BustInfo';
 import type { QuestionType } from './QuestionType';
 import type { ThrowResult } from './ThrowResult';
 
@@ -18,4 +19,6 @@ export interface Question {
   questionText: string;
   /** 開始点数（remainingモードの場合） */
   startingScore?: number;
+  /** バスト情報（バストが発生した場合） */
+  bustInfo?: BustInfo;
 }

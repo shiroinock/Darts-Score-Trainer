@@ -338,7 +338,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] 正解表示
 - [x] スコアラベル表示（例: T20 → 60点）
 - [x] 連続正解数表示（正解時）
-- [ ] バスト表示（別PR #68で実装予定）
+- [x] バスト表示（PR #68で実装完了）
 - [x] 「次へ」ボタン
 - [x] ゲームクリア表示（0点到達時）
 
@@ -455,34 +455,31 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 
 ### 機能追加（優先度：高）
 
-#### バスト表示機能の完全実装（PR #68で対応予定）
-Phase 6.4のフィードバックコンポーネントに、バスト表示機能を追加します。
-
-**背景**:
-- PR #67でuserAnswer表示は実装済み
-- バスト表示はQuestion型とgameStoreの大幅な変更が必要なため別PRで対応
+#### バスト表示機能の完全実装（PR #68で実装完了 - 2025-12-29）
+Phase 6.4のフィードバックコンポーネントに、バスト表示機能を追加しました。
 
 **実装内容**:
 
 1. **Question型の拡張** (`src/types/Question.ts`)
-   - [ ] `bustInfo?: BustInfo` フィールドを追加
-   - [ ] 型テストの作成（型の整合性確認）
+   - [x] `bustInfo?: BustInfo` フィールドを追加
+   - [x] 型テストの作成（15テスト、型の整合性確認）
 
 2. **gameStoreの修正** (`src/stores/gameStore.ts`)
-   - [ ] `generateQuestion()`でバスト判定を実施
-   - [ ] バスト発生時に`bustInfo`を問題に含める
-   - [ ] バストの理由（over, finish_impossible, double_out_required）を設定
-   - [ ] テスト作成: バスト発生時にbustInfoが設定されることを検証
-   - [ ] テスト作成: バストの理由が正しく判定されることを検証
+   - [x] `generateQuestion()`でバスト判定を実施（1本ずつ判定）
+   - [x] `calculateBustInfo()`でsubscribe経由の自動判定を実施
+   - [x] バスト発生時に`bustInfo`を問題に含める
+   - [x] バストの理由（over, finish_impossible, double_out_required）を設定
+   - [x] テスト作成: バスト発生時にbustInfoが設定されることを検証（19テスト追加）
+   - [x] テスト作成: バストの理由が正しく判定されることを検証
 
 3. **Feedbackコンポーネントの拡張** (`src/components/Practice/Feedback.tsx`)
-   - [ ] `currentQuestion.bustInfo`を確認
-   - [ ] バスト時の表示を追加（警告アイコン、理由の説明）
-   - [ ] CSSスタイル追加（`.feedback__bust`）
-   - [ ] テスト作成: バスト表示のセマンティックテスト
-   - [ ] テスト作成: スナップショットテスト
+   - [x] `currentQuestion.bustInfo`を確認
+   - [x] バスト時の表示を追加（警告アイコン⚠️、理由の説明）
+   - [x] CSSスタイル追加（`.feedback__bust`、モバイル対応含む）
+   - [x] テスト作成: バスト表示のセマンティックテスト（6テスト）
+   - [x] テスト作成: スナップショットテスト（3テスト）
 
-**UI仕様**:
+**実装したUI**:
 ```
 ⚠️ バスト！
 [理由に応じたメッセージ]
@@ -491,10 +488,16 @@ Phase 6.4のフィードバックコンポーネントに、バスト表示機�
 - double_out_required: ダブルで上がる必要があります
 ```
 
-**TDDアプローチ**:
-- Phase 1 (Question型): test-first, unit
-- Phase 2 (gameStore): test-first, store
-- Phase 3 (Feedback UI): test-later, component
+**TDDアプローチ（実施済み）**:
+- Phase 1 (Question型): test-first, unit（15テスト）
+- Phase 2 (gameStore): test-first, store（19テスト追加、計136テスト）
+- Phase 3 (Feedback UI): test-later, component（9テスト追加、計38テスト）
+
+**技術的な実装詳細**:
+- **バスト判定ロジック**: ダーツのルールに従い、1本投げるごとにバスト判定を実施
+- **3投モード**: 各投擲後に累積でバスト判定（合計判定ではない）
+- **checkBust()関数**: 入力値バリデーション（0-60点）を厳密に適用
+- **自動バスト判定**: Zustandのsubscribeで状態変更時に自動的にbustInfoを計算・設定
 
 ### 機能追加（優先度：中）
 - [ ] ストレートアウト（シングルアウト）オプション

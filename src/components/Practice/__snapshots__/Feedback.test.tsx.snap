@@ -158,6 +158,303 @@ exports[`Feedback > スナップショットテスト > ゲームクリア時の
 </div>
 `;
 
+exports[`Feedback > スナップショットテスト > バスト（ダブルアウト未達成）時の見た目が一致する 1`] = `
+<div>
+  <section
+    aria-label="フィードバック"
+    class="feedback"
+  >
+    <div
+      class="feedback__result feedback__result--incorrect"
+    >
+      <div
+        aria-hidden="true"
+        class="feedback__icon"
+      >
+        ✗
+      </div>
+      <div
+        class="feedback__text"
+      >
+        不正解
+      </div>
+    </div>
+    <div
+      class="feedback__answer-section"
+    >
+      <dl
+        class="feedback__answer-item"
+      >
+        <dt
+          class="feedback__answer-label"
+        >
+          あなたの回答
+        </dt>
+        <dd
+          class="feedback__answer-value"
+        >
+          0
+        </dd>
+      </dl>
+      <dl
+        class="feedback__answer-item"
+      >
+        <dt
+          class="feedback__answer-label"
+        >
+          正解
+        </dt>
+        <dd
+          class="feedback__answer-value"
+        >
+          0
+        </dd>
+      </dl>
+    </div>
+    <div
+      class="feedback__score-details"
+    >
+      <p
+        class="feedback__score-details-text"
+      >
+        T20 → 60点
+      </p>
+    </div>
+    <div
+      aria-live="polite"
+      class="feedback__bust"
+      role="alert"
+    >
+      <div
+        aria-hidden="true"
+        class="feedback__bust-icon"
+      >
+        ⚠️
+      </div>
+      <div
+        class="feedback__bust-content"
+      >
+        <div
+          class="feedback__bust-title"
+        >
+          バスト！
+        </div>
+        <div
+          class="feedback__bust-message"
+        >
+          ダブルで上がる必要があります
+        </div>
+      </div>
+    </div>
+    <button
+      aria-label="Next Question"
+      class="feedback__next-button"
+      type="button"
+    >
+      次へ
+    </button>
+  </section>
+</div>
+`;
+
+exports[`Feedback > スナップショットテスト > バスト（残り1点）時の見た目が一致する 1`] = `
+<div>
+  <section
+    aria-label="フィードバック"
+    class="feedback"
+  >
+    <div
+      class="feedback__result feedback__result--incorrect"
+    >
+      <div
+        aria-hidden="true"
+        class="feedback__icon"
+      >
+        ✗
+      </div>
+      <div
+        class="feedback__text"
+      >
+        不正解
+      </div>
+    </div>
+    <div
+      class="feedback__answer-section"
+    >
+      <dl
+        class="feedback__answer-item"
+      >
+        <dt
+          class="feedback__answer-label"
+        >
+          あなたの回答
+        </dt>
+        <dd
+          class="feedback__answer-value"
+        >
+          1
+        </dd>
+      </dl>
+      <dl
+        class="feedback__answer-item"
+      >
+        <dt
+          class="feedback__answer-label"
+        >
+          正解
+        </dt>
+        <dd
+          class="feedback__answer-value"
+        >
+          1
+        </dd>
+      </dl>
+    </div>
+    <div
+      class="feedback__score-details"
+    >
+      <p
+        class="feedback__score-details-text"
+      >
+        T20 → 60点
+      </p>
+    </div>
+    <div
+      aria-live="polite"
+      class="feedback__bust"
+      role="alert"
+    >
+      <div
+        aria-hidden="true"
+        class="feedback__bust-icon"
+      >
+        ⚠️
+      </div>
+      <div
+        class="feedback__bust-content"
+      >
+        <div
+          class="feedback__bust-title"
+        >
+          バスト！
+        </div>
+        <div
+          class="feedback__bust-message"
+        >
+          残り1点では上がれません
+        </div>
+      </div>
+    </div>
+    <button
+      aria-label="Next Question"
+      class="feedback__next-button"
+      type="button"
+    >
+      次へ
+    </button>
+  </section>
+</div>
+`;
+
+exports[`Feedback > スナップショットテスト > バスト（残り点数超過）時の見た目が一致する 1`] = `
+<div>
+  <section
+    aria-label="フィードバック"
+    class="feedback"
+  >
+    <div
+      class="feedback__result feedback__result--incorrect"
+    >
+      <div
+        aria-hidden="true"
+        class="feedback__icon"
+      >
+        ✗
+      </div>
+      <div
+        class="feedback__text"
+      >
+        不正解
+      </div>
+    </div>
+    <div
+      class="feedback__answer-section"
+    >
+      <dl
+        class="feedback__answer-item"
+      >
+        <dt
+          class="feedback__answer-label"
+        >
+          あなたの回答
+        </dt>
+        <dd
+          class="feedback__answer-value"
+        >
+          20
+        </dd>
+      </dl>
+      <dl
+        class="feedback__answer-item"
+      >
+        <dt
+          class="feedback__answer-label"
+        >
+          正解
+        </dt>
+        <dd
+          class="feedback__answer-value"
+        >
+          -20
+        </dd>
+      </dl>
+    </div>
+    <div
+      class="feedback__score-details"
+    >
+      <p
+        class="feedback__score-details-text"
+      >
+        T20 → 60点
+      </p>
+    </div>
+    <div
+      aria-live="polite"
+      class="feedback__bust"
+      role="alert"
+    >
+      <div
+        aria-hidden="true"
+        class="feedback__bust-icon"
+      >
+        ⚠️
+      </div>
+      <div
+        class="feedback__bust-content"
+      >
+        <div
+          class="feedback__bust-title"
+        >
+          バスト！
+        </div>
+        <div
+          class="feedback__bust-message"
+        >
+          残り点数を超えています
+        </div>
+      </div>
+    </div>
+    <button
+      aria-label="Next Question"
+      class="feedback__next-button"
+      type="button"
+    >
+      次へ
+    </button>
+  </section>
+</div>
+`;
+
 exports[`Feedback > スナップショットテスト > 不正解時の見た目が一致する 1`] = `
 <div>
   <section
