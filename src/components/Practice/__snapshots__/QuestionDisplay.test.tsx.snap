@@ -1,0 +1,146 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`QuestionDisplay > スナップショットテスト > 1投モード + scoreモード の見た目が一致する 1`] = `
+<div>
+  <section
+    aria-label="問題表示"
+    class="question-display"
+  >
+    <div
+      class="question-display__questions"
+    >
+      <h3
+        class="question-display__text"
+      >
+        この投擲の得点は？
+      </h3>
+    </div>
+  </section>
+</div>
+`;
+
+exports[`QuestionDisplay > スナップショットテスト > 3投モード + scoreモード + 2本目 の見た目が一致する 1`] = `
+<div>
+  <section
+    aria-label="問題表示"
+    class="question-display"
+  >
+    <p
+      class="question-display__throw-label"
+    >
+      2本目
+    </p>
+    <div
+      class="question-display__questions"
+    >
+      <h3
+        class="question-display__text"
+      >
+        3投の合計得点は？
+      </h3>
+    </div>
+  </section>
+</div>
+`;
+
+exports[`QuestionDisplay > スナップショットテスト > bothモード（3投）の見た目が一致する 1`] = `
+<div>
+  <section
+    aria-label="問題表示"
+    class="question-display"
+  >
+    <p
+      class="question-display__throw-label"
+    >
+      1本目
+    </p>
+    <p
+      class="question-display__cumulative-label"
+    >
+      合計
+    </p>
+    <div
+      class="question-display__questions"
+    >
+      <h3
+        class="question-display__text"
+      >
+        3投の合計得点は？
+      </h3>
+      <h3
+        class="question-display__text"
+      >
+        残り点数は？
+      </h3>
+    </div>
+  </section>
+</div>
+`;
+
+exports[`QuestionDisplay > スナップショットテスト > cumulative + 3投モード + 3本目 + 合計ラベル表示 の見た目が一致する 1`] = `
+<div>
+  <section
+    aria-label="問題表示"
+    class="question-display"
+  >
+    <p
+      class="question-display__throw-label"
+    >
+      3本目
+    </p>
+    <p
+      class="question-display__cumulative-label"
+    >
+      合計
+    </p>
+    <div
+      class="question-display__questions"
+    >
+      <h3
+        class="question-display__text"
+      >
+        3投の合計得点は？
+      </h3>
+    </div>
+  </section>
+</div>
+`;
+
+exports[`QuestionDisplay > スナップショットテスト > remainingモード の見た目が一致する 1`] = `
+<div>
+  <section
+    aria-label="問題表示"
+    class="question-display"
+  >
+    <p
+      class="question-display__throw-label"
+    >
+      1本目
+    </p>
+    <div
+      class="question-display__questions"
+    >
+      <h3
+        class="question-display__text"
+      >
+        残り点数は？
+      </h3>
+    </div>
+  </section>
+</div>
+`;
+
+exports[`QuestionDisplay > スナップショットテスト > 問題が存在しない場合の見た目が一致する 1`] = `
+<div>
+  <section
+    aria-label="問題表示"
+    class="question-display"
+  >
+    <p
+      class="question-display__text"
+    >
+      問題を生成中...
+    </p>
+  </section>
+</div>
+`;
