@@ -25,7 +25,7 @@ TDD (Test-Driven Development) のテスト実行と **状態判定** を担当�
 | **主な目的** | TDDサイクルの状態判定 | テスト実行と結果報告 |
 | **入力** | 期待する状態（RED_EXPECTED / GREEN_EXPECTED） | テストファイルパスのみ |
 | **判定** | 期待する状態と実際の状態の一致を判定<br>（SUCCESS / FAILURE） | 成功/失敗のみを報告<br>（PASSED / FAILED） |
-| **使用場面** | TDDパイプライン内（Red確認、Green確認） | CI全体チェック（ci-checker内） |
+| **使用場面** | TDDパイプライン内（Red確認、Green確認） | CI全体チェック（local-ci-checker内） |
 | **実行対象** | 実装に関連するテストのみ（局所的） | 全テストスイート（全体的） |
 | **文脈理解** | あり（TDDサイクルのどの段階か理解） | なし（単純なテスト実行） |
 | **エラー時の対応** | 期待と異なる場合は異常と判定 | 常に失敗として報告 |
@@ -47,7 +47,7 @@ test-runner で Green 確認（期待: GREEN_EXPECTED）
 
 **test-check の使用例（CI全体チェック内）**:
 ```
-ci-checker エージェント起動
+local-ci-checker エージェント起動
 ↓
 並列実行: biome-check、test-check、build-check
 ↓
@@ -62,7 +62,7 @@ test-check: 全テストスイートを実行
   - 実装に伴うテストのみ実行（高速）
   - 期待する状態との一致を判定（TDDサイクルの検証）
 
-- **CI全体チェック（ci-checker）**: test-check を使用
+- **CI全体チェック（local-ci-checker）**: test-check を使用
   - 全テストを実行（網羅的）
   - 成功/失敗のみを報告（シンプル）
 

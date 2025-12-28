@@ -1,6 +1,6 @@
 #!/bin/bash
 # サブエージェント実行結果を評価し、各エージェント定義を改善するスクリプト
-# 対応エージェント: test-writer, implement, test-runner, review-file, classify-files, plan-fix, ci-checker, biome-check, test-check, build-check
+# 対応エージェント: test-writer, implement, test-runner, review-file, classify-files, plan-fix, local-ci-checker, biome-check, test-check, build-check
 
 # プロジェクトディレクトリ
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(pwd)}"
@@ -61,7 +61,7 @@ fi
 
 # サブエージェントタイプに応じて評価を実行
 case "$SUBAGENT_TYPE" in
-  test-writer|implement|test-runner|review-file|classify-files|plan-fix|ci-checker|biome-check|test-check|build-check)
+  test-writer|implement|test-runner|review-file|classify-files|plan-fix|local-ci-checker|biome-check|test-check|build-check)
     EVAL_PROMPT_FILE="$EVAL_PROMPTS_DIR/${SUBAGENT_TYPE}.md"
     REPORT_SUBDIR="$REPORT_BASE_DIR/$SUBAGENT_TYPE"
     TARGET_AGENT_FILE="$AGENTS_DIR/${SUBAGENT_TYPE}.md"
@@ -69,7 +69,7 @@ case "$SUBAGENT_TYPE" in
     echo "✅ $SUBAGENT_TYPE サブエージェントを検出。評価を開始します。"
     ;;
   *)
-    echo "ℹ️ サブエージェントタイプ '$SUBAGENT_TYPE' は評価対象外です（対応: test-writer, implement, test-runner, review-file, classify-files, plan-fix, ci-checker, biome-check, test-check, build-check）"
+    echo "ℹ️ サブエージェントタイプ '$SUBAGENT_TYPE' は評価対象外です（対応: test-writer, implement, test-runner, review-file, classify-files, plan-fix, local-ci-checker, biome-check, test-check, build-check）"
     exit 0
     ;;
 esac

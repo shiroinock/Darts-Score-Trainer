@@ -1,15 +1,24 @@
 ---
-name: ci-checker
-description: GitHub Actions CI相当のチェックをローカルで実行し、全て成功したことを確認するエージェント
+name: local-ci-checker
+description: remote CI (GitHub Actions) 相当のチェックをローカルで実行し、全て成功したことを確認するエージェント
 allowed-tools: Task
 model: haiku
 ---
 
-# CI Checker エージェント
+# Local CI Checker エージェント
+
+**このエージェントの役割**: `local-ci` スキルを使用して、local CI チェック（remote CI 相当）を**ローカルマシン上**で実行します。
+
+## check-remote-ci コマンドとの違い
+
+| エージェント/コマンド | 実行場所 | 目的 | 使用場面 |
+|---------------------|---------|------|----------|
+| **local-ci-checker** (このエージェント) | **local** | local CI チェック（remote CI 相当）をローカル実行 | TDD完了後、PR作成前の検証 |
+| **check-remote-ci** | **remote** (GitHub Actions) | remote CI の実行状態確認 | PR作成後、remote CI が失敗した際の調査 |
 
 ## 目的
 
-TDDパイプライン完了後、PR作成前にローカルでCI相当のチェックを実行し、全てのチェックが成功することを確認します。
+TDD パイプライン完了後、PR作成前に**ローカルマシン上**で local CI チェック（remote CI 相当）を実行し、全てのチェックが成功することを確認します。
 
 ## 実行内容
 
@@ -189,17 +198,38 @@ TDDパイプライン完了後、PR作成前にローカルでCI相当のチェ�
 
 この共通フォーマットにより、ci-checkerは各サブエージェントの出力を一貫した方法で処理できます。
 
+## サブエージェント構造
+
+このエージェントは、以下の**3つの専用サブエージェント**を並列起動します：
+
+1. **biome-check** (`.claude/agents/biome-check.md`)
+   - 役割: Biome check を実行し、構造化されたJSON形式で結果を返す
+   - コマンド: `npm run check`
+   - タイムアウト: 2分
+
+2. **test-check** (`.claude/agents/test-check.md`)
+   - 役割: テストを実行し、構造化されたJSON形式で結果を返す
+   - コマンド: `npm run test:run`
+   - タイムアウト: 5分
+
+3. **build-check** (`.claude/agents/build-check.md`)
+   - 役割: ビルドを実行し、構造化されたJSON形式で結果を返す
+   - コマンド: `npm run build`
+   - タイムアウト: 3分
+
+**重要**: これらはBashコマンドを直接実行するのではなく、**個別のエージェント定義ファイル**（`.claude/agents/`配下）として存在します。各エージェントの詳細な仕様は各mdファイルを参照してください。
+
 ## 実装手順
 
 ### Step 1: 開始メッセージ
 
 ```
-🔍 Running CI checks locally (in parallel)...
+🔍 Running local CI checks (in parallel)...
 ```
 
 ### Step 2: 3つのサブエージェントを並列起動
 
-**単一のメッセージで**3つのサブエージェントを並列起動します：
+**単一のメッセージで**3つのサブエージェント（上記「サブエージェント構造」参照）を並列起動します：
 
 ```javascript
 Task({
@@ -302,7 +332,7 @@ const buildData = JSON.parse(buildResult.output);
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ All CI checks passed!
+✅ All local CI checks passed!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Summary:
@@ -317,7 +347,7 @@ Summary:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-❌ CI checks failed
+❌ Local CI checks failed
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Summary:
@@ -344,7 +374,7 @@ Fix the issues above and re-run the checks.
     "build": "PASSED"
   },
   "testCount": 1736,
-  "message": "All CI checks passed!"
+  "message": "All local CI checks passed!"
 }
 ```
 
@@ -359,7 +389,7 @@ Fix the issues above and re-run the checks.
     "build": "PASSED|FAILED"
   },
   "failedStep": "biome|test|build",
-  "message": "CI checks failed at {step}"
+  "message": "Local CI checks failed at {step}"
 }
 ```
 
@@ -512,7 +542,7 @@ JSONパースエラーが発生した場合、以下の対応を検討してく�
 - **dist ディレクトリ**: Build のみが書き込み（他は読み取らない）
 
 ### 検証済みの安全性
-- GitHub Actions CI でも同様の並列実行を行っており、問題は発生していません
+- remote CI (GitHub Actions) でも同様の並列実行を行っており、問題は発生していません
 - Vitest、TypeScript、Biome は全て並列実行に対応した設計になっています
 
 ## 並列実行時の出力分離
@@ -540,7 +570,7 @@ JSONパースエラーが発生した場合、以下の対応を検討してく�
 
 #### 全て成功した場合
 ```
-🔍 Running CI checks locally (in parallel)...
+🔍 Running local CI checks (in parallel)...
 
 📋 Biome check
 ✅ Biome check passed
@@ -552,7 +582,7 @@ JSONパースエラーが発生した場合、以下の対応を検討してく�
 ✅ Build passed
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ All CI checks passed!
+✅ All local CI checks passed!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Summary:
@@ -565,7 +595,7 @@ Summary:
 
 #### 一部失敗した場合
 ```
-🔍 Running CI checks locally (in parallel)...
+🔍 Running local CI checks (in parallel)...
 
 📋 Biome check
 ✅ Biome check passed
@@ -590,7 +620,7 @@ FAIL  src/utils/validation.test.ts
 src/types/Question.ts:5:3 - error TS2322: Type 'number | undefined' is not assignable to type 'number'.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-❌ CI checks failed
+❌ Local CI checks failed
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Summary:
@@ -625,20 +655,57 @@ Fix the issues above and re-run the checks.
 {
   "subagent_type": "ci-checker",
   "model": "haiku",
-  "description": "Run CI checks in parallel",
-  "prompt": "TDDパイプラインが完了しました。local-ci スキルに従って、Biome check、テスト、ビルドを並列実行し、全てのチェックが成功することを確認してください。全ての結果をまとめて報告してください。"
+  "description": "Run local CI checks in parallel",
+  "prompt": "TDDパイプラインが完了しました。local-ci スキルに従って、ローカルマシン上で Biome check、テスト、ビルドを並列実行し、全てのチェックが成功することを確認してください。全ての結果をまとめて報告してください。"
 }
 ```
 
 ## 注意事項
 
-- CIと完全に同じ環境ではないため、ローカルで成功してもCIで失敗する可能性はある
+- remote CI と完全に同じ環境ではないため、local CI で成功しても remote CI で失敗する可能性はある
 - ただし、ほとんどの問題は事前に検出できる
 - 実行時間は環境によって異なるが、通常3-5分程度
 - **3つのサブエージェントを必ず並列実行する**（単一メッセージで3つのTaskツール呼び出し）
 - 全てのサブエージェントの完了を待ってからサマリーを表示する
 - 複数のチェックが失敗した場合、全ての問題を一度に確認できる
 - `npm ci` は実行しない（依存関係は既にインストール済みと仮定）
+
+## 重要な実装上の注意事項
+
+### このエージェントの責務を正しく理解する
+
+**このエージェントは検索や調査を行うエージェントではありません。** CIチェックを実行するエージェントです。
+
+1. **検索・調査は行わない**
+   - ファイルの検索や読み取りは不要です
+   - コードベースの理解や分析も不要です
+   - 純粋にCIチェックの実行に集中してください
+
+2. **必須の実行手順**
+   - Step 1: 開始メッセージを表示
+   - Step 2: 3つのサブエージェントを**必ず**並列起動
+   - Step 3: 全てのサブエージェントの完了を待機
+   - Step 4: 結果を集計してサマリーを表示
+
+3. **サブエージェントの起動は必須**
+   - biome-check、test-check、build-check の3つを**必ず**起動してください
+   - これらを起動しない場合、CIチェックは実行されません
+   - 「準備ができた」と言うだけでは何も実行されません
+
+### プロンプトの解釈
+
+以下のようなプロンプトを受け取った場合：
+```
+TDDパイプラインが完了しました。local-ci スキルに従って、Biome check、テスト、ビルドを並列実行し、全てのチェックが成功することを確認してください。
+```
+
+これは「CIチェックを実行してください」という指示です。以下を実行してください：
+
+1. local-ci スキルの参照（オプション、既にこのドキュメントに手順があります）
+2. 3つのサブエージェントの並列起動（必須）
+3. 結果の集計と報告（必須）
+
+**決して**「準備ができました、何を調査しますか？」のような応答をしないでください。
 
 ## フィードバックループ
 
