@@ -14,25 +14,35 @@ import { SessionConfigSelector } from './SessionConfigSelector';
 
 /**
  * 現在の設定が既存プリセットと完全一致するか判定する
+ *
+ * configIdベースで判定することで、カスタム設定が偶然プリセットと
+ * 同じパラメータを持つ場合の誤判定を防ぎます。
+ *
+ * @param config - 練習設定
+ * @returns プリセットIDまたはnull（カスタム設定の場合）
  */
 function findMatchingPreset(config: PracticeConfig): string | null {
-  for (const [presetId, preset] of Object.entries(PRESETS)) {
-    // 練習パラメーターと標準偏差を比較（ターゲットは除く）
-    if (
-      preset.throwUnit === config.throwUnit &&
-      preset.questionType === config.questionType &&
-      preset.judgmentTiming === config.judgmentTiming &&
-      preset.startingScore === config.startingScore &&
-      preset.stdDevMM === config.stdDevMM
-    ) {
-      return presetId;
-    }
+  // プリセットではない場合は即座にnullを返す
+  if (!config.isPreset) {
+    return null;
   }
+
+  // configIdが'preset-'で始まり、PRESETSに存在する場合のみ有効
+  if (config.configId.startsWith('preset-') && config.configId in PRESETS) {
+    return config.configId;
+  }
+
   return null;
 }
 
 /**
  * 難易度プリセット名を取得する
+ *
+ * 標準偏差（mm）から対応する難易度ラベルを検索します。
+ * 該当するプリセットがない場合は「カスタム Xmm」形式で表示します。
+ *
+ * @param stdDevMM - 標準偏差（mm単位）
+ * @returns 難易度ラベル（例: '初心者', 'カスタム 25mm'）
  */
 function getDifficultyLabel(stdDevMM: number): string {
   const preset = DIFFICULTY_PRESETS.find((p) => p.stdDevMM === stdDevMM);
@@ -41,6 +51,11 @@ function getDifficultyLabel(stdDevMM: number): string {
 
 /**
  * セッション設定のサマリー文字列を生成する
+ *
+ * セッションモードに応じて、問題数または時間制限の情報を文字列化します。
+ *
+ * @param sessionConfig - セッション設定
+ * @returns サマリー文字列（例: '問題数モード: 10問', '時間制限モード: 3分'）
  */
 function getSessionSummary(sessionConfig: SessionConfig): string {
   if (sessionConfig.mode === 'questions') {

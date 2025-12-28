@@ -377,6 +377,63 @@ describe('quizGenerator', () => {
         expect(result.startingScore).toBe(501);
         expect(typeof result.correctAnswer).toBe('number');
       });
+
+      test('target=undefinedの場合、デフォルトターゲット(T20)が使用される', () => {
+        // Arrange
+        const config: PracticeConfig = {
+          configId: 'test-16',
+          configName: 'テスト設定',
+          throwUnit: 1,
+          questionType: 'score',
+          judgmentTiming: 'independent',
+          startingScore: null,
+          target: undefined, // ターゲット未指定
+          stdDevMM: 0, // 正確な着地でT20を確認
+          isPreset: false,
+        };
+
+        // Act
+        const result = generateQuestion(config, null);
+
+        // Assert - デフォルトT20の物理座標: (0, -103)
+        expect(result.throws[0].landingPoint.x).toBe(0);
+        expect(result.throws[0].landingPoint.y).toBe(-103);
+        expect(result.throws[0].score).toBe(60);
+        expect(result.throws[0].target).toEqual({
+          type: 'TRIPLE',
+          number: 20,
+          label: 'T20',
+        });
+      });
+
+      test('targetが未定義でもクラッシュせず問題を生成できる', () => {
+        // Arrange
+        const config: PracticeConfig = {
+          configId: 'test-17',
+          configName: 'テスト設定',
+          throwUnit: 3,
+          questionType: 'score',
+          judgmentTiming: 'cumulative',
+          startingScore: null,
+          target: undefined, // ターゲット未指定
+          stdDevMM: 15,
+          isPreset: false,
+        };
+
+        // Act
+        const result = generateQuestion(config, null);
+
+        // Assert - クラッシュせず正常に問題が生成される
+        expect(result).toHaveProperty('mode');
+        expect(result).toHaveProperty('throws');
+        expect(result).toHaveProperty('correctAnswer');
+        expect(result.throws).toHaveLength(3);
+        expect(result.throws[0].target).toEqual({
+          type: 'TRIPLE',
+          number: 20,
+          label: 'T20',
+        });
+      });
     });
 
     describe('異常系', () => {

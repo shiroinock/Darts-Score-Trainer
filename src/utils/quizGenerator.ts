@@ -8,6 +8,7 @@
 import type { PracticeConfig } from '../types/PracticeConfig';
 import type { Question } from '../types/Question';
 import type { ThrowResult } from '../types/ThrowResult';
+import { DEFAULT_TARGET } from './constants/defaultTargets';
 import { coordinateToScore } from './scoreCalculator/coordinateToScore';
 import { getRing } from './scoreCalculator/getRing';
 import { getSegmentNumber } from './scoreCalculator/getSegmentNumber';
@@ -48,7 +49,7 @@ export function generateQuestion(config: PracticeConfig, remainingScore: number 
 
   // TODO: Phase 4.3 - 残り点数から最適なターゲットを自動選択
   // 現在は暫定的にT20をデフォルトターゲットとして使用
-  const target = config.target ?? { type: 'TRIPLE' as const, number: 20, label: 'T20' };
+  const target = config.target ?? DEFAULT_TARGET;
 
   // ターゲット座標を取得
   const targetCoords = getTargetCoordinates(target.type, target.number);

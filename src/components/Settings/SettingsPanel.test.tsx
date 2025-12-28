@@ -712,6 +712,47 @@ describe('SettingsPanel', () => {
   });
 
   describe('エッジケース', () => {
+    test('カスタム設定がプリセットと同じパラメータでも「カスタム設定」と表示される', () => {
+      // Arrange - 基礎練習と全く同じパラメータだが isPreset: false
+      mockState.config = {
+        configId: 'custom-12345',
+        configName: 'マイカスタム設定',
+        throwUnit: 1,
+        questionType: 'score',
+        judgmentTiming: 'independent',
+        startingScore: null,
+        stdDevMM: 15,
+        isPreset: false, // カスタム設定フラグ
+      };
+
+      // Act
+      render(<SettingsPanel />);
+
+      // Assert
+      expect(screen.getByText('カスタム設定')).toBeInTheDocument();
+      expect(screen.queryByText('基礎練習')).not.toBeInTheDocument();
+    });
+
+    test('configIdが"preset-"で始まっていてもisPreset=falseならカスタム設定と表示される', () => {
+      // Arrange - configIdが"preset-"で始まるが、isPreset: false
+      mockState.config = {
+        configId: 'preset-basic', // プリセット風のID
+        configName: '基礎練習',
+        throwUnit: 1,
+        questionType: 'score',
+        judgmentTiming: 'independent',
+        startingScore: null,
+        stdDevMM: 15,
+        isPreset: false, // カスタム設定フラグ
+      };
+
+      // Act
+      render(<SettingsPanel />);
+
+      // Assert
+      expect(screen.getByText('カスタム設定')).toBeInTheDocument();
+    });
+
     test('問題数が最小値(10問)の場合でも正常に表示される', () => {
       // Arrange
       mockState.sessionConfig = {
