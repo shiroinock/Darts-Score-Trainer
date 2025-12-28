@@ -114,31 +114,31 @@ export const CHECKOUT_TABLE: Record<number, Target> = {
   96: { type: 'TRIPLE', number: 20, label: 'T20' }, // T20→D18
   97: { type: 'TRIPLE', number: 19, label: 'T19' }, // T19→D20
   98: { type: 'TRIPLE', number: 20, label: 'T20' }, // T20→D19
-  99: { type: 'TRIPLE', number: 19, label: 'T19' }, // T19→D21（存在しないのでT19）
+  99: { type: 'TRIPLE', number: 19, label: 'T19' }, // T19→次投で調整
   100: { type: 'TRIPLE', number: 20, label: 'T20' }, // T20→D20
 
   // 101-110点: T20, T19, T17など
   101: { type: 'TRIPLE', number: 17, label: 'T17' }, // T17→BULL
-  102: { type: 'TRIPLE', number: 20, label: 'T20' }, // T20→D21（存在しないのでT20）
-  103: { type: 'TRIPLE', number: 17, label: 'T17' }, // T17→D26（存在しないのでT17）
+  102: { type: 'TRIPLE', number: 20, label: 'T20' }, // T20→次投で調整
+  103: { type: 'TRIPLE', number: 17, label: 'T17' }, // T17→次投で調整
   104: { type: 'TRIPLE', number: 18, label: 'T18' }, // T18→BULL
   105: { type: 'TRIPLE', number: 19, label: 'T19' }, // T19→D24
   106: { type: 'TRIPLE', number: 20, label: 'T20' }, // T20→D23
   107: { type: 'TRIPLE', number: 19, label: 'T19' }, // T19→BULL
   108: { type: 'TRIPLE', number: 20, label: 'T20' }, // T20→D24
-  109: { type: 'TRIPLE', number: 19, label: 'T19' }, // T19→D26（存在しないのでT19）
+  109: { type: 'TRIPLE', number: 19, label: 'T19' }, // T19→次投で調整
   110: { type: 'TRIPLE', number: 20, label: 'T20' }, // T20→BULL
 
   // 111-120点
-  111: { type: 'TRIPLE', number: 19, label: 'T19' }, // T19→D27（存在しないのでT19）
-  112: { type: 'TRIPLE', number: 20, label: 'T20' }, // T20→D26（存在しないのでT20）
-  113: { type: 'TRIPLE', number: 19, label: 'T19' }, // T19→D28（存在しないのでT19）
-  114: { type: 'TRIPLE', number: 20, label: 'T20' }, // T20→D27（存在しないのでT20）
-  115: { type: 'TRIPLE', number: 19, label: 'T19' }, // T19→D29（存在しないのでT19）
-  116: { type: 'TRIPLE', number: 20, label: 'T20' }, // T20→D28（存在しないのでT20）
-  117: { type: 'TRIPLE', number: 19, label: 'T19' }, // T19→D30（存在しないのでT19）
-  118: { type: 'TRIPLE', number: 20, label: 'T20' }, // T20→D29（存在しないのでT20）
-  119: { type: 'TRIPLE', number: 19, label: 'T19' }, // T19→D31（存在しないのでT19）
+  111: { type: 'TRIPLE', number: 19, label: 'T19' }, // T19→次投で調整
+  112: { type: 'TRIPLE', number: 20, label: 'T20' }, // T20→次投で調整
+  113: { type: 'TRIPLE', number: 19, label: 'T19' }, // T19→次投で調整
+  114: { type: 'TRIPLE', number: 20, label: 'T20' }, // T20→次投で調整
+  115: { type: 'TRIPLE', number: 19, label: 'T19' }, // T19→次投で調整
+  116: { type: 'TRIPLE', number: 20, label: 'T20' }, // T20→次投で調整
+  117: { type: 'TRIPLE', number: 19, label: 'T19' }, // T19→次投で調整
+  118: { type: 'TRIPLE', number: 20, label: 'T20' }, // T20→次投で調整
+  119: { type: 'TRIPLE', number: 19, label: 'T19' }, // T19→次投で調整
   120: { type: 'TRIPLE', number: 20, label: 'T20' }, // T20→S20→D20
 
   // 121-170点: 基本的にT20

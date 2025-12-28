@@ -1,14 +1,10 @@
 import type { PracticeConfig } from '../types/PracticeConfig';
+import { DEFAULT_TARGET } from './constants/defaultTargets.js';
 
 /**
  * プリセット名
  */
 export type PresetName = 'basic' | 'player' | 'callerBasic' | 'callerCumulative' | 'comprehensive';
-
-/**
- * デフォルトターゲット（T20）
- */
-const DEFAULT_TARGET = { type: 'TRIPLE' as const, number: 20 };
 
 /**
  * デフォルト標準偏差（30mm：中級者レベル）
