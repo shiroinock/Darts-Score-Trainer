@@ -10,7 +10,7 @@ import { useGameStore } from '../../stores/gameStore';
 /**
  * 難易度プリセットの定義
  */
-const DIFFICULTY_PRESETS = [
+export const DIFFICULTY_PRESETS = [
   { label: '初心者', stdDevMM: 50 },
   { label: '中級者', stdDevMM: 30 },
   { label: '上級者', stdDevMM: 15 },
@@ -20,9 +20,9 @@ const DIFFICULTY_PRESETS = [
 /**
  * スライダーの範囲定義
  */
-const SLIDER_MIN = 5;
-const SLIDER_MAX = 100;
-const SLIDER_STEP = 1;
+export const SLIDER_MIN = 5;
+export const SLIDER_MAX = 100;
+export const SLIDER_STEP = 1;
 
 /**
  * 難易度選択UIコンポーネント
@@ -44,7 +44,6 @@ export function DifficultySelector(): JSX.Element {
     <div className="difficulty-selector">
       <h2 className="difficulty-selector__title">難易度を選択</h2>
 
-      {/* プリセットボタン */}
       <div className="difficulty-selector__presets">
         {DIFFICULTY_PRESETS.map((preset) => {
           const isActive = stdDevMM === preset.stdDevMM;
@@ -64,7 +63,6 @@ export function DifficultySelector(): JSX.Element {
         })}
       </div>
 
-      {/* スライダー */}
       <div className="difficulty-selector__slider">
         <input
           type="range"
@@ -78,7 +76,6 @@ export function DifficultySelector(): JSX.Element {
         />
       </div>
 
-      {/* 現在値表示 */}
       <div className="difficulty-selector__display">{stdDevMM}mm</div>
     </div>
   );

@@ -6,19 +6,12 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { DifficultySelector } from './DifficultySelector';
-
-// 難易度プリセットの定義（実装と同じ）
-const DIFFICULTY_PRESETS = [
-  { label: '初心者', stdDevMM: 50 },
-  { label: '中級者', stdDevMM: 30 },
-  { label: '上級者', stdDevMM: 15 },
-  { label: 'エキスパート', stdDevMM: 8 },
-] as const;
-
-// スライダー範囲定義（実装と同じ）
-const SLIDER_MIN = 5;
-const SLIDER_MAX = 100;
+import {
+  DIFFICULTY_PRESETS,
+  DifficultySelector,
+  SLIDER_MAX,
+  SLIDER_MIN,
+} from './DifficultySelector';
 
 // モック用の型定義
 type MockConfig = {
