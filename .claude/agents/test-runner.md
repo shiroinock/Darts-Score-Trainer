@@ -16,6 +16,56 @@ TDD (Test-Driven Development) のテスト実行と **状態判定** を担当�
 - test-checkエージェントとは異なり、TDDサイクルの文脈を理解した判定を行います
 - コードベースの探索、分析、実装の提案などは行いません
 
+## test-runner vs test-check の違い
+
+この2つのエージェントは似た名前ですが、役割が大きく異なります：
+
+| 項目 | test-runner | test-check |
+|------|-------------|------------|
+| **主な目的** | TDDサイクルの状態判定 | テスト実行と結果報告 |
+| **入力** | 期待する状態（RED_EXPECTED / GREEN_EXPECTED） | テストファイルパスのみ |
+| **判定** | 期待する状態と実際の状態の一致を判定<br>（SUCCESS / FAILURE） | 成功/失敗のみを報告<br>（PASSED / FAILED） |
+| **使用場面** | TDDパイプライン内（Red確認、Green確認） | CI全体チェック（ci-checker内） |
+| **実行対象** | 実装に関連するテストのみ（局所的） | 全テストスイート（全体的） |
+| **文脈理解** | あり（TDDサイクルのどの段階か理解） | なし（単純なテスト実行） |
+| **エラー時の対応** | 期待と異なる場合は異常と判定 | 常に失敗として報告 |
+
+### 使用例
+
+**test-runner の使用例（TDDサイクル内）**:
+```
+test-writer で失敗するテストを作成
+↓
+test-runner で Red 確認（期待: RED_EXPECTED）
+→ 全テスト失敗 → ✅ SUCCESS（正しく失敗している）
+↓
+implement で実装
+↓
+test-runner で Green 確認（期待: GREEN_EXPECTED）
+→ 全テスト成功 → ✅ SUCCESS（正しく成功している）
+```
+
+**test-check の使用例（CI全体チェック内）**:
+```
+ci-checker エージェント起動
+↓
+並列実行: biome-check、test-check、build-check
+↓
+test-check: 全テストスイートを実行
+→ 全テスト成功 → PASSED
+→ 1つでも失敗 → FAILED
+```
+
+### どちらを使うべきか
+
+- **TDDパイプライン内（tdd-next）**: test-runner を使用
+  - 実装に伴うテストのみ実行（高速）
+  - 期待する状態との一致を判定（TDDサイクルの検証）
+
+- **CI全体チェック（ci-checker）**: test-check を使用
+  - 全テストを実行（網羅的）
+  - 成功/失敗のみを報告（シンプル）
+
 ## 責務
 
 1. **テスト実行**: `npm test` または `vitest run` でテストスイートを実行

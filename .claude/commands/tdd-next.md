@@ -117,51 +117,61 @@ classify-files の判定結果に基づき、適切なパイプラインを**順
 #### 4-1. テストファーストパイプライン (tddMode: test-first)
 
 ```
-1. test-writer エージェント起動
+1. test-writer エージェント起動 【Red: テスト作成】
+   目的: 失敗するテストを作成（TDD Red フェーズ）
    - テストパターンに応じた失敗するテストを作成
    - classify-files が判定した testPattern と testFilePath を渡す
 
-2. test-runner エージェント起動 (Red確認)
+2. test-runner エージェント起動 【Red確認】
+   目的: テストが正しく失敗することを確認（TDDサイクル検証）
    - 期待する状態: RED_EXPECTED
    - 判定: 全テスト失敗 → SUCCESS
    - test-writer が作成したテストファイルパスを渡す
 
-3. implement エージェント起動
+3. implement エージェント起動 【Green: 実装】
+   目的: テストを通す最小限の実装（TDD Green フェーズ）
    - テストを通す最小限の実装
    - テストファイルパスと実装ファイルパスを渡す
 
-4. test-runner エージェント起動 (Green確認)
+4. test-runner エージェント起動 【Green確認（局所的）】
+   目的: 実装したコードが新規テストを通すことを確認
    - 期待する状態: GREEN_EXPECTED
    - 実装したファイルに関連するテストのみ実行（局所的影響を検出）
    - 判定: 全テスト成功 → 次へ
    - 判定: 失敗 → plan-fixへ
 
-5. ci-checker エージェント起動 (CI全体チェック)
+5. ci-checker エージェント起動 【CI全体チェック（全体的）】
+   目的: 既存コード全体への影響がないことを確認
    - Biome check、Test（全テスト）、Build を並列実行（全体的影響を検出）
    - 判定: 全て成功 → 次へ
    - 判定: 失敗 → plan-fixへ
 
-6. (ci-checker が成功した場合) review-file エージェント起動 (Refactor判断)
+6. (ci-checker が成功した場合) review-file エージェント起動 【Refactor判断】
+   目的: コード品質を確認（TDD Refactor フェーズ）
    - review-perspective-selector skill で観点を自動選択
    - 実装ファイルとテストファイルの両方をレビュー
    - 判定: PASS → 完了
    - 判定: WARN → ユーザーに確認「修正しますか？(y/n)」
    - 判定: FAIL → 必須修正（次へ進む）
 
-7. (test-runner/ci-checker が失敗 or WARN時にユーザー承認 or FAIL の場合) plan-fix エージェント起動
+7. (test-runner/ci-checker が失敗 or WARN時にユーザー承認 or FAIL の場合) plan-fix エージェント起動 【修正計画】
+   目的: 問題を分析し、具体的な修正計画を立案
    - test-runner/ci-checker の失敗内容 または review-file の指摘事項に基づき修正計画を作成
    - 修正内容をユーザーに提示
 
-8. (ユーザーが承認した場合) implement エージェント起動
+8. (ユーザーが承認した場合) implement エージェント起動 【修正実行】
+   目的: plan-fix の計画に基づいて問題を修正
    - plan-fixの計画に基づいて修正実行
    - テストファイルと実装ファイルの両方を修正可能
 
-9. ci-checker エージェント起動
+9. ci-checker エージェント起動 【修正確認（全体的）】
+   目的: 修正後のコードが全てのチェックを通過することを確認
    - Biome check、Test、Build を並列実行
    - 判定: 全て成功 → 次へ
    - 判定: 失敗 → 7に戻る（最大3回まで）
 
-10. review-file エージェント起動（再レビュー）
+10. review-file エージェント起動 【再レビュー】
+   目的: 修正後のコード品質を再確認
    - 修正後のコードを再度レビュー
    - 判定: PASS → 完了
    - 判定: WARN/FAIL → 7に戻る（最大3回まで）
@@ -170,42 +180,51 @@ classify-files の判定結果に基づき、適切なパイプラインを**順
 #### 4-2. テストレイターパイプライン (tddMode: test-later)
 
 ```
-1. implement エージェント起動
+1. implement エージェント起動 【実装】
+   目的: 仕様に基づいてコードを実装（テストは後から）
    - 実装優先
 
-2. test-writer エージェント起動
+2. test-writer エージェント起動 【テスト作成】
+   目的: 実装済みのコードに対するテストを作成
    - 実装に基づくテスト作成（Green状態で作成）
 
-3. test-runner エージェント起動 (Green確認)
+3. test-runner エージェント起動 【Green確認（局所的）】
+   目的: 作成したテストが実装を正しく検証することを確認
    - 期待する状態: GREEN_EXPECTED
    - 実装したファイルに関連するテストのみ実行（局所的影響を検出）
    - 判定: 全テスト成功 → 次へ
    - 判定: 失敗 → plan-fixへ
 
-4. ci-checker エージェント起動 (CI全体チェック)
+4. ci-checker エージェント起動 【CI全体チェック（全体的）】
+   目的: 既存コード全体への影響がないことを確認
    - Biome check、Test（全テスト）、Build を並列実行（全体的影響を検出）
    - 判定: 全て成功 → 次へ
    - 判定: 失敗 → plan-fixへ
 
-5. (ci-checker が成功した場合) review-file エージェント起動
+5. (ci-checker が成功した場合) review-file エージェント起動 【品質確認】
+   目的: コード品質とテストの妥当性を確認
    - review-perspective-selector skill で観点を自動選択
    - 実装ファイルとテストファイルの両方をレビュー
    - 判定: PASS → 完了
    - 判定: WARN → ユーザーに確認「修正しますか？(y/n)」
    - 判定: FAIL → 必須修正（次へ進む）
 
-6. (test-runner/ci-checker が失敗 or WARN時にユーザー承認 or FAIL の場合) plan-fix エージェント起動
+6. (test-runner/ci-checker が失敗 or WARN時にユーザー承認 or FAIL の場合) plan-fix エージェント起動 【修正計画】
+   目的: 問題を分析し、具体的な修正計画を立案
    - test-runner/ci-checker の失敗内容 または review-file の指摘事項に基づき修正計画を作成
 
-7. (ユーザーが承認した場合) implement エージェント起動
+7. (ユーザーが承認した場合) implement エージェント起動 【修正実行】
+   目的: plan-fix の計画に基づいて問題を修正
    - plan-fixの計画に基づいて修正実行
 
-8. ci-checker エージェント起動
+8. ci-checker エージェント起動 【修正確認（全体的）】
+   目的: 修正後のコードが全てのチェックを通過することを確認
    - Biome check、Test、Build を並列実行
    - 判定: 全て成功 → 次へ
    - 判定: 失敗 → 6に戻る（最大3回まで）
 
-9. review-file エージェント起動（再レビュー）
+9. review-file エージェント起動 【再レビュー】
+   目的: 修正後のコード品質を再確認
    - 修正後のコードを再度レビュー
    - 判定: PASS → 完了
    - 判定: WARN/FAIL → 6に戻る（最大3回まで）

@@ -43,26 +43,138 @@ Failed tests:
 
 ## 出力フォーマット
 
-### 成功時
-```
-status: PASSED
-message: Tests passed
-testCount: {total}
-passed: {passed}
+**重要**: 親エージェント（ci-checker）が処理できるよう、以下の構造化されたJSON形式で出力してください。
+
+### 基本構造
+
+```json
+{
+  "check": "test",
+  "status": "PASSED|FAILED",
+  "duration": 45230,
+  "summary": {
+    "message": "簡潔な結果サマリー（1行）"
+  },
+  "details": {
+    "testFiles": {
+      "total": 46,
+      "passed": 46,
+      "failed": 0
+    },
+    "tests": {
+      "total": 1736,
+      "passed": 1736,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "errors": []  // 失敗時のみ含める
+}
 ```
 
-### 失敗時
-```
-status: FAILED
-message: Tests failed
-testCount: {total}
-passed: {passed}
-failed: {failed}
-errors: {失敗したテストの詳細}
+### 成功時の例
+
+```json
+{
+  "check": "test",
+  "status": "PASSED",
+  "duration": 45230,
+  "summary": {
+    "message": "All tests passed (1,736 tests in 46 files)"
+  },
+  "details": {
+    "testFiles": {
+      "total": 46,
+      "passed": 46,
+      "failed": 0
+    },
+    "tests": {
+      "total": 1736,
+      "passed": 1736,
+      "failed": 0,
+      "skipped": 0
+    },
+    "coverage": {
+      "statements": 98.5,
+      "branches": 95.2,
+      "functions": 99.1,
+      "lines": 98.3
+    }
+  }
+}
 ```
 
-## 注意事項
+### 失敗時の例
 
-- このエージェントは単一のチェックのみを実行します
-- テスト数を正確にカウントしてください
-- 失敗したテストの詳細を全て含めてください
+```json
+{
+  "check": "test",
+  "status": "FAILED",
+  "duration": 42150,
+  "summary": {
+    "message": "Tests failed (3 failed out of 1,736 tests)"
+  },
+  "details": {
+    "testFiles": {
+      "total": 46,
+      "passed": 45,
+      "failed": 1
+    },
+    "tests": {
+      "total": 1736,
+      "passed": 1733,
+      "failed": 3,
+      "skipped": 0
+    }
+  },
+  "errors": [
+    {
+      "file": "src/utils/validation.test.ts",
+      "testName": "isValidRemainingScore › should return false for negative scores",
+      "error": "AssertionError: expected true to be false",
+      "expected": false,
+      "received": true,
+      "location": "src/utils/validation.test.ts:145:23",
+      "severity": "error"
+    }
+  ]
+}
+```
+
+### エラーオブジェクトの仕様
+
+各エラーは以下のフィールドを含む必要があります：
+
+```typescript
+interface TestError {
+  file: string;          // テストファイルパス
+  testName: string;      // テスト名（describe › it 形式）
+  error: string;         // エラー種別
+  expected?: any;        // 期待値（アサーションエラーの場合）
+  received?: any;        // 実際の値（アサーションエラーの場合）
+  location: string;      // エラー発生箇所（file:line:column形式）
+  severity: "error";     // 深刻度（常にerror）
+  message?: string;      // 追加のエラーメッセージ
+}
+```
+
+## 実装時の注意事項
+
+1. **JSON形式の厳密性**
+   - 全ての出力は有効なJSONでなければなりません
+   - 文字列内の特殊文字は適切にエスケープしてください
+
+2. **エラー件数の制限**
+   - エラーが100件を超える場合、errors 配列は最大100件に制限してください
+   - details.tests.failed フィールドで実際の失敗テスト総数を示してください
+
+3. **テストカウントの正確性**
+   - testFiles と tests の両方のカウントを正確に取得してください
+   - skipped テストも含めてカウントしてください
+
+4. **カバレッジ情報**
+   - 成功時のみ coverage フィールドを含めてください（オプション）
+   - カバレッジが取得できない場合は省略可能です
+
+5. **実行時間の測定**
+   - duration フィールドはミリ秒単位で測定してください
