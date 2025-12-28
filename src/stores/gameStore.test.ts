@@ -320,8 +320,8 @@ describe('gameStore', () => {
       });
 
       // Assert
-      expect(result.current.config.target.type).toBe('BULL');
-      expect(result.current.config.target.number).toBeNull();
+      expect(result.current.config.target?.type).toBe('BULL');
+      expect(result.current.config.target?.number).toBeNull();
     });
   });
 

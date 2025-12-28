@@ -13,6 +13,7 @@ export { DART_MARKER_RADII } from './dartMarkerRadii.js';
 export { DART_MARKER_TEXT_SIZE } from './dartMarkerTextSize.js';
 
 // 難易度・セッション設定
+export { DEFAULT_TARGET } from './defaultTargets.js';
 export { DIFFICULTY_PRESETS } from './difficultyPresets.js';
 export { FEEDBACK_ICONS } from './feedbackIcons.js';
 export { LEGEND_LAYOUT, LEGEND_TEXT_SIZE } from './legendLayout.js';

@@ -352,3 +352,61 @@ const mockResults = createCanvasMock.mock.results;
 
 3. **可読性を維持**
    - 複雑な型操作より、シンプルで理解しやすい解決策を選ぶ
+
+## コンポーネント統合時の注意点
+
+### JSDocコメントの徹底
+
+**重要**: すべてのコンポーネントファイルには、ファイル冒頭に以下の形式でJSDocコメントを必須とします：
+
+```typescript
+/**
+ * ComponentName - コンポーネントの日本語名
+ *
+ * 機能の詳細説明を日本語で記載。
+ * 何をするコンポーネントか、どのような責務を持つかを明確に説明。
+ */
+```
+
+この規約は、コンポーネントファイルだけでなく、ヘルパー関数にも適用してください。
+
+### ヘルパー関数のJSDocコメント
+
+プライベートなヘルパー関数にも、その役割を明確にするJSDocコメントを記載：
+
+```typescript
+/**
+ * 関数の役割を簡潔に説明
+ */
+function helperFunction(): void {
+  // 実装
+}
+```
+
+### コンポーネント配置の順序
+
+1. **ファイル冒頭のJSDocコメント**
+2. **import文**
+3. **定数定義**（あれば）
+4. **ヘルパー関数**（JSDocコメント付き）
+5. **メインコンポーネント**（JSDocコメント付き）
+
+### アクセシビリティ属性の必須化
+
+インタラクティブ要素には以下を必ず含める：
+
+- ボタン: `type="button"` と `aria-label`（テキストが不十分な場合）
+- フォーム要素: 適切な `label` または `aria-label`
+- 状態を持つ要素: `aria-pressed`、`aria-expanded` など
+
+### オプショナルチェイニングとNullish Coalescingの活用
+
+```typescript
+// ✅ 推奨
+const value = config.someValue ?? defaultValue;
+const nested = config?.deeply?.nested?.value;
+
+// ❌ 避ける
+const value = config.someValue !== undefined ? config.someValue : defaultValue;
+const nested = config && config.deeply && config.deeply.nested && config.deeply.nested.value;
+```

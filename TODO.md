@@ -227,6 +227,35 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] `generateQuestionText(config, throwIndex, isCumulative)` 関数
 - [x] `calculateCorrectAnswer(throws, config, throwIndex, previousRemaining)` 関数
 
+### 4.3 ターゲット自動選択機能 (`src/utils/dartStrategy/`)
+**目的**: 残り点数に応じて最適なターゲットを自動決定する
+
+#### 短期実装（固定対応表方式）
+- [ ] `getOptimalTarget(remainingScore, throwsRemaining)` 関数
+  - 残り点数から狙うべきターゲットを返す
+  - 固定の対応表（ルックアップテーブル）を使用
+  - 例: 170点 → T20, 40点 → D20, 50点 → BULL, 32点 → D16
+- [ ] ターゲット対応表の定義 (`src/utils/dartStrategy/targetLookupTable.ts`)
+  - 残り2-170点の範囲で一般的なダーツセオリーに基づく対応表
+  - 参考: PDC推奨チェックアウト表
+- [ ] `PracticeConfig`型からtargetフィールドを削除
+  - または `target?: Target` にしてオプショナル化
+  - デフォルトは自動選択、手動選択も可能にする
+- [ ] `TargetSelector`コンポーネントの非表示化
+  - 残り点数モード（startingScore != null）の場合は非表示
+  - 得点モードの場合は表示（T20固定練習など）
+- [ ] `SettingsPanel`のサマリー表示調整
+  - ターゲット項目を条件付き表示に変更
+- [ ] `gameStore.generateQuestion()`の修正
+  - 残り点数から動的にターゲット決定
+  - `config.target || getOptimalTarget(remainingScore, throwsRemaining)`
+
+#### 長期実装（AI戦略サジェスト）※将来のTODOセクション参照
+- [ ] 実力（stdDevMM）を考慮した成功確率計算
+- [ ] モンテカルロシミュレーションで最適ターゲット探索
+- [ ] 上がり目の期待値最大化アルゴリズム
+- [ ] 複数候補の提示とリスク評価
+
 ---
 
 ## Phase 5: UI（設定画面）
@@ -262,10 +291,10 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] 現在値表示
 
 ### 5.6 設定パネル統合 (`src/components/Settings/SettingsPanel.tsx`)
-- [ ] 全設定コンポーネントの統合
-- [ ] 現在の設定サマリー表示
-- [ ] 練習開始ボタン
-- [ ] レイアウト調整
+- [x] 全設定コンポーネントの統合
+- [x] 現在の設定サマリー表示
+- [x] 練習開始ボタン
+- [x] レイアウト調整
 
 ---
 
@@ -421,7 +450,25 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [ ] インナーシングル狙い位置オプション
 - [ ] 統計履歴の長期保存
 - [ ] ランキング機能
-- [ ] 戦略サジェスト機能
+- [ ] **戦略サジェスト機能（AI最適ターゲット決定）**
+  - Phase 4.3の固定対応表方式からの発展版
+  - 入力パラメータ：
+    - 残り点数
+    - 残り本数（3本、2本、1本）
+    - プレイヤーの実力（stdDevMM）
+  - 処理内容：
+    - モンテカルロシミュレーションで各ターゲット候補の成功確率を計算
+    - 上がり目（フィニッシュ可能な状態）への到達確率を評価
+    - バスト確率の計算とリスク評価
+    - 期待値最大化アルゴリズムで最適ターゲットを決定
+  - UI表示：
+    - 推奨ターゲット（第1候補、第2候補、第3候補）
+    - 各候補の成功確率とリスク評価
+    - 「安全策」「攻撃的」などの戦略タイプ選択
+  - 実装ファイル：
+    - `src/utils/dartStrategy/aiTargetSelector.ts`
+    - `src/utils/dartStrategy/monteCarloSimulator.ts`
+    - `src/utils/dartStrategy/finishProbabilityCalculator.ts`
 - [ ] 弱点エリア分析
 - [ ] グラフ・チャート可視化
 - [ ] 投擲アニメーション
@@ -461,14 +508,14 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | 1 | 39 | 39 | 100% |
 | 2 | 12 | 12 | 100% |
 | 3 | 28 | 31 | 111% |
-| 4 | 7 | 4 | 57% |
-| 5 | 17 | 0 | 0% |
+| 4 | 13 | 7 | 54% |
+| 5 | 23 | 23 | 100% |
 | 6 | 22 | 0 | 0% |
 | 7 | 9 | 0 | 0% |
 | 8 | 10 | 0 | 0% |
 | 9 | 15 | 0 | 0% |
 | 10 | 6 | 0 | 0% |
-| **合計** | **176** | **97** | **55%** |
+| **合計** | **188** | **123** | **65%** |
 
 ### Phase 2 実装方針変更の詳細
 
