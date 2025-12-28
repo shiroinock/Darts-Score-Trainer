@@ -1,20 +1,25 @@
-import { DartBoard } from './components/DartBoard';
-import { PresetSelector } from './components/Settings';
+/**
+ * App - アプリケーションルートコンポーネント
+ *
+ * ゲーム状態に応じて適切な画面を表示します。
+ * - setup: 設定画面（PresetSelector + DifficultySelector + TargetSelector + StartButton）
+ * - practicing: 練習画面（PracticeScreen）
+ * - results: 結果画面（ResultsScreen）
+ */
+
+import { PracticeScreen } from './components/Practice/PracticeScreen';
+import { ResultsScreen } from './components/Results/ResultsScreen';
+import { SettingsPanel } from './components/Settings/SettingsPanel';
+import { useGameStore } from './stores/gameStore';
 
 function App(): JSX.Element {
-  // デモ用: トリプル20を狙った3投をシミュレート（物理座標、mm単位）
-  const demoCoords = [
-    { x: 0, y: -103 }, // 1本目: トリプル20中央
-    { x: 8, y: -105 }, // 2本目: 少し右にずれる
-    { x: -5, y: -100 }, // 3本目: 少し左下にずれる
-  ];
+  const gameState = useGameStore((state) => state.gameState);
 
   return (
     <div className="app">
-      <h1>Darts Score Trainer</h1>
-      <p>ダーツスコア計算練習アプリ</p>
-      <PresetSelector />
-      <DartBoard coords={demoCoords} dartCount={3} />
+      {gameState === 'setup' && <SettingsPanel />}
+      {gameState === 'practicing' && <PracticeScreen />}
+      {gameState === 'results' && <ResultsScreen />}
     </div>
   );
 }

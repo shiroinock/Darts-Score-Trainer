@@ -366,10 +366,10 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] 終了理由表示（完了、時間切れ、手動終了、ゲームクリア）
 
 ### 7.2 結果画面 (`src/components/Results/ResultsScreen.tsx`)
-- [ ] SessionSummary配置
-- [ ] 「同じ設定で再挑戦」ボタン
-- [ ] 「設定を変更」ボタン
-- [ ] レイアウト調整
+- [x] SessionSummary配置
+- [x] 「同じ設定で再挑戦」ボタン
+- [x] 「設定を変更」ボタン
+- [x] レイアウト調整
 
 ---
 
