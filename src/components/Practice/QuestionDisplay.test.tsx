@@ -31,7 +31,7 @@ const createMockQuestion = (): Question => ({
   throws: [
     {
       target: { type: 'TRIPLE', number: 20, label: 'T20' },
-      result: { x: 0, y: -103 },
+      landingPoint: { x: 0, y: -103 },
       score: 60,
     },
   ],
