@@ -52,84 +52,33 @@ export function SettingsPanel(): JSX.Element {
     startPractice();
   };
 
-  const progressContainerStyle: React.CSSProperties = {
-    width: '100%',
-    maxWidth: '800px',
-    margin: '0 auto 1rem',
-    padding: '0.5rem 1rem',
-    flexShrink: 0,
-    boxSizing: 'border-box',
-  };
-
-  const progressBarStyle: React.CSSProperties = {
-    width: '100%',
-    height: '8px',
-    backgroundColor: '#e0e0e0',
-    borderRadius: '4px',
-    overflow: 'hidden',
-    marginBottom: '1rem',
-  };
-
-  const progressFillStyle: React.CSSProperties = {
-    height: '100%',
-    background: 'linear-gradient(90deg, #4a90e2 0%, #357ab8 100%)',
-    transition: 'width 0.3s ease',
-    borderRadius: '4px',
-    width: `${(currentStep / 4) * 100}%`,
-  };
-
-  const progressStepsStyle: React.CSSProperties = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  };
-
-  const getStepStyle = (step: number): React.CSSProperties => {
-    const baseStyle: React.CSSProperties = {
-      width: '40px',
-      height: '40px',
-      borderRadius: '50%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontWeight: 600,
-      fontSize: '1.125rem',
-      transition: 'all 0.3s ease',
-    };
-
+  /**
+   * ステップの状態を判定してCSSクラスを返す
+   */
+  const getStepClassName = (step: number): string => {
+    const baseClass = 'setup-wizard__progress-step';
     if (step === currentStep) {
-      return {
-        ...baseStyle,
-        backgroundColor: '#4a90e2',
-        color: 'white',
-        boxShadow: '0 4px 8px rgba(74, 144, 226, 0.3)',
-        transform: 'scale(1.1)',
-      };
+      return `${baseClass} setup-wizard__progress-step--active`;
     } else if (step < currentStep) {
-      return {
-        ...baseStyle,
-        backgroundColor: '#4caf50',
-        color: 'white',
-      };
+      return `${baseClass} setup-wizard__progress-step--completed`;
     } else {
-      return {
-        ...baseStyle,
-        backgroundColor: '#e0e0e0',
-        color: '#999',
-      };
+      return `${baseClass} setup-wizard__progress-step--pending`;
     }
   };
 
   return (
     <div className="settings-panel">
       {/* 進捗インジケーター */}
-      <div style={progressContainerStyle}>
-        <div style={progressBarStyle}>
-          <div style={progressFillStyle} />
+      <div className="setup-wizard__progress">
+        <div className="setup-wizard__progress-bar">
+          <div
+            className="setup-wizard__progress-fill"
+            style={{ width: `${(currentStep / 4) * 100}%` }}
+          />
         </div>
-        <div style={progressStepsStyle}>
+        <div className="setup-wizard__progress-steps">
           {[1, 2, 3, 4].map((step) => (
-            <div key={step} style={getStepStyle(step)}>
+            <div key={step} className={getStepClassName(step)}>
               {step}
             </div>
           ))}
