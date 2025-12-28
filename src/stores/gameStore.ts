@@ -290,14 +290,9 @@ export const useGameStore = create<GameStore>()(
           state.displayedDarts = [];
           state.currentThrowIndex = 0;
 
-          // 残り点数モードの場合、remainingScoreを設定
-          if (state.config.questionType === 'remaining' || state.config.questionType === 'both') {
-            state.remainingScore = state.config.startingScore;
-            state.roundStartScore = state.remainingScore;
-          } else {
-            state.remainingScore = state.config.startingScore;
-            state.roundStartScore = state.remainingScore;
-          }
+          // startingScoreは必須なので、全モードで設定
+          state.remainingScore = state.config.startingScore;
+          state.roundStartScore = state.remainingScore;
         });
 
         // 最初の問題を生成（set完了後に実行）
