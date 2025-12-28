@@ -14,7 +14,7 @@ function createTestConfig(overrides: Partial<PracticeConfig> = {}): PracticeConf
     throwUnit: 1,
     questionType: 'score',
     judgmentTiming: 'independent',
-    startingScore: null,
+    startingScore: 501,
     target: { type: 'TRIPLE', number: 20 },
     stdDevMM: 30,
     isPreset: false,
@@ -71,9 +71,9 @@ describe('PRACTICE_PRESETS', () => {
       expect(PRACTICE_PRESETS.basic.judgmentTiming).toBe('independent');
     });
 
-    test('startingScoreがnullである', () => {
+    test('startingScoreが501である', () => {
       // Assert
-      expect(PRACTICE_PRESETS.basic.startingScore).toBeNull();
+      expect(PRACTICE_PRESETS.basic.startingScore).toBe(501);
     });
 
     test('isPresetがtrueである', () => {
@@ -141,9 +141,9 @@ describe('PRACTICE_PRESETS', () => {
       expect(PRACTICE_PRESETS.callerBasic.judgmentTiming).toBe('independent');
     });
 
-    test('startingScoreがnullである', () => {
+    test('startingScoreが501である', () => {
       // Assert
-      expect(PRACTICE_PRESETS.callerBasic.startingScore).toBeNull();
+      expect(PRACTICE_PRESETS.callerBasic.startingScore).toBe(501);
     });
 
     test('isPresetがtrueである', () => {
@@ -173,9 +173,9 @@ describe('PRACTICE_PRESETS', () => {
       expect(PRACTICE_PRESETS.callerCumulative.judgmentTiming).toBe('cumulative');
     });
 
-    test('startingScoreがnullである', () => {
+    test('startingScoreが501である', () => {
       // Assert
-      expect(PRACTICE_PRESETS.callerCumulative.startingScore).toBeNull();
+      expect(PRACTICE_PRESETS.callerCumulative.startingScore).toBe(501);
     });
 
     test('isPresetがtrueである', () => {
@@ -225,7 +225,7 @@ describe('findMatchingPreset', () => {
         throwUnit: 1,
         questionType: 'score',
         judgmentTiming: 'independent',
-        startingScore: null,
+        startingScore: 501,
       });
 
       // Act
@@ -257,7 +257,7 @@ describe('findMatchingPreset', () => {
         throwUnit: 3,
         questionType: 'score',
         judgmentTiming: 'independent',
-        startingScore: null,
+        startingScore: 501,
       });
 
       // Act
@@ -273,7 +273,7 @@ describe('findMatchingPreset', () => {
         throwUnit: 3,
         questionType: 'score',
         judgmentTiming: 'cumulative',
-        startingScore: null,
+        startingScore: 501,
       });
 
       // Act
@@ -343,7 +343,7 @@ describe('generateCustomId', () => {
         throwUnit: 1,
         questionType: 'score',
         judgmentTiming: 'independent',
-        startingScore: null,
+        startingScore: 501,
       });
 
       // Act
@@ -378,13 +378,13 @@ describe('generateCustomId', () => {
         throwUnit: 1,
         questionType: 'score',
         judgmentTiming: 'independent',
-        startingScore: null,
+        startingScore: 501,
       });
       const config2 = createTestConfig({
         throwUnit: 3,
         questionType: 'score',
         judgmentTiming: 'independent',
-        startingScore: null,
+        startingScore: 501,
       });
 
       // Act
@@ -401,7 +401,7 @@ describe('generateCustomId', () => {
         throwUnit: 3,
         questionType: 'score',
         judgmentTiming: 'cumulative',
-        startingScore: null,
+        startingScore: 501,
       });
       const config2 = createTestConfig({
         throwUnit: 3,
@@ -424,13 +424,13 @@ describe('generateCustomId', () => {
         throwUnit: 3,
         questionType: 'score',
         judgmentTiming: 'independent',
-        startingScore: null,
+        startingScore: 501,
       });
       const config2 = createTestConfig({
         throwUnit: 3,
         questionType: 'score',
         judgmentTiming: 'cumulative',
-        startingScore: null,
+        startingScore: 501,
       });
 
       // Act
@@ -472,7 +472,7 @@ describe('generateCustomId', () => {
         throwUnit: 1,
         questionType: 'score',
         judgmentTiming: 'independent',
-        startingScore: null,
+        startingScore: 501,
       });
 
       // Act

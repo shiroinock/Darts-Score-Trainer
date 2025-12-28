@@ -38,7 +38,7 @@ describe('gameStore', () => {
           throwUnit: 1,
           questionType: 'score',
           judgmentTiming: 'independent',
-          startingScore: null,
+          startingScore: 501,
           target: { type: 'TRIPLE', number: 20, label: 'T20' },
           stdDevMM: 15,
           isPreset: true,
@@ -2174,7 +2174,7 @@ describe('gameStore', () => {
 
     // 'both'モード関連テスト（2個）
     describe('bothモードのバリデーション', () => {
-      test('bothモード + startingScore: null の場合、scoreモードが強制される', () => {
+      test('bothモード + startingScore: 501 の場合、remainingまたはscoreモードがランダムに選択される', () => {
         // Arrange
         const { result } = renderHook(() => useGameStore());
 
@@ -2182,20 +2182,20 @@ describe('gameStore', () => {
           result.current.setConfig({
             throwUnit: 3,
             questionType: 'both',
-            startingScore: null, // nullに設定
+            startingScore: 501,
           });
           result.current.startPractice();
         });
 
-        // Act: 問題を生成（内部でremainingScoreが0）
+        // Act: 問題を生成
         act(() => {
           result.current.generateQuestion();
         });
 
-        // Assert: modeがscoreに強制されている
+        // Assert: modeがscoreまたはremainingである
         expect(result.current.currentQuestion).not.toBeNull();
         if (result.current.currentQuestion) {
-          expect(result.current.currentQuestion.mode).toBe('score');
+          expect(['score', 'remaining']).toContain(result.current.currentQuestion.mode);
           expect(result.current.currentQuestion.correctAnswer).toBeGreaterThanOrEqual(0);
         }
       });
@@ -2243,7 +2243,7 @@ describe('gameStore', () => {
           result.current.setConfig({
             throwUnit: 1,
             questionType: 'score',
-            startingScore: null,
+            startingScore: 501,
           });
           result.current.startPractice();
         });

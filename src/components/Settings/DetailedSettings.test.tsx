@@ -23,7 +23,7 @@ const createMockConfig = (overrides?: Partial<MockConfig>): MockConfig => ({
   throwUnit: 1,
   questionType: 'score',
   judgmentTiming: 'independent',
-  startingScore: null,
+  startingScore: 501,
   stdDevMM: 15,
   ...overrides,
 });
