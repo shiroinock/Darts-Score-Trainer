@@ -2188,7 +2188,7 @@ describe('gameStore', () => {
           result.current.startPractice();
         });
 
-        // Act: 問題を生成（Math.random() < 0.5 なので score モードが選択される）
+        // Act: Math.random()をモックしてscoreモードが選択されるようにする
         act(() => {
           result.current.generateQuestion();
         });
@@ -2217,7 +2217,7 @@ describe('gameStore', () => {
           result.current.startPractice();
         });
 
-        // Act: 問題を生成（Math.random() >= 0.5 なので remaining モードが選択される）
+        // Act: Math.random()をモックしてremainingモードが選択されるようにする
         act(() => {
           result.current.generateQuestion();
         });
@@ -2262,6 +2262,101 @@ describe('gameStore', () => {
         if (result.current.currentQuestion) {
           expect(result.current.currentQuestion.mode).toBe('score');
         }
+      });
+    });
+
+    // getOptimalTargetがnullを返すエッジケース（3個）
+    describe('getOptimalTargetがnullを返す場合のフォールバック', () => {
+      test('remainingScore=1でDEFAULT_TARGETにフォールバック', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'score',
+            startingScore: 501,
+          });
+          result.current.startPractice();
+        });
+
+        // remainingScoreを1に設定（getOptimalTarget(1, 3)はnullを返す）
+        act(() => {
+          useGameStore.setState({
+            remainingScore: 1,
+          });
+        });
+
+        // Act: 問題を生成
+        act(() => {
+          result.current.generateQuestion();
+        });
+
+        // Assert: DEFAULT_TARGETが使用される（エラーが発生しない）
+        expect(result.current.currentQuestion).not.toBeNull();
+        // 3投モードの場合、generateQuestion直後はdisplayedDartsは空
+        expect(result.current.displayedDarts).toHaveLength(0);
+      });
+
+      test('remainingScore=0でDEFAULT_TARGETにフォールバック', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'score',
+            startingScore: 501,
+          });
+          result.current.startPractice();
+        });
+
+        // remainingScoreを0に設定（getOptimalTarget(0, 3)はnullを返す）
+        act(() => {
+          useGameStore.setState({
+            remainingScore: 0,
+          });
+        });
+
+        // Act: 問題を生成
+        act(() => {
+          result.current.generateQuestion();
+        });
+
+        // Assert: DEFAULT_TARGETが使用される（エラーが発生しない）
+        expect(result.current.currentQuestion).not.toBeNull();
+        // 3投モードの場合、generateQuestion直後はdisplayedDartsは空
+        expect(result.current.displayedDarts).toHaveLength(0);
+      });
+
+      test('throwsRemaining=1でフィニッシュ不可能な点数（163点）の場合', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+          });
+          result.current.startPractice();
+        });
+
+        // remainingScoreを163に設定（getOptimalTarget(163, 1)はnullを返す）
+        act(() => {
+          useGameStore.setState({
+            remainingScore: 163,
+          });
+        });
+
+        // Act: 問題を生成
+        act(() => {
+          result.current.generateQuestion();
+        });
+
+        // Assert: DEFAULT_TARGETが使用される（エラーが発生しない）
+        expect(result.current.currentQuestion).not.toBeNull();
+        expect(result.current.displayedDarts).toHaveLength(1);
       });
     });
 

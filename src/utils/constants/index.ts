@@ -17,6 +17,11 @@ export { DEFAULT_TARGET } from './defaultTargets.js';
 export { DIFFICULTY_PRESETS } from './difficultyPresets.js';
 export { FEEDBACK_ICONS } from './feedbackIcons.js';
 export { ONE_DART_FINISHABLE } from './finishableScores.js';
+export {
+  IMPOSSIBLE_FINISH_SCORE,
+  MIN_FINISHABLE_SCORE,
+  MIN_SCORE,
+} from './gameRules.js';
 export { LEGEND_LAYOUT, LEGEND_TEXT_SIZE } from './legendLayout.js';
 export { SEGMENT_ANGLE } from './segmentAngle.js';
 export { SEGMENT_NUMBER_TEXT_SIZE } from './segmentNumberTextSize.js';

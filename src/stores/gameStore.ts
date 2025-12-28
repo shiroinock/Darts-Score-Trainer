@@ -18,7 +18,7 @@ import type {
   Target,
   ThrowResult,
 } from '../types';
-import { DEFAULT_TARGET, STORAGE_KEY } from '../utils/constants/index.js';
+import { DEFAULT_TARGET, MIN_SCORE, STORAGE_KEY } from '../utils/constants/index.js';
 import { getOptimalTarget } from '../utils/dartStrategy/getOptimalTarget.js';
 import { checkBust, isGameFinished } from '../utils/gameLogic/index.js';
 import { executeThrow } from '../utils/throwSimulator/index.js';
@@ -323,7 +323,7 @@ export const useGameStore = create<GameStore>()(
             throws.push(throwResult);
 
             // シミュレーション用の残り点数を更新（次の投擲のターゲット決定用）
-            currentRemaining = Math.max(0, currentRemaining - throwResult.score);
+            currentRemaining = Math.max(MIN_SCORE, currentRemaining - throwResult.score);
           }
 
           // 得点の合計を計算
