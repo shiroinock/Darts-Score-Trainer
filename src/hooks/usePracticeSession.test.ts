@@ -57,7 +57,7 @@ describe('usePracticeSession', () => {
           throwUnit: 1,
           questionType: 'score',
           judgmentTiming: 'independent',
-          startingScore: null,
+          startingScore: 501,
           target: { type: 'TRIPLE', number: 20, label: 'T20' },
           stdDevMM: 15,
           isPreset: true,

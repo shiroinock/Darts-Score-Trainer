@@ -24,7 +24,7 @@ const createMockState = (overrides?: Partial<MockState>): MockState => ({
     throwUnit: 1,
     questionType: 'score',
     judgmentTiming: 'independent',
-    startingScore: null,
+    startingScore: 501,
     stdDevMM: 15,
     isPreset: true,
   },
@@ -166,7 +166,7 @@ describe('SettingsPanel', () => {
         throwUnit: 3,
         questionType: 'score', // プリセット定義に合わせて修正
         judgmentTiming: 'independent',
-        startingScore: null,
+        startingScore: 501,
         stdDevMM: 15,
         isPreset: true,
       };
@@ -247,7 +247,7 @@ describe('SettingsPanel', () => {
         throwUnit: 1,
         questionType: 'score',
         judgmentTiming: 'independent',
-        startingScore: null,
+        startingScore: 501,
         stdDevMM: 25, // カスタム難易度にしてどのプリセットとも一致しないようにする
         isPreset: false,
       };
@@ -268,7 +268,7 @@ describe('SettingsPanel', () => {
         throwUnit: 1,
         questionType: 'score',
         judgmentTiming: 'independent',
-        startingScore: null,
+        startingScore: 501,
         stdDevMM: 30, // 異なる難易度
         isPreset: false,
       };
@@ -671,7 +671,7 @@ describe('SettingsPanel', () => {
         throwUnit: 3,
         questionType: 'score',
         judgmentTiming: 'independent',
-        startingScore: null,
+        startingScore: 501,
         stdDevMM: 25,
         isPreset: false,
       };
@@ -720,7 +720,7 @@ describe('SettingsPanel', () => {
         throwUnit: 1,
         questionType: 'score',
         judgmentTiming: 'independent',
-        startingScore: null,
+        startingScore: 501,
         stdDevMM: 15,
         isPreset: false, // カスタム設定フラグ
       };
@@ -741,7 +741,7 @@ describe('SettingsPanel', () => {
         throwUnit: 1,
         questionType: 'score',
         judgmentTiming: 'independent',
-        startingScore: null,
+        startingScore: 501,
         stdDevMM: 15,
         isPreset: false, // カスタム設定フラグ
       };
@@ -919,7 +919,7 @@ describe('SettingsPanel', () => {
         throwUnit: 1,
         questionType: 'score',
         judgmentTiming: 'independent',
-        startingScore: null,
+        startingScore: 501,
         stdDevMM: 15,
         isPreset: true,
       };
@@ -941,7 +941,7 @@ describe('SettingsPanel', () => {
         throwUnit: 3, // 異なる値
         questionType: 'score',
         judgmentTiming: 'independent',
-        startingScore: null,
+        startingScore: 501,
         stdDevMM: 25, // カスタム難易度にしてどのプリセットとも一致しないようにする
         isPreset: false,
       };
@@ -962,7 +962,7 @@ describe('SettingsPanel', () => {
         throwUnit: 1,
         questionType: 'remaining', // 異なる値
         judgmentTiming: 'independent',
-        startingScore: null,
+        startingScore: 501,
         stdDevMM: 15,
         isPreset: false,
       };
@@ -982,7 +982,7 @@ describe('SettingsPanel', () => {
         throwUnit: 1,
         questionType: 'score',
         judgmentTiming: 'cumulative', // 異なる値
-        startingScore: null,
+        startingScore: 501,
         stdDevMM: 15,
         isPreset: false,
       };
@@ -1022,7 +1022,7 @@ describe('SettingsPanel', () => {
         throwUnit: 1,
         questionType: 'score',
         judgmentTiming: 'independent',
-        startingScore: null,
+        startingScore: 501,
         stdDevMM: 30, // 異なる値
         isPreset: false,
       };

@@ -238,20 +238,25 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
   - 実装ファイル: `src/utils/dartStrategy/getOptimalTarget.ts`
   - テストファイル: `src/utils/dartStrategy/getOptimalTarget.test.ts`
   - 定数ファイル: `src/utils/constants/checkoutTable.ts`, `src/utils/constants/finishableScores.ts`, `src/utils/constants/defaultTargets.ts`
-- [ ] ターゲット対応表の定義 (`src/utils/dartStrategy/targetLookupTable.ts`)
+- [x] ターゲット対応表の定義 (`src/utils/constants/checkoutTable.ts`)
   - 残り2-170点の範囲で一般的なダーツセオリーに基づく対応表
   - 参考: PDC推奨チェックアウト表
-- [ ] `PracticeConfig`型からtargetフィールドを削除
-  - または `target?: Target` にしてオプショナル化
-  - デフォルトは自動選択、手動選択も可能にする
-- [ ] `TargetSelector`コンポーネントの非表示化
-  - 残り点数モード（startingScore != null）の場合は非表示
-  - 得点モードの場合は表示（T20固定練習など）
-- [ ] `SettingsPanel`のサマリー表示調整
-  - ターゲット項目を条件付き表示に変更
-- [ ] `gameStore.generateQuestion()`の修正
-  - 残り点数から動的にターゲット決定
-  - `config.target || getOptimalTarget(remainingScore, throwsRemaining)`
+  - 実装完了: `CHECKOUT_TABLE` として実装済み
+- [x] `PracticeConfig`型からtargetフィールドをオプショナル化
+  - `target?: Target` として実装済み
+  - デフォルトは自動選択、手動選択も可能
+- [x] `TargetSelector`コンポーネントの実装
+  - コンポーネント実装完了 (`src/components/Settings/TargetSelector.tsx`)
+  - 将来、練習画面でプレイヤー手動選択機能として使用予定
+- [x] 全プリセットに `startingScore` を設定
+  - basic, player プリセットを `startingScore: 501` に修正
+  - 全モードで常に開始点数を持つ設計に統一
+- [x] `PracticeConfig.startingScore` を必須化
+  - 型を `number | null` → `number` に変更
+- [x] `gameStore.generateQuestion()` の修正
+  - 残り点数から動的にターゲット決定を実装
+  - `config.target ?? getOptimalTarget(remainingScore, throwsRemaining) ?? T20`
+  - 手動選択 > 自動選択 > デフォルト の優先順位
 
 #### 長期実装（AI戦略サジェスト）※将来のTODOセクション参照
 - [ ] 実力（stdDevMM）を考慮した成功確率計算
@@ -511,14 +516,14 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | 1 | 39 | 39 | 100% |
 | 2 | 12 | 12 | 100% |
 | 3 | 28 | 31 | 111% |
-| 4 | 13 | 7 | 54% |
+| 4 | 13 | 13 | 100% |
 | 5 | 23 | 23 | 100% |
 | 6 | 22 | 0 | 0% |
 | 7 | 9 | 0 | 0% |
 | 8 | 10 | 0 | 0% |
 | 9 | 15 | 0 | 0% |
 | 10 | 6 | 0 | 0% |
-| **合計** | **188** | **123** | **65%** |
+| **合計** | **188** | **129** | **69%** |
 
 ### Phase 2 実装方針変更の詳細
 

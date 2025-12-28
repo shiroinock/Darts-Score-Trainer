@@ -87,11 +87,11 @@ describe('データ型の保持', () => {
     expect(result!.stdDevMM).toBe(15.5);
   });
 
-  test('null値が正しく保存・復元される', () => {
+  test('undefined値が正しく保存・復元される', () => {
     // Arrange
     const config: PracticeConfig = {
       ...mockConfig,
-      startingScore: null,
+      startingScore: 501,
       description: undefined,
       icon: undefined,
     };
@@ -102,7 +102,8 @@ describe('データ型の保持', () => {
 
     // Assert
     expect(result).not.toBeNull();
-    expect(result!.startingScore).toBeNull();
+    expect(result!.description).toBeUndefined();
+    expect(result!.icon).toBeUndefined();
   });
 
   test('boolean型が正しく保存・復元される', () => {

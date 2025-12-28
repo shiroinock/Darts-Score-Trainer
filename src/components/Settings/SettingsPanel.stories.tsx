@@ -247,7 +247,7 @@ export const BeginnerPracticeScenario: Story = {
         throwUnit: 1,
         questionType: 'score',
         judgmentTiming: 'independent',
-        startingScore: null,
+        startingScore: 501,
         stdDevMM: 50,
       },
       {

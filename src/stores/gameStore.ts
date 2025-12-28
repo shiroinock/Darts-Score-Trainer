@@ -18,7 +18,8 @@ import type {
   Target,
   ThrowResult,
 } from '../types';
-import { STORAGE_KEY } from '../utils/constants/index.js';
+import { DEFAULT_TARGET, MIN_SCORE, STORAGE_KEY } from '../utils/constants/index.js';
+import { getOptimalTarget } from '../utils/dartStrategy/getOptimalTarget.js';
 import { checkBust, isGameFinished } from '../utils/gameLogic/index.js';
 import { executeThrow } from '../utils/throwSimulator/index.js';
 import { getDefaultConfig, PRESETS } from './config/presets.js';
@@ -289,14 +290,9 @@ export const useGameStore = create<GameStore>()(
           state.displayedDarts = [];
           state.currentThrowIndex = 0;
 
-          // 残り点数モードの場合、remainingScoreを設定
-          if (state.config.questionType === 'remaining' || state.config.questionType === 'both') {
-            state.remainingScore = state.config.startingScore || 0;
-            state.roundStartScore = state.remainingScore;
-          } else {
-            state.remainingScore = 0;
-            state.roundStartScore = 0;
-          }
+          // startingScoreは必須なので、全モードで設定
+          state.remainingScore = state.config.startingScore;
+          state.roundStartScore = state.remainingScore;
         });
 
         // 最初の問題を生成（set完了後に実行）
@@ -312,12 +308,22 @@ export const useGameStore = create<GameStore>()(
           const throws: ThrowResult[] = [];
 
           // 指定された投擲数分のシミュレーションを実行
+          let currentRemaining = state.remainingScore; // シミュレーション用の残り点数
           for (let i = 0; i < config.throwUnit; i++) {
-            // TODO: Phase 4.3 - 残り点数から最適なターゲットを自動選択
-            // 現在は暫定的にT20をデフォルトターゲットとして使用
-            const target = config.target ?? { type: 'TRIPLE' as const, number: 20, label: 'T20' };
+            // 残り本数を計算
+            const throwsRemaining = config.throwUnit - i;
+
+            // ターゲットを決定: 手動選択 > 自動選択 > デフォルト(T20)
+            const target =
+              config.target ??
+              getOptimalTarget(currentRemaining, throwsRemaining) ??
+              DEFAULT_TARGET;
+
             const throwResult = executeThrow(target, config.stdDevMM);
             throws.push(throwResult);
+
+            // シミュレーション用の残り点数を更新（次の投擲のターゲット決定用）
+            currentRemaining = Math.max(MIN_SCORE, currentRemaining - throwResult.score);
           }
 
           // 得点の合計を計算

@@ -67,7 +67,7 @@ describe('saveSettings', () => {
         throwUnit: 1,
         questionType: 'score',
         judgmentTiming: 'independent',
-        startingScore: null,
+        startingScore: 501,
         target: {
           type: 'SINGLE',
           number: 20,
