@@ -2172,11 +2172,12 @@ describe('gameStore', () => {
       });
     });
 
-    // 'both'モード関連テスト（2個）
+    // 'both'モード関連テスト（3個）
     describe('bothモードのバリデーション', () => {
-      test('bothモード + startingScore: 501 の場合、remainingまたはscoreモードがランダムに選択される', () => {
+      test('bothモード: scoreモードが選択される場合', () => {
         // Arrange
         const { result } = renderHook(() => useGameStore());
+        const mathRandomSpy = vi.spyOn(Math, 'random').mockReturnValue(0.3);
 
         act(() => {
           result.current.setConfig({
@@ -2187,17 +2188,48 @@ describe('gameStore', () => {
           result.current.startPractice();
         });
 
-        // Act: 問題を生成
+        // Act: 問題を生成（Math.random() < 0.5 なので score モードが選択される）
         act(() => {
           result.current.generateQuestion();
         });
 
-        // Assert: modeがscoreまたはremainingである
+        // Assert: scoreモードが選択されている
         expect(result.current.currentQuestion).not.toBeNull();
         if (result.current.currentQuestion) {
-          expect(['score', 'remaining']).toContain(result.current.currentQuestion.mode);
+          expect(result.current.currentQuestion.mode).toBe('score');
           expect(result.current.currentQuestion.correctAnswer).toBeGreaterThanOrEqual(0);
         }
+
+        mathRandomSpy.mockRestore();
+      });
+
+      test('bothモード: remainingモードが選択される場合', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+        const mathRandomSpy = vi.spyOn(Math, 'random').mockReturnValue(0.7);
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'both',
+            startingScore: 501,
+          });
+          result.current.startPractice();
+        });
+
+        // Act: 問題を生成（Math.random() >= 0.5 なので remaining モードが選択される）
+        act(() => {
+          result.current.generateQuestion();
+        });
+
+        // Assert: remainingモードが選択されている
+        expect(result.current.currentQuestion).not.toBeNull();
+        if (result.current.currentQuestion) {
+          expect(result.current.currentQuestion.mode).toBe('remaining');
+          expect(result.current.currentQuestion.correctAnswer).toBeGreaterThanOrEqual(0);
+        }
+
+        mathRandomSpy.mockRestore();
       });
 
       test('bothモード + remainingScore=0 の場合、scoreモードが強制される', () => {

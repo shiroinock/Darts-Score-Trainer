@@ -18,7 +18,7 @@ import type {
   Target,
   ThrowResult,
 } from '../types';
-import { STORAGE_KEY } from '../utils/constants/index.js';
+import { DEFAULT_TARGET, STORAGE_KEY } from '../utils/constants/index.js';
 import { getOptimalTarget } from '../utils/dartStrategy/getOptimalTarget.js';
 import { checkBust, isGameFinished } from '../utils/gameLogic/index.js';
 import { executeThrow } from '../utils/throwSimulator/index.js';
@@ -322,7 +322,7 @@ export const useGameStore = create<GameStore>()(
             const target =
               config.target ??
               getOptimalTarget(currentRemaining, throwsRemaining) ??
-              ({ type: 'TRIPLE' as const, number: 20, label: 'T20' } as Target);
+              DEFAULT_TARGET;
 
             const throwResult = executeThrow(target, config.stdDevMM);
             throws.push(throwResult);
