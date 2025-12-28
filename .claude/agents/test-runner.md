@@ -1,6 +1,7 @@
 ---
 name: test-runner
 description: テスト実行とRed/Green状態判定を行うエージェント。TDDサイクルの状態遷移を管理する。
+allowed-tools: Bash
 model: haiku
 ---
 
