@@ -22,6 +22,7 @@ export {
   MIN_FINISHABLE_SCORE,
   MIN_SCORE,
 } from './gameRules.js';
+export { MAX_INPUT_DIGITS } from './inputValidation.js';
 export { LEGEND_LAYOUT, LEGEND_TEXT_SIZE } from './legendLayout.js';
 export { SEGMENT_ANGLE } from './segmentAngle.js';
 export { SEGMENT_NUMBER_TEXT_SIZE } from './segmentNumberTextSize.js';

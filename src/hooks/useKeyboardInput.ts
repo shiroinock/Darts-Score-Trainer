@@ -8,6 +8,11 @@ export interface KeyboardCallbacks {
   onEnter?: () => void;
   onBackspace?: () => void;
   onEscape?: () => void;
+  /**
+   * キーボード入力を有効にするかどうか
+   * @default true
+   */
+  enabled?: boolean;
 }
 
 /**
@@ -24,19 +29,22 @@ export interface KeyboardCallbacks {
  * - Backspaceキー: onBackspace() を呼び出し
  * - Escapeキー: onEscape() を呼び出し
  * - それ以外のキー: 無視
+ * - enabled が false の場合はイベントリスナーを登録しない（デフォルト: true）
  * - コンポーネントアンマウント時にリスナーを削除
- * - callbacksが更新された場合はリスナーを再登録
+ * - callbacksまたはenabledが更新された場合はリスナーを再登録
  *
  * @example
  * ```tsx
  * function NumberInput() {
  *   const [value, setValue] = useState('');
+ *   const [isActive, setIsActive] = useState(true);
  *
  *   useKeyboardInput({
  *     onDigit: (digit) => setValue(prev => prev + digit),
  *     onBackspace: () => setValue(prev => prev.slice(0, -1)),
  *     onEnter: () => console.log('Submitted:', value),
  *     onEscape: () => setValue(''),
+ *     enabled: isActive, // フォーカス状態に応じて有効/無効を制御
  *   });
  *
  *   return <div>{value}</div>;
@@ -53,6 +61,12 @@ export const useKeyboardInput = (callbacks: KeyboardCallbacks): void => {
   }, [callbacks]);
 
   useEffect(() => {
+    // enabled が false の場合はイベントリスナーを登録しない
+    const enabled = callbacks.enabled ?? true;
+    if (!enabled) {
+      return;
+    }
+
     // キーボードイベントハンドラ
     const handleKeyDown = (event: KeyboardEvent): void => {
       const { key } = event;
@@ -96,5 +110,5 @@ export const useKeyboardInput = (callbacks: KeyboardCallbacks): void => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, []); // 空配列：マウント時のみ登録
+  }, [callbacks.enabled]); // enabled の変更を検知
 };

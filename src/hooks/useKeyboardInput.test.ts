@@ -604,4 +604,102 @@ describe('useKeyboardInput', () => {
       expect(preventDefaultSpy).not.toHaveBeenCalled();
     });
   });
+
+  // ============================================================
+  // enabled オプションの動作確認
+  // ============================================================
+  describe('enabled オプションの動作確認', () => {
+    test('enabled=falseの場合、キーボードイベントが無視される', () => {
+      // Arrange
+      const callbacksWithDisabled: KeyboardCallbacks = {
+        onDigit: vi.fn(),
+        onEnter: vi.fn(),
+        onBackspace: vi.fn(),
+        onEscape: vi.fn(),
+        enabled: false,
+      };
+      renderHook(() => useKeyboardInput(callbacksWithDisabled));
+
+      // Act: 各キーを押してみる
+      act(() => {
+        window.dispatchEvent(new KeyboardEvent('keydown', { key: '5' }));
+        window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+        window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace' }));
+        window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+      });
+
+      // Assert: すべてのコールバックが呼ばれないことを確認
+      expect(callbacksWithDisabled.onDigit).not.toHaveBeenCalled();
+      expect(callbacksWithDisabled.onEnter).not.toHaveBeenCalled();
+      expect(callbacksWithDisabled.onBackspace).not.toHaveBeenCalled();
+      expect(callbacksWithDisabled.onEscape).not.toHaveBeenCalled();
+    });
+
+    test('enabled=trueの場合、キーボードイベントが処理される', () => {
+      // Arrange
+      const callbacksWithEnabled: KeyboardCallbacks = {
+        onDigit: vi.fn(),
+        onEnter: vi.fn(),
+        enabled: true,
+      };
+      renderHook(() => useKeyboardInput(callbacksWithEnabled));
+
+      // Act
+      act(() => {
+        window.dispatchEvent(new KeyboardEvent('keydown', { key: '7' }));
+        window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+      });
+
+      // Assert
+      expect(callbacksWithEnabled.onDigit).toHaveBeenCalledWith(7);
+      expect(callbacksWithEnabled.onEnter).toHaveBeenCalled();
+    });
+
+    test('enabledが未指定（undefined）の場合、デフォルトでtrueとして動作する', () => {
+      // Arrange
+      const callbacksWithoutEnabled: KeyboardCallbacks = {
+        onDigit: vi.fn(),
+      };
+      renderHook(() => useKeyboardInput(callbacksWithoutEnabled));
+
+      // Act
+      act(() => {
+        window.dispatchEvent(new KeyboardEvent('keydown', { key: '3' }));
+      });
+
+      // Assert: enabledが未指定でもイベントが処理される
+      expect(callbacksWithoutEnabled.onDigit).toHaveBeenCalledWith(3);
+    });
+
+    test('enabledをfalse→trueに変更すると、キーボードイベントが再び有効になる', () => {
+      // Arrange
+      const callbacksWithToggle: KeyboardCallbacks = {
+        onDigit: vi.fn(),
+        enabled: false,
+      };
+      const { rerender } = renderHook(({ callbacks }) => useKeyboardInput(callbacks), {
+        initialProps: { callbacks: callbacksWithToggle },
+      });
+
+      // Act 1: enabled=false の状態でキーを押す
+      act(() => {
+        window.dispatchEvent(new KeyboardEvent('keydown', { key: '1' }));
+      });
+
+      // Assert 1: コールバックが呼ばれない
+      expect(callbacksWithToggle.onDigit).not.toHaveBeenCalled();
+
+      // Act 2: enabled=true に変更
+      callbacksWithToggle.enabled = true;
+      rerender({ callbacks: callbacksWithToggle });
+
+      // Act 3: enabled=true の状態でキーを押す
+      act(() => {
+        window.dispatchEvent(new KeyboardEvent('keydown', { key: '2' }));
+      });
+
+      // Assert 2: コールバックが呼ばれる
+      expect(callbacksWithToggle.onDigit).toHaveBeenCalledWith(2);
+    });
+  });
 });
