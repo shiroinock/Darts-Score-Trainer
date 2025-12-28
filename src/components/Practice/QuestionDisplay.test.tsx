@@ -21,7 +21,33 @@ const TEST_CONSTANTS = {
     STARTING_501: 501,
     STARTING_0: 0,
   },
+  // 投擲インデックス
+  THROW_INDEX: {
+    FIRST: 1,
+    SECOND: 2,
+    THIRD: 3,
+  },
 } as const;
+
+/**
+ * テスト用PracticeConfig生成ヘルパー
+ */
+const createMockConfig = (
+  overrides: Partial<import('../../types/PracticeConfig').PracticeConfig> = {}
+): import('../../types/PracticeConfig').PracticeConfig => ({
+  configId: 'preset-basic',
+  configName: '基礎練習',
+  description: '1投ごとに得点を答える基本モード',
+  throwUnit: 1,
+  questionType: 'score',
+  judgmentTiming: 'independent',
+  startingScore: TEST_CONSTANTS.SCORE.STARTING_0,
+  stdDevMM: TEST_CONSTANTS.STD_DEV.DEFAULT,
+  target: undefined,
+  icon: '🎯',
+  isPreset: true,
+  ...overrides,
+});
 
 /**
  * モック問題データ生成ヘルパー
@@ -44,20 +70,8 @@ describe('QuestionDisplay', () => {
     // ストアをリセット
     useGameStore.setState({
       currentQuestion: null,
-      currentThrowIndex: 1,
-      config: {
-        configId: 'preset-basic',
-        configName: '基礎練習',
-        description: '1投ごとに得点を答える基本モード',
-        throwUnit: 1,
-        questionType: 'score',
-        judgmentTiming: 'independent',
-        startingScore: TEST_CONSTANTS.SCORE.STARTING_0,
-        stdDevMM: TEST_CONSTANTS.STD_DEV.DEFAULT,
-        target: undefined,
-        icon: '🎯',
-        isPreset: true,
-      },
+      currentThrowIndex: TEST_CONSTANTS.THROW_INDEX.FIRST,
+      config: createMockConfig(),
     });
   });
 
