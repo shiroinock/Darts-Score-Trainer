@@ -9,6 +9,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import type {
+  BustInfo,
   GameState,
   PracticeConfig,
   Question,
@@ -188,6 +189,56 @@ interface GameStore {
 /**
  * ゲームストアの実装
  */
+
+/**
+ * 投擲結果からバスト判定を実施する
+ * @param throws 投擲結果の配列
+ * @param initialRemainingScore 初期残り点数
+ * @returns バスト情報（バストしていない場合はundefined）
+ */
+function checkBustFromThrows(
+  throws: ThrowResult[],
+  initialRemainingScore: number
+): BustInfo | undefined {
+  let currentRemaining = initialRemainingScore;
+
+  for (const throwResult of throws) {
+    const isDouble = throwResult.ring === 'DOUBLE' || throwResult.ring === 'INNER_BULL';
+    const checkResult = checkBust(currentRemaining, throwResult.score, isDouble);
+
+    // バストが発生した場合、その時点で判定を返す
+    if (checkResult.isBust) {
+      return checkResult;
+    }
+
+    // バストでなければ残り点数を更新して次の投擲へ
+    currentRemaining -= throwResult.score;
+  }
+
+  return undefined;
+}
+
+function calculateBustInfo(state: GameStore): BustInfo | undefined {
+  const { currentQuestion, remainingScore, config } = state;
+
+  // currentQuestionがない場合は何もしない
+  if (!currentQuestion) return undefined;
+
+  // 既にbustInfoが設定されている場合は何もしない
+  if (currentQuestion.bustInfo !== undefined) return undefined;
+
+  // remainingモードでない場合は何もしない
+  if (currentQuestion.mode !== 'remaining') return undefined;
+
+  // scoreモードの場合は何もしない
+  if (config.questionType === 'score') return undefined;
+
+  // startingScoreがある場合はそれを使用、ない場合はremainingScoreを使用
+  const initialRemaining = currentQuestion.startingScore ?? remainingScore;
+
+  return checkBustFromThrows(currentQuestion.throws, initialRemaining);
+}
+
 export const useGameStore = create<GameStore>()(
   persist(
     immer((set, get) => ({
@@ -337,12 +388,19 @@ export const useGameStore = create<GameStore>()(
             state.remainingScore
           );
 
+          // remainingモードでのみバスト判定を実施
+          const bustInfo =
+            mode === 'remaining' && config.questionType !== 'score'
+              ? checkBustFromThrows(throws, state.remainingScore)
+              : undefined;
+
           state.currentQuestion = {
             mode,
             throws,
             correctAnswer,
             questionText,
             startingScore: mode === 'remaining' ? state.remainingScore : undefined,
+            bustInfo,
           };
 
           // 1投モードの場合は即座にdisplayedDartsに追加
@@ -617,3 +675,16 @@ export const useGameStore = create<GameStore>()(
     }
   )
 );
+
+// state変更を監視してbustInfoを自動計算・設定する
+useGameStore.subscribe((state) => {
+  const bustInfo = calculateBustInfo(state);
+  if (bustInfo !== undefined && state.currentQuestion) {
+    // bustInfoを設定（immerミドルウェアがあるため、直接変更可能）
+    useGameStore.setState((draft) => {
+      if (draft.currentQuestion) {
+        draft.currentQuestion.bustInfo = bustInfo;
+      }
+    });
+  }
+});

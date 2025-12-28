@@ -794,6 +794,33 @@ TDD サイクルで新しい関数のテストを実行する際、既存の関�
 
 この形式により、TDD サイクルのどの段階にいるかが明確になり、どの関数に焦点を当てるべきかが一目でわかります。
 
+### 新規機能追加時のレポート
+
+既存ファイルに新しい機能（例：バスト判定）を追加する場合：
+
+```markdown
+### 失敗したテスト（バスト判定機能関連）
+
+新規追加された7つのバスト判定テストがすべて失敗しています：
+
+1. **オーバー判定: remainingScore < throwScore**
+   - Error: expected undefined to be defined
+   - Location: Line 2097
+
+2. **1点残し判定: remainingScore - throwScore === 1**
+   - Error: expected undefined to be defined
+   - Location: Line 2189
+
+[以下、失敗テストを分類して記載]
+
+### 分析
+
+- 既存のテスト（129個）はすべて成功
+- 新規追加されたバスト判定関連テスト（7個）のみが失敗
+- bustInfo プロパティがまだ実装されていないため、すべて undefined を返している
+- これは RED フェーズとして正しい状態です
+```
+
 ## ダミーアサーションパターンの認識
 
 ### テスト実装時のダミーアサーション
@@ -1068,3 +1095,73 @@ Error: Failed to resolve import "./presets" from "src/utils/presets.test.ts". Di
    実装ファイルが存在しないため、テストを実行できません。
    これは RED フェーズの正常な状態です。
    ```
+
+## TypeScript 型チェックエラーの特別な扱い
+
+### TypeScript 型エラーと Vitest 実行の違い
+
+TypeScript の型チェックエラーと Vitest のテスト実行結果が異なる場合があります：
+
+1. **現象の理解**
+   - **Vitest**: 実行時の動作をテスト（型エラーがあってもコードは実行可能）
+   - **TypeScript**: 静的な型チェック（コンパイル時エラー）
+   - 例: 存在しないプロパティへのアクセスは、Vitest では `undefined` を返すが、TypeScript では型エラー
+
+2. **RED_EXPECTED での判定**
+   ```markdown
+   ### 実行状況
+   
+   **npm test**（Vitest）での実行結果：
+   ```
+   ✓ src/types/Question.test.ts (15 tests) 3ms
+   Test Files: 1 passed (1)
+   Tests: 15 passed (15)
+   ```
+   
+   **TypeScript 型チェック**（npx tsc --noEmit）での結果：
+   ```
+   error TS2339: Property 'bustInfo' does not exist on type 'Question'
+   ```
+   
+   ### 分析
+   
+   この状況は矛盾しているように見えますが、実は**Vitest と TypeScript の型チェックの違い**を示しています：
+   
+   1. **Vitest テスト実行**: ✅ 成功（15 tests）
+      - Vitest は実際にコードを実行し、オブジェクトのプロパティアクセスをテストします
+      - `question.bustInfo` にアクセスしても、実装では単に `undefined` が返されるため失敗しません
+   
+   2. **TypeScript 型チェック**: ❌ 失敗（30+ エラー）
+      - TypeScript は型定義に基づいて静的な型チェックを行います
+      - `Question` 型に `bustInfo` フィールドが定義されていないため、型エラーが発生します
+   
+   ### 状態判定
+   
+   **期待する状態**: RED_EXPECTED
+   **実際の状態**: RED（TypeScript 型チェックエラー）
+   **判定**: ✅ **SUCCESS** - RED フェーズとして正しい状態
+   ```
+
+3. **型安全性テストの識別**
+   - テストファイルのコメントで「型エラー」「TypeScript エラー」に言及
+   - 実装前の型定義不足を RED フェーズの指標とするテスト
+   - プロパティアクセスが `undefined` を期待するパターン
+
+4. **レポート時の推奨事項**
+   - TypeScript 型チェックを実行した場合は、その結果も含める
+   - Vitest と TypeScript の結果が異なる理由を明確に説明
+   - 型安全性のテストであることを強調
+
+### TypeScript 型チェックコマンド
+
+親エージェントから TypeScript の型チェックを含めるよう指示された場合：
+
+```bash
+# テストファイルの型チェックのみ
+npx tsc --noEmit src/types/Question.test.ts
+
+# プロジェクト全体の型チェック（推奨しない - 範囲が広すぎる）
+npx tsc --noEmit
+```
+
+注意: 型チェックは対象ファイルに限定し、プロジェクト全体の型エラーに惑わされないようにしてください。

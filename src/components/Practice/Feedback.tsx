@@ -55,6 +55,24 @@ function formatScoreDetails(throws: ThrowResult[]): string {
 }
 
 /**
+ * バスト理由から表示メッセージを生成する
+ * @param reason - バスト理由
+ * @returns バスト理由の説明文
+ */
+function getBustReasonMessage(
+  reason: 'over' | 'finish_impossible' | 'double_out_required'
+): string {
+  switch (reason) {
+    case 'over':
+      return '残り点数を超えています';
+    case 'finish_impossible':
+      return '残り1点では上がれません';
+    case 'double_out_required':
+      return 'ダブルで上がる必要があります';
+  }
+}
+
+/**
  * フィードバック表示コンポーネントのプロパティ
  */
 interface FeedbackProps {
@@ -137,6 +155,21 @@ export function Feedback({ userAnswer, isCorrect }: FeedbackProps): JSX.Element 
         <div className="feedback__streak">
           <span className="feedback__streak-icon">🔥</span>
           <span className="feedback__streak-text">{stats.currentStreak}回連続正解！</span>
+        </div>
+      )}
+
+      {/* バスト表示 */}
+      {currentQuestion.bustInfo?.isBust && currentQuestion.bustInfo.reason && (
+        <div className="feedback__bust">
+          <div className="feedback__bust-icon" aria-hidden="true">
+            ⚠️
+          </div>
+          <div className="feedback__bust-content">
+            <div className="feedback__bust-title">バスト！</div>
+            <div className="feedback__bust-message">
+              {getBustReasonMessage(currentQuestion.bustInfo.reason)}
+            </div>
+          </div>
         </div>
       )}
 

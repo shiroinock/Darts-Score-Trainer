@@ -1385,6 +1385,43 @@ h1 {
   color: #e67e00;
 }
 
+/* バスト表示 */
+.feedback__bust {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #fff3e6 0%, #ffe6e6 100%);
+  border: 2px solid #ff9800;
+  border-radius: 12px;
+  margin-top: 1rem;
+}
+
+.feedback__bust-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.feedback__bust-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.feedback__bust-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #d84315;
+}
+
+.feedback__bust-message {
+  font-size: 1.125rem;
+  color: #666;
+  line-height: 1.5;
+}
+
 /* 次へボタン */
 .feedback__next-button {
   width: 100%;
@@ -1486,6 +1523,23 @@ h1 {
   }
 
   .feedback__streak-text {
+    font-size: 1rem;
+  }
+
+  .feedback__bust {
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+
+  .feedback__bust-icon {
+    font-size: 2rem;
+  }
+
+  .feedback__bust-title {
+    font-size: 1.25rem;
+  }
+
+  .feedback__bust-message {
     font-size: 1rem;
   }
 
