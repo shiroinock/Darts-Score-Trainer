@@ -1,0 +1,323 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Feedback > スナップショットテスト > 3投の場合のスコア詳細表示の見た目が一致する 1`] = `
+<div>
+  <section
+    aria-label="フィードバック"
+    class="feedback"
+  >
+    <div
+      class="feedback__result feedback__result--correct"
+    >
+      <div
+        aria-hidden="true"
+        class="feedback__icon"
+      >
+        ✓
+      </div>
+      <div
+        class="feedback__text"
+      >
+        正解
+      </div>
+    </div>
+    <div
+      class="feedback__answer-section"
+    >
+      <dl
+        class="feedback__answer-item"
+      >
+        <dt
+          class="feedback__answer-label"
+        >
+          正解
+        </dt>
+        <dd
+          class="feedback__answer-value"
+        >
+          160
+        </dd>
+      </dl>
+    </div>
+    <div
+      class="feedback__score-details"
+    >
+      <p
+        class="feedback__score-details-text"
+      >
+        T20 (60点) + D20 (40点) + T20 (60点) = 160点
+      </p>
+    </div>
+    <button
+      aria-label="Next Question"
+      class="feedback__next-button"
+      type="button"
+    >
+      次へ
+    </button>
+  </section>
+</div>
+`;
+
+exports[`Feedback > スナップショットテスト > ゲームクリア時の見た目が一致する 1`] = `
+<div>
+  <section
+    aria-label="フィードバック"
+    class="feedback"
+  >
+    <div
+      class="feedback__game-clear"
+    >
+      <div
+        class="feedback__game-clear-icon"
+      >
+        🎉
+      </div>
+      <h2
+        class="feedback__game-clear-title"
+      >
+        ゲームクリア！
+      </h2>
+      <p
+        class="feedback__game-clear-text"
+      >
+        おめでとうございます！
+      </p>
+    </div>
+    <div
+      class="feedback__result feedback__result--correct"
+    >
+      <div
+        aria-hidden="true"
+        class="feedback__icon"
+      >
+        ✓
+      </div>
+      <div
+        class="feedback__text"
+      >
+        正解
+      </div>
+    </div>
+    <div
+      class="feedback__answer-section"
+    >
+      <dl
+        class="feedback__answer-item"
+      >
+        <dt
+          class="feedback__answer-label"
+        >
+          正解
+        </dt>
+        <dd
+          class="feedback__answer-value"
+        >
+          0
+        </dd>
+      </dl>
+    </div>
+    <div
+      class="feedback__score-details"
+    >
+      <p
+        class="feedback__score-details-text"
+      >
+        T20 → 60点
+      </p>
+    </div>
+  </section>
+</div>
+`;
+
+exports[`Feedback > スナップショットテスト > 不正解時の見た目が一致する 1`] = `
+<div>
+  <section
+    aria-label="フィードバック"
+    class="feedback"
+  >
+    <div
+      class="feedback__result feedback__result--incorrect"
+    >
+      <div
+        aria-hidden="true"
+        class="feedback__icon"
+      >
+        ✗
+      </div>
+      <div
+        class="feedback__text"
+      >
+        不正解
+      </div>
+    </div>
+    <div
+      class="feedback__answer-section"
+    >
+      <dl
+        class="feedback__answer-item"
+      >
+        <dt
+          class="feedback__answer-label"
+        >
+          正解
+        </dt>
+        <dd
+          class="feedback__answer-value"
+        >
+          60
+        </dd>
+      </dl>
+    </div>
+    <div
+      class="feedback__score-details"
+    >
+      <p
+        class="feedback__score-details-text"
+      >
+        T20 → 60点
+      </p>
+    </div>
+    <button
+      aria-label="Next Question"
+      class="feedback__next-button"
+      type="button"
+    >
+      次へ
+    </button>
+  </section>
+</div>
+`;
+
+exports[`Feedback > スナップショットテスト > 正解時（連続正解あり）の見た目が一致する 1`] = `
+<div>
+  <section
+    aria-label="フィードバック"
+    class="feedback"
+  >
+    <div
+      class="feedback__result feedback__result--correct"
+    >
+      <div
+        aria-hidden="true"
+        class="feedback__icon"
+      >
+        ✓
+      </div>
+      <div
+        class="feedback__text"
+      >
+        正解
+      </div>
+    </div>
+    <div
+      class="feedback__answer-section"
+    >
+      <dl
+        class="feedback__answer-item"
+      >
+        <dt
+          class="feedback__answer-label"
+        >
+          正解
+        </dt>
+        <dd
+          class="feedback__answer-value"
+        >
+          60
+        </dd>
+      </dl>
+    </div>
+    <div
+      class="feedback__score-details"
+    >
+      <p
+        class="feedback__score-details-text"
+      >
+        T20 → 60点
+      </p>
+    </div>
+    <div
+      class="feedback__streak"
+    >
+      <span
+        class="feedback__streak-icon"
+      >
+        🔥
+      </span>
+      <span
+        class="feedback__streak-text"
+      >
+        5
+        回連続正解！
+      </span>
+    </div>
+    <button
+      aria-label="Next Question"
+      class="feedback__next-button"
+      type="button"
+    >
+      次へ
+    </button>
+  </section>
+</div>
+`;
+
+exports[`Feedback > スナップショットテスト > 正解時（連続正解なし）の見た目が一致する 1`] = `
+<div>
+  <section
+    aria-label="フィードバック"
+    class="feedback"
+  >
+    <div
+      class="feedback__result feedback__result--correct"
+    >
+      <div
+        aria-hidden="true"
+        class="feedback__icon"
+      >
+        ✓
+      </div>
+      <div
+        class="feedback__text"
+      >
+        正解
+      </div>
+    </div>
+    <div
+      class="feedback__answer-section"
+    >
+      <dl
+        class="feedback__answer-item"
+      >
+        <dt
+          class="feedback__answer-label"
+        >
+          正解
+        </dt>
+        <dd
+          class="feedback__answer-value"
+        >
+          60
+        </dd>
+      </dl>
+    </div>
+    <div
+      class="feedback__score-details"
+    >
+      <p
+        class="feedback__score-details-text"
+      >
+        T20 → 60点
+      </p>
+    </div>
+    <button
+      aria-label="Next Question"
+      class="feedback__next-button"
+      type="button"
+    >
+      次へ
+    </button>
+  </section>
+</div>
+`;
