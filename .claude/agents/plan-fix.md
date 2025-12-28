@@ -539,3 +539,44 @@ const toleranceRatio = 0.1; // 10%の誤差を許容
   }
 }
 ```
+
+##### 型プロパティの欠落問題
+```json
+{
+  "file": "ファイルパス",
+  "line": "行番号",
+  "issue": "必須プロパティの欠落",
+  "fix_instruction": "型定義で必須とされているプロパティを追加。特にモックオブジェクトやテスト用データでは全ての必須プロパティを含める。",
+  "code_example": {
+    "before": "const mockConfig: PracticeConfig = {\n  throwUnit: 3,\n  // 他のプロパティ\n};",
+    "after": "const mockConfig: PracticeConfig = {\n  throwUnit: 3,\n  isPreset: true, // 必須プロパティを追加\n  // 他のプロパティ\n};"
+  }
+}
+```
+
+## 大量の修正項目がある場合の対処
+
+### 修正計画の分割戦略
+1. **同一ファイルの類似問題はグループ化**
+   - 例：createMockState関数で21箇所の `isPreset` 欠落は1つの修正項目として扱う
+   - 修正指示には「関数内の全てのモックオブジェクトに適用」と明記
+
+2. **修正の実装例**
+   ```json
+   {
+     "file": "src/components/Settings/SettingsPanel.test.tsx",
+     "line": "8-27",
+     "issue": "createMockState関数で生成される全てのPracticeConfigオブジェクトで必須プロパティ 'isPreset' が欠落",
+     "fix_instruction": "createMockState関数のpracticeConfigプロパティに 'isPreset: true' を追加。これにより関数を使用する全てのテストケースで問題が解決される。",
+     "code_example": {
+       "before": "practiceConfig: {\n  throwUnit: 3,\n  questionType: 'score',\n  // 他のプロパティ\n}",
+       "after": "practiceConfig: {\n  throwUnit: 3,\n  questionType: 'score',\n  isPreset: true, // 必須プロパティを追加\n  // 他のプロパティ\n}"
+     },
+     "impact": "この修正により、21箇所全てのisPreset欠落エラーが解決される"
+   }
+   ```
+
+3. **出力を確実に完了させるための方針**
+   - 修正項目が多い場合は、最も影響が大きい修正から優先的に記載
+   - 類似問題は1つの修正項目にまとめ、impactフィールドで影響範囲を明記
+   - JSON出力は必ず最後の閉じ括弧まで完全に出力する

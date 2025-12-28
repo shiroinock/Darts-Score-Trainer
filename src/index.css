@@ -684,3 +684,109 @@ h1 {
     width: 100%;
   }
 }
+
+/* ============================================================ */
+/* SettingsPanel Component                                     */
+/* ============================================================ */
+
+.settings-panel {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* 設定サマリー */
+.settings-panel__summary {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  border: 2px solid #4a90e2;
+  border-radius: 8px;
+  background-color: #f0f7ff;
+}
+
+.settings-panel__summary-title {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: #333;
+  font-weight: 600;
+}
+
+.settings-panel__summary-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.settings-panel__summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  border-bottom: 1px solid #d0e7ff;
+}
+
+.settings-panel__summary-item:last-child {
+  border-bottom: none;
+}
+
+.settings-panel__summary-label {
+  font-weight: 600;
+  color: #555;
+}
+
+.settings-panel__summary-value {
+  color: #333;
+}
+
+/* 練習開始ボタン */
+.settings-panel__start-button {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #4a90e2;
+  color: #fff;
+  font-family: inherit;
+  font-size: 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+}
+
+.settings-panel__start-button:hover {
+  background-color: #357ab8;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(74, 144, 226, 0.4);
+}
+
+.settings-panel__start-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(74, 144, 226, 0.3);
+}
+
+/* モバイル: スタック配置 */
+@media (max-width: 640px) {
+  .settings-panel {
+    padding: 0.75rem;
+    gap: 1.5rem;
+  }
+
+  .settings-panel__summary {
+    padding: 1rem;
+  }
+
+  .settings-panel__start-button {
+    font-size: 1.25rem;
+    padding: 1.25rem 1.5rem;
+  }
+}

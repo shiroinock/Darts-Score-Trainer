@@ -30,8 +30,8 @@ export interface PracticeConfig {
   startingScore: number | null;
 
   // ターゲット・難易度
-  /** 狙う位置 */
-  target: Target;
+  /** 狙う位置（オプショナル、残り点数モードでは自動決定） */
+  target?: Target;
   /** 標準偏差（mm単位、散らばりの大きさ） */
   stdDevMM: number;
 

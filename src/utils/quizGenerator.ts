@@ -46,8 +46,12 @@ export function generateQuestion(config: PracticeConfig, remainingScore: number 
     }
   }
 
+  // TODO: Phase 4.3 - 残り点数から最適なターゲットを自動選択
+  // 現在は暫定的にT20をデフォルトターゲットとして使用
+  const target = config.target ?? { type: 'TRIPLE' as const, number: 20, label: 'T20' };
+
   // ターゲット座標を取得
-  const targetCoords = getTargetCoordinates(config.target.type, config.target.number);
+  const targetCoords = getTargetCoordinates(target.type, target.number);
 
   // 投擲結果を生成
   const throws: ThrowResult[] = [];
@@ -64,7 +68,7 @@ export function generateQuestion(config: PracticeConfig, remainingScore: number 
 
     // 投擲結果を追加
     throws.push({
-      target: config.target,
+      target,
       landingPoint,
       score,
       ring,

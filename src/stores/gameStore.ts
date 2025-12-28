@@ -313,7 +313,10 @@ export const useGameStore = create<GameStore>()(
 
           // 指定された投擲数分のシミュレーションを実行
           for (let i = 0; i < config.throwUnit; i++) {
-            const throwResult = executeThrow(config.target, config.stdDevMM);
+            // TODO: Phase 4.3 - 残り点数から最適なターゲットを自動選択
+            // 現在は暫定的にT20をデフォルトターゲットとして使用
+            const target = config.target ?? { type: 'TRIPLE' as const, number: 20, label: 'T20' };
+            const throwResult = executeThrow(target, config.stdDevMM);
             throws.push(throwResult);
           }
 
