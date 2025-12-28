@@ -1096,6 +1096,78 @@ expect(packageJson.devDependencies['simple-git-hooks']).toMatch(/^\^?2\.13\.1$/)
 
 これらのテストにより、設定が正しく機能することを保証できます。
 
+## 追加ガイドライン（2025-12-28 追記 - PracticeScreen.test.tsx の評価に基づく改善）
+
+### React コンポーネントテストにおけるベストプラクティス
+
+PracticeScreen のテストで示された優れた実践を継続してください：
+
+1. **テスト用定数の明確な定義**
+   ```typescript
+   const TEST_CONSTANTS = {
+     SCORE: {
+       STARTING_501: 501,
+       REMAINING_100: 100,
+       THROW_SCORE_60: 60,
+     },
+     TIME: {
+       LIMIT_3_MIN: 3,
+       ELAPSED_180_SEC: 180, // 3分経過
+     },
+     // ...
+   };
+   ```
+   
+   この方法により：
+   - マジックナンバーを排除
+   - テスト全体で一貫した値の使用
+   - 値の意味が明確になる
+
+2. **モックヘルパー関数の作成**
+   ```typescript
+   const createMockThrowT20 = (): ThrowResult => ({
+     target: { type: 'TRIPLE', number: 20, label: 'T20' },
+     landingPoint: { x: 0, y: -103 },
+     score: 60,
+     ring: 'TRIPLE',
+     segmentNumber: 20,
+   });
+   ```
+   
+   複雑なオブジェクトの生成を簡潔にし、テストの可読性を向上させます。
+
+3. **子コンポーネントの適切なモック化**
+   ```typescript
+   vi.mock('../DartBoard/P5Canvas', () => ({
+     P5Canvas: ({ coords, dartCount }: { coords: unknown; dartCount: number }) => (
+       <div data-testid="mock-p5-canvas" data-dart-count={dartCount}>
+         Mock P5Canvas ({dartCount} darts)
+       </div>
+     ),
+   }));
+   ```
+   
+   - テスト対象の境界を明確にする
+   - 必要な props の受け渡しを検証可能にする
+   - data-testid と data-* 属性で検証を容易にする
+
+### フックのモック化に関する注意
+
+複数のカスタムフックを使用するコンポーネントのテストでは：
+
+```typescript
+// フックをモック化（実際のタイマー動作はhook自体のテストで検証）
+vi.mock('../../hooks/useTimer', () => ({
+  useTimer: vi.fn(),
+}));
+
+vi.mock('../../hooks/usePracticeSession', () => ({
+  usePracticeSession: vi.fn(),
+}));
+```
+
+**重要**: コメントで「実際のタイマー動作はhook自体のテストで検証」と明記し、なぜモックを使用するかを説明してください。
+
 ## 追加ガイドライン（2025-12-28 追記 - getOptimalTarget関数のテスト評価に基づく改善）
 
 ### PDC標準チェックアウト表への準拠
