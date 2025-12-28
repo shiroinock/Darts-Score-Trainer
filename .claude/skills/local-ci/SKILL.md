@@ -1,7 +1,6 @@
 ---
 name: local-ci
 description: GitHub Actions CI相当のチェックをローカルで実行。Biome check、テスト、ビルドを並列実行し、全てのチェックが成功したことを確認する。PR作成前の事前チェックに使用。
-allowed-tools: Task
 ---
 
 # Local CI スキル
@@ -36,6 +35,19 @@ GitHub Actions CI相当のチェックをローカルで実行するスキル。
 - 全ての失敗要因を一度に検出できる
 - 複数の問題を同時に修正可能
 - 再実行の回数を削減し、開発効率を向上
+
+### GitHub Actions CI との違い
+
+**含まれていないチェック**:
+- **Security Audit** (`npm audit`, `secretlint`)
+  - **理由**: セキュリティチェックは依存関係の脆弱性を検出するため、コード変更のたびに実行する必要性は低い
+  - **推奨**: セキュリティチェックは GitHub Actions CI で自動実行されます。ローカルで実行したい場合は以下を手動で実行してください：
+    ```bash
+    npm audit --audit-level=moderate
+    npm run secretlint
+    ```
+
+**注意**: local-ci は PR 作成前の基本的な品質チェックに焦点を当てています。包括的なチェック（セキュリティ、依存関係の更新など）は GitHub Actions CI に委ねられます。
 
 ## 実装手順
 
@@ -178,7 +190,7 @@ Fix the issues above and re-run the checks.
 /local-ci
 ```
 
-このコマンドを実行すると、Claudeが上記の手順を順次実行します。
+このコマンドを実行すると、Claudeが上記の手順を実行します（3つのチェックは並列実行されます）。
 
 ## 他のコマンドとの違い
 

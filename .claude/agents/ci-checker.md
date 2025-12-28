@@ -234,19 +234,66 @@ Task({
 
 ### Step 3: 結果の集計
 
+**TaskOutput ツールを使用して各サブエージェントの出力を取得します：**
+
+並列実行されたサブエージェントの出力は、TaskOutput ツールを使用して個別に取得します。これにより、出力の混在を防ぎ、各チェックの結果を明確に分離できます。
+
+```javascript
+// Step 2 で起動した3つのサブエージェントのタスクIDを取得
+const biomeTaskId = "{biome-check のタスクID}";
+const testTaskId = "{test-check のタスクID}";
+const buildTaskId = "{build-check のタスクID}";
+
+// 各サブエージェントの完了を待ち、出力を取得
+const biomeResult = TaskOutput({
+  "task_id": biomeTaskId,
+  "block": true,      // 完了まで待機
+  "timeout": 120000   // 2分
+});
+
+const testResult = TaskOutput({
+  "task_id": testTaskId,
+  "block": true,
+  "timeout": 300000   // 5分
+});
+
+const buildResult = TaskOutput({
+  "task_id": buildTaskId,
+  "block": true,
+  "timeout": 180000   // 3分
+});
+```
+
+**出力のパース**:
+
+各サブエージェントの出力をJSON形式でパースし、構造化されたデータを取得します：
+
+```javascript
+// JSON形式の出力をパース（詳細は「サブエージェント出力フォーマット」セクション参照）
+const biomeData = JSON.parse(biomeResult.output);
+const testData = JSON.parse(testResult.output);
+const buildData = JSON.parse(buildResult.output);
+```
+
+**結果の判定**:
+
 各サブエージェントの結果を確認し、成功・失敗を記録します：
 
 - **Biome check**:
-  - ✅ 成功: `Biome check: ✓`
-  - ❌ 失敗: `Biome check: ✗` + エラー内容
+  - ✅ 成功: `biomeData.status === "PASSED"` → `Biome check: ✓`
+  - ❌ 失敗: `biomeData.status === "FAILED"` → `Biome check: ✗` + エラー内容
 
 - **Test**:
-  - ✅ 成功: `Tests: ✓ (X tests passed)`
-  - ❌ 失敗: `Tests: ✗` + エラー内容
+  - ✅ 成功: `testData.status === "PASSED"` → `Tests: ✓ (${testData.details.tests.total} tests passed)`
+  - ❌ 失敗: `testData.status === "FAILED"` → `Tests: ✗` + エラー内容
 
 - **Build**:
-  - ✅ 成功: `Build: ✓`
-  - ❌ 失敗: `Build: ✗` + エラー内容
+  - ✅ 成功: `buildData.status === "PASSED"` → `Build: ✓`
+  - ❌ 失敗: `buildData.status === "FAILED"` → `Build: ✗` + エラー内容
+
+**出力順序の保証**:
+
+サブエージェントは並列実行されるため完了順序は不定ですが、TaskOutput で取得後に常に **Biome → Test → Build** の順序で表示します。これにより、ユーザーは一貫した形式で結果を確認できます。
 
 ### Step 4: サマリー表示
 
@@ -337,6 +384,87 @@ Fix the issues above and re-run the checks.
    - 各チェックの修正方法を提示
    - ユーザーが全ての問題を同時に修正できるようにする
 
+### JSON パースエラー時の対応（フォールバック機構）
+
+サブエージェント（biome-check、test-check、build-check）は構造化されたJSON形式で出力することが期待されますが、予期しないエラーやモデルの制限により、JSON形式でない出力が返される可能性があります。
+
+**JSONパースエラーの検出**:
+
+```javascript
+let biomeData;
+try {
+  biomeData = JSON.parse(biomeResult.output);
+} catch (error) {
+  // JSON パースエラー: フォールバック処理
+  biomeData = parseFallback(biomeResult.output, "biome");
+}
+```
+
+**フォールバック処理**:
+
+JSON形式でない場合、以下の手順でプレーンテキスト出力を解析します：
+
+1. **ステータスの判定**:
+   - 出力に "PASSED" または "✓" または "success" が含まれる → `status: "PASSED"`
+   - 出力に "FAILED" または "✗" または "error" が含まれる → `status: "FAILED"`
+   - いずれも含まれない → `status: "FAILED"`（安全側に倒す）
+
+2. **エラーメッセージの抽出**:
+   - 出力全体を `errors` 配列の1要素として含める
+   - ファイル名や行番号が含まれている場合、可能な範囲で抽出
+
+3. **警告メッセージの表示**:
+   ```
+   ⚠️  Warning: Subagent output format is invalid (expected JSON)
+   Check: biome-check
+   Falling back to plain text parsing. Result accuracy may be reduced.
+   ```
+
+**フォールバックデータ構造**:
+
+```javascript
+function parseFallback(output, checkType) {
+  // キーワードベースでステータスを判定
+  const isPassed = /PASSED|✓|success/i.test(output);
+  const isFailed = /FAILED|✗|error/i.test(output);
+
+  return {
+    check: checkType,
+    status: isPassed && !isFailed ? "PASSED" : "FAILED",
+    duration: 0,  // 不明
+    summary: {
+      message: isFailed ?
+        `${checkType} check failed (output format error)` :
+        `${checkType} check passed (output format error)`
+    },
+    details: {
+      formatError: true,
+      rawOutput: output.substring(0, 500)  // 最大500文字
+    },
+    errors: isFailed ? [
+      {
+        message: "Unable to parse subagent output. Raw output included in details.",
+        severity: "error"
+      }
+    ] : []
+  };
+}
+```
+
+**推奨される改善策**:
+
+JSONパースエラーが発生した場合、以下の対応を検討してください：
+
+1. サブエージェントのプロンプトを確認し、JSON出力の指示が明確か確認
+2. サブエージェントのモデル（現在: haiku）が適切か確認（必要に応じて sonnet に変更）
+3. エラーログをレポートし、サブエージェントの実装を改善
+
+**リスク軽減**:
+
+- フォールバック処理により、JSONパースエラーが発生しても ci-checker は完全に失敗しません
+- ただし、結果の精度が低下する可能性があるため、ユーザーに警告を表示します
+- フォールバック処理が頻繁に発生する場合、サブエージェントの実装を見直す必要があります
+
 ### 部分的失敗時の再実行方針
 
 修正後は、**全てのチェックを再実行**します（失敗したものだけではなく）。これは以下の理由によります：
@@ -345,9 +473,26 @@ Fix the issues above and re-run the checks.
 2. **一貫性の保証**: 全てのチェックが同じコードベースで実行されることを保証
 3. **並列実行の利点**: 3つのチェックを並列実行するため、再実行コストは最小限
 
+**コスト比較**:
+
+従来の逐次実行と比較して、並列実行は再実行時も効率的です：
+
+| シナリオ | 逐次実行（従来） | 並列実行（現在） | 短縮時間 |
+|----------|------------------|------------------|----------|
+| **Biome のみ失敗** | Biome(10秒) → Test(2分) → Build(1分) = 3分10秒 | 並列実行 = 2分（最も遅い Test） | **-1分10秒** |
+| **Test のみ失敗** | Test(2分) → Biome(10秒) → Build(1分) = 3分10秒 | 並列実行 = 2分 | **-1分10秒** |
+| **Build のみ失敗** | Build(1分) → Biome(10秒) → Test(2分) = 3分10秒 | 並列実行 = 2分 | **-1分10秒** |
+| **複数失敗** | 最大 3分10秒 | 最大 2分 | **-1分10秒** |
+
+**実行時間の計算**:
+- 逐次実行: 各チェックの時間を合計（Biome 10秒 + Test 2分 + Build 1分 = 3分10秒）
+- 並列実行: 最も時間のかかるチェック（Test 2分）が全体の実行時間を決定
+
+**結論**: 並列実行により、どのチェックが失敗しても再実行時間は約**2分**に固定され、逐次実行と比較して**約37%の時間短縮**を実現します。
+
 **例**:
-- Biome checkのみ失敗 → 修正後、Biome、Test、Build の3つ全てを再実行
-- Test と Build が失敗 → 修正後、3つ全てを再実行
+- Biome checkのみ失敗 → 修正後、Biome、Test、Build の3つ全てを並列実行（2分で完了）
+- Test と Build が失敗 → 修正後、3つ全てを並列実行（2分で完了）
 
 ## 並列実行の安全性
 
