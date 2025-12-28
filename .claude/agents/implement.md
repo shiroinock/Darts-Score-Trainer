@@ -137,8 +137,9 @@ export const useStore = create(/* ... */);
    - 例：`preset-selector`, `preset-selector__title`, `preset-button--active`
 
 3. **アクセシビリティ属性**
-   - インタラクティブ要素には適切なARIA属性を追加
-   - 例：`aria-pressed`, `aria-hidden`, `title`属性でツールチップ
+   - インタラクティブ要素や特定のランドマーク要素に必要な場合のみARIA属性を追加
+   - `aria-label`は一般的なコンテナ要素（`div`, `section`など）には付与しない
+   - 例：`button`要素の`aria-pressed`、`nav`要素の`aria-label`、`title`属性でツールチップ
 
 4. **開発サーバーの起動確認**
    - 実装完了時に`npm run dev`を実行し、開発サーバーが正常に起動することを確認
@@ -391,13 +392,47 @@ function helperFunction(): void {
 4. **ヘルパー関数**（JSDocコメント付き）
 5. **メインコンポーネント**（JSDocコメント付き）
 
-### アクセシビリティ属性の必須化
+## Feedbackコンポーネント実装時の重要事項
 
-インタラクティブ要素には以下を必ず含める：
+### 要件の完全性チェック
 
-- ボタン: `type="button"` と `aria-label`（テキストが不十分な場合）
-- フォーム要素: 適切な `label` または `aria-label`
+Feedbackコンポーネントのような多機能コンポーネントを実装する際は、以下を徹底してください：
+
+1. **TODOの要件を一つずつチェック**
+   - すべての要件項目を実装前に確認
+   - 実装後、要件ごとに実装されているかチェックリスト形式で確認
+
+2. **Props定義と実装の一致**
+   - インターフェースで定義したPropsはすべて使用する
+   - 使用しないPropsは定義から削除する
+   - 例: `userAnswer` propを定義したなら、必ず表示に使用する
+
+3. **具体的な要件の例（Feedbackコンポーネント）**
+   ```typescript
+   // ✅ 正しい実装: userAnswerを受け取って表示
+   export function Feedback({ userAnswer, isCorrect }: FeedbackProps): JSX.Element {
+     // ... 中略 ...
+     
+     {/* ユーザーの回答表示 */}
+     <dl className="feedback__answer-item">
+       <dt className="feedback__answer-label">あなたの回答</dt>
+       <dd className="feedback__answer-value">{userAnswer}</dd>
+     </dl>
+   ```
+
+4. **バスト表示の実装**
+   - BustInfo型を使用してバスト情報を表示
+   - currentQuestionのbustInfoフィールドをチェック
+   - バスト時には特別な表示を行う
+
+### アクセシビリティ属性の適切な使用
+
+インタラクティブ要素には必要に応じて以下を含める：
+
+- ボタン: `type="button"` と、テキストが不明確な場合のみ`aria-label`（例：アイコンのみのボタン）
+- フォーム要素: 適切な `label` 要素または、不可能な場合のみ`aria-label`
 - 状態を持つ要素: `aria-pressed`、`aria-expanded` など
+- **注意**: 一般的なコンテナ要素（`div`, `section`, `span`など）には`aria-label`を付与しない
 
 ### オプショナルチェイニングとNullish Coalescingの活用
 

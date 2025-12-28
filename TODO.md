@@ -333,14 +333,14 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] タッチフレンドリーなサイズ
 
 ### 6.4 フィードバック (`src/components/Practice/Feedback.tsx`)
-- [ ] 正解/不正解表示（✓/✗ アイコン + テキスト）
-- [ ] ユーザーの回答表示
-- [ ] 正解表示
-- [ ] スコアラベル表示（例: T20 → 60点）
-- [ ] 連続正解数表示（正解時）
-- [ ] バスト表示
-- [ ] 「次へ」ボタン
-- [ ] ゲームクリア表示（0点到達時）
+- [x] 正解/不正解表示（✓/✗ アイコン + テキスト）
+- [x] ユーザーの回答表示
+- [x] 正解表示
+- [x] スコアラベル表示（例: T20 → 60点）
+- [x] 連続正解数表示（正解時）
+- [ ] バスト表示（別PR #68で実装予定）
+- [x] 「次へ」ボタン
+- [x] ゲームクリア表示（0点到達時）
 
 ### 6.5 練習画面統合 (`src/components/Practice/PracticeScreen.tsx`)
 - [ ] StatsBar配置
@@ -453,7 +453,50 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 
 ## 将来のTODO（MVP後）
 
-### 機能追加
+### 機能追加（優先度：高）
+
+#### バスト表示機能の完全実装（PR #68で対応予定）
+Phase 6.4のフィードバックコンポーネントに、バスト表示機能を追加します。
+
+**背景**:
+- PR #67でuserAnswer表示は実装済み
+- バスト表示はQuestion型とgameStoreの大幅な変更が必要なため別PRで対応
+
+**実装内容**:
+
+1. **Question型の拡張** (`src/types/Question.ts`)
+   - [ ] `bustInfo?: BustInfo` フィールドを追加
+   - [ ] 型テストの作成（型の整合性確認）
+
+2. **gameStoreの修正** (`src/stores/gameStore.ts`)
+   - [ ] `generateQuestion()`でバスト判定を実施
+   - [ ] バスト発生時に`bustInfo`を問題に含める
+   - [ ] バストの理由（over, finish_impossible, double_out_required）を設定
+   - [ ] テスト作成: バスト発生時にbustInfoが設定されることを検証
+   - [ ] テスト作成: バストの理由が正しく判定されることを検証
+
+3. **Feedbackコンポーネントの拡張** (`src/components/Practice/Feedback.tsx`)
+   - [ ] `currentQuestion.bustInfo`を確認
+   - [ ] バスト時の表示を追加（警告アイコン、理由の説明）
+   - [ ] CSSスタイル追加（`.feedback__bust`）
+   - [ ] テスト作成: バスト表示のセマンティックテスト
+   - [ ] テスト作成: スナップショットテスト
+
+**UI仕様**:
+```
+⚠️ バスト！
+[理由に応じたメッセージ]
+- over: 残り点数を超えています
+- finish_impossible: 残り1点では上がれません
+- double_out_required: ダブルで上がる必要があります
+```
+
+**TDDアプローチ**:
+- Phase 1 (Question型): test-first, unit
+- Phase 2 (gameStore): test-first, store
+- Phase 3 (Feedback UI): test-later, component
+
+### 機能追加（優先度：中）
 - [ ] ストレートアウト（シングルアウト）オプション
 - [ ] インナーシングル狙い位置オプション
 - [ ] 統計履歴の長期保存
@@ -518,12 +561,12 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 | 3 | 28 | 31 | 111% |
 | 4 | 13 | 13 | 100% |
 | 5 | 23 | 23 | 100% |
-| 6 | 22 | 5 | 23% |
+| 6 | 22 | 12 | 55% |
 | 7 | 9 | 0 | 0% |
 | 8 | 10 | 0 | 0% |
 | 9 | 15 | 0 | 0% |
 | 10 | 6 | 0 | 0% |
-| **合計** | **188** | **134** | **71%** |
+| **合計** | **188** | **141** | **75%** |
 
 ### Phase 2 実装方針変更の詳細
 
