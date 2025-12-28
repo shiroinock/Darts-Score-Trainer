@@ -20,6 +20,11 @@
   --spacing-bust-gap: 1rem;
   --spacing-bust-gap-mobile: 0.75rem;
   --spacing-bust-content-gap: 0.5rem;
+  --spacing-bust-margin-top: 1rem;
+
+  /* バスト表示のボーダー */
+  --border-bust-width: 2px;
+  --border-bust-radius: 12px;
 }
 
 * {
@@ -1416,9 +1421,9 @@ h1 {
   gap: var(--spacing-bust-gap);
   padding: var(--spacing-bust-padding);
   background: linear-gradient(135deg, var(--color-bust-bg-start) 0%, var(--color-bust-bg-end) 100%);
-  border: 2px solid var(--color-bust-border);
-  border-radius: 12px;
-  margin-top: 1rem;
+  border: var(--border-bust-width) solid var(--color-bust-border);
+  border-radius: var(--border-bust-radius);
+  margin-top: var(--spacing-bust-margin-top);
 }
 
 .feedback__bust-icon {

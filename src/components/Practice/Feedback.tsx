@@ -160,7 +160,7 @@ export function Feedback({ userAnswer, isCorrect }: FeedbackProps): JSX.Element 
 
       {/* バスト表示 */}
       {currentQuestion.bustInfo?.isBust && currentQuestion.bustInfo.reason && (
-        <div className="feedback__bust">
+        <div className="feedback__bust" role="alert" aria-live="polite">
           <div className="feedback__bust-icon" aria-hidden="true">
             ⚠️
           </div>

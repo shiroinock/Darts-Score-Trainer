@@ -36,4 +36,8 @@ describe('isDoubleRing', () => {
   it('null の場合はfalseを返す', () => {
     expect(isDoubleRing(null)).toBe(false);
   });
+
+  it('undefined の場合はfalseを返す', () => {
+    expect(isDoubleRing(undefined)).toBe(false);
+  });
 });

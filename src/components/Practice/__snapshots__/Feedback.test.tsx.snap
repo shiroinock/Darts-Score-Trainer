@@ -154,30 +154,6 @@ exports[`Feedback > スナップショットテスト > ゲームクリア時の
         T20 → 60点
       </p>
     </div>
-    <div
-      class="feedback__bust"
-    >
-      <div
-        aria-hidden="true"
-        class="feedback__bust-icon"
-      >
-        ⚠️
-      </div>
-      <div
-        class="feedback__bust-content"
-      >
-        <div
-          class="feedback__bust-title"
-        >
-          バスト！
-        </div>
-        <div
-          class="feedback__bust-message"
-        >
-          残り点数を超えています
-        </div>
-      </div>
-    </div>
   </section>
 </div>
 `;
@@ -245,7 +221,9 @@ exports[`Feedback > スナップショットテスト > バスト（ダブルア
       </p>
     </div>
     <div
+      aria-live="polite"
       class="feedback__bust"
+      role="alert"
     >
       <div
         aria-hidden="true"
@@ -342,7 +320,9 @@ exports[`Feedback > スナップショットテスト > バスト（残り1点�
       </p>
     </div>
     <div
+      aria-live="polite"
       class="feedback__bust"
+      role="alert"
     >
       <div
         aria-hidden="true"
@@ -439,7 +419,9 @@ exports[`Feedback > スナップショットテスト > バスト（残り点数
       </p>
     </div>
     <div
+      aria-live="polite"
       class="feedback__bust"
+      role="alert"
     >
       <div
         aria-hidden="true"

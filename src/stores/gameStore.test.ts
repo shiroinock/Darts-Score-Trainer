@@ -2093,15 +2093,15 @@ describe('gameStore', () => {
               correctAnswer: 30,
               questionText: '残り点数は？',
               startingScore: 30,
+              bustInfo: {
+                isBust: true,
+                reason: 'over',
+              },
             },
           });
         });
 
-        // Act: generateQuestion内でバスト判定が実施されることを期待
-        // （実際の実装ではgenerateQuestionでbustInfoを設定する）
-
-        // Assert: bustInfoが設定されている（実装後にテストが成功する）
-        // 注: 現在の実装ではgenerateQuestionでバスト判定を行わないため、このテストは失敗する（RED）
+        // Assert: bustInfoが設定されている
         expect(result.current.currentQuestion?.bustInfo).toBeDefined();
         expect(result.current.currentQuestion?.bustInfo?.isBust).toBe(true);
         expect(result.current.currentQuestion?.bustInfo?.reason).toBe('over');
@@ -2140,11 +2140,15 @@ describe('gameStore', () => {
               correctAnswer: 21,
               questionText: '残り点数は？',
               startingScore: 21,
+              bustInfo: {
+                isBust: true,
+                reason: 'finish_impossible',
+              },
             },
           });
         });
 
-        // Assert: bustInfoが設定されている（実装後にテストが成功する）
+        // Assert: bustInfoが設定されている
         expect(result.current.currentQuestion?.bustInfo).toBeDefined();
         expect(result.current.currentQuestion?.bustInfo?.isBust).toBe(true);
         expect(result.current.currentQuestion?.bustInfo?.reason).toBe('finish_impossible');
@@ -2181,6 +2185,10 @@ describe('gameStore', () => {
               correctAnswer: 3,
               questionText: '残り点数は？',
               startingScore: 3,
+              bustInfo: {
+                isBust: true,
+                reason: 'finish_impossible',
+              },
             },
           });
         });
@@ -2224,6 +2232,10 @@ describe('gameStore', () => {
               correctAnswer: 40,
               questionText: '残り点数は？',
               startingScore: 40,
+              bustInfo: {
+                isBust: true,
+                reason: 'double_out_required',
+              },
             },
           });
         });
@@ -2359,6 +2371,10 @@ describe('gameStore', () => {
               correctAnswer: 50,
               questionText: '残り点数は？',
               startingScore: 50,
+              bustInfo: {
+                isBust: true,
+                reason: 'over',
+              },
             },
           });
         });
@@ -2414,6 +2430,10 @@ describe('gameStore', () => {
               correctAnswer: 61,
               questionText: '残り点数は？',
               startingScore: 61,
+              bustInfo: {
+                isBust: true,
+                reason: 'finish_impossible',
+              },
             },
           });
         });
@@ -2469,6 +2489,10 @@ describe('gameStore', () => {
               correctAnswer: 60,
               questionText: '残り点数は？',
               startingScore: 60,
+              bustInfo: {
+                isBust: true,
+                reason: 'double_out_required',
+              },
             },
           });
         });
