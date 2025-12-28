@@ -670,3 +670,49 @@ const toleranceRatio = 0.1; // 10%の誤差を許容
   "summary": "修正可能: 1件, 修正不可能: 0件"
 }
 ```
+
+## NumPadコンポーネント固有の修正指示
+
+### マジックナンバーの定数化
+NumPadコンポーネントに関するマジックナンバー（特に3桁制限）を定数化する際は：
+
+1. **定数の定義場所**
+   ```typescript
+   // src/components/Practice/NumPad.tsx の上部に追加
+   const MAX_INPUT_DIGITS = 3; // ダーツの最大得点（180点）は3桁
+   ```
+
+2. **修正指示の具体例**
+   ```json
+   {
+     "file": "src/components/Practice/NumPad.tsx",
+     "line": "85",
+     "issue": "3桁制限がハードコードされている",
+     "fix_instruction": "ファイル上部に MAX_INPUT_DIGITS = 3 を定数として定義し、コメントで180点が最大値であることを明記。inputValue.length < 3 を inputValue.length < MAX_INPUT_DIGITS に変更。",
+     "code_example": {
+       "before": "if (inputValue.length < 3) {",
+       "after": "// ファイル上部に追加\nconst MAX_INPUT_DIGITS = 3; // ダーツの最大得点（180点）は3桁\n\n// 使用箇所\nif (inputValue.length < MAX_INPUT_DIGITS) {"
+     }
+   }
+   ```
+
+### イベントリスナー管理の修正
+グローバルイベントリスナーの競合問題については：
+
+1. **フォーカス管理の追加**
+   - コンポーネントがアクティブな場合のみキーボード入力を処理
+   - 複数インスタンスでの競合を防ぐ
+
+2. **修正指示の具体例**
+   ```json
+   {
+     "file": "src/components/Practice/NumPad.tsx",
+     "line": "144-154",
+     "issue": "グローバルイベントリスナーが複数インスタンスで競合する可能性",
+     "fix_instruction": "isActiveプロップまたはフォーカス状態を追加し、アクティブな場合のみキーボード入力を処理。useEffect内でisActiveチェックを追加。",
+     "code_example": {
+       "before": "useEffect(() => {\n  const handleKeyDown = (e: KeyboardEvent) => {\n    // 処理\n  };\n  window.addEventListener('keydown', handleKeyDown);",
+       "after": "// プロップスに追加: isActive?: boolean\n\nuseEffect(() => {\n  if (!isActive) return; // アクティブでない場合は処理しない\n  \n  const handleKeyDown = (e: KeyboardEvent) => {\n    // 処理\n  };\n  window.addEventListener('keydown', handleKeyDown);"
+     }
+   }
+   ```
