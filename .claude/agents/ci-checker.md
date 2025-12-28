@@ -53,7 +53,8 @@ Task({
   "subagent_type": "biome-check",
   "model": "haiku",
   "description": "Run Biome check",
-  "prompt": "npm run check を実行し、結果を報告してください。"
+  "prompt": "npm run check を実行し、結果を報告してください。",
+  "timeout": 120000  // 2分（120秒）
 })
 ```
 
@@ -62,7 +63,8 @@ Task({
   "subagent_type": "test-check",
   "model": "haiku",
   "description": "Run tests",
-  "prompt": "npm run test:run を実行し、結果を報告してください。"
+  "prompt": "npm run test:run を実行し、結果を報告してください。",
+  "timeout": 300000  // 5分（300秒）
 })
 ```
 
@@ -71,7 +73,8 @@ Task({
   "subagent_type": "build-check",
   "model": "haiku",
   "description": "Run build",
-  "prompt": "npm run build を実行し、結果を報告してください。"
+  "prompt": "npm run build を実行し、結果を報告してください。",
+  "timeout": 180000  // 3分（180秒）
 })
 ```
 
@@ -152,13 +155,15 @@ Fix the issues above and re-run the checks.
   "status": "FAILED",
   "checks": {
     "biome": "PASSED|FAILED",
-    "test": "PASSED|FAILED|SKIPPED",
-    "build": "PASSED|FAILED|SKIPPED"
+    "test": "PASSED|FAILED",
+    "build": "PASSED|FAILED"
   },
   "failedStep": "biome|test|build",
   "message": "CI checks failed at {step}"
 }
 ```
+
+**注**: 並列実行のため、全てのチェックが実行されます。SKIPPED状態は発生しません。
 
 ## エラーハンドリング
 
