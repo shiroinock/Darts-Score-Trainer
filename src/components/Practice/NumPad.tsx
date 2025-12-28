@@ -118,12 +118,21 @@ export const NumPad: React.FC<NumPadProps> = ({ questionType, onConfirm, maxValu
 
   /**
    * キーボード入力のハンドリング（基本キー：0-9, Enter, Backspace, Escape）
+   *
+   * @remarks
+   * enabled オプションは省略（デフォルト: true）
+   * 現在のプロジェクトでは NumPad は単一インスタンスのみが想定されているため、
+   * 常にキーボード入力を有効にしています。
+   *
+   * 将来的に複数の NumPad インスタンスが同時に存在する場合は、
+   * フォーカス管理を追加して enabled オプションを動的に制御することを推奨します。
    */
   useKeyboardInput({
     onDigit: handleNumberClick,
     onEnter: handleConfirm,
     onBackspace: handleBackspace,
     onEscape: handleClear,
+    // enabled: true, // デフォルト値のため省略
   });
 
   /**
