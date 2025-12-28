@@ -366,10 +366,10 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] 終了理由表示（完了、時間切れ、手動終了、ゲームクリア）
 
 ### 7.2 結果画面 (`src/components/Results/ResultsScreen.tsx`)
-- [ ] SessionSummary配置
-- [ ] 「同じ設定で再挑戦」ボタン
-- [ ] 「設定を変更」ボタン
-- [ ] レイアウト調整
+- [x] SessionSummary配置
+- [x] 「同じ設定で再挑戦」ボタン
+- [x] 「設定を変更」ボタン
+- [x] レイアウト調整
 
 ---
 
@@ -454,6 +454,16 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 ## 将来のTODO（MVP後）
 
 ### 機能追加（優先度：高）
+
+#### セッション終了理由の記録機能
+- [ ] ResultsScreenで実際の終了理由を記録する機能を実装
+  - [ ] 'completed': 問題数達成による終了
+  - [ ] 'timeout': 時間切れによる終了
+  - [ ] 'manual': ユーザーによる手動終了
+  - [ ] 'cleared': ゲームクリア（01ゲームで0点到達）
+- [ ] gameStoreにfinishReasonフィールドを追加
+- [ ] 各終了条件でfinishReasonを設定するロジックを実装
+- [ ] SessionSummaryで終了理由を表示
 
 #### バスト表示機能の完全実装（PR #68で実装完了 - 2025-12-29）
 Phase 6.4のフィードバックコンポーネントに、バスト表示機能を追加しました。

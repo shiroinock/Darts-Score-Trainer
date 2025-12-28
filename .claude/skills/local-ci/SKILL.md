@@ -1,16 +1,23 @@
 ---
 name: local-ci
-description: GitHub Actions CI相当のチェックをローカルで実行。Biome check、テスト、ビルドを並列実行し、全てのチェックが成功したことを確認する。PR作成前の事前チェックに使用。
+description: remote CI (GitHub Actions) 相当のチェックをローカルで実行。Biome check、テスト、ビルドを並列実行し、全てのチェックが成功したことを確認する。PR作成前の事前チェックに使用。
 ---
 
 # Local CI スキル
 
-GitHub Actions CI相当のチェックをローカルで実行するスキル。
+**このスキルの役割**: remote CI (GitHub Actions) 相当のチェックを**ローカルマシン上**で実行するスキル。
+
+## check-remote-ci コマンドとの違い
+
+| スキル/コマンド | 実行場所 | 目的 | 使用場面 |
+|---------------|---------|------|----------|
+| **local-ci** (このスキル) | **local** | local CI チェック（remote CI 相当）をローカル実行 | PR作成前の事前チェック、TDD完了後の検証 |
+| **check-remote-ci** | **remote** (GitHub Actions) | remote CI の実行状態確認と修正方針提案 | PR作成後、remote CI が失敗した際の原因調査 |
 
 ## 目的
 
-プルリクエスト作成前にローカルで実行することで、CIの失敗を事前に検出します。
-`.github/workflows/ci.yml`と同じチェックを並列実行し、全ての問題を一度に検出します。
+プルリクエスト作成前に**ローカルマシン上**で実行することで、remote CI の失敗を事前に検出します。
+`.github/workflows/ci.yml` と同じチェックを並列実行し、全ての問題を一度に検出します。
 
 ## 実行内容
 
@@ -36,7 +43,7 @@ GitHub Actions CI相当のチェックをローカルで実行するスキル。
 - 複数の問題を同時に修正可能
 - 再実行の回数を削減し、開発効率を向上
 
-### GitHub Actions CI との違い
+### remote CI (GitHub Actions) との違い
 
 **含まれていないチェック**:
 - **Security Audit** (`npm audit`, `secretlint`)
@@ -44,9 +51,9 @@ GitHub Actions CI相当のチェックをローカルで実行するスキル。
     - セキュリティチェックは依存関係の脆弱性を検出するため、コード変更のたびに実行する必要性は低い
     - 実行時間は通常30秒以内と高速だが、頻繁に実行する価値は低い
     - 脆弱性は依存関係のアップデート時に主に発生し、コード変更では影響を受けない
-  - **GitHub Actions CI での実行**:
-    - すべてのPRで自動的に実行されます
-    - security-auditジョブとして独立して実行され、失敗時はPRマージがブロックされます
+  - **remote CI (GitHub Actions) での実行**:
+    - すべての PR で自動的に実行されます
+    - security-audit ジョブとして独立して実行され、失敗時は PR マージがブロックされます
   - **ローカルでの手動実行**（必要に応じて）:
     ```bash
     npm audit --audit-level=moderate
@@ -55,33 +62,49 @@ GitHub Actions CI相当のチェックをローカルで実行するスキル。
 
 **設計方針**:
 - **local-ci**: PR作成前の基本的な品質チェック（Biome、Test、Build）に焦点
-- **GitHub Actions CI**: 包括的なチェック（セキュリティ、依存関係の更新など）を含む完全な検証
+- **remote CI (GitHub Actions)**: 包括的なチェック（セキュリティ、依存関係の更新など）を含む完全な検証
 
 ## 実装手順
 
-### Step 1: ci-checker サブエージェントを起動
+### Step 1: local-ci-checker サブエージェントを起動
 
-このスキルは **ci-checker サブエージェント** を呼び出して実行します。
+このスキルは **local-ci-checker サブエージェント**（`.claude/agents/local-ci-checker.md`）を呼び出して実行します。
 
 ```javascript
 Task({
-  "subagent_type": "ci-checker",
+  "subagent_type": "local-ci-checker",
   "model": "haiku",
-  "description": "Run CI checks in parallel",
+  "description": "Run local CI checks in parallel",
   "prompt": "local-ci スキルに従って、3つのサブエージェント（biome-check、test-check、build-check）を並列実行し、全てのチェックが成功することを確認してください。全ての結果をまとめて報告してください。"
 })
 ```
 
-ci-checkerサブエージェントが以下を実行します：
+### サブエージェント構造
 
-1. **3つのサブエージェントを並列起動**:
-   - biome-check: Biome checkを実行
-   - test-check: テストを実行
-   - build-check: ビルドを実行
+local-ci-checker サブエージェントは、さらに**3つの専用サブエージェント**を並列起動します：
 
-2. **結果集計**: 各サブエージェントの成功・失敗を判定
+1. **biome-check** (`.claude/agents/biome-check.md`)
+   - 役割: Biome check を実行
+   - コマンド: `npm run check`
+   - タイムアウト: 2分
 
-3. **サマリー表示**: 全体の結果を報告
+2. **test-check** (`.claude/agents/test-check.md`)
+   - 役割: テストを実行
+   - コマンド: `npm run test:run`
+   - タイムアウト: 5分
+
+3. **build-check** (`.claude/agents/build-check.md`)
+   - 役割: ビルドを実行
+   - コマンド: `npm run build`
+   - タイムアウト: 3分
+
+**重要**: これらはBashコマンドを直接実行するのではなく、**個別のエージェント定義ファイル**として存在します。各エージェントは構造化されたJSON形式で結果を返します。
+
+local-ci-checker サブエージェントの処理フロー：
+
+1. **3つのサブエージェントを並列起動**: 単一メッセージで3つのTask呼び出し
+2. **結果集計**: TaskOutputツールで各サブエージェントの出力を取得
+3. **サマリー表示**: 全体の結果を整形して報告
 
 ### Step 2: サマリー表示
 
@@ -89,7 +112,7 @@ ci-checkerサブエージェントが以下を実行します：
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ All CI checks passed!
+✅ All local CI checks passed!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Summary:
@@ -104,7 +127,7 @@ Summary:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-❌ CI checks failed
+❌ Local CI checks failed
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Summary:
@@ -143,7 +166,7 @@ Fix the issues above and re-run the checks.
 ### 成功例
 
 ```
-🔍 Running CI checks locally (in parallel)...
+🔍 Running local CI checks (in parallel)...
 
 📋 Biome check
 ✅ Biome check passed
@@ -155,7 +178,7 @@ Fix the issues above and re-run the checks.
 ✅ Build passed
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ All CI checks passed!
+✅ All local CI checks passed!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Summary:
@@ -169,7 +192,7 @@ Summary:
 ### 失敗例（複数のチェックで失敗）
 
 ```
-🔍 Running CI checks locally (in parallel)...
+🔍 Running local CI checks (in parallel)...
 
 📋 Biome check
 ✅ Biome check passed
@@ -183,7 +206,7 @@ Summary:
 [ビルドエラー出力]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-❌ CI checks failed
+❌ Local CI checks failed
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Summary:
@@ -200,10 +223,10 @@ Fix the issues above and re-run the checks.
 
 ## 注意事項
 
-- CIと完全に同じ環境ではないため、ローカルで成功してもCIで失敗する可能性はある
+- remote CI と完全に同じ環境ではないため、local CI で成功しても remote CI で失敗する可能性はある
 - ただし、ほとんどの問題は事前に検出できる
 - 実行時間は環境によって異なるが、通常3-5分程度
-- `npm ci`は実行しない（依存関係は既にインストール済みと仮定）
+- `npm ci` は実行しない（依存関係は既にインストール済みと仮定）
 
 ## 使い方
 
@@ -211,9 +234,11 @@ Fix the issues above and re-run the checks.
 /local-ci
 ```
 
-このコマンドを実行すると、Claudeが上記の手順を実行します（3つのチェックは並列実行されます）。
+このコマンドを実行すると、Claude が上記の手順を実行します（3つのチェックは並列実行されます）。
 
 ## 他のコマンドとの違い
 
-- **`/local-ci`** (このスキル): CI相当のチェックを**ローカル**で実行（Biome check、テスト、ビルド）
-- **`/check-ci`**: GitHub ActionsのCI状態を**リモート**で確認して修正方針を提案
+詳細な比較は冒頭の表を参照してください。
+
+- **`/local-ci`** (このスキル): local CI チェック（remote CI 相当）を**ローカルマシン上**で実行（Biome check、テスト、ビルド）
+- **`/check-remote-ci`**: **remote CI (GitHub Actions)** の実行状態を確認して修正方針を提案

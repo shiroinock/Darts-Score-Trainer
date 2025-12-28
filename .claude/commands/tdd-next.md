@@ -6,6 +6,18 @@ description: TDD対応の次タスク実装。TODO.mdから選定し、適切な
 
 TODO.mdから次のタスクを選定し、テストパターン判定に基づいて適切なTDDパイプラインで実装します。
 
+## CI チェックに関する重要な区別
+
+このパイプラインでは **local-ci-checker エージェント**を使用します。以下の違いを理解しておいてください：
+
+| エージェント/コマンド | 実行場所 | 目的 | 使用場面 |
+|---------------------|---------|------|----------|
+| **local-ci-checker** (このパイプラインで使用) | **local** | local CI チェック（remote CI 相当）をローカル実行 | TDD完了後、PR作成前の検証 |
+| **check-remote-ci** | **remote** (GitHub Actions) | remote CI の実行状態確認 | PR作成後、remote CI が失敗した際の調査 |
+
+- **local-ci-checker**: local-ci スキルを使用して、ローカルマシン上で Biome check、Test、Build を並列実行
+- **check-remote-ci**: remote CI (GitHub Actions) の実行結果を確認し、失敗時の修正方針を提案
+
 ## 実行フロー
 
 ### 0. ドメイン知識の参照（ダーツ関連タスクの場合）
@@ -140,13 +152,14 @@ classify-files の判定結果に基づき、適切なパイプラインを**順
    - 判定: 全テスト成功 → 次へ
    - 判定: 失敗 → plan-fixへ
 
-5. ci-checker エージェント起動 【CI全体チェック（全体的）】
+5. local-ci-checker エージェント起動 【local CI 全体チェック（全体的）】
    目的: 既存コード全体への影響がないことを確認
-   - Biome check、Test（全テスト）、Build を並列実行（全体的影響を検出）
+   - **ローカルマシン上**で Biome check、Test（全テスト）、Build を並列実行（全体的影響を検出）
+   - local-ci スキルを使用して local CI チェック（remote CI 相当）を実行
    - 判定: 全て成功 → 次へ
    - 判定: 失敗 → plan-fixへ
 
-6. (ci-checker が成功した場合) review-file エージェント起動 【Refactor判断】
+6. (local-ci-checker が成功した場合) review-file エージェント起動 【Refactor判断】
    目的: コード品質を確認（TDD Refactor フェーズ）
    - review-perspective-selector skill で観点を自動選択
    - 実装ファイルとテストファイルの両方をレビュー
@@ -154,9 +167,9 @@ classify-files の判定結果に基づき、適切なパイプラインを**順
    - 判定: WARN → ユーザーに確認「修正しますか？(y/n)」
    - 判定: FAIL → 必須修正（次へ進む）
 
-7. (test-runner/ci-checker が失敗 or WARN時にユーザー承認 or FAIL の場合) plan-fix エージェント起動 【修正計画】
+7. (test-runner/local-ci-checker が失敗 or WARN時にユーザー承認 or FAIL の場合) plan-fix エージェント起動 【修正計画】
    目的: 問題を分析し、具体的な修正計画を立案
-   - test-runner/ci-checker の失敗内容 または review-file の指摘事項に基づき修正計画を作成
+   - test-runner/local-ci-checker の失敗内容 または review-file の指摘事項に基づき修正計画を作成
    - 修正内容をユーザーに提示
 
 8. (ユーザーが承認した場合) implement エージェント起動 【修正実行】
@@ -164,9 +177,10 @@ classify-files の判定結果に基づき、適切なパイプラインを**順
    - plan-fixの計画に基づいて修正実行
    - テストファイルと実装ファイルの両方を修正可能
 
-9. ci-checker エージェント起動 【修正確認（全体的）】
+9. local-ci-checker エージェント起動 【修正確認（全体的）】
    目的: 修正後のコードが全てのチェックを通過することを確認
-   - Biome check、Test、Build を並列実行
+   - **ローカルマシン上**で Biome check、Test、Build を並列実行
+   - local-ci スキルを使用して local CI チェック実行
    - 判定: 全て成功 → 次へ
    - 判定: 失敗 → 7に戻る（最大3回まで）
 
@@ -195,13 +209,14 @@ classify-files の判定結果に基づき、適切なパイプラインを**順
    - 判定: 全テスト成功 → 次へ
    - 判定: 失敗 → plan-fixへ
 
-4. ci-checker エージェント起動 【CI全体チェック（全体的）】
+4. local-ci-checker エージェント起動 【local CI 全体チェック（全体的）】
    目的: 既存コード全体への影響がないことを確認
-   - Biome check、Test（全テスト）、Build を並列実行（全体的影響を検出）
+   - **ローカルマシン上**で Biome check、Test（全テスト）、Build を並列実行（全体的影響を検出）
+   - local-ci スキルを使用して local CI チェック（remote CI 相当）を実行
    - 判定: 全て成功 → 次へ
    - 判定: 失敗 → plan-fixへ
 
-5. (ci-checker が成功した場合) review-file エージェント起動 【品質確認】
+5. (local-ci-checker が成功した場合) review-file エージェント起動 【品質確認】
    目的: コード品質とテストの妥当性を確認
    - review-perspective-selector skill で観点を自動選択
    - 実装ファイルとテストファイルの両方をレビュー
@@ -209,17 +224,18 @@ classify-files の判定結果に基づき、適切なパイプラインを**順
    - 判定: WARN → ユーザーに確認「修正しますか？(y/n)」
    - 判定: FAIL → 必須修正（次へ進む）
 
-6. (test-runner/ci-checker が失敗 or WARN時にユーザー承認 or FAIL の場合) plan-fix エージェント起動 【修正計画】
+6. (test-runner/local-ci-checker が失敗 or WARN時にユーザー承認 or FAIL の場合) plan-fix エージェント起動 【修正計画】
    目的: 問題を分析し、具体的な修正計画を立案
-   - test-runner/ci-checker の失敗内容 または review-file の指摘事項に基づき修正計画を作成
+   - test-runner/local-ci-checker の失敗内容 または review-file の指摘事項に基づき修正計画を作成
 
 7. (ユーザーが承認した場合) implement エージェント起動 【修正実行】
    目的: plan-fix の計画に基づいて問題を修正
    - plan-fixの計画に基づいて修正実行
 
-8. ci-checker エージェント起動 【修正確認（全体的）】
+8. local-ci-checker エージェント起動 【修正確認（全体的）】
    目的: 修正後のコードが全てのチェックを通過することを確認
-   - Biome check、Test、Build を並列実行
+   - **ローカルマシン上**で Biome check、Test、Build を並列実行
+   - local-ci スキルを使用して local CI チェック実行
    - 判定: 全て成功 → 次へ
    - 判定: 失敗 → 6に戻る（最大3回まで）
 
@@ -266,7 +282,7 @@ classify-files の判定結果に基づき、適切なパイプラインを**順
 - test-writer: {レポートパス}
 - implement: {レポートパス}
 - test-runner: {レポートパス}
-- ci-checker: {結果サマリー}
+- local-ci-checker: {結果サマリー}
 
 ### 次回の改善点
 {エージェント定義ファイルへの改善内容}
@@ -368,12 +384,12 @@ test-writer の出力:
 }
 ```
 
-**ci-checker エージェント**:
+**local-ci-checker エージェント**:
 ```javascript
 {
-  "subagent_type": "ci-checker",
+  "subagent_type": "local-ci-checker",
   "model": "haiku",
-  "prompt": "TDDパイプラインが完了しました。local-ci スキルに従って、Biome check、テスト、ビルドを並列実行し、全てのチェックが成功することを確認してください。全ての結果をまとめて報告してください。"
+  "prompt": "TDDパイプラインが完了しました。local-ci スキルに従って、ローカルマシン上で Biome check、テスト、ビルドを並列実行し、全てのチェックが成功することを確認してください。全ての結果をまとめて報告してください。"
 }
 ```
 
@@ -387,13 +403,13 @@ test-writer の出力:
 → 続行するかユーザーに確認
 ```
 
-### ci-checker が失敗する場合 (implement 直後)
+### local-ci-checker が失敗する場合 (implement 直後)
 
 ```
 → 失敗したチェックを全て確認（Biome/Test/Build）
 → 全てのエラー内容をまとめて表示
 → plan-fix エージェント起動
-→ ci-checker の失敗内容に基づき総合的な修正計画を作成
+→ local-ci-checker の失敗内容に基づき総合的な修正計画を作成
 → implement エージェント再起動
 → 最大3回までリトライ
 → それでも失敗 → ユーザーに報告
@@ -427,9 +443,9 @@ classify-files が提案したパスを厳守してください:
 
 ### 4. TODO.md の更新タイミング
 
-- **全パイプライン完了後（ci-checker が成功し、review-file が PASS した後）**に更新してください
+- **全パイプライン完了後（local-ci-checker が成功し、review-file が PASS した後）**に更新してください
 - 途中でエラーが起きた場合は更新しないでください
-- ci-checker が失敗した場合も更新しないでください
+- local-ci-checker が失敗した場合も更新しないでください
 
 ### 5. 座標系の分離 (プロジェクト固有)
 
@@ -446,11 +462,11 @@ classify-files が提案したパスを厳守してください:
 3. classify-files が判定を行う
 4. 適切なパイプラインが実行される
 5. ファイルが作成される
-6. ci-checker が並列実行される（Biome check、Test、Build）
+6. local-ci-checker が並列実行される（Biome check、Test、Build）
 7. 全てのCIチェックが成功する（または失敗した全ての問題が報告される）
 8. review-file がコードをレビューする
 9. TODO.md が更新される
-10. フィードバックレポートが生成される（test-writer、implement、ci-checker、review-file）
+10. フィードバックレポートが生成される（test-writer、implement、local-ci-checker、review-file）
 
 ---
 

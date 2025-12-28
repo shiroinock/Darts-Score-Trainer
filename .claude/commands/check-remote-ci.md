@@ -1,30 +1,39 @@
-# 現在のブランチのCI状態を確認して修正方針を提案
+# 現在のブランチの remote CI 状態を確認して修正方針を提案
 
-現在チェックアウトしているブランチのCI/CD実行状態を確認し、失敗がある場合は原因を分析して修正方針を提案してください。
+**このコマンドの役割**: GitHub Actions上で実行されている **remote CI** の状態を確認し、失敗がある場合は原因を分析して修正方針を提案します。
+
+## local-ci との違い
+
+| コマンド | 実行場所 | 目的 | 使用場面 |
+|---------|---------|------|----------|
+| **check-ci** (このコマンド) | **remote** (GitHub Actions) | remote CI の実行状態確認と修正方針提案 | PR作成後、remote CI が失敗した際の原因調査 |
+| **local-ci** | **local** | local CI チェック（CI相当）をローカル実行 | PR作成前の事前チェック、TDD完了後の検証 |
+
+現在チェックアウトしているブランチの remote CI 実行状態を確認し、失敗がある場合は原因を分析して修正方針を提案してください。
 
 **重要**: このコマンドは **サブエージェントを使用せず**、Bashツールで直接実装してください。
 
 ## 実装手順
 
-### 1. 現在のブランチの最新CI実行を取得（並列実行）
+### 1. 現在のブランチの最新 remote CI 実行を取得
 
 ```bash
 # 現在のブランチ名
 git branch --show-current
 
-# 最新のCI実行リスト（JSON形式、CIワークフローのみ）
+# 最新の remote CI 実行リスト（JSON形式、CI ワークフローのみ）
 gh run list --branch $(git branch --show-current) --limit 5 --json databaseId,status,conclusion,createdAt,name,event
 ```
 
-### 2. CIワークフローを特定
+### 2. remote CI ワークフローを特定
 
-`name: "CI"` のワークフローを見つける（Claude Code ReviewやDeployは除外）
+`name: "CI"` のワークフローを見つける（Claude Code Review や Deploy は除外）
 
 ### 3. ステータスに応じた処理
 
 #### ✅ success（完了・成功）
 ```markdown
-## CI Status Report
+## Remote CI Status Report
 
 **ブランチ**: {branch}
 **ステータス**: ✅ すべてのチェックがパスしました
@@ -58,10 +67,10 @@ gh run view <run-id> --log-failed
 
 **修正方針レポートを生成:**
 ```markdown
-## CI Status Report
+## Remote CI Status Report
 
 **ブランチ**: {branch}
-**CI実行**: {run-id} (completed - failure)
+**remote CI 実行**: {run-id} (completed - failure)
 
 ### 失敗したジョブ
 - {job-name}: "{step-name}"で失敗
@@ -95,10 +104,10 @@ gh run view <run-id>
 ```
 
 ```markdown
-## CI Status Report
+## Remote CI Status Report
 
 **ブランチ**: {branch}
-**ステータス**: 🔄 CI実行中
+**ステータス**: 🔄 remote CI 実行中
 
 **進行状況:**
 - biome-check: {status}
@@ -111,10 +120,10 @@ gh run view <run-id>
 #### ⏸️ queued（待機中）
 
 ```markdown
-## CI Status Report
+## Remote CI Status Report
 
 **ブランチ**: {branch}
-**ステータス**: ⏸️ CI待機中
+**ステータス**: ⏸️ remote CI 待機中
 
 ジョブがキューに入っています。しばらく待ってから再度確認してください。
 ```
@@ -131,8 +140,8 @@ gh run view <run-id>
 ## 実装上の注意事項
 
 ### ❌ やってはいけないこと
-- WebFetchツールでGitHub ActionsのHTMLページを取得する
-- review-fileやその他のサブエージェントにログ解析を依頼する
+- WebFetchツールで GitHub Actions の HTMLページを取得する
+- review-file やその他のサブエージェントにログ解析を依頼する
 - サブエージェントを使用する
 
 ### ✅ 正しい実装
@@ -154,8 +163,8 @@ gh run view <run-id>
 ## 使用例
 
 ```
-User: /check-ci
-Assistant: 現在のブランチのCI状態を確認します...
+User: /check-remote-ci
+Assistant: 現在のブランチのremote CI状態を確認します...
           [Bashツールでgh runコマンドを実行]
           [結果を分析してレポート生成]
           [修正方針を提示]
