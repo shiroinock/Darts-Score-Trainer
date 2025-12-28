@@ -21,7 +21,7 @@ import type {
 } from '../types';
 import { DEFAULT_TARGET, MIN_SCORE, STORAGE_KEY } from '../utils/constants/index.js';
 import { getOptimalTarget } from '../utils/dartStrategy/getOptimalTarget.js';
-import { checkBust, isGameFinished } from '../utils/gameLogic/index.js';
+import { checkBust, checkBustFromThrows, isGameFinished } from '../utils/gameLogic/index.js';
 import { executeThrow } from '../utils/throwSimulator/index.js';
 import { getDefaultConfig, PRESETS } from './config/presets.js';
 import { initialSessionConfig, initialStats } from './session/initialState.js';
@@ -189,34 +189,6 @@ interface GameStore {
 /**
  * ゲームストアの実装
  */
-
-/**
- * 投擲結果からバスト判定を実施する
- * @param throws 投擲結果の配列
- * @param initialRemainingScore 初期残り点数
- * @returns バスト情報（バストしていない場合はundefined）
- */
-function checkBustFromThrows(
-  throws: ThrowResult[],
-  initialRemainingScore: number
-): BustInfo | undefined {
-  let currentRemaining = initialRemainingScore;
-
-  for (const throwResult of throws) {
-    const isDouble = throwResult.ring === 'DOUBLE' || throwResult.ring === 'INNER_BULL';
-    const checkResult = checkBust(currentRemaining, throwResult.score, isDouble);
-
-    // バストが発生した場合、その時点で判定を返す
-    if (checkResult.isBust) {
-      return checkResult;
-    }
-
-    // バストでなければ残り点数を更新して次の投擲へ
-    currentRemaining -= throwResult.score;
-  }
-
-  return undefined;
-}
 
 function calculateBustInfo(state: GameStore): BustInfo | undefined {
   const { currentQuestion, remainingScore, config } = state;
@@ -389,10 +361,10 @@ export const useGameStore = create<GameStore>()(
           );
 
           // remainingモードでのみバスト判定を実施
-          const bustInfo =
-            mode === 'remaining' && config.questionType !== 'score'
-              ? checkBustFromThrows(throws, state.remainingScore)
-              : undefined;
+          const shouldCheckBust = mode === 'remaining' && config.questionType !== 'score';
+          const bustInfo = shouldCheckBust
+            ? checkBustFromThrows(throws, state.remainingScore)
+            : undefined;
 
           state.currentQuestion = {
             mode,
