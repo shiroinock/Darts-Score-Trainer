@@ -153,16 +153,17 @@ describe('Feedback', () => {
       expect(feedbackText).toHaveTextContent('正解');
     });
 
-    it('正解の数値が表示される', () => {
-      const { container } = render(<Feedback userAnswer={60} isCorrect={true} />);
+    it('ユーザーの回答と正解が表示される', () => {
+      render(<Feedback userAnswer={60} isCorrect={true} />);
 
-      // dt要素に「正解」ラベルが表示される
-      const answerLabel = container.querySelector('dt.feedback__answer-label');
-      expect(answerLabel).toHaveTextContent('正解');
+      // 「あなたの回答」ラベルと値
+      expect(screen.getByText('あなたの回答')).toBeInTheDocument();
+      const userAnswerElements = screen.getAllByText('60');
+      expect(userAnswerElements.length).toBeGreaterThanOrEqual(1);
 
-      // dd要素に正解の数値が表示される
-      const answerValue = container.querySelector('dd.feedback__answer-value');
-      expect(answerValue).toHaveTextContent('60');
+      // 「正解」ラベルと値（複数存在するのでgetAllByText使用）
+      const correctLabels = screen.getAllByText('正解');
+      expect(correctLabels.length).toBeGreaterThanOrEqual(1);
     });
 
     it('スコア詳細（T20 → 60点）が表示される', () => {
@@ -234,9 +235,15 @@ describe('Feedback', () => {
       expect(screen.getByText('不正解')).toBeInTheDocument();
     });
 
-    it('正解の数値が表示される', () => {
+    it('ユーザーの回答と正解が表示される', () => {
       render(<Feedback userAnswer={50} isCorrect={false} />);
 
+      // 「あなたの回答」と誤った値
+      expect(screen.getByText('あなたの回答')).toBeInTheDocument();
+      expect(screen.getByText('50')).toBeInTheDocument();
+
+      // 「正解」と正しい値
+      expect(screen.getByText('正解')).toBeInTheDocument();
       expect(screen.getByText('60')).toBeInTheDocument();
     });
 
@@ -424,14 +431,22 @@ describe('Feedback', () => {
 
       const { container } = render(<Feedback userAnswer={60} isCorrect={true} />);
 
-      const dl = container.querySelector('dl.feedback__answer-item');
-      expect(dl).toBeInTheDocument();
+      const dlElements = container.querySelectorAll('dl.feedback__answer-item');
+      expect(dlElements.length).toBeGreaterThanOrEqual(2);
 
-      const dt = container.querySelector('dt.feedback__answer-label');
-      expect(dt).toHaveTextContent('正解');
+      // 最初のdlは「あなたの回答」
+      const firstDt = dlElements[0].querySelector('dt.feedback__answer-label');
+      expect(firstDt).toHaveTextContent('あなたの回答');
 
-      const dd = container.querySelector('dd.feedback__answer-value');
-      expect(dd).toHaveTextContent('60');
+      const firstDd = dlElements[0].querySelector('dd.feedback__answer-value');
+      expect(firstDd).toHaveTextContent('60');
+
+      // 2番目のdlは「正解」
+      const secondDt = dlElements[1].querySelector('dt.feedback__answer-label');
+      expect(secondDt).toHaveTextContent('正解');
+
+      const secondDd = dlElements[1].querySelector('dd.feedback__answer-value');
+      expect(secondDd).toHaveTextContent('60');
     });
   });
 

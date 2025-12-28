@@ -71,7 +71,7 @@ interface FeedbackProps {
  * このコンポーネントは回答送信後に親コンポーネントから表示されることを想定しています。
  * userAnswerとisCorrectを親から受け取り、現在の問題情報をstoreから取得して表示します。
  */
-export function Feedback({ isCorrect }: FeedbackProps): JSX.Element | null {
+export function Feedback({ userAnswer, isCorrect }: FeedbackProps): JSX.Element | null {
   const currentQuestion = useGameStore((state) => state.currentQuestion);
   const remainingScore = useGameStore((state) => state.remainingScore);
   const stats = useGameStore((state) => state.stats);
@@ -113,8 +113,12 @@ export function Feedback({ isCorrect }: FeedbackProps): JSX.Element | null {
         <div className="feedback__text">{isCorrect ? '正解' : '不正解'}</div>
       </div>
 
-      {/* 正解表示 */}
+      {/* 回答表示 */}
       <div className="feedback__answer-section">
+        <dl className="feedback__answer-item">
+          <dt className="feedback__answer-label">あなたの回答</dt>
+          <dd className="feedback__answer-value">{userAnswer}</dd>
+        </dl>
         <dl className="feedback__answer-item">
           <dt className="feedback__answer-label">正解</dt>
           <dd className="feedback__answer-value">{correctAnswer}</dd>

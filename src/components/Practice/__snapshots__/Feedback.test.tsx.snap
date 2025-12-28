@@ -30,6 +30,20 @@ exports[`Feedback > スナップショットテスト > 3投の場合のスコ�
         <dt
           class="feedback__answer-label"
         >
+          あなたの回答
+        </dt>
+        <dd
+          class="feedback__answer-value"
+        >
+          160
+        </dd>
+      </dl>
+      <dl
+        class="feedback__answer-item"
+      >
+        <dt
+          class="feedback__answer-label"
+        >
           正解
         </dt>
         <dd
@@ -108,6 +122,20 @@ exports[`Feedback > スナップショットテスト > ゲームクリア時の
         <dt
           class="feedback__answer-label"
         >
+          あなたの回答
+        </dt>
+        <dd
+          class="feedback__answer-value"
+        >
+          0
+        </dd>
+      </dl>
+      <dl
+        class="feedback__answer-item"
+      >
+        <dt
+          class="feedback__answer-label"
+        >
           正解
         </dt>
         <dd
@@ -154,6 +182,20 @@ exports[`Feedback > スナップショットテスト > 不正解時の見た目
     <div
       class="feedback__answer-section"
     >
+      <dl
+        class="feedback__answer-item"
+      >
+        <dt
+          class="feedback__answer-label"
+        >
+          あなたの回答
+        </dt>
+        <dd
+          class="feedback__answer-value"
+        >
+          50
+        </dd>
+      </dl>
       <dl
         class="feedback__answer-item"
       >
@@ -213,6 +255,20 @@ exports[`Feedback > スナップショットテスト > 正解時（連続正解
     <div
       class="feedback__answer-section"
     >
+      <dl
+        class="feedback__answer-item"
+      >
+        <dt
+          class="feedback__answer-label"
+        >
+          あなたの回答
+        </dt>
+        <dd
+          class="feedback__answer-value"
+        >
+          60
+        </dd>
+      </dl>
       <dl
         class="feedback__answer-item"
       >
@@ -287,6 +343,20 @@ exports[`Feedback > スナップショットテスト > 正解時（連続正解
     <div
       class="feedback__answer-section"
     >
+      <dl
+        class="feedback__answer-item"
+      >
+        <dt
+          class="feedback__answer-label"
+        >
+          あなたの回答
+        </dt>
+        <dd
+          class="feedback__answer-value"
+        >
+          60
+        </dd>
+      </dl>
       <dl
         class="feedback__answer-item"
       >
