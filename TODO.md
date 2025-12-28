@@ -343,14 +343,14 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] ゲームクリア表示（0点到達時）
 
 ### 6.5 練習画面統合 (`src/components/Practice/PracticeScreen.tsx`)
-- [ ] StatsBar配置
-- [ ] DartBoard配置
-- [ ] QuestionDisplay配置
-- [ ] NumPad配置
-- [ ] Feedback配置（モーダルまたはオーバーレイ）
-- [ ] 「設定に戻る」「終了」ボタン
-- [ ] タイマー管理
-- [ ] 時間切れ処理
+- [x] StatsBar配置
+- [x] DartBoard配置
+- [x] QuestionDisplay配置
+- [x] NumPad配置
+- [x] Feedback配置（モーダルまたはオーバーレイ）
+- [x] 「設定に戻る」「終了」ボタン
+- [x] タイマー管理
+- [x] 時間切れ処理
 
 ---
 

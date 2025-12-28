@@ -445,3 +445,50 @@ const nested = config?.deeply?.nested?.value;
 const value = config.someValue !== undefined ? config.someValue : defaultValue;
 const nested = config && config.deeply && config.deeply.nested && config.deeply.nested.value;
 ```
+
+## PracticeScreenコンポーネント実装時の注意点
+
+### useRefを使った状態変化検出の注意
+
+`useRef`と`useEffect`を使って状態変化を検出する際は、以下の点に注意してください：
+
+1. **シンプルな実装を優先**
+   ```typescript
+   // ✅ 推奨: 依存配列でcurrentQuestionの変化を直接検出
+   useEffect(() => {
+     if (showFeedback && currentQuestion) {
+       setShowFeedback(false);
+     }
+   }, [currentQuestion]); // currentQuestionが変わったら実行
+   
+   // ⚠️ 避ける: useRefを使った複雑な実装
+   const prevQuestionRef = useRef(currentQuestion);
+   useEffect(() => {
+     if (currentQuestion !== prevQuestionRef.current && showFeedback) {
+       setShowFeedback(false);
+     }
+     prevQuestionRef.current = currentQuestion;
+   }, [currentQuestion, showFeedback]);
+   ```
+
+2. **定数化の徹底**
+   ```typescript
+   // ✅ 推奨: 意味のある定数名を使用
+   const SECONDS_PER_MINUTE = 60;
+   const minutes = Math.floor(seconds / SECONDS_PER_MINUTE);
+   
+   // ⚠️ 改善可能: マジックナンバーが残っている
+   const minutes = Math.floor(seconds / 60);
+   ```
+
+### フラグ管理のベストプラクティス
+
+フィードバック表示のようなUI状態フラグを管理する際：
+
+1. **状態変化に応じた自動リセット**
+   - 新しい問題に移行したらフィードバックを自動的に非表示にする
+   - 依存配列を活用して、関連する状態の変化を検出
+
+2. **不要な状態の削除**
+   - `lastAnswer`のような状態は、`currentQuestion`から取得できる場合は冗長
+   - ただし、パフォーマンスや可読性の観点から必要な場合は残す
