@@ -19,6 +19,7 @@ import type {
   ThrowResult,
 } from '../types';
 import { STORAGE_KEY } from '../utils/constants/index.js';
+import { getOptimalTarget } from '../utils/dartStrategy/getOptimalTarget.js';
 import { checkBust, isGameFinished } from '../utils/gameLogic/index.js';
 import { executeThrow } from '../utils/throwSimulator/index.js';
 import { getDefaultConfig, PRESETS } from './config/presets.js';
@@ -291,11 +292,11 @@ export const useGameStore = create<GameStore>()(
 
           // 残り点数モードの場合、remainingScoreを設定
           if (state.config.questionType === 'remaining' || state.config.questionType === 'both') {
-            state.remainingScore = state.config.startingScore || 0;
+            state.remainingScore = state.config.startingScore;
             state.roundStartScore = state.remainingScore;
           } else {
-            state.remainingScore = 0;
-            state.roundStartScore = 0;
+            state.remainingScore = state.config.startingScore;
+            state.roundStartScore = state.remainingScore;
           }
         });
 
@@ -312,12 +313,22 @@ export const useGameStore = create<GameStore>()(
           const throws: ThrowResult[] = [];
 
           // 指定された投擲数分のシミュレーションを実行
+          let currentRemaining = state.remainingScore; // シミュレーション用の残り点数
           for (let i = 0; i < config.throwUnit; i++) {
-            // TODO: Phase 4.3 - 残り点数から最適なターゲットを自動選択
-            // 現在は暫定的にT20をデフォルトターゲットとして使用
-            const target = config.target ?? { type: 'TRIPLE' as const, number: 20, label: 'T20' };
+            // 残り本数を計算
+            const throwsRemaining = config.throwUnit - i;
+
+            // ターゲットを決定: 手動選択 > 自動選択 > デフォルト(T20)
+            const target =
+              config.target ??
+              getOptimalTarget(currentRemaining, throwsRemaining) ??
+              ({ type: 'TRIPLE' as const, number: 20, label: 'T20' } as Target);
+
             const throwResult = executeThrow(target, config.stdDevMM);
             throws.push(throwResult);
+
+            // シミュレーション用の残り点数を更新（次の投擲のターゲット決定用）
+            currentRemaining = Math.max(0, currentRemaining - throwResult.score);
           }
 
           // 得点の合計を計算

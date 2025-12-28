@@ -1486,7 +1486,7 @@ describe('gameStore', () => {
           throwUnit: 1,
           judgmentTiming: 'independent',
           questionType: 'score',
-          startingScore: null,
+          startingScore: 501,
         });
         result.current.startPractice();
       });
@@ -1495,7 +1495,7 @@ describe('gameStore', () => {
       expect(result.current.config.throwUnit).toBe(1);
       expect(result.current.config.judgmentTiming).toBe('independent');
       expect(result.current.config.questionType).toBe('score');
-      expect(result.current.remainingScore).toBe(0); // startingScoreがnullなので0
+      expect(result.current.remainingScore).toBe(501); // startingScoreは常に設定される
     });
 
     test('3投 + 独立 + 両方モード', () => {

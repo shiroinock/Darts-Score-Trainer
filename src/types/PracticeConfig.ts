@@ -26,8 +26,8 @@ export interface PracticeConfig {
   questionType: QuestionType;
   /** 判定タイミング */
   judgmentTiming: JudgmentTiming;
-  /** 開始点数（501等、nullの場合は開始点数なし） */
-  startingScore: number | null;
+  /** 開始点数（501/701/301等） */
+  startingScore: number;
 
   // ターゲット・難易度
   /** 狙う位置（オプショナル、残り点数モードでは自動決定） */
