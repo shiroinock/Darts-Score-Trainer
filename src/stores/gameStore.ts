@@ -250,6 +250,10 @@ export const useGameStore = create<GameStore>()(
 
       /**
        * 標準偏差を設定する
+       *
+       * 注: UIのスライダー範囲（5-100mm）とは独立したバリデーションです。
+       * プログラム的に設定する場合の柔軟性を確保するため、任意の正の有限数を許容します。
+       *
        * @throws {Error} 不正な値の場合
        */
       setStdDev: (stdDevMM) => {

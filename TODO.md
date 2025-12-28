@@ -257,9 +257,9 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] アクティブ状態のスタイル
 
 ### 5.5 難易度セレクター (`src/components/Settings/DifficultySelector.tsx`)
-- [ ] プリセットボタン（初心者、中級者、上級者、エキスパート）
-- [ ] 標準偏差スライダー（5mm〜100mm）
-- [ ] 現在値表示
+- [x] プリセットボタン（初心者、中級者、上級者、エキスパート）
+- [x] 標準偏差スライダー（5mm〜100mm）
+- [x] 現在値表示
 
 ### 5.6 設定パネル統合 (`src/components/Settings/SettingsPanel.tsx`)
 - [ ] 全設定コンポーネントの統合

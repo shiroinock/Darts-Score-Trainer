@@ -1,0 +1,336 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DifficultySelector > スナップショットテスト > エキスパート(8mm)選択時のスナップショット 1`] = `
+<div
+  class="difficulty-selector"
+>
+  <h2
+    class="difficulty-selector__title"
+  >
+    難易度を選択
+  </h2>
+  <div
+    class="difficulty-selector__presets"
+  >
+    <button
+      aria-pressed="false"
+      class="difficulty-preset-button "
+      title="初心者（50mm）を選択"
+      type="button"
+    >
+      初心者
+    </button>
+    <button
+      aria-pressed="false"
+      class="difficulty-preset-button "
+      title="中級者（30mm）を選択"
+      type="button"
+    >
+      中級者
+    </button>
+    <button
+      aria-pressed="false"
+      class="difficulty-preset-button "
+      title="上級者（15mm）を選択"
+      type="button"
+    >
+      上級者
+    </button>
+    <button
+      aria-pressed="true"
+      class="difficulty-preset-button difficulty-preset-button--active"
+      title="エキスパート（8mm）を選択"
+      type="button"
+    >
+      エキスパート
+    </button>
+  </div>
+  <div
+    class="difficulty-selector__slider"
+  >
+    <input
+      aria-label="標準偏差スライダー"
+      class="difficulty-slider"
+      max="100"
+      min="5"
+      step="1"
+      type="range"
+      value="8"
+    />
+  </div>
+  <div
+    class="difficulty-selector__display"
+  >
+    8
+    mm
+  </div>
+</div>
+`;
+
+exports[`DifficultySelector > スナップショットテスト > カスタム値(25mm)選択時のスナップショット 1`] = `
+<div
+  class="difficulty-selector"
+>
+  <h2
+    class="difficulty-selector__title"
+  >
+    難易度を選択
+  </h2>
+  <div
+    class="difficulty-selector__presets"
+  >
+    <button
+      aria-pressed="false"
+      class="difficulty-preset-button "
+      title="初心者（50mm）を選択"
+      type="button"
+    >
+      初心者
+    </button>
+    <button
+      aria-pressed="false"
+      class="difficulty-preset-button "
+      title="中級者（30mm）を選択"
+      type="button"
+    >
+      中級者
+    </button>
+    <button
+      aria-pressed="false"
+      class="difficulty-preset-button "
+      title="上級者（15mm）を選択"
+      type="button"
+    >
+      上級者
+    </button>
+    <button
+      aria-pressed="false"
+      class="difficulty-preset-button "
+      title="エキスパート（8mm）を選択"
+      type="button"
+    >
+      エキスパート
+    </button>
+  </div>
+  <div
+    class="difficulty-selector__slider"
+  >
+    <input
+      aria-label="標準偏差スライダー"
+      class="difficulty-slider"
+      max="100"
+      min="5"
+      step="1"
+      type="range"
+      value="25"
+    />
+  </div>
+  <div
+    class="difficulty-selector__display"
+  >
+    25
+    mm
+  </div>
+</div>
+`;
+
+exports[`DifficultySelector > スナップショットテスト > 上級者(15mm)選択時のスナップショット 1`] = `
+<div
+  class="difficulty-selector"
+>
+  <h2
+    class="difficulty-selector__title"
+  >
+    難易度を選択
+  </h2>
+  <div
+    class="difficulty-selector__presets"
+  >
+    <button
+      aria-pressed="false"
+      class="difficulty-preset-button "
+      title="初心者（50mm）を選択"
+      type="button"
+    >
+      初心者
+    </button>
+    <button
+      aria-pressed="false"
+      class="difficulty-preset-button "
+      title="中級者（30mm）を選択"
+      type="button"
+    >
+      中級者
+    </button>
+    <button
+      aria-pressed="true"
+      class="difficulty-preset-button difficulty-preset-button--active"
+      title="上級者（15mm）を選択"
+      type="button"
+    >
+      上級者
+    </button>
+    <button
+      aria-pressed="false"
+      class="difficulty-preset-button "
+      title="エキスパート（8mm）を選択"
+      type="button"
+    >
+      エキスパート
+    </button>
+  </div>
+  <div
+    class="difficulty-selector__slider"
+  >
+    <input
+      aria-label="標準偏差スライダー"
+      class="difficulty-slider"
+      max="100"
+      min="5"
+      step="1"
+      type="range"
+      value="15"
+    />
+  </div>
+  <div
+    class="difficulty-selector__display"
+  >
+    15
+    mm
+  </div>
+</div>
+`;
+
+exports[`DifficultySelector > スナップショットテスト > 中級者(30mm)選択時のスナップショット 1`] = `
+<div
+  class="difficulty-selector"
+>
+  <h2
+    class="difficulty-selector__title"
+  >
+    難易度を選択
+  </h2>
+  <div
+    class="difficulty-selector__presets"
+  >
+    <button
+      aria-pressed="false"
+      class="difficulty-preset-button "
+      title="初心者（50mm）を選択"
+      type="button"
+    >
+      初心者
+    </button>
+    <button
+      aria-pressed="true"
+      class="difficulty-preset-button difficulty-preset-button--active"
+      title="中級者（30mm）を選択"
+      type="button"
+    >
+      中級者
+    </button>
+    <button
+      aria-pressed="false"
+      class="difficulty-preset-button "
+      title="上級者（15mm）を選択"
+      type="button"
+    >
+      上級者
+    </button>
+    <button
+      aria-pressed="false"
+      class="difficulty-preset-button "
+      title="エキスパート（8mm）を選択"
+      type="button"
+    >
+      エキスパート
+    </button>
+  </div>
+  <div
+    class="difficulty-selector__slider"
+  >
+    <input
+      aria-label="標準偏差スライダー"
+      class="difficulty-slider"
+      max="100"
+      min="5"
+      step="1"
+      type="range"
+      value="30"
+    />
+  </div>
+  <div
+    class="difficulty-selector__display"
+  >
+    30
+    mm
+  </div>
+</div>
+`;
+
+exports[`DifficultySelector > スナップショットテスト > 初心者(50mm)選択時のスナップショット 1`] = `
+<div
+  class="difficulty-selector"
+>
+  <h2
+    class="difficulty-selector__title"
+  >
+    難易度を選択
+  </h2>
+  <div
+    class="difficulty-selector__presets"
+  >
+    <button
+      aria-pressed="true"
+      class="difficulty-preset-button difficulty-preset-button--active"
+      title="初心者（50mm）を選択"
+      type="button"
+    >
+      初心者
+    </button>
+    <button
+      aria-pressed="false"
+      class="difficulty-preset-button "
+      title="中級者（30mm）を選択"
+      type="button"
+    >
+      中級者
+    </button>
+    <button
+      aria-pressed="false"
+      class="difficulty-preset-button "
+      title="上級者（15mm）を選択"
+      type="button"
+    >
+      上級者
+    </button>
+    <button
+      aria-pressed="false"
+      class="difficulty-preset-button "
+      title="エキスパート（8mm）を選択"
+      type="button"
+    >
+      エキスパート
+    </button>
+  </div>
+  <div
+    class="difficulty-selector__slider"
+  >
+    <input
+      aria-label="標準偏差スライダー"
+      class="difficulty-slider"
+      max="100"
+      min="5"
+      step="1"
+      type="range"
+      value="50"
+    />
+  </div>
+  <div
+    class="difficulty-selector__display"
+  >
+    50
+    mm
+  </div>
+</div>
+`;
