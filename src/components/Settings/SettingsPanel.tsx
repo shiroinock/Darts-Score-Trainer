@@ -1,127 +1,184 @@
 /**
- * SettingsPanel - 設定パネルコンポーネント
+ * SettingsPanel - 設定パネルコンポーネント（ウィザード形式）
  *
- * 全設定コンポーネントを統合し、現在の設定サマリー表示と練習開始ボタンを提供します。
+ * 4ステップのウィザード形式で設定を行います：
+ * - Step 1: プリセット選択
+ * - Step 2: 難易度選択
+ * - Step 3: セッション設定
+ * - Step 4: 確認画面
  */
 
-import { PRESETS } from '../../stores/config/presets';
+import { useState } from 'react';
 import { useGameStore } from '../../stores/gameStore';
-import type { PracticeConfig, SessionConfig } from '../../types';
-import { DetailedSettings } from './DetailedSettings';
-import { DIFFICULTY_PRESETS, DifficultySelector } from './DifficultySelector';
-import { PresetSelector } from './PresetSelector';
-import { SessionConfigSelector } from './SessionConfigSelector';
+import { Step1Preset } from './SetupWizard/Step1Preset';
+import { Step2Difficulty } from './SetupWizard/Step2Difficulty';
+import { Step3Session } from './SetupWizard/Step3Session';
+import { Step4Confirm } from './SetupWizard/Step4Confirm';
 
 /**
- * 現在の設定が既存プリセットと完全一致するか判定する
- *
- * configIdベースで判定することで、カスタム設定が偶然プリセットと
- * 同じパラメータを持つ場合の誤判定を防ぎます。
- *
- * @param config - 練習設定
- * @returns プリセットIDまたはnull（カスタム設定の場合）
+ * ウィザードのステップ定義
  */
-function findMatchingPreset(config: PracticeConfig): string | null {
-  // プリセットではない場合は即座にnullを返す
-  if (!config.isPreset) {
-    return null;
-  }
-
-  // configIdが'preset-'で始まり、PRESETSに存在する場合のみ有効
-  if (config.configId.startsWith('preset-') && config.configId in PRESETS) {
-    return config.configId;
-  }
-
-  return null;
-}
-
-/**
- * 難易度プリセット名を取得する
- *
- * 標準偏差（mm）から対応する難易度ラベルを検索します。
- * 該当するプリセットがない場合は「カスタム Xmm」形式で表示します。
- *
- * @param stdDevMM - 標準偏差（mm単位）
- * @returns 難易度ラベル（例: '初心者', 'カスタム 25mm'）
- */
-function getDifficultyLabel(stdDevMM: number): string {
-  const preset = DIFFICULTY_PRESETS.find((p) => p.stdDevMM === stdDevMM);
-  return preset ? preset.label : `カスタム ${stdDevMM}mm`;
-}
-
-/**
- * セッション設定のサマリー文字列を生成する
- *
- * セッションモードに応じて、問題数または時間制限の情報を文字列化します。
- *
- * @param sessionConfig - セッション設定
- * @returns サマリー文字列（例: '問題数モード: 10問', '時間制限モード: 3分'）
- */
-function getSessionSummary(sessionConfig: SessionConfig): string {
-  if (sessionConfig.mode === 'questions') {
-    return `問題数モード: ${sessionConfig.questionCount ?? 10}問`;
-  }
-  return `時間制限モード: ${sessionConfig.timeLimit ?? 3}分`;
-}
+type WizardStep = 1 | 2 | 3 | 4;
 
 /**
  * 設定パネルコンポーネント
  */
 export function SettingsPanel(): JSX.Element {
-  const config = useGameStore((state) => state.config);
-  const sessionConfig = useGameStore((state) => state.sessionConfig);
+  const [currentStep, setCurrentStep] = useState<WizardStep>(1);
   const startPractice = useGameStore((state) => state.startPractice);
 
-  // プリセット判定
-  const matchingPresetId = findMatchingPreset(config);
-  const presetName = matchingPresetId ? PRESETS[matchingPresetId].configName : 'カスタム設定';
+  /**
+   * 次のステップへ進む
+   */
+  const handleNext = (): void => {
+    if (currentStep < 4) {
+      setCurrentStep((prev) => (prev + 1) as WizardStep);
+    }
+  };
 
-  // 設定サマリー
-  const sessionSummary = getSessionSummary(sessionConfig);
-  const difficultyLabel = getDifficultyLabel(config.stdDevMM);
+  /**
+   * 前のステップに戻る
+   */
+  const handleBack = (): void => {
+    if (currentStep > 1) {
+      setCurrentStep((prev) => (prev - 1) as WizardStep);
+    }
+  };
+
+  /**
+   * 練習開始
+   */
+  const handleStart = (): void => {
+    startPractice();
+  };
+
+  const progressContainerStyle: React.CSSProperties = {
+    width: '100%',
+    maxWidth: '800px',
+    margin: '0 auto 1rem',
+    padding: '0.5rem 1rem',
+    flexShrink: 0,
+    boxSizing: 'border-box',
+  };
+
+  const progressBarStyle: React.CSSProperties = {
+    width: '100%',
+    height: '8px',
+    backgroundColor: '#e0e0e0',
+    borderRadius: '4px',
+    overflow: 'hidden',
+    marginBottom: '1rem',
+  };
+
+  const progressFillStyle: React.CSSProperties = {
+    height: '100%',
+    background: 'linear-gradient(90deg, #4a90e2 0%, #357ab8 100%)',
+    transition: 'width 0.3s ease',
+    borderRadius: '4px',
+    width: `${(currentStep / 4) * 100}%`,
+  };
+
+  const progressStepsStyle: React.CSSProperties = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  };
+
+  const getStepStyle = (step: number): React.CSSProperties => {
+    const baseStyle: React.CSSProperties = {
+      width: '40px',
+      height: '40px',
+      borderRadius: '50%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontWeight: 600,
+      fontSize: '1.125rem',
+      transition: 'all 0.3s ease',
+    };
+
+    if (step === currentStep) {
+      return {
+        ...baseStyle,
+        backgroundColor: '#4a90e2',
+        color: 'white',
+        boxShadow: '0 4px 8px rgba(74, 144, 226, 0.3)',
+        transform: 'scale(1.1)',
+      };
+    } else if (step < currentStep) {
+      return {
+        ...baseStyle,
+        backgroundColor: '#4caf50',
+        color: 'white',
+      };
+    } else {
+      return {
+        ...baseStyle,
+        backgroundColor: '#e0e0e0',
+        color: '#999',
+      };
+    }
+  };
 
   return (
     <div className="settings-panel">
-      {/* プリセット選択 */}
-      <PresetSelector />
-
-      {/* セッション設定 */}
-      <SessionConfigSelector />
-
-      {/* 難易度選択 */}
-      <DifficultySelector />
-
-      {/* 詳細設定 */}
-      <DetailedSettings />
-
-      {/* 設定サマリー */}
-      <div className="settings-panel__summary">
-        <h2 className="settings-panel__summary-title">現在の設定</h2>
-        <div className="settings-panel__summary-content">
-          <div className="settings-panel__summary-item">
-            <span className="settings-panel__summary-label">プリセット:</span>
-            <span className="settings-panel__summary-value">{presetName}</span>
-          </div>
-          <div className="settings-panel__summary-item">
-            <span className="settings-panel__summary-label">セッション:</span>
-            <span className="settings-panel__summary-value">{sessionSummary}</span>
-          </div>
-          <div className="settings-panel__summary-item">
-            <span className="settings-panel__summary-label">難易度:</span>
-            <span className="settings-panel__summary-value">{difficultyLabel}</span>
-          </div>
+      {/* 進捗インジケーター */}
+      <div style={progressContainerStyle}>
+        <div style={progressBarStyle}>
+          <div style={progressFillStyle} />
+        </div>
+        <div style={progressStepsStyle}>
+          {[1, 2, 3, 4].map((step) => (
+            <div key={step} style={getStepStyle(step)}>
+              {step}
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* 練習開始ボタン */}
-      <button
-        className="settings-panel__start-button"
-        onClick={startPractice}
-        type="button"
-        aria-label="練習を開始"
-      >
-        練習を開始
-      </button>
+      {/* ステップコンテンツ */}
+      <div className="setup-wizard__content">
+        {currentStep === 1 && <Step1Preset />}
+        {currentStep === 2 && <Step2Difficulty />}
+        {currentStep === 3 && <Step3Session />}
+        {currentStep === 4 && <Step4Confirm />}
+      </div>
+
+      {/* ナビゲーションボタン */}
+      <div className="setup-wizard__navigation">
+        {/* 戻るボタン（ステップ1では非表示） */}
+        {currentStep > 1 && (
+          <button
+            type="button"
+            className="setup-wizard__button setup-wizard__button--back"
+            onClick={handleBack}
+            aria-label="前のステップに戻る"
+          >
+            ← 戻る
+          </button>
+        )}
+
+        {/* 次へ/練習開始ボタン */}
+        {currentStep < 4 ? (
+          <button
+            type="button"
+            className="setup-wizard__button setup-wizard__button--next"
+            onClick={handleNext}
+            aria-label="次のステップへ進む"
+          >
+            次へ →
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="setup-wizard__button setup-wizard__button--start"
+            onClick={handleStart}
+            aria-label="練習を開始"
+          >
+            練習を開始
+          </button>
+        )}
+      </div>
     </div>
   );
 }
