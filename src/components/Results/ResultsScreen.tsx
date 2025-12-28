@@ -20,6 +20,7 @@ export function ResultsScreen(): JSX.Element {
   // ストアから必要な状態を取得
   const gameState = useGameStore((state) => state.gameState);
   const config = useGameStore((state) => state.config);
+  const sessionConfig = useGameStore((state) => state.sessionConfig);
   const stats = useGameStore((state) => state.stats);
   const elapsedTime = useGameStore((state) => state.elapsedTime);
 
@@ -55,7 +56,7 @@ export function ResultsScreen(): JSX.Element {
     stats,
     elapsedTime,
     config, // PracticeConfig全体を渡す
-    sessionConfig: useGameStore.getState().sessionConfig,
+    sessionConfig, // フック経由で取得した値を使用
     completedAt: new Date().toISOString(),
     finishReason: 'manual', // TODO: 実際の終了理由を記録する機能を実装
   };

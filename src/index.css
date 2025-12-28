@@ -2010,12 +2010,6 @@ h1 {
   color: white;
 }
 
-.results-screen__button--retry:hover {
-  background-color: #45a049;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
-}
-
 .results-screen__button--retry:active {
   transform: translateY(0);
   box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
@@ -2026,23 +2020,28 @@ h1 {
   color: white;
 }
 
-.results-screen__button--settings:hover {
-  background-color: #5a6268;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(108, 117, 125, 0.3);
-}
-
 .results-screen__button--settings:active {
   transform: translateY(0);
   box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
 }
 
-/* タッチデバイス向けの調整 */
-@media (hover: none) {
-  .results-screen__button:hover {
-    transform: none;
+/* ホバー可能なデバイスでのみhover効果を適用 */
+@media (hover: hover) {
+  .results-screen__button--retry:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
   }
 
+  .results-screen__button--settings:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(108, 117, 125, 0.3);
+  }
+}
+
+/* タッチデバイス向けの調整 */
+@media (hover: none) {
   /* タッチデバイスではボタンを大きく */
   .results-screen__button {
     padding: 1.25rem 2rem;
