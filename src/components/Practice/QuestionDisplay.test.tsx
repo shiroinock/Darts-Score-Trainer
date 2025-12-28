@@ -3,7 +3,7 @@
  */
 
 import { render, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useGameStore } from '../../stores/gameStore';
 import type { Question } from '../../types/Question';
 import { QuestionDisplay } from './QuestionDisplay';
@@ -481,6 +481,57 @@ describe('QuestionDisplay', () => {
 
       const h3Elements = container.querySelectorAll('h3.question-display__text');
       expect(h3Elements.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('異常系テスト（境界値）', () => {
+    it('currentThrowIndex が範囲外（0）の場合、警告が出て投擲ラベルは表示されない', () => {
+      const consoleWarnSpy = vi.spyOn(console, 'warn');
+      useGameStore.setState({
+        currentQuestion: createMockQuestion(),
+        currentThrowIndex: 0, // 無効値
+        config: createMockConfig({ throwUnit: 3 }),
+      });
+
+      render(<QuestionDisplay />);
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith('Invalid currentThrowIndex: 0 (expected 1-3)');
+      expect(screen.queryByText('1本目')).not.toBeInTheDocument();
+      expect(screen.queryByText('0本目')).not.toBeInTheDocument();
+
+      consoleWarnSpy.mockRestore();
+    });
+
+    it('currentThrowIndex が範囲外（4）の場合、警告が出て投擲ラベルは表示されない', () => {
+      const consoleWarnSpy = vi.spyOn(console, 'warn');
+      useGameStore.setState({
+        currentQuestion: createMockQuestion(),
+        currentThrowIndex: 4, // 無効値
+        config: createMockConfig({ throwUnit: 3 }),
+      });
+
+      render(<QuestionDisplay />);
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith('Invalid currentThrowIndex: 4 (expected 1-3)');
+      expect(screen.queryByText('4本目')).not.toBeInTheDocument();
+
+      consoleWarnSpy.mockRestore();
+    });
+
+    it('currentThrowIndex が負の値（-1）の場合、警告が出て投擲ラベルは表示されない', () => {
+      const consoleWarnSpy = vi.spyOn(console, 'warn');
+      useGameStore.setState({
+        currentQuestion: createMockQuestion(),
+        currentThrowIndex: -1, // 無効値
+        config: createMockConfig({ throwUnit: 3 }),
+      });
+
+      render(<QuestionDisplay />);
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith('Invalid currentThrowIndex: -1 (expected 1-3)');
+      expect(screen.queryByText('0本目')).not.toBeInTheDocument();
+
+      consoleWarnSpy.mockRestore();
     });
   });
 

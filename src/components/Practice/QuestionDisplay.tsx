@@ -10,6 +10,15 @@
 import { useGameStore } from '../../stores/gameStore';
 
 /**
+ * 問題文の定数
+ */
+const QUESTION_TEXTS = {
+  SCORE_SINGLE: 'この投擲の得点は？',
+  SCORE_TRIPLE: '3投の合計得点は？',
+  REMAINING: '残り点数は？',
+} as const;
+
+/**
  * 投擲インデックスから表示テキストを生成する
  * @param zeroBasedIndex - 投擲インデックス（0始まり: 0, 1, 2）
  * @returns 投擲単位の表示文字列（例: "1本目", "2本目", "3本目"）
@@ -37,13 +46,17 @@ export function QuestionDisplay(): JSX.Element {
     );
   }
 
-  // 投擲単位表示の判定と生成（条件式を簡素化）
+  // 投擲単位表示の判定と生成（境界値検証を含む）
   const zeroBasedIndex = currentThrowIndex - 1;
-  // 境界値検証: 0-2の範囲外の場合は警告
-  if (throwUnit === 3 && (zeroBasedIndex < 0 || zeroBasedIndex >= 3)) {
-    console.warn(`Invalid currentThrowIndex: ${currentThrowIndex} (expected 1-3)`);
+  let throwLabel: string | null = null;
+  if (throwUnit === 3) {
+    // 境界値検証: 0-2の範囲外の場合は警告し、nullを返す
+    if (zeroBasedIndex < 0 || zeroBasedIndex >= 3) {
+      console.warn(`Invalid currentThrowIndex: ${currentThrowIndex} (expected 1-3)`);
+    } else {
+      throwLabel = getThrowLabel(zeroBasedIndex);
+    }
   }
-  const throwLabel = throwUnit === 3 ? getThrowLabel(zeroBasedIndex) : null;
 
   // 累積表示の判定（独立モードでない かつ 3投モード）
   const showCumulativeLabel = judgmentTiming === 'cumulative' && throwUnit === 3;
@@ -61,13 +74,13 @@ export function QuestionDisplay(): JSX.Element {
         {/* scoreモード、またはbothモードでscoreを含む場合 */}
         {(questionType === 'score' || questionType === 'both') && (
           <h3 className="question-display__text">
-            {throwUnit === 1 ? 'この投擲の得点は？' : '3投の合計得点は？'}
+            {throwUnit === 1 ? QUESTION_TEXTS.SCORE_SINGLE : QUESTION_TEXTS.SCORE_TRIPLE}
           </h3>
         )}
 
         {/* remainingモード、またはbothモードでremainingを含む場合 */}
         {(questionType === 'remaining' || questionType === 'both') && (
-          <h3 className="question-display__text">残り点数は？</h3>
+          <h3 className="question-display__text">{QUESTION_TEXTS.REMAINING}</h3>
         )}
       </div>
     </section>
