@@ -1095,3 +1095,136 @@ expect(packageJson.devDependencies['simple-git-hooks']).toMatch(/^\^?2\.13\.1$/)
    ```
 
 これらのテストにより、設定が正しく機能することを保証できます。
+
+## 追加ガイドライン（2025-12-28 追記 - getOptimalTarget関数のテスト評価に基づく改善）
+
+### PDC標準チェックアウト表への準拠
+
+ダーツの戦略系関数（特にチェックアウト関連）のテストでは、PDC（Professional Darts Corporation）の標準チェックアウト表に基づいたテストケースを含めてください：
+
+1. **実践的なチェックアウトシナリオの網羅**
+   ```typescript
+   describe('PDC標準チェックアウト', () => {
+     test('167点（T20->T19->BULL）のチェックアウトパス', () => {
+       expect(getOptimalTarget(167, 3)).toEqual({ type: 'TRIPLE', number: 20, label: 'T20' });
+     });
+     
+     test('164点（T20->T18->BULL）のチェックアウトパス', () => {
+       expect(getOptimalTarget(164, 3)).toEqual({ type: 'TRIPLE', number: 20, label: 'T20' });
+     });
+     
+     test('161点（T20->T17->BULL）のチェックアウトパス', () => {
+       expect(getOptimalTarget(161, 3)).toEqual({ type: 'TRIPLE', number: 20, label: 'T20' });
+     });
+   });
+   ```
+
+2. **実践的なゲームシナリオの追加**
+   ```typescript
+   describe('実践的なゲームシナリオ', () => {
+     describe('301ゲーム', () => {
+       test('301点開始時の最適ターゲット', () => {
+         expect(getOptimalTarget(301, 9)).toEqual({ type: 'TRIPLE', number: 20, label: 'T20' });
+       });
+     });
+     
+     describe('ミスからのリカバリー', () => {
+       test('T20狙いを外して1点になった場合の次の狙い', () => {
+         expect(getOptimalTarget(107, 2)).toEqual({ type: 'TRIPLE', number: 19, label: 'T19' });
+       });
+     });
+   });
+   ```
+
+### テストケース数の適切な管理
+
+1. **過度に多いテストケースへの警告**
+   - 1つのテストファイルに70以上のテストケースは多すぎる可能性があります
+   - 必要十分なテストケースに絞り込むか、複数のファイルに分割を検討してください
+   
+2. **テストケースのグループ化**
+   - 関連するテストケースは describe ブロックで適切にグループ化
+   - 各 describe ブロックは明確な目的を持つ（例：「正常系」「PDC標準」「エッジケース」「異常系」）
+
+### 入力バリデーションの統一的なアプローチ
+
+1. **浮動小数点数のテストパターン**
+   ```typescript
+   describe('浮動小数点数（残り点数）', () => {
+     test.each([
+       [32.5, 'ダブルリング境界値'],
+       [2.5, 'フィニッシュ可能境界'],
+       [170.1, '高得点境界'],
+       [0.1, 'ゼロ近辺']
+     ])('%p点の場合はnullを返す（%s）', (score, description) => {
+       expect(getOptimalTarget(score, 3)).toBeNull();
+     });
+   });
+   ```
+
+2. **特殊な数値の扱い**
+   ```typescript
+   test.each([
+     [NaN, 'NaN'],
+     [Infinity, 'Infinity'],
+     [-Infinity, '-Infinity']
+   ])('%s の場合はnullを返す', (value, name) => {
+     expect(getOptimalTarget(value, 3)).toBeNull();
+   });
+   ```
+
+### ドメイン知識の明確な表現
+
+ダーツ戦略系のテストでは、なぜその期待値になるのかをコメントで説明：
+
+```typescript
+test('40点（D20）は1投でフィニッシュ可能', () => {
+  // ダブル20（40点）で直接フィニッシュできるため
+  expect(getOptimalTarget(40, 1)).toEqual({ type: 'DOUBLE', number: 20, label: 'D20' });
+});
+
+test('50点（BULL）は1投でフィニッシュ可能', () => {
+  // ブル（50点）はダブルとして扱われ、直接フィニッシュできる
+  expect(getOptimalTarget(50, 1)).toEqual({ type: 'BULL', number: null, label: 'BULL' });
+});
+```
+
+### テスト完了報告の改善
+
+Red フェーズ完了時の報告フォーマット：
+
+```
+## 完了報告
+
+✅ **テストファイル作成完了**: `[ファイルパス]`
+
+### テスト概要
+
+**テストケース数**: X個のテストケース（Y個のdescribeグループ）
+
+### カバーしたシナリオ
+
+#### 1. 正常系（X件）
+- 基本的な動作確認
+- 典型的な使用ケース
+
+#### 2. エッジケース（Y件）
+- 境界値
+- 特殊な条件
+
+#### 3. 異常系（Z件）
+- バリデーション
+- エラーケース
+
+### 実行コマンド
+
+```bash
+npm test [ファイルパス]
+```
+
+### Red フェーズ確認
+
+期待通り、実装ファイルが存在しないためテストが失敗しています（Red フェーズ）。
+```
+
+この構造化された報告により、実装者（implement エージェント）がテスト要件を正確に理解できます。

@@ -7,15 +7,16 @@
 
 // ダーツボード物理仕様
 export { BOARD_PHYSICAL } from './boardPhysical.js';
+// 難易度・セッション設定
+export { CHECKOUT_RANGES, CHECKOUT_TABLE } from './checkoutTable.js';
 // UI表示設定
 export { DART_COLORS } from './dartColors.js';
 export { DART_MARKER_RADII } from './dartMarkerRadii.js';
 export { DART_MARKER_TEXT_SIZE } from './dartMarkerTextSize.js';
-
-// 難易度・セッション設定
 export { DEFAULT_TARGET } from './defaultTargets.js';
 export { DIFFICULTY_PRESETS } from './difficultyPresets.js';
 export { FEEDBACK_ICONS } from './feedbackIcons.js';
+export { ONE_DART_FINISHABLE } from './finishableScores.js';
 export { LEGEND_LAYOUT, LEGEND_TEXT_SIZE } from './legendLayout.js';
 export { SEGMENT_ANGLE } from './segmentAngle.js';
 export { SEGMENT_NUMBER_TEXT_SIZE } from './segmentNumberTextSize.js';

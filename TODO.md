@@ -231,10 +231,13 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 **目的**: 残り点数に応じて最適なターゲットを自動決定する
 
 #### 短期実装（固定対応表方式）
-- [ ] `getOptimalTarget(remainingScore, throwsRemaining)` 関数
+- [x] `getOptimalTarget(remainingScore, throwsRemaining)` 関数
   - 残り点数から狙うべきターゲットを返す
   - 固定の対応表（ルックアップテーブル）を使用
   - 例: 170点 → T20, 40点 → D20, 50点 → BULL, 32点 → D16
+  - 実装ファイル: `src/utils/dartStrategy/getOptimalTarget.ts`
+  - テストファイル: `src/utils/dartStrategy/getOptimalTarget.test.ts`
+  - 定数ファイル: `src/utils/constants/checkoutTable.ts`, `src/utils/constants/finishableScores.ts`, `src/utils/constants/defaultTargets.ts`
 - [ ] ターゲット対応表の定義 (`src/utils/dartStrategy/targetLookupTable.ts`)
   - 残り2-170点の範囲で一般的なダーツセオリーに基づく対応表
   - 参考: PDC推奨チェックアウト表

@@ -580,3 +580,43 @@ const toleranceRatio = 0.1; // 10%の誤差を許容
    - 修正項目が多い場合は、最も影響が大きい修正から優先的に記載
    - 類似問題は1つの修正項目にまとめ、impactフィールドで影響範囲を明記
    - JSON出力は必ず最後の閉じ括弧まで完全に出力する
+
+## チェックアウト表関連の修正指示
+
+### チェックアウト表の定数化における注意事項
+1. **既存の定数定義の確認**
+   - チェックアウトの仕様（2-170の範囲）が既にCLAUDE.mdに記載されている場合は、それを参照
+   - 新規に定数を作る際は、既存の定数命名規則に従う
+
+2. **修正指示の具体例**
+   ```json
+   {
+     "file": "src/utils/dartStrategy/getOptimalTarget.ts",
+     "line": "5-7",
+     "issue": "チェックアウト表の定数定義でマジックナンバーを使用",
+     "fix_instruction": "CHECKOUT_TABLE_START = 2, CHECKOUT_TABLE_END = 170 として定数化し、コメントでCLAUDE.mdの仕様を参照する",
+     "code_example": {
+       "before": "const CHECKOUT_TABLE: Record<number, Checkout> = {\n  2: { dart1: 'D1' },\n  // ...\n  170: { dart1: 'T20', dart2: 'T20', dart3: 'BULL' }",
+       "after": "// チェックアウト表の範囲（CLAUDE.md仕様準拠）\nconst CHECKOUT_TABLE_START = 2;\nconst CHECKOUT_TABLE_END = 170;\n\nconst CHECKOUT_TABLE: Record<number, Checkout> = {\n  [CHECKOUT_TABLE_START]: { dart1: 'D1' },\n  // ...\n  [CHECKOUT_TABLE_END]: { dart1: 'T20', dart2: 'T20', dart3: 'BULL' }"
+     }
+   }
+   ```
+
+3. **ONE_DART_FINISHABLEの定義統合**
+   - 既存の定数定義がある場合は、それを参照するように修正
+   - 重複定義は必ず削除し、単一の真実の源を保つ
+
+## 修正実施後の確認事項
+
+### 修正計画作成時の追加チェック項目
+1. **定数のインポート確認**
+   - 新規に定数を作成する場合は、適切なexport/importの指示を含める
+   - 既存の定数を使用する場合は、正しいインポートパスを指定
+
+2. **コメント追加の具体性**
+   - JSDocコメントを追加する場合は、完全なコメントブロックを提供
+   - 仕様参照（CLAUDE.mdなど）がある場合は、その旨を明記
+
+3. **テストへの影響考慮**
+   - 定数化により既存のテストが影響を受ける場合は、その旨を記載
+   - 必要に応じてテストファイルの修正も含める
