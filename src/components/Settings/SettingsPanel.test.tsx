@@ -95,7 +95,7 @@ describe('SettingsPanel', () => {
       expect(screen.queryByRole('button', { name: '前のステップに戻る' })).not.toBeInTheDocument();
     });
 
-    test('進捗バーの幅が25%である', () => {
+    test('進捗バーがステップ1を示している', () => {
       // Arrange & Act
       render(<SettingsPanel />);
 
@@ -104,7 +104,7 @@ describe('SettingsPanel', () => {
         .getAllByRole('generic')
         .find((el) => el.className === 'setup-wizard__progress-fill');
 
-      expect(progressFill).toHaveStyle({ width: '25%' });
+      expect(progressFill).toHaveAttribute('data-step', '1');
     });
   });
 
@@ -321,7 +321,7 @@ describe('SettingsPanel', () => {
       );
     });
 
-    test('ステップ2の進捗バーの幅が50%である', async () => {
+    test('ステップ2の進捗バーがステップ2を示している', async () => {
       // Arrange
       const user = userEvent.setup();
       render(<SettingsPanel />);
@@ -334,10 +334,10 @@ describe('SettingsPanel', () => {
         .getAllByRole('generic')
         .find((el) => el.className === 'setup-wizard__progress-fill');
 
-      expect(progressFill).toHaveStyle({ width: '50%' });
+      expect(progressFill).toHaveAttribute('data-step', '2');
     });
 
-    test('ステップ3の進捗バーの幅が75%である', async () => {
+    test('ステップ3の進捗バーがステップ3を示している', async () => {
       // Arrange
       const user = userEvent.setup();
       render(<SettingsPanel />);
@@ -351,10 +351,10 @@ describe('SettingsPanel', () => {
         .getAllByRole('generic')
         .find((el) => el.className === 'setup-wizard__progress-fill');
 
-      expect(progressFill).toHaveStyle({ width: '75%' });
+      expect(progressFill).toHaveAttribute('data-step', '3');
     });
 
-    test('ステップ4の進捗バーの幅が100%である', async () => {
+    test('ステップ4の進捗バーがステップ4を示している', async () => {
       // Arrange
       const user = userEvent.setup();
       render(<SettingsPanel />);
@@ -369,7 +369,7 @@ describe('SettingsPanel', () => {
         .getAllByRole('generic')
         .find((el) => el.className === 'setup-wizard__progress-fill');
 
-      expect(progressFill).toHaveStyle({ width: '100%' });
+      expect(progressFill).toHaveAttribute('data-step', '4');
     });
   });
 

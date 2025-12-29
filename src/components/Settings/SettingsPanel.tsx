@@ -64,18 +64,16 @@ export function SettingsPanel({
    * 次のステップへ進む
    */
   const handleNext = (): void => {
-    if (currentStep < 4) {
-      changeStep((currentStep + 1) as WizardStep);
-    }
+    const nextStep = Math.min(currentStep + 1, 4) as WizardStep;
+    changeStep(nextStep);
   };
 
   /**
    * 前のステップに戻る
    */
   const handleBack = (): void => {
-    if (currentStep > 1) {
-      changeStep((currentStep - 1) as WizardStep);
-    }
+    const prevStep = Math.max(currentStep - 1, 1) as WizardStep;
+    changeStep(prevStep);
   };
 
   /**
@@ -104,10 +102,7 @@ export function SettingsPanel({
       {/* 進捗インジケーター */}
       <div className="setup-wizard__progress">
         <div className="setup-wizard__progress-bar">
-          <div
-            className="setup-wizard__progress-fill"
-            style={{ width: `${(currentStep / 4) * 100}%` }}
-          />
+          <div className="setup-wizard__progress-fill" data-step={currentStep} />
         </div>
         <div className="setup-wizard__progress-steps">
           {[1, 2, 3, 4].map((step) => (

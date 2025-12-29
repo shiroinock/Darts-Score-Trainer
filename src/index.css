@@ -758,6 +758,23 @@ h1 {
   border-radius: 4px;
 }
 
+/* プログレスバーの幅をステップに応じて設定 */
+.setup-wizard__progress-fill[data-step="1"] {
+  width: 25%;
+}
+
+.setup-wizard__progress-fill[data-step="2"] {
+  width: 50%;
+}
+
+.setup-wizard__progress-fill[data-step="3"] {
+  width: 75%;
+}
+
+.setup-wizard__progress-fill[data-step="4"] {
+  width: 100%;
+}
+
 .setup-wizard__progress-steps {
   display: flex;
   justify-content: space-between;
@@ -830,6 +847,8 @@ h1 {
 /* ステップコンテンツ */
 .setup-wizard__step-content {
   width: 100%;
+  overflow-y: auto;
+  max-height: calc(100vh - 250px); /* 進捗バー + ナビゲーション分を除く */
 }
 
 /* 詳細設定（Step4） */

@@ -13,7 +13,7 @@ exports[`SettingsPanel > スナップショットテスト > ステップ1の基
       >
         <div
           class="setup-wizard__progress-fill"
-          style="width: 25%;"
+          data-step="1"
         />
       </div>
       <div
@@ -82,7 +82,7 @@ exports[`SettingsPanel > スナップショットテスト > ステップ2の見
       >
         <div
           class="setup-wizard__progress-fill"
-          style="width: 50%;"
+          data-step="2"
         />
       </div>
       <div
@@ -158,7 +158,7 @@ exports[`SettingsPanel > スナップショットテスト > ステップ3の見
       >
         <div
           class="setup-wizard__progress-fill"
-          style="width: 75%;"
+          data-step="3"
         />
       </div>
       <div
@@ -234,7 +234,7 @@ exports[`SettingsPanel > スナップショットテスト > ステップ4の見
       >
         <div
           class="setup-wizard__progress-fill"
-          style="width: 100%;"
+          data-step="4"
         />
       </div>
       <div
