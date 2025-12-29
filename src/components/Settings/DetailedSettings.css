@@ -1,0 +1,131 @@
+/* ============================================================ */
+/* DetailedSettings Component                                   */
+/* ============================================================ */
+
+.detailed-settings {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background-color: #fafafa;
+}
+
+.detailed-settings__toggle {
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1rem;
+  text-align: left;
+  transition: background-color 0.2s ease;
+}
+
+.detailed-settings__toggle:hover {
+  background-color: #f0f0f0;
+}
+
+.detailed-settings__header {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detailed-settings__content {
+  padding: 1rem 0;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.detailed-settings__section {
+  margin-bottom: 1.5rem;
+}
+
+.detailed-settings__section:last-child {
+  margin-bottom: 0;
+}
+
+.detailed-settings__subtitle {
+  font-size: 1.125rem;
+  margin-bottom: 0.75rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.detailed-settings__buttons {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* 詳細設定ボタン */
+.detailed-setting-button {
+  flex: 1;
+  min-width: 100px;
+  padding: 0.875rem 1.25rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.detailed-setting-button:hover {
+  border-color: #4a90e2;
+  background-color: #f0f7ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.detailed-setting-button:active {
+  transform: translateY(0);
+}
+
+.detailed-setting-button--active {
+  border-color: #4a90e2;
+  background-color: #e6f2ff;
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+}
+
+.detailed-setting-button--active:hover {
+  background-color: #d9edff;
+}
+
+/* タッチデバイス向けの調整 */
+@media (hover: none) {
+  .detailed-setting-button:hover {
+    transform: none;
+  }
+}
+
+/* モバイル: スタック配置 */
+@media (max-width: 640px) {
+  .detailed-settings__buttons {
+    flex-direction: column;
+  }
+
+  .detailed-setting-button {
+    min-width: auto;
+    width: 100%;
+  }
+}
