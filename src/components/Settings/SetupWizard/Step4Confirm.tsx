@@ -10,7 +10,7 @@ import {
   findMatchingPreset,
   getDifficultyLabel,
   getSessionSummary,
-} from '../../../utils/configHelpers.js';
+} from '../../../utils/configHelpers';
 import { DetailedSettings } from '../DetailedSettings';
 
 /**

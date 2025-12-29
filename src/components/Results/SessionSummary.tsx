@@ -10,7 +10,7 @@
  */
 
 import type { SessionResult } from '../../types/SessionResult';
-import { getDifficultyLabel } from '../../utils/configHelpers.js';
+import { getDifficultyLabel } from '../../utils/configHelpers';
 
 /**
  * セッション終了理由を日本語に変換する

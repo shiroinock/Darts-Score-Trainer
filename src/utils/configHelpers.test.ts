@@ -4,9 +4,9 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import { PRESETS } from '../stores/config/presets.js';
-import type { PracticeConfig, SessionConfig } from '../types/index.js';
-import { findMatchingPreset, getDifficultyLabel, getSessionSummary } from './configHelpers.js';
+import { PRESETS } from '../stores/config/presets';
+import type { PracticeConfig, SessionConfig } from '../types';
+import { findMatchingPreset, getDifficultyLabel, getSessionSummary } from './configHelpers';
 
 describe('configHelpers', () => {
   describe('findMatchingPreset', () => {

@@ -3,9 +3,9 @@
  * Step4ConfirmとSessionSummaryで共通使用する関数を提供
  */
 
-import { PRESETS } from '../stores/config/presets.js';
-import type { PracticeConfig, SessionConfig } from '../types/index.js';
-import { DIFFICULTY_PRESETS } from './constants/index.js';
+import { PRESETS } from '../stores/config/presets';
+import type { PracticeConfig, SessionConfig } from '../types';
+import { DIFFICULTY_PRESETS } from './constants';
 
 /**
  * 現在の設定が既存プリセットと完全一致するか判定する

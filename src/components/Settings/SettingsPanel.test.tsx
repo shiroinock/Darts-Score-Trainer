@@ -505,4 +505,136 @@ describe('SettingsPanel', () => {
       expect(container).toMatchSnapshot();
     });
   });
+
+  describe('Controlledモード', () => {
+    test('外部からステップを制御できる（ステップ1→3）', () => {
+      // Arrange
+      const handleStepChange = vi.fn();
+      const { rerender } = render(
+        <SettingsPanel currentStep={1} onStepChange={handleStepChange} />
+      );
+
+      // Assert: ステップ1が表示される
+      expect(screen.getByTestId('step1-preset')).toBeInTheDocument();
+      expect(screen.queryByTestId('step3-session')).not.toBeInTheDocument();
+
+      // Act: 外部からステップを3に変更
+      rerender(<SettingsPanel currentStep={3} onStepChange={handleStepChange} />);
+
+      // Assert: ステップ3が表示される
+      expect(screen.queryByTestId('step1-preset')).not.toBeInTheDocument();
+      expect(screen.getByTestId('step3-session')).toBeInTheDocument();
+    });
+
+    test('外部からステップを制御できる（ステップ4→2）', () => {
+      // Arrange
+      const handleStepChange = vi.fn();
+      const { rerender } = render(
+        <SettingsPanel currentStep={4} onStepChange={handleStepChange} />
+      );
+
+      // Assert: ステップ4が表示される
+      expect(screen.getByTestId('step4-confirm')).toBeInTheDocument();
+
+      // Act: 外部からステップを2に変更
+      rerender(<SettingsPanel currentStep={2} onStepChange={handleStepChange} />);
+
+      // Assert: ステップ2が表示される
+      expect(screen.queryByTestId('step4-confirm')).not.toBeInTheDocument();
+      expect(screen.getByTestId('step2-difficulty')).toBeInTheDocument();
+    });
+
+    test('次へボタンクリック時にonStepChangeが呼ばれる', async () => {
+      // Arrange
+      const handleStepChange = vi.fn();
+      const user = userEvent.setup();
+      render(<SettingsPanel currentStep={1} onStepChange={handleStepChange} />);
+
+      // Act: 次へボタンをクリック
+      await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+
+      // Assert: onStepChangeが2で呼ばれる
+      expect(handleStepChange).toHaveBeenCalledTimes(1);
+      expect(handleStepChange).toHaveBeenCalledWith(2);
+    });
+
+    test('戻るボタンクリック時にonStepChangeが呼ばれる', async () => {
+      // Arrange
+      const handleStepChange = vi.fn();
+      const user = userEvent.setup();
+      render(<SettingsPanel currentStep={3} onStepChange={handleStepChange} />);
+
+      // Act: 戻るボタンをクリック
+      await user.click(screen.getByRole('button', { name: '前のステップに戻る' }));
+
+      // Assert: onStepChangeが2で呼ばれる
+      expect(handleStepChange).toHaveBeenCalledTimes(1);
+      expect(handleStepChange).toHaveBeenCalledWith(2);
+    });
+
+    test('ステップ4で練習開始ボタンクリック時にonStepChangeは呼ばれない', async () => {
+      // Arrange
+      const handleStepChange = vi.fn();
+      const user = userEvent.setup();
+      render(<SettingsPanel currentStep={4} onStepChange={handleStepChange} />);
+
+      // Act: 練習開始ボタンをクリック
+      await user.click(screen.getByRole('button', { name: '練習を開始' }));
+
+      // Assert: onStepChangeは呼ばれない
+      expect(handleStepChange).not.toHaveBeenCalled();
+      // startPracticeは呼ばれる
+      expect(mockStartPractice).toHaveBeenCalledTimes(1);
+    });
+
+    test('Controlledモードでプログレスステップが正しく表示される', () => {
+      // Arrange & Act
+      const { rerender } = render(<SettingsPanel currentStep={1} onStepChange={vi.fn()} />);
+
+      // Assert: ステップ1がアクティブ
+      const step1 = screen.getByTestId('progress-step-1');
+      expect(step1).toHaveClass('setup-wizard__progress-step--active');
+      expect(screen.getByTestId('progress-step-2')).toHaveClass(
+        'setup-wizard__progress-step--pending'
+      );
+
+      // Act: ステップ3に変更
+      rerender(<SettingsPanel currentStep={3} onStepChange={vi.fn()} />);
+
+      // Assert: ステップ3がアクティブ、1-2が完了
+      expect(screen.getByTestId('progress-step-1')).toHaveClass(
+        'setup-wizard__progress-step--completed'
+      );
+      expect(screen.getByTestId('progress-step-2')).toHaveClass(
+        'setup-wizard__progress-step--completed'
+      );
+      expect(screen.getByTestId('progress-step-3')).toHaveClass(
+        'setup-wizard__progress-step--active'
+      );
+      expect(screen.getByTestId('progress-step-4')).toHaveClass(
+        'setup-wizard__progress-step--pending'
+      );
+    });
+
+    test('Controlledモードでステップ間の遷移が正しく動作する', () => {
+      // Arrange
+      const handleStepChange = vi.fn();
+      const { rerender } = render(
+        <SettingsPanel currentStep={1} onStepChange={handleStepChange} />
+      );
+
+      // Assert: 初期状態（ステップ1）
+      expect(screen.getByTestId('step1-preset')).toBeInTheDocument();
+
+      // Act & Assert: ステップ2に遷移
+      rerender(<SettingsPanel currentStep={2} onStepChange={handleStepChange} />);
+      expect(screen.getByTestId('step2-difficulty')).toBeInTheDocument();
+      expect(screen.queryByTestId('step1-preset')).not.toBeInTheDocument();
+
+      // Act & Assert: ステップ4に遷移
+      rerender(<SettingsPanel currentStep={4} onStepChange={handleStepChange} />);
+      expect(screen.getByTestId('step4-confirm')).toBeInTheDocument();
+      expect(screen.queryByTestId('step2-difficulty')).not.toBeInTheDocument();
+    });
+  });
 });
