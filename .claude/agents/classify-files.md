@@ -497,6 +497,14 @@ function isRenderingOnlyFile(file: FileInfo): boolean {
 - **基本方針**: CSSファイル（`.css`, `.scss`, `.sass`）は `uncovered_files` に記載
 - **理由**: 現在の観点（TypeScript、座標系、仕様）では適用不可
 - **テストパターン**: 判定対象外
+- **重要**: CSSファイルに対してテストパターン判定を求められた場合でも、以下のように応答すること：
+  ```json
+  {
+    "error": "CSS files are not eligible for test pattern determination",
+    "reason": "CSS files do not contain executable logic and cannot be unit tested",
+    "suggestion": "For CSS validation, consider using CSS linters or visual regression testing tools"
+  }
+  ```
 
 ##### 出力の簡潔化
 出力が長大になる場合は、以下の優先順位で情報を含める：
@@ -504,6 +512,33 @@ function isRenderingOnlyFile(file: FileInfo): boolean {
 2. `matrix` と `summary` 
 3. `testSummary`（存在する場合）
 4. `suggested_aspects` と `uncovered_files`
+
+### 2025-12-29: まだ存在しないファイルの扱いの明確化
+
+#### 背景
+エージェントが存在しないファイル（`src/styles/index.css`）に対してテストパターン判定を行おうとした際に、以下の問題が発生：
+1. ファイルの存在確認を行わずに判定を試みた
+2. 出力が途中で切れてしまった
+
+#### 追加ガイドライン
+
+##### 存在しないファイルへの対応
+エージェントは、ファイルのテストパターン判定を求められた場合：
+
+1. **必ずファイルの存在を確認**：Read ツールまたは LS ツールで確認
+2. **存在しない場合の応答**：
+   ```json
+   {
+     "error": "File does not exist",
+     "path": "対象ファイルパス",
+     "message": "The specified file does not exist yet. Test pattern determination requires an actual file to analyze."
+   }
+   ```
+
+3. **TODO.mdとの整合性**：存在しないファイルがTODO.mdに記載されている場合は、実装前の段階であることを明記
+
+##### エラー時の出力形式
+エラーや特殊なケースでは、必ず完全なJSON形式で応答すること。出力が途中で切れることを防ぐため、簡潔な形式を使用。
 
 ## 改善履歴
 

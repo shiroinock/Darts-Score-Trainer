@@ -1,12 +1,87 @@
 :root {
-  /* バスト表示のカラー */
+  /* ============================================================ */
+  /* カラーパレット                                               */
+  /* ============================================================ */
+
+  /* プライマリカラー */
+  --color-primary: #4a90e2;
+  --color-primary-light: #f0f7ff;
+  --color-primary-lighter: #e6f2ff;
+  --color-primary-lightest: #d0e7ff;
+  --color-primary-active: #d9edff;
+  --color-primary-dark: #357ab8;
+  --color-primary-darker: #3a7bc8;
+
+  /* セカンダリカラー */
+  --color-secondary: #4caf50;
+  --color-secondary-dark: #45a049;
+
+  /* アクセントカラー */
+  --color-accent-purple-start: #667eea;
+  --color-accent-purple-end: #764ba2;
+  --color-accent-orange: #e67e00;
+  --color-accent-yellow: #ffcc00;
+  --color-accent-yellow-light: #ffe6cc;
+
+  /* 状態カラー */
+  --color-success: #4caf50;
+  --color-success-light: #e6f9f0;
+  --color-error: #f44336;
+  --color-error-dark: #dc3545;
+  --color-error-darker: #c82333;
+  --color-warning: #ff9800;
+  --color-warning-light: #fff9e6;
+
+  /* テキストカラー */
+  --color-text-primary: #333;
+  --color-text-secondary: #666;
+  --color-text-tertiary: #999;
+  --color-text-muted: #6c757d;
+  --color-text-muted-dark: #5a6268;
+  --color-text-dark: #555;
+
+  /* 背景カラー */
+  --color-bg-white: #fff;
+  --color-bg-white-alt: #ffffff;
+  --color-bg-light: #f8f9fa;
+  --color-bg-lighter: #fafafa;
+  --color-bg-lightest: #f5f5f5;
+  --color-bg-gray: #f0f0f0;
+  --color-bg-gray-light: #e9ecef;
+
+  /* ボーダーカラー */
+  --color-border-light: #ddd;
+  --color-border-lighter: #e0e0e0;
+  --color-border-lightest: #ccc;
+
+  /* バスト表示のカラー（既存） */
   --color-bust-bg-start: #fff3e6;
   --color-bust-bg-end: #ffe6e6;
   --color-bust-border: #ff9800;
   --color-bust-title: #d84315;
   --color-bust-message: #666;
 
-  /* バスト表示のフォントサイズ */
+  /* ============================================================ */
+  /* フォントサイズ                                               */
+  /* ============================================================ */
+
+  /* ベースフォントサイズ */
+  --font-size-xs: 0.625rem; /* 10px */
+  --font-size-sm: 0.75rem; /* 12px */
+  --font-size-base: 1rem; /* 16px */
+  --font-size-md: 1.125rem; /* 18px */
+  --font-size-lg: 1.25rem; /* 20px */
+  --font-size-xl: 1.5rem; /* 24px */
+  --font-size-2xl: 1.75rem; /* 28px */
+  --font-size-3xl: 2rem; /* 32px */
+  --font-size-4xl: 2.5rem; /* 40px */
+  --font-size-5xl: 3rem; /* 48px */
+  --font-size-6xl: 4rem; /* 64px */
+
+  /* 特殊なフォントサイズ */
+  --font-size-small: 0.875rem; /* 14px */
+
+  /* バスト表示のフォントサイズ（既存） */
   --font-size-bust-icon: 2.5rem;
   --font-size-bust-icon-mobile: 2rem;
   --font-size-bust-title: 1.5rem;
@@ -14,7 +89,24 @@
   --font-size-bust-message: 1.125rem;
   --font-size-bust-message-mobile: 1rem;
 
-  /* バスト表示のスペーシング */
+  /* ============================================================ */
+  /* スペーシング                                                 */
+  /* ============================================================ */
+
+  /* 基本スペーシング */
+  --spacing-xs: 0.25rem; /* 4px */
+  --spacing-sm: 0.5rem; /* 8px */
+  --spacing-md: 0.75rem; /* 12px */
+  --spacing-base: 1rem; /* 16px */
+  --spacing-lg: 1.25rem; /* 20px */
+  --spacing-xl: 1.5rem; /* 24px */
+  --spacing-2xl: 2rem; /* 32px */
+
+  /* 特殊なスペーシング */
+  --spacing-0875: 0.875rem; /* 14px */
+  --spacing-1-75: 1.75rem; /* 28px */
+
+  /* バスト表示のスペーシング（既存） */
   --spacing-bust-padding: 1.5rem;
   --spacing-bust-padding-mobile: 1rem;
   --spacing-bust-gap: 1rem;
@@ -22,9 +114,46 @@
   --spacing-bust-content-gap: 0.5rem;
   --spacing-bust-margin-top: 1rem;
 
-  /* バスト表示のボーダー */
+  /* ============================================================ */
+  /* ボーダー                                                     */
+  /* ============================================================ */
+
+  /* ボーダー幅 */
+  --border-width-thin: 1px;
+  --border-width-base: 2px;
+  --border-width-thick: 3px;
+
+  /* ボーダー半径 */
+  --border-radius-sm: 4px;
+  --border-radius-base: 8px;
+  --border-radius-md: 10px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+
+  /* バスト表示のボーダー（既存） */
   --border-bust-width: 2px;
   --border-bust-radius: 12px;
+
+  /* ============================================================ */
+  /* シャドウ                                                     */
+  /* ============================================================ */
+
+  /* 基本シャドウ */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-base: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+
+  /* プライマリカラーシャドウ */
+  --shadow-primary: 0 2px 8px rgba(74, 144, 226, 0.3);
+
+  /* ============================================================ */
+  /* トランジション                                               */
+  /* ============================================================ */
+
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.3s ease;
+  --transition-slow: 0.5s ease;
 }
 
 * {

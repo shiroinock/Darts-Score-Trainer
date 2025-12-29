@@ -306,39 +306,21 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 
 ### 5.7 ウィザード形式対応（PR #75）
 #### 5.7.1 マージ後推奨タスク（優先度：中）
-- [ ] **CSSモジュール化の優先度を決定する**
+- [x] **CSSモジュール化の優先度を決定する**（2025-12-29完了）
   - 背景: Phase 8.3.1に20タスク存在するが、スケジュールが不明確
   - 対応: Phase 8.3.1の実施時期と優先順位を明確化
-  - 検討事項: index.css（2323行）の肥大化が進んでいるため、早期対応が望ましい
+  - 検討事項: index.css（2342行）の肥大化が進んでいるため、早期対応が望ましい
+  - **決定事項**:
+    - 実施順序: Phase 8.2（CSS変数定義） → Phase 8.3.1（CSSモジュール化） → Phase 9（テスト）
+    - タイミング: Phase 8.2完了後、Phase 9の前に実施
+    - 段階的実施: Settings（8タスク） → Practice（5タスク） → Results（2タスク） → 最終確認（4タスク）
 
-- [ ] **ウィザード中断時の状態保持を検証する**
-  - 懸念: SettingsPanelがアンマウント→マウント時に`currentStep`がリセットされる可能性
-  - 検証内容:
-    - ステップ2で難易度変更 → ステップ1に戻る → ステップ2に進む、で設定が保持されるか
-    - SettingsPanelのアンマウント→マウント時の動作確認
-  - 対策案（必要な場合）: `currentStep`をZustand storeまたはlocalStorageで管理
-
-- [ ] **モバイルでのスクロール対応を実施する**
-  - 問題: Step4（確認画面）は内容が多く、モバイルで画面に収まらない可能性
-  - 対応: `.setup-wizard__step-content`に`overflow-y: auto`と`max-height`を設定
-  - 実装例:
-    ```css
-    .setup-wizard__step-content {
-      overflow-y: auto;
-      max-height: calc(100vh - 200px); /* ヘッダー・フッター分を除く */
-    }
-    ```
-
-- [ ] **インラインスタイルの削除**
+- [x] **インラインスタイルの削除**（完了済み）
   - 問題: `SettingsPanel.tsx (L109)`で`style={{ width: \`${(currentStep / 4) * 100}%\` }}`を使用
   - 解決策: `data-step`属性を使ってCSSで制御
-  - 実装例:
-    ```css
-    .setup-wizard__progress-fill[data-step="1"] { width: 25%; }
-    .setup-wizard__progress-fill[data-step="2"] { width: 50%; }
-    .setup-wizard__progress-fill[data-step="3"] { width: 75%; }
-    .setup-wizard__progress-fill[data-step="4"] { width: 100%; }
-    ```
+  - 実装状況:
+    - SettingsPanel.tsx (L105): `data-step={currentStep}`属性を使用
+    - index.css (L762-776): CSS定義済み
 
 ---
 
@@ -419,7 +401,15 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] 初期設定のロード（localStorage）（gameStore.ts の persist ミドルウェアで実装済み）
 
 ### 8.2 スタイリング (`src/styles/index.css`)
-- [ ] CSS変数定義（色、フォントサイズ、スペーシング）
+- [x] CSS変数定義（色、フォントサイズ、スペーシング）
+  - 実装ファイル: src/index.css (1-157行目)
+  - カラーパレット: プライマリ、セカンダリ、アクセント、状態、テキスト、背景、ボーダー
+  - フォントサイズ: xs(10px)〜6xl(64px)
+  - スペーシング: xs(4px)〜2xl(32px)
+  - ボーダー: 幅、半径
+  - シャドウ: sm〜lg、プライマリカラー
+  - トランジション: fast、base、slow
+  - 注記: 既存のハードコード値の置換はPhase 8.3.1（CSSモジュール化）と同時に実施予定
 - [ ] リセットCSS
 - [ ] 共通コンポーネントスタイル
 - [ ] ボタンスタイル（通常、アクティブ、無効）
@@ -435,6 +425,11 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 
 ### 8.3.1 CSSモジュール化（コンポーネント単位でのスタイル分離）
 **目的**: `src/index.css`に集約されているコンポーネント固有のスタイルを、各コンポーネントファイルにインラインまたは専用CSSファイルとして移行する。`index.css`にはグローバルスタイルのみを残す。
+
+**実施計画**（2025-12-29決定）:
+- **優先度**: 中（Phase 8.2完了後、Phase 9の前に実施）
+- **現状**: index.css（2,342行）の肥大化により、早期対応が望ましい
+- **段階的実施**: Settings配下（8タスク） → Practice配下（5タスク） → Results配下（2タスク） → 最終確認（4タスク）
 
 **方針**:
 - 各コンポーネントに対応するCSSファイルを作成（例: `PresetSelector.css`）
@@ -646,6 +641,12 @@ Phase 6.4のフィードバックコンポーネントに、バスト表示機�
 - [ ] インナーシングル狙い位置オプション
 - [ ] 統計履歴の長期保存
 - [ ] ランキング機能
+- [ ] **ウィザード中断時の状態保持を検証する**
+  - 懸念: SettingsPanelがアンマウント→マウント時に`currentStep`がリセットされる可能性
+  - 検証内容:
+    - ステップ2で難易度変更 → ステップ1に戻る → ステップ2に進む、で設定が保持されるか
+    - SettingsPanelのアンマウント→マウント時の動作確認
+  - 対策案（必要な場合）: `currentStep`をZustand storeまたはlocalStorageで管理
 - [ ] **戦略サジェスト機能（AI最適ターゲット決定）**
   - Phase 4.3の固定対応表方式からの発展版
   - 入力パラメータ：
