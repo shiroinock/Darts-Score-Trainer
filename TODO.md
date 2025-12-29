@@ -304,6 +304,42 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] 練習開始ボタン
 - [x] レイアウト調整
 
+### 5.7 ウィザード形式対応（PR #75）
+#### 5.7.1 マージ後推奨タスク（優先度：中）
+- [ ] **CSSモジュール化の優先度を決定する**
+  - 背景: Phase 8.3.1に20タスク存在するが、スケジュールが不明確
+  - 対応: Phase 8.3.1の実施時期と優先順位を明確化
+  - 検討事項: index.css（2323行）の肥大化が進んでいるため、早期対応が望ましい
+
+- [ ] **ウィザード中断時の状態保持を検証する**
+  - 懸念: SettingsPanelがアンマウント→マウント時に`currentStep`がリセットされる可能性
+  - 検証内容:
+    - ステップ2で難易度変更 → ステップ1に戻る → ステップ2に進む、で設定が保持されるか
+    - SettingsPanelのアンマウント→マウント時の動作確認
+  - 対策案（必要な場合）: `currentStep`をZustand storeまたはlocalStorageで管理
+
+- [ ] **モバイルでのスクロール対応を実施する**
+  - 問題: Step4（確認画面）は内容が多く、モバイルで画面に収まらない可能性
+  - 対応: `.setup-wizard__step-content`に`overflow-y: auto`と`max-height`を設定
+  - 実装例:
+    ```css
+    .setup-wizard__step-content {
+      overflow-y: auto;
+      max-height: calc(100vh - 200px); /* ヘッダー・フッター分を除く */
+    }
+    ```
+
+- [ ] **インラインスタイルの削除**
+  - 問題: `SettingsPanel.tsx (L109)`で`style={{ width: \`${(currentStep / 4) * 100}%\` }}`を使用
+  - 解決策: `data-step`属性を使ってCSSで制御
+  - 実装例:
+    ```css
+    .setup-wizard__progress-fill[data-step="1"] { width: 25%; }
+    .setup-wizard__progress-fill[data-step="2"] { width: 50%; }
+    .setup-wizard__progress-fill[data-step="3"] { width: 75%; }
+    .setup-wizard__progress-fill[data-step="4"] { width: 100%; }
+    ```
+
 ---
 
 ## Phase 6: UI（練習画面）
@@ -396,6 +432,102 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [ ] デスクトップ（901px〜）
 - [ ] タッチデバイス対応
 - [ ] ボードサイズの動的調整
+
+### 8.3.1 CSSモジュール化（コンポーネント単位でのスタイル分離）
+**目的**: `src/index.css`に集約されているコンポーネント固有のスタイルを、各コンポーネントファイルにインラインまたは専用CSSファイルとして移行する。`index.css`にはグローバルスタイルのみを残す。
+
+**方針**:
+- 各コンポーネントに対応するCSSファイルを作成（例: `PresetSelector.css`）
+- 1コンポーネントずつ順次対応し、diffを小さく保つ
+- 各タスク完了後、テストを実行して動作確認
+- **重要**: `index.css`の整理は最後に行う（各コンポーネントへの移行が完了してから削除）
+
+#### Settings配下のコンポーネント（8タスク）
+- [ ] `PresetSelector.tsx`のスタイルを分離（`PresetSelector.css`作成、`.preset-selector*`, `.preset-button*`を移行）
+- [ ] `SessionConfigSelector.tsx`のスタイルを分離（`SessionConfigSelector.css`作成、`.session-config-selector*`, `.session-mode-button*`, `.session-param-button*`を移行）
+- [ ] `DetailedSettings.tsx`のスタイルを分離（`DetailedSettings.css`作成、`.detailed-settings*`, `.detailed-setting-button*`を移行）
+- [ ] `TargetSelector.tsx`のスタイルを分離（`TargetSelector.css`作成、`.target-selector*`, `.target-type-button*`, `.target-number-button*`を移行）
+- [ ] `DifficultySelector.tsx`のスタイルを分離（`DifficultySelector.css`作成、`.difficulty-selector*`, `.difficulty-preset-button*`, `.difficulty-slider*`を移行）
+- [ ] `SettingsPanel.tsx`のスタイルを分離（`SettingsPanel.css`作成、`.settings-panel*`を移行）
+- [ ] `SetupWizard/*.tsx`（Step1-4）のスタイルを分離（`SetupWizard.css`作成、`.setup-wizard*`を移行）
+- [ ] 設定サマリー・開始ボタンのスタイルを`SettingsPanel.css`に統合（`.settings-panel__summary*`, `.settings-panel__start-button*`を移行）
+
+#### Practice配下のコンポーネント（5タスク）
+- [ ] `StatsBar.tsx`のスタイルを分離（`StatsBar.css`作成、`.stats-bar*`を移行）
+- [ ] `QuestionDisplay.tsx`のスタイルを分離（`QuestionDisplay.css`作成、`.question-display*`を移行）
+- [ ] `NumPad.tsx`のスタイルを分離（`NumPad.css`作成、`.num-pad*`を移行）
+- [ ] `Feedback.tsx`のスタイルを分離（`Feedback.css`作成、`.feedback*`を移行）
+- [ ] `PracticeScreen.tsx`のスタイルを分離（`PracticeScreen.css`作成、`.practice-screen*`を移行）
+
+#### Results配下のコンポーネント（2タスク）
+- [ ] `SessionSummary.tsx`のスタイルを分離（`SessionSummary.css`作成、`.session-summary*`を移行）
+- [ ] `ResultsScreen.tsx`のスタイルを分離（`ResultsScreen.css`作成、`.results-screen*`を移行）
+
+#### 最終確認
+- [ ] `index.css`の最終整理（グローバルスタイルのみが残っていることを確認）
+- [ ] 全コンポーネントで正しくスタイルが適用されているか視覚的に確認
+- [ ] 全テストが通ることを確認（`npm test`）
+- [ ] ビルドが成功することを確認（`npm run build`）
+
+### 8.3.2 座標変換の修正（ダーツボード描画・判定のズレ解消）
+**目的**: ダーツボードの描画位置と判定座標のズレを修正する。
+
+**問題点**:
+- `CoordinateTransform`クラスで座標変換（`physicalToScreen`）と距離変換（`physicalDistanceToScreen`）で異なるスケールを使用している
+- 座標変換は`scaleX`と`scaleY`を使用（59-60行目、72-73行目）
+- 距離変換は`this.scale = Math.min(scaleX, scaleY) * 0.8`を使用（83行目、44行目）
+- ボード描画は距離変換（`this.scale`）を使用
+- ダーツマーカー描画は座標変換（`scaleX`, `scaleY`）を使用
+- 結果として、ボードとダーツでスケールが異なり、位置がズレる
+
+**解決策**:
+すべての変換で同じスケール（`this.scale`）を使用する。
+
+#### タスク
+- [ ] `coordinateTransform.ts`の`physicalToScreen`メソッドを修正（`scaleX`, `scaleY` → `scale`に統一）
+- [ ] `coordinateTransform.ts`の`screenToPhysical`メソッドを修正（`scaleX`, `scaleY` → `scale`に統一）
+- [ ] 修正後、ダーツボードが正しい円形で描画されることを確認
+- [ ] 修正後、ダーツマーカーがボード上の正しい位置に表示されることを確認
+- [ ] `coordinateTransform.test.ts`のテストが通ることを確認
+- [ ] 実際にアプリを起動して、視覚的にズレが解消されていることを確認
+
+### 8.4 ビューポート固定レイアウト（スクロールなし）
+**目的**: すべての画面をビューポート（100vw × 100vh）にぴったり収め、スクロールなしで表示する。コンポーネント同士が重ならないように相対的な配置を決定する。
+
+#### 8.4.1 App.tsx - ビューポートラッパー
+- [ ] `App.tsx`にビューポート固定ラッパーを追加（`width: 100vw; height: 100vh; overflow: hidden`）
+- [ ] 全画面共通のCSSクラス `.app` を定義（`display: flex; flex-direction: column`）
+
+#### 8.4.2 SettingsPanel - ウィザード画面レイアウト
+- [ ] `SettingsPanel`の全体レイアウトを縦方向flex配置に変更
+- [ ] 進捗インジケーターの高さを固定（例: 80px）
+- [ ] ウィザードコンテンツエリアを `flex: 1` で残りスペースを占有
+- [ ] ナビゲーションボタンエリアの高さを固定（例: 80px）
+- [ ] `Step1Preset`コンポーネントの高さ調整（親の高さに収まるように）
+- [ ] `Step2Difficulty`コンポーネントの高さ調整（親の高さに収まるように）
+- [ ] `Step3Session`コンポーネントの高さ調整（親の高さに収まるように）
+- [ ] `Step4Confirm`コンポーネントの高さ調整（親の高さに収まるように、内容が多い場合はスクロール可能に）
+
+#### 8.4.3 PracticeScreen - 練習画面レイアウト
+- [ ] `PracticeScreen`の全体レイアウトを縦方向flex配置に変更
+- [ ] `StatsBar`の高さを固定（例: 60px）
+- [ ] メインコンテンツエリア（`.practice-screen__main`）を `flex: 1` で残りスペースを占有
+- [ ] フッターボタンエリアの高さを固定（例: 80px）
+- [ ] `DartBoard`のサイズを親コンテナに適応（アスペクト比を維持しつつ、縦横どちらかに収まる）
+- [ ] `QuestionDisplay`の高さ調整（親の高さに依存）
+- [ ] `NumPad`の高さ調整（親の高さに依存、ボタンサイズを動的に調整）
+- [ ] `Feedback`の高さ調整（親の高さに依存、内容が多い場合はスクロール可能に）
+
+#### 8.4.4 ResultsScreen - 結果画面レイアウト
+- [ ] `ResultsScreen`の全体レイアウトを縦方向flex配置に変更
+- [ ] メインコンテンツエリア（`.results-screen__main`）を `flex: 1` で残りスペースを占有
+- [ ] フッターボタンエリアの高さを固定（例: 80px）
+- [ ] `SessionSummary`の内部スクロール対応（`overflow: auto`、内容が多い場合にスクロール）
+
+#### 8.4.5 CSS変数とレイアウト比率の定義
+- [ ] CSS変数でレイアウト高さを定義（`--header-height`, `--footer-height`, `--content-flex`など）
+- [ ] 全画面で一貫したスペーシング・マージンを定義
+- [ ] レスポンシブブレークポイントで高さ比率を調整（モバイル、タブレット、デスクトップ）
 
 ---
 

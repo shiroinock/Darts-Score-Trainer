@@ -1,268 +1,298 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SettingsPanel > スナップショットテスト > カスタム設定 + 時間制限5分 + カスタム25mmのスナップショット 1`] = `
-<div
-  class="settings-panel"
->
+exports[`SettingsPanel > スナップショットテスト > ステップ1の基本的なレンダリング結果が一致する 1`] = `
+<div>
   <div
-    data-testid="preset-selector"
+    class="settings-panel"
   >
-    PresetSelector
-  </div>
-  <div
-    data-testid="session-config-selector"
-  >
-    SessionConfigSelector
-  </div>
-  <div
-    data-testid="difficulty-selector"
-  >
-    DifficultySelector
-  </div>
-  <div
-    data-testid="detailed-settings"
-  >
-    DetailedSettings
-  </div>
-  <div
-    class="settings-panel__summary"
-  >
-    <h2
-      class="settings-panel__summary-title"
-    >
-      現在の設定
-    </h2>
     <div
-      class="settings-panel__summary-content"
+      class="setup-wizard__progress"
     >
       <div
-        class="settings-panel__summary-item"
+        class="setup-wizard__progress-bar"
       >
-        <span
-          class="settings-panel__summary-label"
-        >
-          プリセット:
-        </span>
-        <span
-          class="settings-panel__summary-value"
-        >
-          カスタム設定
-        </span>
+        <div
+          class="setup-wizard__progress-fill"
+          data-step="1"
+        />
       </div>
       <div
-        class="settings-panel__summary-item"
+        class="setup-wizard__progress-steps"
       >
-        <span
-          class="settings-panel__summary-label"
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--active"
+          data-testid="progress-step-1"
         >
-          セッション:
-        </span>
-        <span
-          class="settings-panel__summary-value"
+          1
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--pending"
+          data-testid="progress-step-2"
         >
-          時間制限モード: 5分
-        </span>
-      </div>
-      <div
-        class="settings-panel__summary-item"
-      >
-        <span
-          class="settings-panel__summary-label"
+          2
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--pending"
+          data-testid="progress-step-3"
         >
-          難易度:
-        </span>
-        <span
-          class="settings-panel__summary-value"
+          3
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--pending"
+          data-testid="progress-step-4"
         >
-          カスタム 25mm
-        </span>
+          4
+        </div>
       </div>
     </div>
+    <div
+      class="setup-wizard__content"
+    >
+      <div
+        data-testid="step1-preset"
+      >
+        Step 1: Preset Selection
+      </div>
+    </div>
+    <div
+      class="setup-wizard__navigation"
+    >
+      <button
+        aria-label="次のステップへ進む"
+        class="setup-wizard__button setup-wizard__button--next"
+        type="button"
+      >
+        次へ →
+      </button>
+    </div>
   </div>
-  <button
-    aria-label="練習を開始"
-    class="settings-panel__start-button"
-    type="button"
-  >
-    練習を開始
-  </button>
 </div>
 `;
 
-exports[`SettingsPanel > スナップショットテスト > 基礎練習 + 問題数10問 + 上級者のスナップショット 1`] = `
-<div
-  class="settings-panel"
->
+exports[`SettingsPanel > スナップショットテスト > ステップ2の見た目が一致する 1`] = `
+<div>
   <div
-    data-testid="preset-selector"
+    class="settings-panel"
   >
-    PresetSelector
-  </div>
-  <div
-    data-testid="session-config-selector"
-  >
-    SessionConfigSelector
-  </div>
-  <div
-    data-testid="difficulty-selector"
-  >
-    DifficultySelector
-  </div>
-  <div
-    data-testid="detailed-settings"
-  >
-    DetailedSettings
-  </div>
-  <div
-    class="settings-panel__summary"
-  >
-    <h2
-      class="settings-panel__summary-title"
-    >
-      現在の設定
-    </h2>
     <div
-      class="settings-panel__summary-content"
+      class="setup-wizard__progress"
     >
       <div
-        class="settings-panel__summary-item"
+        class="setup-wizard__progress-bar"
       >
-        <span
-          class="settings-panel__summary-label"
-        >
-          プリセット:
-        </span>
-        <span
-          class="settings-panel__summary-value"
-        >
-          基礎練習
-        </span>
+        <div
+          class="setup-wizard__progress-fill"
+          data-step="2"
+        />
       </div>
       <div
-        class="settings-panel__summary-item"
+        class="setup-wizard__progress-steps"
       >
-        <span
-          class="settings-panel__summary-label"
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--completed"
+          data-testid="progress-step-1"
         >
-          セッション:
-        </span>
-        <span
-          class="settings-panel__summary-value"
+          1
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--active"
+          data-testid="progress-step-2"
         >
-          問題数モード: 10問
-        </span>
-      </div>
-      <div
-        class="settings-panel__summary-item"
-      >
-        <span
-          class="settings-panel__summary-label"
+          2
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--pending"
+          data-testid="progress-step-3"
         >
-          難易度:
-        </span>
-        <span
-          class="settings-panel__summary-value"
+          3
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--pending"
+          data-testid="progress-step-4"
         >
-          上級者
-        </span>
+          4
+        </div>
       </div>
     </div>
+    <div
+      class="setup-wizard__content"
+    >
+      <div
+        data-testid="step2-difficulty"
+      >
+        Step 2: Difficulty Selection
+      </div>
+    </div>
+    <div
+      class="setup-wizard__navigation"
+    >
+      <button
+        aria-label="前のステップに戻る"
+        class="setup-wizard__button setup-wizard__button--back"
+        type="button"
+      >
+        ← 戻る
+      </button>
+      <button
+        aria-label="次のステップへ進む"
+        class="setup-wizard__button setup-wizard__button--next"
+        type="button"
+      >
+        次へ →
+      </button>
+    </div>
   </div>
-  <button
-    aria-label="練習を開始"
-    class="settings-panel__start-button"
-    type="button"
-  >
-    練習を開始
-  </button>
 </div>
 `;
 
-exports[`SettingsPanel > スナップショットテスト > 総合練習 + 時間制限10分 + 初心者のスナップショット 1`] = `
-<div
-  class="settings-panel"
->
+exports[`SettingsPanel > スナップショットテスト > ステップ3の見た目が一致する 1`] = `
+<div>
   <div
-    data-testid="preset-selector"
+    class="settings-panel"
   >
-    PresetSelector
-  </div>
-  <div
-    data-testid="session-config-selector"
-  >
-    SessionConfigSelector
-  </div>
-  <div
-    data-testid="difficulty-selector"
-  >
-    DifficultySelector
-  </div>
-  <div
-    data-testid="detailed-settings"
-  >
-    DetailedSettings
-  </div>
-  <div
-    class="settings-panel__summary"
-  >
-    <h2
-      class="settings-panel__summary-title"
-    >
-      現在の設定
-    </h2>
     <div
-      class="settings-panel__summary-content"
+      class="setup-wizard__progress"
     >
       <div
-        class="settings-panel__summary-item"
+        class="setup-wizard__progress-bar"
       >
-        <span
-          class="settings-panel__summary-label"
-        >
-          プリセット:
-        </span>
-        <span
-          class="settings-panel__summary-value"
-        >
-          総合練習
-        </span>
+        <div
+          class="setup-wizard__progress-fill"
+          data-step="3"
+        />
       </div>
       <div
-        class="settings-panel__summary-item"
+        class="setup-wizard__progress-steps"
       >
-        <span
-          class="settings-panel__summary-label"
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--completed"
+          data-testid="progress-step-1"
         >
-          セッション:
-        </span>
-        <span
-          class="settings-panel__summary-value"
+          1
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--completed"
+          data-testid="progress-step-2"
         >
-          時間制限モード: 10分
-        </span>
-      </div>
-      <div
-        class="settings-panel__summary-item"
-      >
-        <span
-          class="settings-panel__summary-label"
+          2
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--active"
+          data-testid="progress-step-3"
         >
-          難易度:
-        </span>
-        <span
-          class="settings-panel__summary-value"
+          3
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--pending"
+          data-testid="progress-step-4"
         >
-          初心者
-        </span>
+          4
+        </div>
       </div>
     </div>
+    <div
+      class="setup-wizard__content"
+    >
+      <div
+        data-testid="step3-session"
+      >
+        Step 3: Session Configuration
+      </div>
+    </div>
+    <div
+      class="setup-wizard__navigation"
+    >
+      <button
+        aria-label="前のステップに戻る"
+        class="setup-wizard__button setup-wizard__button--back"
+        type="button"
+      >
+        ← 戻る
+      </button>
+      <button
+        aria-label="次のステップへ進む"
+        class="setup-wizard__button setup-wizard__button--next"
+        type="button"
+      >
+        次へ →
+      </button>
+    </div>
   </div>
-  <button
-    aria-label="練習を開始"
-    class="settings-panel__start-button"
-    type="button"
+</div>
+`;
+
+exports[`SettingsPanel > スナップショットテスト > ステップ4の見た目が一致する 1`] = `
+<div>
+  <div
+    class="settings-panel"
   >
-    練習を開始
-  </button>
+    <div
+      class="setup-wizard__progress"
+    >
+      <div
+        class="setup-wizard__progress-bar"
+      >
+        <div
+          class="setup-wizard__progress-fill"
+          data-step="4"
+        />
+      </div>
+      <div
+        class="setup-wizard__progress-steps"
+      >
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--completed"
+          data-testid="progress-step-1"
+        >
+          1
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--completed"
+          data-testid="progress-step-2"
+        >
+          2
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--completed"
+          data-testid="progress-step-3"
+        >
+          3
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--active"
+          data-testid="progress-step-4"
+        >
+          4
+        </div>
+      </div>
+    </div>
+    <div
+      class="setup-wizard__content"
+    >
+      <div
+        data-testid="step4-confirm"
+      >
+        Step 4: Confirmation
+      </div>
+    </div>
+    <div
+      class="setup-wizard__navigation"
+    >
+      <button
+        aria-label="前のステップに戻る"
+        class="setup-wizard__button setup-wizard__button--back"
+        type="button"
+      >
+        ← 戻る
+      </button>
+      <button
+        aria-label="練習を開始"
+        class="setup-wizard__button setup-wizard__button--start"
+        type="button"
+      >
+        練習を開始
+      </button>
+    </div>
+  </div>
 </div>
 `;

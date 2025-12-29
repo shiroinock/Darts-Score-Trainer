@@ -10,7 +10,7 @@
  */
 
 import type { SessionResult } from '../../types/SessionResult';
-import { DIFFICULTY_PRESETS } from '../../utils/constants';
+import { getDifficultyLabel } from '../../utils/configHelpers';
 
 /**
  * セッション終了理由を日本語に変換する
@@ -30,22 +30,6 @@ function getFinishReasonLabel(
     case 'game_finished':
       return 'ゲームクリア';
   }
-}
-
-/**
- * 標準偏差から難易度ラベルを取得する
- * @param stdDevMM - 標準偏差（mm単位）
- * @returns 難易度ラベル（例: "上級者", "15mm"）
- */
-function getDifficultyLabel(stdDevMM: number): string {
-  // プリセットと一致する標準偏差を探す
-  for (const [_, preset] of Object.entries(DIFFICULTY_PRESETS)) {
-    if (preset.stdDevMM === stdDevMM) {
-      return preset.label;
-    }
-  }
-  // プリセットにない場合は数値をそのまま表示
-  return `${stdDevMM}mm`;
 }
 
 /**

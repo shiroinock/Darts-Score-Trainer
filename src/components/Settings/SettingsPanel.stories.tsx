@@ -1,260 +1,183 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useEffect } from 'react';
-import { getDefaultConfig, PRESETS } from '../../stores/config/presets';
-import { useGameStore } from '../../stores/gameStore';
-import type { PracticeConfig } from '../../types';
+/**
+ * SettingsPanel のStorybookストーリー
+ * ウィザード形式の設定パネル（4ステップ）
+ */
+
+import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
 import { SettingsPanel } from './SettingsPanel';
 
-/**
- * 特定の設定でSettingsPanelをレンダリングするデコレーター
- */
-const withConfig =
-  (configOverrides: Partial<PracticeConfig> = {}, sessionConfigOverrides = {}) =>
-  (Story: React.ComponentType) => {
-    function StoryWrapper() {
-      useEffect(() => {
-        // マウント時に設定を適用
-        useGameStore.setState((state) => ({
-          config: { ...state.config, ...configOverrides },
-          sessionConfig: { ...state.sessionConfig, ...sessionConfigOverrides },
-        }));
+// ウィザードナビゲーション機能付きラッパー
+function SettingsPanelWithControls() {
+  return (
+    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
+      <SettingsPanel />
+    </div>
+  );
+}
 
-        // アンマウント時にデフォルト設定に戻す
-        return () => {
-          useGameStore.setState({
-            config: getDefaultConfig(),
-            sessionConfig: {
-              mode: 'questions',
-              questionCount: 10,
-              timeLimit: undefined,
-            },
-          });
-        };
-      }, [configOverrides, sessionConfigOverrides]);
+// インタラクティブなデモ用ラッパー（Controlledモードを使用）
+function SettingsPanelInteractive({ initialStep }: { initialStep: number }) {
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(initialStep as 1 | 2 | 3 | 4);
 
-      return <Story />;
-    }
+  return (
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
+      {/* Controlledモードで制御 */}
+      <SettingsPanel currentStep={currentStep} onStepChange={setCurrentStep} />
 
-    return <StoryWrapper />;
-  };
+      {/* デバッグ情報 */}
+      <div
+        style={{ marginTop: '40px', padding: '20px', background: '#f5f5f5', borderRadius: '8px' }}
+      >
+        <h3 style={{ marginTop: 0 }}>デバッグ情報</h3>
+        <p>
+          <strong>現在のステップ:</strong> {currentStep} / 4
+        </p>
+        <p>
+          <strong>進捗:</strong> {(currentStep / 4) * 100}%
+        </p>
+        <p style={{ fontSize: '0.875rem', color: '#666', marginTop: '1rem' }}>
+          ※ このストーリーはControlledモードで動作しており、外部から状態を制御しています。
+        </p>
+      </div>
+    </div>
+  );
+}
 
-/**
- * プリセット設定でSettingsPanelをレンダリングするデコレーター
- */
-const withPreset = (presetId: string) => (Story: React.ComponentType) => {
-  function StoryWrapper() {
-    useEffect(() => {
-      // マウント時に特定のプリセットを設定
-      const config = PRESETS[presetId];
-      useGameStore.setState({ config });
-
-      // アンマウント時にデフォルト設定に戻す
-      return () => {
-        useGameStore.setState({ config: getDefaultConfig() });
-      };
-    }, [presetId]);
-
-    return <Story />;
-  }
-
-  return <StoryWrapper />;
-};
-
-const meta = {
-  title: 'Settings/SettingsPanel',
+const meta: Meta<typeof SettingsPanel> = {
+  title: 'Components/Settings/SettingsPanel',
   component: SettingsPanel,
+  tags: ['autodocs'],
   parameters: {
-    layout: 'padded',
+    layout: 'fullscreen',
     docs: {
-      story: {
-        height: '900px',
+      description: {
+        component: 'ウィザード形式の設定パネルコンポーネント。4つのステップで練習設定を行います。',
       },
     },
   },
-  tags: ['autodocs'],
-  decorators: [
-    (Story) => (
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        <Story />
-      </div>
-    ),
-  ],
-} satisfies Meta<typeof SettingsPanel>;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof SettingsPanel>;
 
-// =============================================================================
-// プリセット設定のストーリー
-// =============================================================================
-
-export const BasicPreset: Story = {
-  decorators: [withPreset('preset-basic')],
-};
-
-export const PlayerPreset: Story = {
-  decorators: [withPreset('preset-player')],
-};
-
-export const CallerBasicPreset: Story = {
-  decorators: [withPreset('preset-caller-basic')],
-};
-
-export const CallerCumulativePreset: Story = {
-  decorators: [withPreset('preset-caller-cumulative')],
-};
-
-export const ComprehensivePreset: Story = {
-  decorators: [withPreset('preset-comprehensive')],
-};
-
-// =============================================================================
-// カスタム設定のストーリー
-// =============================================================================
-
-export const CustomSettings: Story = {
-  decorators: [
-    withConfig({
-      configId: 'custom',
-      configName: 'カスタム',
-      isPreset: false,
-      throwUnit: 3,
-      questionType: 'both',
-      judgmentTiming: 'cumulative',
-      startingScore: 701,
-      stdDevMM: 25,
-    }),
-  ],
-};
-
-// =============================================================================
-// セッション設定のバリエーション
-// =============================================================================
-
-export const QuestionMode10: Story = {
-  decorators: [
-    withConfig(
-      {},
-      {
-        mode: 'questions',
-        questionCount: 10,
-        timeLimit: undefined,
-      }
-    ),
-  ],
-};
-
-export const QuestionMode50: Story = {
-  decorators: [
-    withConfig(
-      {},
-      {
-        mode: 'questions',
-        questionCount: 50,
-        timeLimit: undefined,
-      }
-    ),
-  ],
-};
-
-export const TimeMode3Min: Story = {
-  decorators: [
-    withConfig(
-      {},
-      {
-        mode: 'time',
-        questionCount: undefined,
-        timeLimit: 3,
-      }
-    ),
-  ],
-};
-
-export const TimeMode10Min: Story = {
-  decorators: [
-    withConfig(
-      {},
-      {
-        mode: 'time',
-        questionCount: undefined,
-        timeLimit: 10,
-      }
-    ),
-  ],
-};
-
-// =============================================================================
-// 難易度のバリエーション
-// =============================================================================
-
-export const BeginnerDifficulty: Story = {
-  decorators: [
-    withConfig({
-      stdDevMM: 50,
-    }),
-  ],
-};
-
-export const ExpertDifficulty: Story = {
-  decorators: [
-    withConfig({
-      stdDevMM: 8,
-    }),
-  ],
-};
-
-export const CustomDifficulty: Story = {
-  decorators: [
-    withConfig({
-      stdDevMM: 25,
-    }),
-  ],
-};
-
-// =============================================================================
-// 複合的なシナリオ
-// =============================================================================
-
-export const AdvancedPlayerScenario: Story = {
-  decorators: [
-    withConfig(
-      {
-        configId: 'custom',
-        configName: 'カスタム',
-        isPreset: false,
-        throwUnit: 3,
-        questionType: 'remaining',
-        judgmentTiming: 'cumulative',
-        startingScore: 501,
-        stdDevMM: 15,
+/**
+ * デフォルト状態（ステップ1から開始）
+ */
+export const Default: Story = {
+  render: () => <SettingsPanelWithControls />,
+  parameters: {
+    docs: {
+      description: {
+        story: 'デフォルトの状態。ステップ1（プリセット選択）から開始します。',
       },
-      {
-        mode: 'time',
-        questionCount: undefined,
-        timeLimit: 5,
-      }
-    ),
-  ],
+    },
+  },
 };
 
-export const BeginnerPracticeScenario: Story = {
-  decorators: [
-    withConfig(
-      {
-        configId: 'custom',
-        configName: 'カスタム',
-        isPreset: false,
-        throwUnit: 1,
-        questionType: 'score',
-        judgmentTiming: 'independent',
-        startingScore: 501,
-        stdDevMM: 50,
+/**
+ * ステップ1: プリセット選択
+ */
+export const Step1_PresetSelection: Story = {
+  render: () => <SettingsPanelInteractive initialStep={1} />,
+  parameters: {
+    docs: {
+      description: {
+        story: 'ステップ1: プリセット選択画面。練習モードのプリセットを選択します。進捗バーは25%。',
       },
-      {
-        mode: 'questions',
-        questionCount: 20,
-        timeLimit: undefined,
-      }
-    ),
-  ],
+    },
+  },
+};
+
+/**
+ * ステップ2: 難易度選択
+ */
+export const Step2_DifficultySelection: Story = {
+  render: () => <SettingsPanelInteractive initialStep={2} />,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'ステップ2: 難易度選択画面。プレイヤーの実力（標準偏差）を選択します。進捗バーは50%。「戻る」ボタンが表示されます。',
+      },
+    },
+  },
+};
+
+/**
+ * ステップ3: セッション設定
+ */
+export const Step3_SessionConfiguration: Story = {
+  render: () => <SettingsPanelInteractive initialStep={3} />,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'ステップ3: セッション設定画面。練習セッションのモード（問題数/時間制限）を選択します。進捗バーは75%。',
+      },
+    },
+  },
+};
+
+/**
+ * ステップ4: 確認画面
+ */
+export const Step4_Confirmation: Story = {
+  render: () => <SettingsPanelInteractive initialStep={4} />,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'ステップ4: 確認画面。設定内容を確認して練習を開始します。進捗バーは100%。「次へ」ボタンが「練習を開始」ボタンに変わります。',
+      },
+    },
+  },
+};
+
+/**
+ * インタラクティブデモ
+ */
+export const Interactive: Story = {
+  render: () => <SettingsPanelInteractive initialStep={1} />,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'インタラクティブなデモ。ボタンをクリックしてステップを前後に移動できます。デバッグ情報も表示されます。',
+      },
+    },
+  },
+};
+
+/**
+ * 全ステップのプレビュー
+ */
+export const AllSteps: Story = {
+  render: () => (
+    <div style={{ display: 'grid', gap: '40px', padding: '20px' }}>
+      <div>
+        <h3 style={{ marginBottom: '20px' }}>ステップ 1/4: プリセット選択</h3>
+        <SettingsPanelInteractive initialStep={1} />
+      </div>
+      <div>
+        <h3 style={{ marginBottom: '20px' }}>ステップ 2/4: 難易度選択</h3>
+        <SettingsPanelInteractive initialStep={2} />
+      </div>
+      <div>
+        <h3 style={{ marginBottom: '20px' }}>ステップ 3/4: セッション設定</h3>
+        <SettingsPanelInteractive initialStep={3} />
+      </div>
+      <div>
+        <h3 style={{ marginBottom: '20px' }}>ステップ 4/4: 確認画面</h3>
+        <SettingsPanelInteractive initialStep={4} />
+      </div>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: '全4ステップを一覧表示。各ステップの見た目と進捗状態を確認できます。',
+      },
+    },
+  },
 };

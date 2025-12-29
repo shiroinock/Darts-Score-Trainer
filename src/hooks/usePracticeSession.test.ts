@@ -950,7 +950,7 @@ describe('usePracticeSession', () => {
           config: {
             ...useGameStore.getState().config,
             questionType: 'remaining',
-            startingScore: 100,
+            startingScore: 501,
           },
         });
         useGameStore.getState().startPractice();

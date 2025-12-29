@@ -59,12 +59,12 @@ TDD パイプライン完了後、PR作成前に**ローカルマシン上**で 
    Debugging steps:
    1. Run tests locally: npm run test:run
    2. Check for slow tests: npm run test:run -- --reporter=verbose
-   3. Increase timeout if necessary (in .claude/agents/ci-checker.md)
+   3. Increase timeout if necessary (in .claude/agents/local-ci-checker.md)
    ```
 
 3. **タイムアウト調整が必要な場合**
    - プロジェクトの成長に伴い、テストの実行時間が増加する可能性があります
-   - タイムアウト値は `.claude/agents/ci-checker.md` の Step 2 で調整できます
+   - タイムアウト値は `.claude/agents/local-ci-checker.md` の Step 2 で調整できます
    - 推奨: タイムアウトを増やす前に、テストのパフォーマンスを確認してください
 
 ### タイムアウトの妥当性
@@ -132,7 +132,7 @@ TDD パイプライン完了後、PR作成前に**ローカルマシン上**で 
    - 通常の実行時間 × 2.5-3倍 = 推奨タイムアウト値
    - 例: テスト実行が3分 → タイムアウトは7.5-9分（450-540秒）
 
-3. **ci-checker.md の Step 2 を更新**
+3. **local-ci-checker.md の Step 2 を更新**
    ```javascript
    // 例: テストのタイムアウトを5分 → 9分に変更
    Task({
@@ -146,7 +146,7 @@ TDD パイプライン完了後、PR作成前に**ローカルマシン上**で 
 
 4. **変更をコミット**
    ```bash
-   git add .claude/agents/ci-checker.md
+   git add .claude/agents/local-ci-checker.md
    git commit -m "chore: テストタイムアウトを9分に調整（テスト数増加に対応）"
    ```
 
@@ -196,7 +196,7 @@ TDD パイプライン完了後、PR作成前に**ローカルマシン上**で 
 }
 ```
 
-この共通フォーマットにより、ci-checkerは各サブエージェントの出力を一貫した方法で処理できます。
+この共通フォーマットにより、local-ci-checkerは各サブエージェントの出力を一貫した方法で処理できます。
 
 ## サブエージェント構造
 
@@ -492,7 +492,7 @@ JSONパースエラーが発生した場合、以下の対応を検討してく�
 
 **リスク軽減**:
 
-- フォールバック処理により、JSONパースエラーが発生しても ci-checker は完全に失敗しません
+- フォールバック処理により、JSONパースエラーが発生しても local-ci-checker は完全に失敗しません
 - ただし、結果の精度が低下する可能性があるため、ユーザーに警告を表示します
 - フォールバック処理が頻繁に発生する場合、サブエージェントの実装を見直す必要があります
 
@@ -557,7 +557,7 @@ JSONパースエラーが発生した場合、以下の対応を検討してく�
    - TaskOutputツールを使用して、各エージェントの完了後に出力を取得します
 
 2. **出力の集約**
-   - ci-checkerエージェントは、全てのサブエージェントの完了を待ちます
+   - local-ci-checkerエージェントは、全てのサブエージェントの完了を待ちます
    - 各サブエージェントの出力を個別に取得し、整形して表示します
    - 出力順序は常に一定（Biome → Test → Build）
 
