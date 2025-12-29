@@ -25,6 +25,7 @@
 
   /* 状態カラー */
   --color-success: #4caf50;
+  --color-success-dark: #45a049;
   --color-success-light: #e6f9f0;
   --color-error: #f44336;
   --color-error-light: #ffe6e6;
@@ -170,6 +171,14 @@
   --transition-fast: 0.15s ease;
   --transition-base: 0.3s ease;
   --transition-slow: 0.5s ease;
+
+  /* ============================================================ */
+  /* アニメーション・トランスフォーム                              */
+  /* ============================================================ */
+
+  /* ホバー時の移動距離 */
+  --transform-hover-lift: -2px;
+  --transform-active-press: 0;
 }
 
 /* ============================================================ */
@@ -260,8 +269,8 @@ textarea:not([rows]) {
 /* Focus Styles (WCAG 2.1 Accessibility)                        */
 /* ============================================================ */
 
-/* Remove default outline and add custom focus style */
-:focus {
+/* Remove default outline only for mouse/touch focus (WCAG 2.1 compliant) */
+:focus:not(:focus-visible) {
   outline: none;
 }
 
@@ -312,7 +321,11 @@ h1 {
   font-size: var(--font-size-base);
   font-weight: 600;
   cursor: pointer;
-  transition: var(--transition-base);
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
   box-shadow: var(--shadow-sm);
   user-select: none;
   -webkit-tap-highlight-color: transparent;
@@ -321,12 +334,12 @@ h1 {
 .btn:hover {
   border-color: var(--color-primary);
   background-color: var(--color-primary-light);
-  transform: translateY(-2px);
+  transform: translateY(var(--transform-hover-lift));
   box-shadow: var(--shadow-base);
 }
 
 .btn:active {
-  transform: translateY(0);
+  transform: translateY(var(--transform-active-press));
   box-shadow: var(--shadow-sm);
 }
 
@@ -386,8 +399,8 @@ h1 {
 }
 
 .btn--success:hover:not(:disabled) {
-  background-color: var(--color-secondary-dark);
-  border-color: var(--color-secondary-dark);
+  background-color: var(--color-success-dark);
+  border-color: var(--color-success-dark);
   box-shadow: var(--shadow-success);
 }
 
@@ -459,7 +472,10 @@ h1 {
   color: var(--color-text-primary);
   font-family: inherit;
   font-size: var(--font-size-base);
-  transition: var(--transition-base);
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .input:focus {
