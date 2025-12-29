@@ -25,8 +25,10 @@
 
   /* 状態カラー */
   --color-success: #4caf50;
+  --color-success-dark: #45a049;
   --color-success-light: #e6f9f0;
   --color-error: #f44336;
+  --color-error-light: #ffe6e6;
   --color-error-dark: #dc3545;
   --color-error-darker: #c82333;
   --color-warning: #ff9800;
@@ -146,6 +148,21 @@
 
   /* プライマリカラーシャドウ */
   --shadow-primary: 0 2px 8px rgba(74, 144, 226, 0.3);
+  --shadow-primary-md: 0 6px 12px rgba(74, 144, 226, 0.4);
+  --shadow-secondary: 0 6px 12px rgba(108, 117, 125, 0.3);
+  --shadow-success: 0 6px 12px rgba(76, 175, 80, 0.3);
+  --shadow-danger: 0 6px 12px rgba(220, 53, 69, 0.3);
+  --shadow-error: 0 2px 8px rgba(244, 67, 54, 0.3);
+
+  /* ============================================================ */
+  /* フォーカス・インタラクション                                  */
+  /* ============================================================ */
+
+  /* フォーカスリング（WCAG 2.1対応） */
+  --focus-ring-color: var(--color-primary);
+  --focus-ring-width: var(--border-width-thick);
+  --focus-ring-offset: 2px;
+  --focus-ring-shadow: 0 0 0 4px rgba(74, 144, 226, 0.2);
 
   /* ============================================================ */
   /* トランジション                                               */
@@ -154,20 +171,125 @@
   --transition-fast: 0.15s ease;
   --transition-base: 0.3s ease;
   --transition-slow: 0.5s ease;
+
+  /* ============================================================ */
+  /* アニメーション・トランスフォーム                              */
+  /* ============================================================ */
+
+  /* ホバー時の移動距離 */
+  --transform-hover-lift: -2px;
+  --transform-active-press: 0;
 }
 
-* {
+/* ============================================================ */
+/* Modern CSS Reset                                             */
+/* ============================================================ */
+
+/* Box sizing rules and reset defaults */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
+/* Prevent font size inflation */
+html {
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+/* Remove list styles on ul, ol elements with a list role */
+ul[role="list"],
+ol[role="list"] {
+  list-style: none;
+}
+
+/* Set core body defaults */
 body {
+  min-height: 100vh;
+  line-height: 1.5;
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell",
     "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Set shorter line heights on headings and interactive elements */
+h1,
+h2,
+h3,
+h4,
+button,
+input,
+label {
+  line-height: 1.1;
+}
+
+/* Balance text wrapping on headings */
+h1,
+h2,
+h3,
+h4 {
+  text-wrap: balance;
+}
+
+/* Make images easier to work with */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Inherit fonts for inputs and buttons */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Make sure textareas without a rows attribute are not tiny */
+textarea:not([rows]) {
+  min-height: 10em;
+}
+
+/* Anything that has been anchored to should have extra scroll margin */
+:target {
+  scroll-margin-block: 5ex;
+}
+
+/* ============================================================ */
+/* Focus Styles (WCAG 2.1 Accessibility)                        */
+/* ============================================================ */
+
+/* Remove default outline only for mouse/touch focus (WCAG 2.1 compliant) */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Visible focus indicator for keyboard navigation */
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--border-radius-sm);
+}
+
+/* High contrast focus for buttons and interactive elements */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+  box-shadow: var(--focus-ring-shadow);
 }
 
 .app {
@@ -182,6 +304,208 @@ body {
 h1 {
   font-size: 2rem;
   margin-bottom: 1rem;
+}
+
+/* ============================================================ */
+/* Common Component Styles                                      */
+/* ============================================================ */
+
+/* Button Base Style */
+.btn {
+  padding: var(--spacing-0875) var(--spacing-lg);
+  border: var(--border-width-base) solid var(--color-border-light);
+  border-radius: var(--border-radius-base);
+  background-color: var(--color-bg-white);
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
+  box-shadow: var(--shadow-sm);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-light);
+  transform: translateY(var(--transform-hover-lift));
+  box-shadow: var(--shadow-base);
+}
+
+.btn:active {
+  transform: translateY(var(--transform-active-press));
+  box-shadow: var(--shadow-sm);
+}
+
+.btn:disabled {
+  background-color: var(--color-border-lightest);
+  color: var(--color-text-tertiary);
+  cursor: not-allowed;
+  border-color: var(--color-border-lighter);
+  box-shadow: none;
+}
+
+.btn:disabled:hover {
+  transform: none;
+  background-color: var(--color-border-lightest);
+  border-color: var(--color-border-lighter);
+}
+
+/* Button Variants */
+.btn--primary {
+  background-color: var(--color-primary);
+  color: var(--color-bg-white);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-primary);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+  box-shadow: var(--shadow-primary-md);
+}
+
+.btn--primary:active:not(:disabled) {
+  background-color: var(--color-primary-darker);
+  box-shadow: var(--shadow-primary);
+}
+
+.btn--secondary {
+  background-color: var(--color-text-muted);
+  color: var(--color-bg-white);
+  border-color: var(--color-text-muted);
+}
+
+.btn--secondary:hover:not(:disabled) {
+  background-color: var(--color-text-muted-dark);
+  border-color: var(--color-text-muted-dark);
+  box-shadow: var(--shadow-secondary);
+}
+
+.btn--secondary:active:not(:disabled) {
+  box-shadow: var(--shadow-secondary);
+}
+
+.btn--success {
+  background-color: var(--color-success);
+  color: var(--color-bg-white);
+  border-color: var(--color-success);
+}
+
+.btn--success:hover:not(:disabled) {
+  background-color: var(--color-success-dark);
+  border-color: var(--color-success-dark);
+  box-shadow: var(--shadow-success);
+}
+
+.btn--success:active:not(:disabled) {
+  box-shadow: var(--shadow-success);
+}
+
+.btn--danger {
+  background-color: var(--color-error-dark);
+  color: var(--color-bg-white);
+  border-color: var(--color-error-dark);
+}
+
+.btn--danger:hover:not(:disabled) {
+  background-color: var(--color-error-darker);
+  border-color: var(--color-error-darker);
+  box-shadow: var(--shadow-danger);
+}
+
+.btn--danger:active:not(:disabled) {
+  box-shadow: var(--shadow-danger);
+}
+
+.btn--active {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-lighter);
+  box-shadow: var(--shadow-primary);
+}
+
+.btn--active:hover {
+  background-color: var(--color-primary-active);
+}
+
+/* Button Sizes */
+.btn--small {
+  padding: var(--spacing-sm) var(--spacing-base);
+  font-size: var(--font-size-sm);
+}
+
+.btn--large {
+  padding: var(--spacing-lg) var(--spacing-2xl);
+  font-size: var(--font-size-lg);
+}
+
+/* Card Style */
+.card {
+  padding: var(--spacing-2xl);
+  background-color: var(--color-bg-white);
+  border: var(--border-width-base) solid var(--color-primary);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.card--neutral {
+  border-color: var(--color-border-light);
+  box-shadow: var(--shadow-base);
+}
+
+.card--elevated {
+  box-shadow: var(--shadow-lg);
+}
+
+/* Input Field Style */
+.input {
+  padding: var(--spacing-md) var(--spacing-base);
+  border: var(--border-width-base) solid var(--color-border-light);
+  border-radius: var(--border-radius-base);
+  background-color: var(--color-bg-white);
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: var(--font-size-base);
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-lightest);
+  box-shadow: var(--shadow-primary);
+}
+
+.input:disabled {
+  background-color: var(--color-bg-gray-light);
+  color: var(--color-text-tertiary);
+  cursor: not-allowed;
+}
+
+.input--error {
+  border-color: var(--color-error);
+  background-color: var(--color-error-light);
+}
+
+.input--error:focus {
+  border-color: var(--color-error-dark);
+  box-shadow: var(--shadow-error);
+}
+
+/* Touch device adjustments */
+@media (hover: none) {
+  .btn:hover {
+    transform: none;
+  }
 }
 
 /* ============================================================ */

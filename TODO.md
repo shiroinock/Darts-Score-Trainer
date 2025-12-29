@@ -410,11 +410,18 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
   - シャドウ: sm〜lg、プライマリカラー
   - トランジション: fast、base、slow
   - 注記: 既存のハードコード値の置換はPhase 8.3.1（CSSモジュール化）と同時に実施予定
-- [ ] リセットCSS
-- [ ] 共通コンポーネントスタイル
-- [ ] ボタンスタイル（通常、アクティブ、無効）
-- [ ] 入力フィールドスタイル
-- [ ] カードスタイル
+- [x] リセットCSS
+- [x] 共通コンポーネントスタイル
+  - 実装ファイル: src/index.css (275-468行目)
+  - ボタン基本クラス: `.btn`（通常、hover、active、disabled状態）
+  - ボタンバリアント: `.btn--primary`, `.btn--secondary`, `.btn--success`, `.btn--danger`, `.btn--active`
+  - ボタンサイズ: `.btn--small`, `.btn--large`
+  - カード: `.card`, `.card--neutral`, `.card--elevated`
+  - 入力フィールド: `.input`, `.input--error`
+  - タッチデバイス対応含む
+- [x] ボタンスタイル（通常、アクティブ、無効）
+- [x] 入力フィールドスタイル
+- [x] カードスタイル
 
 ### 8.3 レスポンシブ対応
 - [ ] スマートフォン（〜600px）
