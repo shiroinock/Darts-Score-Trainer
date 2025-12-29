@@ -834,3 +834,71 @@ function isRootComponent(file: FileInfo): boolean {
   }
 }
 ```
+
+### 2025-12-29: CSS分離リファクタリングタスクのテストパターン判定強化
+
+#### 背景
+`PresetSelector.tsx` のCSS分離タスクにおいて、エージェントが以下の問題を示した：
+1. 特定のテストパターン判定のみに集中し、完全な分類出力を行わなかった
+2. レビュー観点のマッピングを実施しなかった
+
+#### 追加ガイドライン
+
+##### CSS分離リファクタリングの判定基準
+CSS分離リファクタリングタスクの特徴：
+- **既存機能の変更なし**: 機能は一切変わらず、スタイルの配置場所のみ変更
+- **test-later必須**: リファクタリングであり、新規機能追加ではない
+- **視覚的確認が必要**: CSSが正しく適用されているか確認が必要
+- **回帰テストの重要性**: 分離前後で見た目と動作が同一であることを保証
+
+##### エージェントの出力要件の再確認
+単一ファイルのテストパターン判定を求められた場合でも、以下を必ず含めること：
+
+1. **標準的な分類出力形式の使用**
+   - `files` 配列内にファイル情報を格納
+   - `testPattern` オブジェクトを各ファイルに含める
+
+2. **レビュー観点の適用**
+   - TypeScript ファイルには最低限 `typescript` 観点を適用
+   - 該当する他の観点も判定して適用
+
+3. **完全な出力構造**
+   ```json
+   {
+     "files": [...],
+     "matrix": {...},
+     "summary": {...}
+   }
+   ```
+
+##### CSS分離タスクの判定例
+```json
+{
+  "files": [{
+    "path": "src/components/Settings/PresetSelector.tsx",
+    "type": "component",
+    "description": "プリセット選択UIコンポーネント",
+    "applicable_aspects": ["typescript"],
+    "testPattern": {
+      "tddMode": "test-later",
+      "pattern": "component",
+      "placement": "colocated",
+      "rationale": "既存機能のスタイル分離リファクタリング、視覚的確認が必要",
+      "testFilePath": "src/components/Settings/PresetSelector.test.tsx",
+      "testingFocus": [
+        "CSS適用の確認（グリッドレイアウト、ホバー状態）",
+        "機能の維持確認（5つのプリセットボタン表示、クリック動作）",
+        "回帰テスト（CSS分離前後で同一動作）"
+      ]
+    }
+  }],
+  "matrix": {
+    "typescript": ["src/components/Settings/PresetSelector.tsx"]
+  },
+  "summary": {
+    "total_files": 1,
+    "total_reviews": 1,
+    "aspects_used": ["typescript"]
+  }
+}
+```
