@@ -1,6 +1,6 @@
-# ci-checker サブエージェント評価プロンプト
+# local-ci-checker サブエージェント評価プロンプト
 
-以下は ci-checker サブエージェントの実行情報です。
+以下は local-ci-checker サブエージェントの実行情報です。
 
 ---サブエージェント情報---
 {EVALUATION_INPUT}
@@ -8,7 +8,7 @@
 
 ## 評価タスク
 
-このサブエージェントの実行結果を評価し、`.claude/agents/ci-checker.md` の指示内容に改善すべき点があれば、そのファイルに追記してください。
+このサブエージェントの実行結果を評価し、`.claude/agents/local-ci-checker.md` の指示内容に改善すべき点があれば、そのファイルに追記してください。
 
 ## 評価観点
 
@@ -42,7 +42,7 @@
 評価結果に基づき、以下のいずれかを実行してください：
 
 ### 問題がある場合
-`.claude/agents/ci-checker.md` に以下を追記：
+`.claude/agents/local-ci-checker.md` に以下を追記：
 
 1. **サブエージェント並列起動に関する改善**
    - 例: 「3つのTaskツール呼び出しを単一のメッセージで実行してください」
@@ -68,4 +68,4 @@
 
 - サブエージェント(Task tool)を再帰的に呼び出さないでください
 - Edit ツールと Read ツールのみを使用してください
-- ファイルの変更は `.claude/agents/ci-checker.md` のみに限定してください
+- ファイルの変更は `.claude/agents/local-ci-checker.md` のみに限定してください
