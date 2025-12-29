@@ -1,5 +1,267 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`PresetSelector > スナップショットテスト > コーラー基礎が選択された状態のスナップショット 1`] = `
+<div
+  class="preset-selector"
+>
+  <h2
+    class="preset-selector__title"
+  >
+    練習モードを選択
+  </h2>
+  <div
+    class="preset-selector__grid"
+  >
+    <button
+      aria-pressed="false"
+      class="preset-button "
+      title="1投単位で得点を問う基本練習"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="preset-button__icon"
+      >
+        📚
+      </span>
+      <span
+        class="preset-button__name"
+      >
+        基礎練習
+      </span>
+      <span
+        class="preset-button__description"
+      >
+        1投単位で得点を問う基本練習
+      </span>
+    </button>
+    <button
+      aria-pressed="false"
+      class="preset-button "
+      title="3投単位で得点を問う練習"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="preset-button__icon"
+      >
+        🎯
+      </span>
+      <span
+        class="preset-button__name"
+      >
+        プレイヤー練習
+      </span>
+      <span
+        class="preset-button__description"
+      >
+        3投単位で得点を問う練習
+      </span>
+    </button>
+    <button
+      aria-pressed="true"
+      class="preset-button preset-button--active"
+      title="残り点数を問う基礎練習"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="preset-button__icon"
+      >
+        📢
+      </span>
+      <span
+        class="preset-button__name"
+      >
+        コーラー基礎
+      </span>
+      <span
+        class="preset-button__description"
+      >
+        残り点数を問う基礎練習
+      </span>
+    </button>
+    <button
+      aria-pressed="false"
+      class="preset-button "
+      title="累積での残り点数計算練習"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="preset-button__icon"
+      >
+        🎲
+      </span>
+      <span
+        class="preset-button__name"
+      >
+        コーラー累積
+      </span>
+      <span
+        class="preset-button__description"
+      >
+        累積での残り点数計算練習
+      </span>
+    </button>
+    <button
+      aria-pressed="false"
+      class="preset-button "
+      title="得点と残り点数の両方を問う"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="preset-button__icon"
+      >
+        🏆
+      </span>
+      <span
+        class="preset-button__name"
+      >
+        総合練習
+      </span>
+      <span
+        class="preset-button__description"
+      >
+        得点と残り点数の両方を問う
+      </span>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`PresetSelector > スナップショットテスト > コーラー累積が選択された状態のスナップショット 1`] = `
+<div
+  class="preset-selector"
+>
+  <h2
+    class="preset-selector__title"
+  >
+    練習モードを選択
+  </h2>
+  <div
+    class="preset-selector__grid"
+  >
+    <button
+      aria-pressed="false"
+      class="preset-button "
+      title="1投単位で得点を問う基本練習"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="preset-button__icon"
+      >
+        📚
+      </span>
+      <span
+        class="preset-button__name"
+      >
+        基礎練習
+      </span>
+      <span
+        class="preset-button__description"
+      >
+        1投単位で得点を問う基本練習
+      </span>
+    </button>
+    <button
+      aria-pressed="false"
+      class="preset-button "
+      title="3投単位で得点を問う練習"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="preset-button__icon"
+      >
+        🎯
+      </span>
+      <span
+        class="preset-button__name"
+      >
+        プレイヤー練習
+      </span>
+      <span
+        class="preset-button__description"
+      >
+        3投単位で得点を問う練習
+      </span>
+    </button>
+    <button
+      aria-pressed="false"
+      class="preset-button "
+      title="残り点数を問う基礎練習"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="preset-button__icon"
+      >
+        📢
+      </span>
+      <span
+        class="preset-button__name"
+      >
+        コーラー基礎
+      </span>
+      <span
+        class="preset-button__description"
+      >
+        残り点数を問う基礎練習
+      </span>
+    </button>
+    <button
+      aria-pressed="true"
+      class="preset-button preset-button--active"
+      title="累積での残り点数計算練習"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="preset-button__icon"
+      >
+        🎲
+      </span>
+      <span
+        class="preset-button__name"
+      >
+        コーラー累積
+      </span>
+      <span
+        class="preset-button__description"
+      >
+        累積での残り点数計算練習
+      </span>
+    </button>
+    <button
+      aria-pressed="false"
+      class="preset-button "
+      title="得点と残り点数の両方を問う"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="preset-button__icon"
+      >
+        🏆
+      </span>
+      <span
+        class="preset-button__name"
+      >
+        総合練習
+      </span>
+      <span
+        class="preset-button__description"
+      >
+        得点と残り点数の両方を問う
+      </span>
+    </button>
+  </div>
+</div>
+`;
+
 exports[`PresetSelector > スナップショットテスト > デフォルト状態（基礎練習選択）のスナップショット 1`] = `
 <div
   class="preset-selector"
@@ -107,6 +369,268 @@ exports[`PresetSelector > スナップショットテスト > デフォルト状
     <button
       aria-pressed="false"
       class="preset-button "
+      title="得点と残り点数の両方を問う"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="preset-button__icon"
+      >
+        🏆
+      </span>
+      <span
+        class="preset-button__name"
+      >
+        総合練習
+      </span>
+      <span
+        class="preset-button__description"
+      >
+        得点と残り点数の両方を問う
+      </span>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`PresetSelector > スナップショットテスト > プレイヤー練習が選択された状態のスナップショット 1`] = `
+<div
+  class="preset-selector"
+>
+  <h2
+    class="preset-selector__title"
+  >
+    練習モードを選択
+  </h2>
+  <div
+    class="preset-selector__grid"
+  >
+    <button
+      aria-pressed="false"
+      class="preset-button "
+      title="1投単位で得点を問う基本練習"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="preset-button__icon"
+      >
+        📚
+      </span>
+      <span
+        class="preset-button__name"
+      >
+        基礎練習
+      </span>
+      <span
+        class="preset-button__description"
+      >
+        1投単位で得点を問う基本練習
+      </span>
+    </button>
+    <button
+      aria-pressed="true"
+      class="preset-button preset-button--active"
+      title="3投単位で得点を問う練習"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="preset-button__icon"
+      >
+        🎯
+      </span>
+      <span
+        class="preset-button__name"
+      >
+        プレイヤー練習
+      </span>
+      <span
+        class="preset-button__description"
+      >
+        3投単位で得点を問う練習
+      </span>
+    </button>
+    <button
+      aria-pressed="false"
+      class="preset-button "
+      title="残り点数を問う基礎練習"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="preset-button__icon"
+      >
+        📢
+      </span>
+      <span
+        class="preset-button__name"
+      >
+        コーラー基礎
+      </span>
+      <span
+        class="preset-button__description"
+      >
+        残り点数を問う基礎練習
+      </span>
+    </button>
+    <button
+      aria-pressed="false"
+      class="preset-button "
+      title="累積での残り点数計算練習"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="preset-button__icon"
+      >
+        🎲
+      </span>
+      <span
+        class="preset-button__name"
+      >
+        コーラー累積
+      </span>
+      <span
+        class="preset-button__description"
+      >
+        累積での残り点数計算練習
+      </span>
+    </button>
+    <button
+      aria-pressed="false"
+      class="preset-button "
+      title="得点と残り点数の両方を問う"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="preset-button__icon"
+      >
+        🏆
+      </span>
+      <span
+        class="preset-button__name"
+      >
+        総合練習
+      </span>
+      <span
+        class="preset-button__description"
+      >
+        得点と残り点数の両方を問う
+      </span>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`PresetSelector > スナップショットテスト > 総合練習が選択された状態のスナップショット 1`] = `
+<div
+  class="preset-selector"
+>
+  <h2
+    class="preset-selector__title"
+  >
+    練習モードを選択
+  </h2>
+  <div
+    class="preset-selector__grid"
+  >
+    <button
+      aria-pressed="false"
+      class="preset-button "
+      title="1投単位で得点を問う基本練習"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="preset-button__icon"
+      >
+        📚
+      </span>
+      <span
+        class="preset-button__name"
+      >
+        基礎練習
+      </span>
+      <span
+        class="preset-button__description"
+      >
+        1投単位で得点を問う基本練習
+      </span>
+    </button>
+    <button
+      aria-pressed="false"
+      class="preset-button "
+      title="3投単位で得点を問う練習"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="preset-button__icon"
+      >
+        🎯
+      </span>
+      <span
+        class="preset-button__name"
+      >
+        プレイヤー練習
+      </span>
+      <span
+        class="preset-button__description"
+      >
+        3投単位で得点を問う練習
+      </span>
+    </button>
+    <button
+      aria-pressed="false"
+      class="preset-button "
+      title="残り点数を問う基礎練習"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="preset-button__icon"
+      >
+        📢
+      </span>
+      <span
+        class="preset-button__name"
+      >
+        コーラー基礎
+      </span>
+      <span
+        class="preset-button__description"
+      >
+        残り点数を問う基礎練習
+      </span>
+    </button>
+    <button
+      aria-pressed="false"
+      class="preset-button "
+      title="累積での残り点数計算練習"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+        class="preset-button__icon"
+      >
+        🎲
+      </span>
+      <span
+        class="preset-button__name"
+      >
+        コーラー累積
+      </span>
+      <span
+        class="preset-button__description"
+      >
+        累積での残り点数計算練習
+      </span>
+    </button>
+    <button
+      aria-pressed="true"
+      class="preset-button preset-button--active"
       title="得点と残り点数の両方を問う"
       type="button"
     >

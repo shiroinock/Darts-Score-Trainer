@@ -4,6 +4,7 @@
  * 5つのプリセットボタンを表示し、選択するとストアのselectPresetアクションを呼び出します。
  */
 
+import './PresetSelector.css';
 import { PRESETS } from '../../stores/config/presets';
 import { useGameStore } from '../../stores/gameStore';
 

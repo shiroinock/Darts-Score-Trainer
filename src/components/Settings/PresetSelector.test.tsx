@@ -11,7 +11,7 @@ import { PresetSelector } from './PresetSelector';
 
 // useGameStoreのモック
 const mockSelectPreset = vi.fn();
-const mockCurrentConfigId = 'preset-basic';
+let mockCurrentConfigId = 'preset-basic';
 
 vi.mock('../../stores/gameStore', () => ({
   useGameStore: (
@@ -427,7 +427,54 @@ describe('PresetSelector', () => {
 
   describe('スナップショットテスト', () => {
     test('デフォルト状態（基礎練習選択）のスナップショット', () => {
-      // Arrange & Act
+      // Arrange
+      mockCurrentConfigId = 'preset-basic';
+
+      // Act
+      const { container } = render(<PresetSelector />);
+
+      // Assert
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    test('プレイヤー練習が選択された状態のスナップショット', () => {
+      // Arrange
+      mockCurrentConfigId = 'preset-player';
+
+      // Act
+      const { container } = render(<PresetSelector />);
+
+      // Assert
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    test('コーラー基礎が選択された状態のスナップショット', () => {
+      // Arrange
+      mockCurrentConfigId = 'preset-caller-basic';
+
+      // Act
+      const { container } = render(<PresetSelector />);
+
+      // Assert
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    test('コーラー累積が選択された状態のスナップショット', () => {
+      // Arrange
+      mockCurrentConfigId = 'preset-caller-cumulative';
+
+      // Act
+      const { container } = render(<PresetSelector />);
+
+      // Assert
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    test('総合練習が選択された状態のスナップショット', () => {
+      // Arrange
+      mockCurrentConfigId = 'preset-comprehensive';
+
+      // Act
       const { container } = render(<PresetSelector />);
 
       // Assert
