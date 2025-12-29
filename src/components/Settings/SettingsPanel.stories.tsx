@@ -5,7 +5,6 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import { useGameStore } from '../../stores/gameStore';
 import { SettingsPanel } from './SettingsPanel';
 
 // ウィザードナビゲーション機能付きラッパー
@@ -17,150 +16,14 @@ function SettingsPanelWithControls() {
   );
 }
 
-// インタラクティブなデモ用ラッパー（手動でステップを切り替え可能）
+// インタラクティブなデモ用ラッパー（Controlledモードを使用）
 function SettingsPanelInteractive({ initialStep }: { initialStep: number }) {
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(initialStep as 1 | 2 | 3 | 4);
-  const startPractice = useGameStore((state) => state.startPractice);
-
-  const handleNext = () => {
-    if (currentStep < 4) {
-      setCurrentStep((prev) => (prev + 1) as 1 | 2 | 3 | 4);
-    }
-  };
-
-  const handleBack = () => {
-    if (currentStep > 1) {
-      setCurrentStep((prev) => (prev - 1) as 1 | 2 | 3 | 4);
-    }
-  };
-
-  const handleStart = () => {
-    startPractice();
-    alert('練習が開始されました！');
-  };
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
-      <div className="settings-panel">
-        {/* 進捗インジケーター */}
-        <div className="setup-wizard__progress">
-          <div className="setup-wizard__progress-bar">
-            <div
-              className="setup-wizard__progress-fill"
-              style={{ width: `${(currentStep / 4) * 100}%` }}
-            />
-          </div>
-          <div className="setup-wizard__progress-steps">
-            {[1, 2, 3, 4].map((step) => {
-              const baseClass = 'setup-wizard__progress-step';
-              let className = baseClass;
-              if (step === currentStep) {
-                className = `${baseClass} setup-wizard__progress-step--active`;
-              } else if (step < currentStep) {
-                className = `${baseClass} setup-wizard__progress-step--completed`;
-              } else {
-                className = `${baseClass} setup-wizard__progress-step--pending`;
-              }
-
-              return (
-                <div key={step} className={className}>
-                  {step}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* ステップコンテンツ */}
-        <div className="setup-wizard__content">
-          {currentStep === 1 && (
-            <div className="setup-wizard__step">
-              <div className="setup-wizard__step-header">
-                <h2 className="setup-wizard__step-title">ステップ 1/4</h2>
-                <p className="setup-wizard__step-description">練習モードを選択してください</p>
-              </div>
-              <div className="setup-wizard__step-content">
-                <p style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-                  プリセット選択コンポーネント
-                </p>
-              </div>
-            </div>
-          )}
-          {currentStep === 2 && (
-            <div className="setup-wizard__step">
-              <div className="setup-wizard__step-header">
-                <h2 className="setup-wizard__step-title">ステップ 2/4</h2>
-                <p className="setup-wizard__step-description">難易度を選択してください</p>
-              </div>
-              <div className="setup-wizard__step-content">
-                <p style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-                  難易度選択コンポーネント
-                </p>
-              </div>
-            </div>
-          )}
-          {currentStep === 3 && (
-            <div className="setup-wizard__step">
-              <div className="setup-wizard__step-header">
-                <h2 className="setup-wizard__step-title">ステップ 3/4</h2>
-                <p className="setup-wizard__step-description">セッション設定を選択してください</p>
-              </div>
-              <div className="setup-wizard__step-content">
-                <p style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-                  セッション設定コンポーネント
-                </p>
-              </div>
-            </div>
-          )}
-          {currentStep === 4 && (
-            <div className="setup-wizard__step">
-              <div className="setup-wizard__step-header">
-                <h2 className="setup-wizard__step-title">ステップ 4/4</h2>
-                <p className="setup-wizard__step-description">設定内容を確認してください</p>
-              </div>
-              <div className="setup-wizard__step-content">
-                <p style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-                  確認画面コンポーネント
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* ナビゲーションボタン */}
-        <div className="setup-wizard__navigation">
-          {currentStep > 1 && (
-            <button
-              type="button"
-              className="setup-wizard__button setup-wizard__button--back"
-              onClick={handleBack}
-              aria-label="前のステップに戻る"
-            >
-              ← 戻る
-            </button>
-          )}
-
-          {currentStep < 4 ? (
-            <button
-              type="button"
-              className="setup-wizard__button setup-wizard__button--next"
-              onClick={handleNext}
-              aria-label="次のステップへ進む"
-            >
-              次へ →
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="setup-wizard__button setup-wizard__button--start"
-              onClick={handleStart}
-              aria-label="練習を開始"
-            >
-              練習を開始
-            </button>
-          )}
-        </div>
-      </div>
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
+      {/* Controlledモードで制御 */}
+      <SettingsPanel currentStep={currentStep} onStepChange={setCurrentStep} />
 
       {/* デバッグ情報 */}
       <div
@@ -172,6 +35,9 @@ function SettingsPanelInteractive({ initialStep }: { initialStep: number }) {
         </p>
         <p>
           <strong>進捗:</strong> {(currentStep / 4) * 100}%
+        </p>
+        <p style={{ fontSize: '0.875rem', color: '#666', marginTop: '1rem' }}>
+          ※ このストーリーはControlledモードで動作しており、外部から状態を制御しています。
         </p>
       </div>
     </div>

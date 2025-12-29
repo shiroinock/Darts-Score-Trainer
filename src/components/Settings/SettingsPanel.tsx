@@ -21,18 +21,51 @@ import { Step4Confirm } from './SetupWizard/Step4Confirm';
 type WizardStep = 1 | 2 | 3 | 4;
 
 /**
- * 設定パネルコンポーネント
+ * 設定パネルのProps
  */
-export function SettingsPanel(): JSX.Element {
-  const [currentStep, setCurrentStep] = useState<WizardStep>(1);
+interface SettingsPanelProps {
+  /** 現在のステップ（Controlledモード用） */
+  currentStep?: WizardStep;
+  /** ステップ変更時のコールバック（Controlledモード用） */
+  onStepChange?: (step: WizardStep) => void;
+}
+
+/**
+ * 設定パネルコンポーネント
+ *
+ * Uncontrolledモード（デフォルト）:
+ * - propsを渡さない場合、内部で状態管理
+ *
+ * Controlledモード:
+ * - currentStepとonStepChangeを渡すことで、外部から制御可能
+ */
+export function SettingsPanel({
+  currentStep: controlledStep,
+  onStepChange,
+}: SettingsPanelProps = {}): JSX.Element {
+  const [internalStep, setInternalStep] = useState<WizardStep>(1);
   const startPractice = useGameStore((state) => state.startPractice);
+
+  // Controlled/Uncontrolledモードの判定
+  const isControlled = controlledStep !== undefined;
+  const currentStep = isControlled ? controlledStep : internalStep;
+
+  /**
+   * ステップを変更する（Controlled/Uncontrolled両対応）
+   */
+  const changeStep = (newStep: WizardStep): void => {
+    if (!isControlled) {
+      setInternalStep(newStep);
+    }
+    onStepChange?.(newStep);
+  };
 
   /**
    * 次のステップへ進む
    */
   const handleNext = (): void => {
     if (currentStep < 4) {
-      setCurrentStep((prev) => (prev + 1) as WizardStep);
+      changeStep((currentStep + 1) as WizardStep);
     }
   };
 
@@ -41,7 +74,7 @@ export function SettingsPanel(): JSX.Element {
    */
   const handleBack = (): void => {
     if (currentStep > 1) {
-      setCurrentStep((prev) => (prev - 1) as WizardStep);
+      changeStep((currentStep - 1) as WizardStep);
     }
   };
 
@@ -78,7 +111,11 @@ export function SettingsPanel(): JSX.Element {
         </div>
         <div className="setup-wizard__progress-steps">
           {[1, 2, 3, 4].map((step) => (
-            <div key={step} className={getStepClassName(step)}>
+            <div
+              key={`step-${step}`}
+              data-testid={`progress-step-${step}`}
+              className={getStepClassName(step)}
+            >
               {step}
             </div>
           ))}

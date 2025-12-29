@@ -64,21 +64,19 @@ describe('SettingsPanel', () => {
       render(<SettingsPanel />);
 
       // Assert
-      const progressSteps = screen.getAllByRole('generic').filter((el) => {
-        return (
-          el.className.includes('setup-wizard__progress-step') &&
-          !el.className.includes('setup-wizard__progress-steps')
-        );
-      });
-
-      // 4つのステップが表示される
-      expect(progressSteps).toHaveLength(4);
-
       // ステップ1がアクティブ
-      expect(progressSteps[0]).toHaveClass('setup-wizard__progress-step--active');
-      expect(progressSteps[1]).toHaveClass('setup-wizard__progress-step--pending');
-      expect(progressSteps[2]).toHaveClass('setup-wizard__progress-step--pending');
-      expect(progressSteps[3]).toHaveClass('setup-wizard__progress-step--pending');
+      expect(screen.getByTestId('progress-step-1')).toHaveClass(
+        'setup-wizard__progress-step--active'
+      );
+      expect(screen.getByTestId('progress-step-2')).toHaveClass(
+        'setup-wizard__progress-step--pending'
+      );
+      expect(screen.getByTestId('progress-step-3')).toHaveClass(
+        'setup-wizard__progress-step--pending'
+      );
+      expect(screen.getByTestId('progress-step-4')).toHaveClass(
+        'setup-wizard__progress-step--pending'
+      );
     });
 
     test('「次へ」ボタンが表示される', () => {
@@ -260,17 +258,18 @@ describe('SettingsPanel', () => {
       await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
 
       // Assert
-      const progressSteps = screen.getAllByRole('generic').filter((el) => {
-        return (
-          el.className.includes('setup-wizard__progress-step') &&
-          !el.className.includes('setup-wizard__progress-steps')
-        );
-      });
-
-      expect(progressSteps[0]).toHaveClass('setup-wizard__progress-step--completed');
-      expect(progressSteps[1]).toHaveClass('setup-wizard__progress-step--active');
-      expect(progressSteps[2]).toHaveClass('setup-wizard__progress-step--pending');
-      expect(progressSteps[3]).toHaveClass('setup-wizard__progress-step--pending');
+      expect(screen.getByTestId('progress-step-1')).toHaveClass(
+        'setup-wizard__progress-step--completed'
+      );
+      expect(screen.getByTestId('progress-step-2')).toHaveClass(
+        'setup-wizard__progress-step--active'
+      );
+      expect(screen.getByTestId('progress-step-3')).toHaveClass(
+        'setup-wizard__progress-step--pending'
+      );
+      expect(screen.getByTestId('progress-step-4')).toHaveClass(
+        'setup-wizard__progress-step--pending'
+      );
     });
 
     test('ステップ3では、ステップ1-2が完了、ステップ3がアクティブになる', async () => {
@@ -283,17 +282,18 @@ describe('SettingsPanel', () => {
       await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
 
       // Assert
-      const progressSteps = screen.getAllByRole('generic').filter((el) => {
-        return (
-          el.className.includes('setup-wizard__progress-step') &&
-          !el.className.includes('setup-wizard__progress-steps')
-        );
-      });
-
-      expect(progressSteps[0]).toHaveClass('setup-wizard__progress-step--completed');
-      expect(progressSteps[1]).toHaveClass('setup-wizard__progress-step--completed');
-      expect(progressSteps[2]).toHaveClass('setup-wizard__progress-step--active');
-      expect(progressSteps[3]).toHaveClass('setup-wizard__progress-step--pending');
+      expect(screen.getByTestId('progress-step-1')).toHaveClass(
+        'setup-wizard__progress-step--completed'
+      );
+      expect(screen.getByTestId('progress-step-2')).toHaveClass(
+        'setup-wizard__progress-step--completed'
+      );
+      expect(screen.getByTestId('progress-step-3')).toHaveClass(
+        'setup-wizard__progress-step--active'
+      );
+      expect(screen.getByTestId('progress-step-4')).toHaveClass(
+        'setup-wizard__progress-step--pending'
+      );
     });
 
     test('ステップ4では、ステップ1-3が完了、ステップ4がアクティブになる', async () => {
@@ -307,17 +307,18 @@ describe('SettingsPanel', () => {
       await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
 
       // Assert
-      const progressSteps = screen.getAllByRole('generic').filter((el) => {
-        return (
-          el.className.includes('setup-wizard__progress-step') &&
-          !el.className.includes('setup-wizard__progress-steps')
-        );
-      });
-
-      expect(progressSteps[0]).toHaveClass('setup-wizard__progress-step--completed');
-      expect(progressSteps[1]).toHaveClass('setup-wizard__progress-step--completed');
-      expect(progressSteps[2]).toHaveClass('setup-wizard__progress-step--completed');
-      expect(progressSteps[3]).toHaveClass('setup-wizard__progress-step--active');
+      expect(screen.getByTestId('progress-step-1')).toHaveClass(
+        'setup-wizard__progress-step--completed'
+      );
+      expect(screen.getByTestId('progress-step-2')).toHaveClass(
+        'setup-wizard__progress-step--completed'
+      );
+      expect(screen.getByTestId('progress-step-3')).toHaveClass(
+        'setup-wizard__progress-step--completed'
+      );
+      expect(screen.getByTestId('progress-step-4')).toHaveClass(
+        'setup-wizard__progress-step--active'
+      );
     });
 
     test('ステップ2の進捗バーの幅が50%である', async () => {
