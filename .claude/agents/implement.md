@@ -492,3 +492,66 @@ const nested = config && config.deeply && config.deeply.nested && config.deeply.
 2. **不要な状態の削除**
    - `lastAnswer`のような状態は、`currentQuestion`から取得できる場合は冗長
    - ただし、パフォーマンスや可読性の観点から必要な場合は残す
+
+## CSS分離タスクの実装ガイドライン
+
+### 基本方針
+
+index.cssからコンポーネント固有のスタイルを独立したCSSファイルに分離する際は、以下の手順に従ってください：
+
+1. **事前確認**
+   - 対象コンポーネントが存在することを確認（Readツール使用）
+   - index.cssから移行対象のスタイルを特定
+   - 既存のCSSファイルが存在しないことを確認
+
+2. **実装手順**
+   ```
+   1. コンポーネントと同じディレクトリにCSSファイル作成
+   2. index.cssから関連スタイルをコピー（セレクタパターンで検索）
+   3. コンポーネントファイルにimport文を追加
+   4. index.cssから該当スタイルと区切りコメントを削除
+   ```
+
+3. **命名規則**
+   - ファイル名: `ComponentName.css`（コンポーネント名と同じ）
+   - 配置場所: コンポーネントと同じディレクトリ
+
+4. **スタイル移行時の注意点**
+   - **スタイルの機能は一切変更しない**（配置場所のみを変更）
+   - インデントやフォーマットは元のまま維持
+   - CSSファイルの先頭に見出しコメントを追加：
+     ```css
+     /**
+      * ComponentName スタイル定義
+      */
+     ```
+
+5. **移行対象の判断基準**
+   - `.component-name*` のパターンに一致するすべてのクラス
+   - コンポーネント専用のアニメーション定義（`@keyframes`）
+   - コンポーネント内のメディアクエリ
+
+6. **動作確認**
+   - 開発サーバー（`npm run dev`）での表示確認
+   - ビルド（`npm run build`）の成功確認
+   - ブラウザでスタイルが正しく適用されていることを目視確認
+
+### 典型的な移行パターン
+
+```css
+/* index.css から削除 */
+/* ======================== */
+/* ComponentName Styles     */
+/* ======================== */
+.component-name { ... }
+.component-name__element { ... }
+.component-name--modifier { ... }
+
+/* ComponentName.css に移行 */
+/**
+ * ComponentName スタイル定義
+ */
+.component-name { ... }
+.component-name__element { ... }
+.component-name--modifier { ... }
+```
