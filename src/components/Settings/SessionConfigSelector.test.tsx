@@ -814,7 +814,7 @@ describe('SessionConfigSelector', () => {
   });
 
   describe('スナップショットテスト', () => {
-    test('問題数モードのスナップショット（10問選択）', () => {
+    test('基本的なレンダリング（デフォルト状態: 問題数モード・10問）', () => {
       // Arrange
       mockSessionConfig.mode = 'questions';
       mockSessionConfig.questionCount = 10;
@@ -827,17 +827,99 @@ describe('SessionConfigSelector', () => {
       expect(container.firstChild).toMatchSnapshot();
     });
 
-    test('時間制限モードのスナップショット（3分選択）', () => {
-      // Arrange
-      mockSessionConfig.mode = 'time';
-      mockSessionConfig.timeLimit = 3;
-      delete (mockSessionConfig as { questionCount?: number }).questionCount;
+    describe('問題数モードのバリエーション', () => {
+      test('問題数モード: 10問選択', () => {
+        // Arrange
+        mockSessionConfig.mode = 'questions';
+        mockSessionConfig.questionCount = 10;
+        delete (mockSessionConfig as { timeLimit?: number }).timeLimit;
 
-      // Act
-      const { container } = render(<SessionConfigSelector />);
+        // Act
+        const { container } = render(<SessionConfigSelector />);
 
-      // Assert
-      expect(container.firstChild).toMatchSnapshot();
+        // Assert
+        expect(container.firstChild).toMatchSnapshot();
+      });
+
+      test('問題数モード: 20問選択', () => {
+        // Arrange
+        mockSessionConfig.mode = 'questions';
+        mockSessionConfig.questionCount = 20;
+        delete (mockSessionConfig as { timeLimit?: number }).timeLimit;
+
+        // Act
+        const { container } = render(<SessionConfigSelector />);
+
+        // Assert
+        expect(container.firstChild).toMatchSnapshot();
+      });
+
+      test('問題数モード: 50問選択', () => {
+        // Arrange
+        mockSessionConfig.mode = 'questions';
+        mockSessionConfig.questionCount = 50;
+        delete (mockSessionConfig as { timeLimit?: number }).timeLimit;
+
+        // Act
+        const { container } = render(<SessionConfigSelector />);
+
+        // Assert
+        expect(container.firstChild).toMatchSnapshot();
+      });
+
+      test('問題数モード: 100問選択', () => {
+        // Arrange
+        mockSessionConfig.mode = 'questions';
+        mockSessionConfig.questionCount = 100;
+        delete (mockSessionConfig as { timeLimit?: number }).timeLimit;
+
+        // Act
+        const { container } = render(<SessionConfigSelector />);
+
+        // Assert
+        expect(container.firstChild).toMatchSnapshot();
+      });
+    });
+
+    describe('時間制限モードのバリエーション', () => {
+      test('時間制限モード: 3分選択', () => {
+        // Arrange
+        mockSessionConfig.mode = 'time';
+        mockSessionConfig.timeLimit = 3;
+        delete (mockSessionConfig as { questionCount?: number }).questionCount;
+
+        // Act
+        const { container } = render(<SessionConfigSelector />);
+
+        // Assert
+        expect(container.firstChild).toMatchSnapshot();
+      });
+
+      test('時間制限モード: 5分選択', () => {
+        // Arrange
+        mockSessionConfig.mode = 'time';
+        mockSessionConfig.timeLimit = 5;
+        delete (mockSessionConfig as { questionCount?: number }).questionCount;
+
+        // Act
+        const { container } = render(<SessionConfigSelector />);
+
+        // Assert
+        expect(container.firstChild).toMatchSnapshot();
+      });
+
+      test('時間制限モード: 10分選択', () => {
+        // Arrange
+        mockSessionConfig.mode = 'time';
+        mockSessionConfig.timeLimit = 10;
+        delete (mockSessionConfig as { questionCount?: number }).questionCount;
+
+        // Act
+        const { container } = render(<SessionConfigSelector />);
+
+        // Assert
+        expect(container.firstChild).toMatchSnapshot();
+      });
     });
   });
 });
