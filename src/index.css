@@ -27,6 +27,7 @@
   --color-success: #4caf50;
   --color-success-light: #e6f9f0;
   --color-error: #f44336;
+  --color-error-light: #ffe6e6;
   --color-error-dark: #dc3545;
   --color-error-darker: #c82333;
   --color-warning: #ff9800;
@@ -146,6 +147,21 @@
 
   /* プライマリカラーシャドウ */
   --shadow-primary: 0 2px 8px rgba(74, 144, 226, 0.3);
+  --shadow-primary-md: 0 6px 12px rgba(74, 144, 226, 0.4);
+  --shadow-secondary: 0 6px 12px rgba(108, 117, 125, 0.3);
+  --shadow-success: 0 6px 12px rgba(76, 175, 80, 0.3);
+  --shadow-danger: 0 6px 12px rgba(220, 53, 69, 0.3);
+  --shadow-error: 0 2px 8px rgba(244, 67, 54, 0.3);
+
+  /* ============================================================ */
+  /* フォーカス・インタラクション                                  */
+  /* ============================================================ */
+
+  /* フォーカスリング（WCAG 2.1対応） */
+  --focus-ring-color: var(--color-primary);
+  --focus-ring-width: var(--border-width-thick);
+  --focus-ring-offset: 2px;
+  --focus-ring-shadow: 0 0 0 4px rgba(74, 144, 226, 0.2);
 
   /* ============================================================ */
   /* トランジション                                               */
@@ -160,15 +176,11 @@
 /* Modern CSS Reset                                             */
 /* ============================================================ */
 
-/* Box sizing rules */
+/* Box sizing rules and reset defaults */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
-}
-
-/* Remove default margin and padding */
-* {
   margin: 0;
   padding: 0;
 }
@@ -178,20 +190,6 @@ html {
   -moz-text-size-adjust: none;
   -webkit-text-size-adjust: none;
   text-size-adjust: none;
-}
-
-/* Remove default margin in favour of better control in authored CSS */
-body,
-h1,
-h2,
-h3,
-h4,
-p,
-figure,
-blockquote,
-dl,
-dd {
-  margin: 0;
 }
 
 /* Remove list styles on ul, ol elements with a list role */
@@ -256,6 +254,33 @@ textarea:not([rows]) {
 /* Anything that has been anchored to should have extra scroll margin */
 :target {
   scroll-margin-block: 5ex;
+}
+
+/* ============================================================ */
+/* Focus Styles (WCAG 2.1 Accessibility)                        */
+/* ============================================================ */
+
+/* Remove default outline and add custom focus style */
+:focus {
+  outline: none;
+}
+
+/* Visible focus indicator for keyboard navigation */
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--border-radius-sm);
+}
+
+/* High contrast focus for buttons and interactive elements */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+  box-shadow: var(--focus-ring-shadow);
 }
 
 .app {
@@ -330,7 +355,7 @@ h1 {
 .btn--primary:hover:not(:disabled) {
   background-color: var(--color-primary-dark);
   border-color: var(--color-primary-dark);
-  box-shadow: 0 6px 12px rgba(74, 144, 226, 0.4);
+  box-shadow: var(--shadow-primary-md);
 }
 
 .btn--primary:active:not(:disabled) {
@@ -347,11 +372,11 @@ h1 {
 .btn--secondary:hover:not(:disabled) {
   background-color: var(--color-text-muted-dark);
   border-color: var(--color-text-muted-dark);
-  box-shadow: 0 6px 12px rgba(108, 117, 125, 0.3);
+  box-shadow: var(--shadow-secondary);
 }
 
 .btn--secondary:active:not(:disabled) {
-  box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
+  box-shadow: var(--shadow-secondary);
 }
 
 .btn--success {
@@ -363,11 +388,11 @@ h1 {
 .btn--success:hover:not(:disabled) {
   background-color: var(--color-secondary-dark);
   border-color: var(--color-secondary-dark);
-  box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
+  box-shadow: var(--shadow-success);
 }
 
 .btn--success:active:not(:disabled) {
-  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+  box-shadow: var(--shadow-success);
 }
 
 .btn--danger {
@@ -379,11 +404,11 @@ h1 {
 .btn--danger:hover:not(:disabled) {
   background-color: var(--color-error-darker);
   border-color: var(--color-error-darker);
-  box-shadow: 0 6px 12px rgba(220, 53, 69, 0.3);
+  box-shadow: var(--shadow-danger);
 }
 
 .btn--danger:active:not(:disabled) {
-  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+  box-shadow: var(--shadow-danger);
 }
 
 .btn--active {
@@ -413,7 +438,7 @@ h1 {
   background-color: var(--color-bg-white);
   border: var(--border-width-base) solid var(--color-primary);
   border-radius: var(--border-radius-lg);
-  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.15);
+  box-shadow: var(--shadow-md);
 }
 
 .card--neutral {
@@ -452,12 +477,12 @@ h1 {
 
 .input--error {
   border-color: var(--color-error);
-  background-color: #ffe6e6;
+  background-color: var(--color-error-light);
 }
 
 .input--error:focus {
   border-color: var(--color-error-dark);
-  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+  box-shadow: var(--shadow-error);
 }
 
 /* Touch device adjustments */
