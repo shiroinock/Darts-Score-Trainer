@@ -450,7 +450,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] 設定サマリー・開始ボタンのスタイルを`SettingsPanel.css`に統合（`SettingsPanel.css`に含まれる）
 
 #### Practice配下のコンポーネント（5タスク）
-- [ ] `StatsBar.tsx`のスタイルを分離（`StatsBar.css`作成、`.stats-bar*`を移行）
+- [x] `StatsBar.tsx`のスタイルを分離（`StatsBar.css`作成、`.stats-bar*`を移行）
 - [ ] `QuestionDisplay.tsx`のスタイルを分離（`QuestionDisplay.css`作成、`.question-display*`を移行）
 - [ ] `NumPad.tsx`のスタイルを分離（`NumPad.css`作成、`.num-pad*`を移行）
 - [ ] `Feedback.tsx`のスタイルを分離（`Feedback.css`作成、`.feedback*`を移行）
