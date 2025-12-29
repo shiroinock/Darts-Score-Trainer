@@ -440,7 +440,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - **重要**: `index.css`の整理は最後に行う（各コンポーネントへの移行が完了してから削除）
 
 #### Settings配下のコンポーネント（8タスク）
-- [ ] `PresetSelector.tsx`のスタイルを分離（`PresetSelector.css`作成、`.preset-selector*`, `.preset-button*`を移行）
+- [x] `PresetSelector.tsx`のスタイルを分離（`PresetSelector.css`作成、`.preset-selector*`, `.preset-button*`を移行）
 - [ ] `SessionConfigSelector.tsx`のスタイルを分離（`SessionConfigSelector.css`作成、`.session-config-selector*`, `.session-mode-button*`, `.session-param-button*`を移行）
 - [ ] `DetailedSettings.tsx`のスタイルを分離（`DetailedSettings.css`作成、`.detailed-settings*`, `.detailed-setting-button*`を移行）
 - [ ] `TargetSelector.tsx`のスタイルを分離（`TargetSelector.css`作成、`.target-selector*`, `.target-type-button*`, `.target-number-button*`を移行）
