@@ -397,6 +397,102 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [ ] タッチデバイス対応
 - [ ] ボードサイズの動的調整
 
+### 8.3.1 CSSモジュール化（コンポーネント単位でのスタイル分離）
+**目的**: `src/index.css`に集約されているコンポーネント固有のスタイルを、各コンポーネントファイルにインラインまたは専用CSSファイルとして移行する。`index.css`にはグローバルスタイルのみを残す。
+
+**方針**:
+- 各コンポーネントに対応するCSSファイルを作成（例: `PresetSelector.css`）
+- 1コンポーネントずつ順次対応し、diffを小さく保つ
+- 各タスク完了後、テストを実行して動作確認
+- **重要**: `index.css`の整理は最後に行う（各コンポーネントへの移行が完了してから削除）
+
+#### Settings配下のコンポーネント（8タスク）
+- [ ] `PresetSelector.tsx`のスタイルを分離（`PresetSelector.css`作成、`.preset-selector*`, `.preset-button*`を移行）
+- [ ] `SessionConfigSelector.tsx`のスタイルを分離（`SessionConfigSelector.css`作成、`.session-config-selector*`, `.session-mode-button*`, `.session-param-button*`を移行）
+- [ ] `DetailedSettings.tsx`のスタイルを分離（`DetailedSettings.css`作成、`.detailed-settings*`, `.detailed-setting-button*`を移行）
+- [ ] `TargetSelector.tsx`のスタイルを分離（`TargetSelector.css`作成、`.target-selector*`, `.target-type-button*`, `.target-number-button*`を移行）
+- [ ] `DifficultySelector.tsx`のスタイルを分離（`DifficultySelector.css`作成、`.difficulty-selector*`, `.difficulty-preset-button*`, `.difficulty-slider*`を移行）
+- [ ] `SettingsPanel.tsx`のスタイルを分離（`SettingsPanel.css`作成、`.settings-panel*`を移行）
+- [ ] `SetupWizard/*.tsx`（Step1-4）のスタイルを分離（`SetupWizard.css`作成、`.setup-wizard*`を移行）
+- [ ] 設定サマリー・開始ボタンのスタイルを`SettingsPanel.css`に統合（`.settings-panel__summary*`, `.settings-panel__start-button*`を移行）
+
+#### Practice配下のコンポーネント（5タスク）
+- [ ] `StatsBar.tsx`のスタイルを分離（`StatsBar.css`作成、`.stats-bar*`を移行）
+- [ ] `QuestionDisplay.tsx`のスタイルを分離（`QuestionDisplay.css`作成、`.question-display*`を移行）
+- [ ] `NumPad.tsx`のスタイルを分離（`NumPad.css`作成、`.num-pad*`を移行）
+- [ ] `Feedback.tsx`のスタイルを分離（`Feedback.css`作成、`.feedback*`を移行）
+- [ ] `PracticeScreen.tsx`のスタイルを分離（`PracticeScreen.css`作成、`.practice-screen*`を移行）
+
+#### Results配下のコンポーネント（2タスク）
+- [ ] `SessionSummary.tsx`のスタイルを分離（`SessionSummary.css`作成、`.session-summary*`を移行）
+- [ ] `ResultsScreen.tsx`のスタイルを分離（`ResultsScreen.css`作成、`.results-screen*`を移行）
+
+#### 最終確認
+- [ ] `index.css`の最終整理（グローバルスタイルのみが残っていることを確認）
+- [ ] 全コンポーネントで正しくスタイルが適用されているか視覚的に確認
+- [ ] 全テストが通ることを確認（`npm test`）
+- [ ] ビルドが成功することを確認（`npm run build`）
+
+### 8.3.2 座標変換の修正（ダーツボード描画・判定のズレ解消）
+**目的**: ダーツボードの描画位置と判定座標のズレを修正する。
+
+**問題点**:
+- `CoordinateTransform`クラスで座標変換（`physicalToScreen`）と距離変換（`physicalDistanceToScreen`）で異なるスケールを使用している
+- 座標変換は`scaleX`と`scaleY`を使用（59-60行目、72-73行目）
+- 距離変換は`this.scale = Math.min(scaleX, scaleY) * 0.8`を使用（83行目、44行目）
+- ボード描画は距離変換（`this.scale`）を使用
+- ダーツマーカー描画は座標変換（`scaleX`, `scaleY`）を使用
+- 結果として、ボードとダーツでスケールが異なり、位置がズレる
+
+**解決策**:
+すべての変換で同じスケール（`this.scale`）を使用する。
+
+#### タスク
+- [ ] `coordinateTransform.ts`の`physicalToScreen`メソッドを修正（`scaleX`, `scaleY` → `scale`に統一）
+- [ ] `coordinateTransform.ts`の`screenToPhysical`メソッドを修正（`scaleX`, `scaleY` → `scale`に統一）
+- [ ] 修正後、ダーツボードが正しい円形で描画されることを確認
+- [ ] 修正後、ダーツマーカーがボード上の正しい位置に表示されることを確認
+- [ ] `coordinateTransform.test.ts`のテストが通ることを確認
+- [ ] 実際にアプリを起動して、視覚的にズレが解消されていることを確認
+
+### 8.4 ビューポート固定レイアウト（スクロールなし）
+**目的**: すべての画面をビューポート（100vw × 100vh）にぴったり収め、スクロールなしで表示する。コンポーネント同士が重ならないように相対的な配置を決定する。
+
+#### 8.4.1 App.tsx - ビューポートラッパー
+- [ ] `App.tsx`にビューポート固定ラッパーを追加（`width: 100vw; height: 100vh; overflow: hidden`）
+- [ ] 全画面共通のCSSクラス `.app` を定義（`display: flex; flex-direction: column`）
+
+#### 8.4.2 SettingsPanel - ウィザード画面レイアウト
+- [ ] `SettingsPanel`の全体レイアウトを縦方向flex配置に変更
+- [ ] 進捗インジケーターの高さを固定（例: 80px）
+- [ ] ウィザードコンテンツエリアを `flex: 1` で残りスペースを占有
+- [ ] ナビゲーションボタンエリアの高さを固定（例: 80px）
+- [ ] `Step1Preset`コンポーネントの高さ調整（親の高さに収まるように）
+- [ ] `Step2Difficulty`コンポーネントの高さ調整（親の高さに収まるように）
+- [ ] `Step3Session`コンポーネントの高さ調整（親の高さに収まるように）
+- [ ] `Step4Confirm`コンポーネントの高さ調整（親の高さに収まるように、内容が多い場合はスクロール可能に）
+
+#### 8.4.3 PracticeScreen - 練習画面レイアウト
+- [ ] `PracticeScreen`の全体レイアウトを縦方向flex配置に変更
+- [ ] `StatsBar`の高さを固定（例: 60px）
+- [ ] メインコンテンツエリア（`.practice-screen__main`）を `flex: 1` で残りスペースを占有
+- [ ] フッターボタンエリアの高さを固定（例: 80px）
+- [ ] `DartBoard`のサイズを親コンテナに適応（アスペクト比を維持しつつ、縦横どちらかに収まる）
+- [ ] `QuestionDisplay`の高さ調整（親の高さに依存）
+- [ ] `NumPad`の高さ調整（親の高さに依存、ボタンサイズを動的に調整）
+- [ ] `Feedback`の高さ調整（親の高さに依存、内容が多い場合はスクロール可能に）
+
+#### 8.4.4 ResultsScreen - 結果画面レイアウト
+- [ ] `ResultsScreen`の全体レイアウトを縦方向flex配置に変更
+- [ ] メインコンテンツエリア（`.results-screen__main`）を `flex: 1` で残りスペースを占有
+- [ ] フッターボタンエリアの高さを固定（例: 80px）
+- [ ] `SessionSummary`の内部スクロール対応（`overflow: auto`、内容が多い場合にスクロール）
+
+#### 8.4.5 CSS変数とレイアウト比率の定義
+- [ ] CSS変数でレイアウト高さを定義（`--header-height`, `--footer-height`, `--content-flex`など）
+- [ ] 全画面で一貫したスペーシング・マージンを定義
+- [ ] レスポンシブブレークポイントで高さ比率を調整（モバイル、タブレット、デスクトップ）
+
 ---
 
 ## Phase 9: テスト・調整
