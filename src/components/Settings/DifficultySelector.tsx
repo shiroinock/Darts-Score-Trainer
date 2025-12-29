@@ -6,6 +6,7 @@
  */
 
 import { useGameStore } from '../../stores/gameStore';
+import './DifficultySelector.css';
 
 /**
  * 難易度プリセットの定義
