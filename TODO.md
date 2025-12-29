@@ -443,7 +443,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] `PresetSelector.tsx`のスタイルを分離（`PresetSelector.css`作成、`.preset-selector*`, `.preset-button*`を移行）
 - [x] `SessionConfigSelector.tsx`のスタイルを分離（`SessionConfigSelector.css`作成、`.session-config-selector*`, `.session-mode-button*`, `.session-param-button*`を移行）
 - [x] `DetailedSettings.tsx`のスタイルを分離（`DetailedSettings.css`作成、`.detailed-settings*`, `.detailed-setting-button*`を移行）
-- [ ] `TargetSelector.tsx`のスタイルを分離（`TargetSelector.css`作成、`.target-selector*`, `.target-type-button*`, `.target-number-button*`を移行）
+- [x] `TargetSelector.tsx`のスタイルを分離（`TargetSelector.css`作成、`.target-selector*`, `.target-type-button*`, `.target-number-button*`を移行）
 - [ ] `DifficultySelector.tsx`のスタイルを分離（`DifficultySelector.css`作成、`.difficulty-selector*`, `.difficulty-preset-button*`, `.difficulty-slider*`を移行）
 - [ ] `SettingsPanel.tsx`のスタイルを分離（`SettingsPanel.css`作成、`.settings-panel*`を移行）
 - [ ] `SetupWizard/*.tsx`（Step1-4）のスタイルを分離（`SetupWizard.css`作成、`.setup-wizard*`を移行）
