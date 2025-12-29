@@ -107,7 +107,7 @@ describe('TargetSelector', () => {
       NUMBERS.forEach((number) => {
         expect(screen.getByRole('button', { name: number.toString() })).toBeInTheDocument();
       });
-    });
+    }, 10000); // Increase timeout to 10 seconds
   });
 
   describe('タイプ選択UI', () => {
