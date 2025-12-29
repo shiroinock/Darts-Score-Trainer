@@ -9,6 +9,7 @@
  */
 
 import { useState } from 'react';
+import './SettingsPanel.css';
 import { useGameStore } from '../../stores/gameStore';
 import { Step1Preset } from './SetupWizard/Step1Preset';
 import { Step2Difficulty } from './SetupWizard/Step2Difficulty';
