@@ -5,6 +5,7 @@
  */
 
 import { useGameStore } from '../../stores/gameStore';
+import './SessionConfigSelector.css';
 
 /**
  * 問題数の選択肢

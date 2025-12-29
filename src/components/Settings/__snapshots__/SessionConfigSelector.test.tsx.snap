@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SessionConfigSelector > スナップショットテスト > 問題数モードのスナップショット（10問選択） 1`] = `
+exports[`SessionConfigSelector > スナップショットテスト > 問題数モードのバリエーション > 問題数モード: 10問選択 1`] = `
 <div
   class="session-config-selector"
 >
@@ -84,7 +84,343 @@ exports[`SessionConfigSelector > スナップショットテスト > 問題数�
 </div>
 `;
 
-exports[`SessionConfigSelector > スナップショットテスト > 時間制限モードのスナップショット（3分選択） 1`] = `
+exports[`SessionConfigSelector > スナップショットテスト > 問題数モードのバリエーション > 問題数モード: 20問選択 1`] = `
+<div
+  class="session-config-selector"
+>
+  <h2
+    class="session-config-selector__title"
+  >
+    セッション設定
+  </h2>
+  <div
+    class="session-config-selector__mode"
+  >
+    <h3
+      class="session-config-selector__subtitle"
+    >
+      モード
+    </h3>
+    <div
+      class="session-config-selector__buttons"
+    >
+      <button
+        aria-pressed="true"
+        class="session-mode-button session-mode-button--active"
+        type="button"
+      >
+        問題数
+      </button>
+      <button
+        aria-pressed="false"
+        class="session-mode-button "
+        type="button"
+      >
+        時間制限
+      </button>
+    </div>
+  </div>
+  <div
+    class="session-config-selector__params"
+  >
+    <h3
+      class="session-config-selector__subtitle"
+    >
+      問題数
+    </h3>
+    <div
+      class="session-config-selector__buttons"
+    >
+      <button
+        aria-pressed="false"
+        class="session-param-button "
+        type="button"
+      >
+        10
+        問
+      </button>
+      <button
+        aria-pressed="true"
+        class="session-param-button session-param-button--active"
+        type="button"
+      >
+        20
+        問
+      </button>
+      <button
+        aria-pressed="false"
+        class="session-param-button "
+        type="button"
+      >
+        50
+        問
+      </button>
+      <button
+        aria-pressed="false"
+        class="session-param-button "
+        type="button"
+      >
+        100
+        問
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SessionConfigSelector > スナップショットテスト > 問題数モードのバリエーション > 問題数モード: 50問選択 1`] = `
+<div
+  class="session-config-selector"
+>
+  <h2
+    class="session-config-selector__title"
+  >
+    セッション設定
+  </h2>
+  <div
+    class="session-config-selector__mode"
+  >
+    <h3
+      class="session-config-selector__subtitle"
+    >
+      モード
+    </h3>
+    <div
+      class="session-config-selector__buttons"
+    >
+      <button
+        aria-pressed="true"
+        class="session-mode-button session-mode-button--active"
+        type="button"
+      >
+        問題数
+      </button>
+      <button
+        aria-pressed="false"
+        class="session-mode-button "
+        type="button"
+      >
+        時間制限
+      </button>
+    </div>
+  </div>
+  <div
+    class="session-config-selector__params"
+  >
+    <h3
+      class="session-config-selector__subtitle"
+    >
+      問題数
+    </h3>
+    <div
+      class="session-config-selector__buttons"
+    >
+      <button
+        aria-pressed="false"
+        class="session-param-button "
+        type="button"
+      >
+        10
+        問
+      </button>
+      <button
+        aria-pressed="false"
+        class="session-param-button "
+        type="button"
+      >
+        20
+        問
+      </button>
+      <button
+        aria-pressed="true"
+        class="session-param-button session-param-button--active"
+        type="button"
+      >
+        50
+        問
+      </button>
+      <button
+        aria-pressed="false"
+        class="session-param-button "
+        type="button"
+      >
+        100
+        問
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SessionConfigSelector > スナップショットテスト > 問題数モードのバリエーション > 問題数モード: 100問選択 1`] = `
+<div
+  class="session-config-selector"
+>
+  <h2
+    class="session-config-selector__title"
+  >
+    セッション設定
+  </h2>
+  <div
+    class="session-config-selector__mode"
+  >
+    <h3
+      class="session-config-selector__subtitle"
+    >
+      モード
+    </h3>
+    <div
+      class="session-config-selector__buttons"
+    >
+      <button
+        aria-pressed="true"
+        class="session-mode-button session-mode-button--active"
+        type="button"
+      >
+        問題数
+      </button>
+      <button
+        aria-pressed="false"
+        class="session-mode-button "
+        type="button"
+      >
+        時間制限
+      </button>
+    </div>
+  </div>
+  <div
+    class="session-config-selector__params"
+  >
+    <h3
+      class="session-config-selector__subtitle"
+    >
+      問題数
+    </h3>
+    <div
+      class="session-config-selector__buttons"
+    >
+      <button
+        aria-pressed="false"
+        class="session-param-button "
+        type="button"
+      >
+        10
+        問
+      </button>
+      <button
+        aria-pressed="false"
+        class="session-param-button "
+        type="button"
+      >
+        20
+        問
+      </button>
+      <button
+        aria-pressed="false"
+        class="session-param-button "
+        type="button"
+      >
+        50
+        問
+      </button>
+      <button
+        aria-pressed="true"
+        class="session-param-button session-param-button--active"
+        type="button"
+      >
+        100
+        問
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SessionConfigSelector > スナップショットテスト > 基本的なレンダリング（デフォルト状態: 問題数モード・10問） 1`] = `
+<div
+  class="session-config-selector"
+>
+  <h2
+    class="session-config-selector__title"
+  >
+    セッション設定
+  </h2>
+  <div
+    class="session-config-selector__mode"
+  >
+    <h3
+      class="session-config-selector__subtitle"
+    >
+      モード
+    </h3>
+    <div
+      class="session-config-selector__buttons"
+    >
+      <button
+        aria-pressed="true"
+        class="session-mode-button session-mode-button--active"
+        type="button"
+      >
+        問題数
+      </button>
+      <button
+        aria-pressed="false"
+        class="session-mode-button "
+        type="button"
+      >
+        時間制限
+      </button>
+    </div>
+  </div>
+  <div
+    class="session-config-selector__params"
+  >
+    <h3
+      class="session-config-selector__subtitle"
+    >
+      問題数
+    </h3>
+    <div
+      class="session-config-selector__buttons"
+    >
+      <button
+        aria-pressed="true"
+        class="session-param-button session-param-button--active"
+        type="button"
+      >
+        10
+        問
+      </button>
+      <button
+        aria-pressed="false"
+        class="session-param-button "
+        type="button"
+      >
+        20
+        問
+      </button>
+      <button
+        aria-pressed="false"
+        class="session-param-button "
+        type="button"
+      >
+        50
+        問
+      </button>
+      <button
+        aria-pressed="false"
+        class="session-param-button "
+        type="button"
+      >
+        100
+        問
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SessionConfigSelector > スナップショットテスト > 時間制限モードのバリエーション > 時間制限モード: 3分選択 1`] = `
 <div
   class="session-config-selector"
 >
@@ -150,6 +486,158 @@ exports[`SessionConfigSelector > スナップショットテスト > 時間制�
       <button
         aria-pressed="false"
         class="session-param-button "
+        type="button"
+      >
+        10
+        分
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SessionConfigSelector > スナップショットテスト > 時間制限モードのバリエーション > 時間制限モード: 5分選択 1`] = `
+<div
+  class="session-config-selector"
+>
+  <h2
+    class="session-config-selector__title"
+  >
+    セッション設定
+  </h2>
+  <div
+    class="session-config-selector__mode"
+  >
+    <h3
+      class="session-config-selector__subtitle"
+    >
+      モード
+    </h3>
+    <div
+      class="session-config-selector__buttons"
+    >
+      <button
+        aria-pressed="false"
+        class="session-mode-button "
+        type="button"
+      >
+        問題数
+      </button>
+      <button
+        aria-pressed="true"
+        class="session-mode-button session-mode-button--active"
+        type="button"
+      >
+        時間制限
+      </button>
+    </div>
+  </div>
+  <div
+    class="session-config-selector__params"
+  >
+    <h3
+      class="session-config-selector__subtitle"
+    >
+      時間制限
+    </h3>
+    <div
+      class="session-config-selector__buttons"
+    >
+      <button
+        aria-pressed="false"
+        class="session-param-button "
+        type="button"
+      >
+        3
+        分
+      </button>
+      <button
+        aria-pressed="true"
+        class="session-param-button session-param-button--active"
+        type="button"
+      >
+        5
+        分
+      </button>
+      <button
+        aria-pressed="false"
+        class="session-param-button "
+        type="button"
+      >
+        10
+        分
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SessionConfigSelector > スナップショットテスト > 時間制限モードのバリエーション > 時間制限モード: 10分選択 1`] = `
+<div
+  class="session-config-selector"
+>
+  <h2
+    class="session-config-selector__title"
+  >
+    セッション設定
+  </h2>
+  <div
+    class="session-config-selector__mode"
+  >
+    <h3
+      class="session-config-selector__subtitle"
+    >
+      モード
+    </h3>
+    <div
+      class="session-config-selector__buttons"
+    >
+      <button
+        aria-pressed="false"
+        class="session-mode-button "
+        type="button"
+      >
+        問題数
+      </button>
+      <button
+        aria-pressed="true"
+        class="session-mode-button session-mode-button--active"
+        type="button"
+      >
+        時間制限
+      </button>
+    </div>
+  </div>
+  <div
+    class="session-config-selector__params"
+  >
+    <h3
+      class="session-config-selector__subtitle"
+    >
+      時間制限
+    </h3>
+    <div
+      class="session-config-selector__buttons"
+    >
+      <button
+        aria-pressed="false"
+        class="session-param-button "
+        type="button"
+      >
+        3
+        分
+      </button>
+      <button
+        aria-pressed="false"
+        class="session-param-button "
+        type="button"
+      >
+        5
+        分
+      </button>
+      <button
+        aria-pressed="true"
+        class="session-param-button session-param-button--active"
         type="button"
       >
         10
