@@ -304,6 +304,42 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] 練習開始ボタン
 - [x] レイアウト調整
 
+### 5.7 ウィザード形式対応（PR #75）
+#### 5.7.1 マージ後推奨タスク（優先度：中）
+- [ ] **CSSモジュール化の優先度を決定する**
+  - 背景: Phase 8.3.1に20タスク存在するが、スケジュールが不明確
+  - 対応: Phase 8.3.1の実施時期と優先順位を明確化
+  - 検討事項: index.css（2323行）の肥大化が進んでいるため、早期対応が望ましい
+
+- [ ] **ウィザード中断時の状態保持を検証する**
+  - 懸念: SettingsPanelがアンマウント→マウント時に`currentStep`がリセットされる可能性
+  - 検証内容:
+    - ステップ2で難易度変更 → ステップ1に戻る → ステップ2に進む、で設定が保持されるか
+    - SettingsPanelのアンマウント→マウント時の動作確認
+  - 対策案（必要な場合）: `currentStep`をZustand storeまたはlocalStorageで管理
+
+- [ ] **モバイルでのスクロール対応を実施する**
+  - 問題: Step4（確認画面）は内容が多く、モバイルで画面に収まらない可能性
+  - 対応: `.setup-wizard__step-content`に`overflow-y: auto`と`max-height`を設定
+  - 実装例:
+    ```css
+    .setup-wizard__step-content {
+      overflow-y: auto;
+      max-height: calc(100vh - 200px); /* ヘッダー・フッター分を除く */
+    }
+    ```
+
+- [ ] **インラインスタイルの削除**
+  - 問題: `SettingsPanel.tsx (L109)`で`style={{ width: \`${(currentStep / 4) * 100}%\` }}`を使用
+  - 解決策: `data-step`属性を使ってCSSで制御
+  - 実装例:
+    ```css
+    .setup-wizard__progress-fill[data-step="1"] { width: 25%; }
+    .setup-wizard__progress-fill[data-step="2"] { width: 50%; }
+    .setup-wizard__progress-fill[data-step="3"] { width: 75%; }
+    .setup-wizard__progress-fill[data-step="4"] { width: 100%; }
+    ```
+
 ---
 
 ## Phase 6: UI（練習画面）

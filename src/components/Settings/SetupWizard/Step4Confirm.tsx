@@ -6,40 +6,12 @@
 
 import { PRESETS } from '../../../stores/config/presets';
 import { useGameStore } from '../../../stores/gameStore';
-import type { PracticeConfig, SessionConfig } from '../../../types';
+import {
+  findMatchingPreset,
+  getDifficultyLabel,
+  getSessionSummary,
+} from '../../../utils/configHelpers.js';
 import { DetailedSettings } from '../DetailedSettings';
-import { DIFFICULTY_PRESETS } from '../DifficultySelector';
-
-/**
- * 現在の設定が既存プリセットと完全一致するか判定する
- */
-function findMatchingPreset(config: PracticeConfig): string | null {
-  if (!config.isPreset) {
-    return null;
-  }
-  if (config.configId.startsWith('preset-') && config.configId in PRESETS) {
-    return config.configId;
-  }
-  return null;
-}
-
-/**
- * 難易度プリセット名を取得する
- */
-function getDifficultyLabel(stdDevMM: number): string {
-  const preset = DIFFICULTY_PRESETS.find((p) => p.stdDevMM === stdDevMM);
-  return preset ? preset.label : `カスタム ${stdDevMM}mm`;
-}
-
-/**
- * セッション設定のサマリー文字列を生成する
- */
-function getSessionSummary(sessionConfig: SessionConfig): string {
-  if (sessionConfig.mode === 'questions') {
-    return `問題数モード: ${sessionConfig.questionCount ?? 10}問`;
-  }
-  return `時間制限モード: ${sessionConfig.timeLimit ?? 3}分`;
-}
 
 /**
  * ステップ4: 確認画面コンポーネント
