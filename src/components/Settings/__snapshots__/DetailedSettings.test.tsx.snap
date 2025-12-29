@@ -1,5 +1,1502 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`DetailedSettings > スナップショットテスト > 1投、bothモード、501点のスナップショット 1`] = `
+<div>
+  <div
+    class="detailed-settings"
+  >
+    <button
+      aria-expanded="true"
+      class="detailed-settings__toggle"
+      type="button"
+    >
+      <span
+        class="detailed-settings__header"
+      >
+        詳細設定 
+        ▲
+      </span>
+    </button>
+    <div
+      class="detailed-settings__content"
+    >
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          投擲単位
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            1
+            投
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            3
+            投
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          問う内容
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            得点
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            残り点数
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            両方
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          開始点数
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            501
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            701
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            301
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DetailedSettings > スナップショットテスト > 1投、remainingモード、301点のスナップショット 1`] = `
+<div>
+  <div
+    class="detailed-settings"
+  >
+    <button
+      aria-expanded="true"
+      class="detailed-settings__toggle"
+      type="button"
+    >
+      <span
+        class="detailed-settings__header"
+      >
+        詳細設定 
+        ▲
+      </span>
+    </button>
+    <div
+      class="detailed-settings__content"
+    >
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          投擲単位
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            1
+            投
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            3
+            投
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          問う内容
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            得点
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            残り点数
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            両方
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          開始点数
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            501
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            701
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            301
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DetailedSettings > スナップショットテスト > 1投、remainingモード、501点のスナップショット 1`] = `
+<div>
+  <div
+    class="detailed-settings"
+  >
+    <button
+      aria-expanded="true"
+      class="detailed-settings__toggle"
+      type="button"
+    >
+      <span
+        class="detailed-settings__header"
+      >
+        詳細設定 
+        ▲
+      </span>
+    </button>
+    <div
+      class="detailed-settings__content"
+    >
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          投擲単位
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            1
+            投
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            3
+            投
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          問う内容
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            得点
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            残り点数
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            両方
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          開始点数
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            501
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            701
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            301
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DetailedSettings > スナップショットテスト > 1投、remainingモード、701点のスナップショット 1`] = `
+<div>
+  <div
+    class="detailed-settings"
+  >
+    <button
+      aria-expanded="true"
+      class="detailed-settings__toggle"
+      type="button"
+    >
+      <span
+        class="detailed-settings__header"
+      >
+        詳細設定 
+        ▲
+      </span>
+    </button>
+    <div
+      class="detailed-settings__content"
+    >
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          投擲単位
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            1
+            投
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            3
+            投
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          問う内容
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            得点
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            残り点数
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            両方
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          開始点数
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            501
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            701
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            301
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DetailedSettings > スナップショットテスト > 3投、bothモード、cumulative、301点のスナップショット 1`] = `
+<div>
+  <div
+    class="detailed-settings"
+  >
+    <button
+      aria-expanded="true"
+      class="detailed-settings__toggle"
+      type="button"
+    >
+      <span
+        class="detailed-settings__header"
+      >
+        詳細設定 
+        ▲
+      </span>
+    </button>
+    <div
+      class="detailed-settings__content"
+    >
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          投擲単位
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            1
+            投
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            3
+            投
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          問う内容
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            得点
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            残り点数
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            両方
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          判定タイミング
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            独立
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            累積
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          開始点数
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            501
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            701
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            301
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DetailedSettings > スナップショットテスト > 3投、bothモード、cumulative、701点のスナップショット 1`] = `
+<div>
+  <div
+    class="detailed-settings"
+  >
+    <button
+      aria-expanded="true"
+      class="detailed-settings__toggle"
+      type="button"
+    >
+      <span
+        class="detailed-settings__header"
+      >
+        詳細設定 
+        ▲
+      </span>
+    </button>
+    <div
+      class="detailed-settings__content"
+    >
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          投擲単位
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            1
+            投
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            3
+            投
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          問う内容
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            得点
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            残り点数
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            両方
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          判定タイミング
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            独立
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            累積
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          開始点数
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            501
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            701
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            301
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DetailedSettings > スナップショットテスト > 3投、bothモード、independent、501点のスナップショット 1`] = `
+<div>
+  <div
+    class="detailed-settings"
+  >
+    <button
+      aria-expanded="true"
+      class="detailed-settings__toggle"
+      type="button"
+    >
+      <span
+        class="detailed-settings__header"
+      >
+        詳細設定 
+        ▲
+      </span>
+    </button>
+    <div
+      class="detailed-settings__content"
+    >
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          投擲単位
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            1
+            投
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            3
+            投
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          問う内容
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            得点
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            残り点数
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            両方
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          判定タイミング
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            独立
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            累積
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          開始点数
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            501
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            701
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            301
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DetailedSettings > スナップショットテスト > 3投、remainingモード、cumulative、301点のスナップショット 1`] = `
+<div>
+  <div
+    class="detailed-settings"
+  >
+    <button
+      aria-expanded="true"
+      class="detailed-settings__toggle"
+      type="button"
+    >
+      <span
+        class="detailed-settings__header"
+      >
+        詳細設定 
+        ▲
+      </span>
+    </button>
+    <div
+      class="detailed-settings__content"
+    >
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          投擲単位
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            1
+            投
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            3
+            投
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          問う内容
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            得点
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            残り点数
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            両方
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          判定タイミング
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            独立
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            累積
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          開始点数
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            501
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            701
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            301
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DetailedSettings > スナップショットテスト > 3投、remainingモード、cumulative、701点のスナップショット 1`] = `
+<div>
+  <div
+    class="detailed-settings"
+  >
+    <button
+      aria-expanded="true"
+      class="detailed-settings__toggle"
+      type="button"
+    >
+      <span
+        class="detailed-settings__header"
+      >
+        詳細設定 
+        ▲
+      </span>
+    </button>
+    <div
+      class="detailed-settings__content"
+    >
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          投擲単位
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            1
+            投
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            3
+            投
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          問う内容
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            得点
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            残り点数
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            両方
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          判定タイミング
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            独立
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            累積
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          開始点数
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            501
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            701
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            301
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DetailedSettings > スナップショットテスト > 3投、remainingモード、independent、501点のスナップショット 1`] = `
+<div>
+  <div
+    class="detailed-settings"
+  >
+    <button
+      aria-expanded="true"
+      class="detailed-settings__toggle"
+      type="button"
+    >
+      <span
+        class="detailed-settings__header"
+      >
+        詳細設定 
+        ▲
+      </span>
+    </button>
+    <div
+      class="detailed-settings__content"
+    >
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          投擲単位
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            1
+            投
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            3
+            投
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          問う内容
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            得点
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            残り点数
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            両方
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          判定タイミング
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            独立
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            累積
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          開始点数
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            501
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            701
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            301
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DetailedSettings > スナップショットテスト > 3投、scoreモード、independentのスナップショット 1`] = `
+<div>
+  <div
+    class="detailed-settings"
+  >
+    <button
+      aria-expanded="true"
+      class="detailed-settings__toggle"
+      type="button"
+    >
+      <span
+        class="detailed-settings__header"
+      >
+        詳細設定 
+        ▲
+      </span>
+    </button>
+    <div
+      class="detailed-settings__content"
+    >
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          投擲単位
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            1
+            投
+          </button>
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            3
+            投
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          問う内容
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            得点
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            残り点数
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            両方
+          </button>
+        </div>
+      </div>
+      <div
+        class="detailed-settings__section"
+      >
+        <h3
+          class="detailed-settings__subtitle"
+        >
+          判定タイミング
+        </h3>
+        <div
+          class="detailed-settings__buttons"
+        >
+          <button
+            aria-pressed="true"
+            class="detailed-setting-button detailed-setting-button--active"
+            type="button"
+          >
+            独立
+          </button>
+          <button
+            aria-pressed="false"
+            class="detailed-setting-button "
+            type="button"
+          >
+            累積
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`DetailedSettings > スナップショットテスト > 3投モード時のスナップショット（判定タイミング表示） 1`] = `
 <div>
   <div

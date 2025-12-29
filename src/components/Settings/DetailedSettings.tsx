@@ -8,6 +8,7 @@
 import { useState } from 'react';
 import { useGameStore } from '../../stores/gameStore';
 import type { JudgmentTiming, QuestionType } from '../../types';
+import './DetailedSettings.css';
 
 /**
  * 投擲単位の選択肢

@@ -954,6 +954,179 @@ describe('DetailedSettings', () => {
       // Assert
       expect(container).toMatchSnapshot();
     });
+
+    // CSS分離前の状態を詳細にキャプチャするための追加スナップショット
+
+    test('1投、remainingモード、501点のスナップショット', async () => {
+      // Arrange
+      mockConfig.throwUnit = 1;
+      mockConfig.questionType = 'remaining';
+      mockConfig.startingScore = 501;
+      const user = userEvent.setup();
+      const { container } = render(<DetailedSettings />);
+
+      // Act
+      await user.click(screen.getByRole('button', { name: /詳細設定/ }));
+
+      // Assert
+      expect(container).toMatchSnapshot();
+    });
+
+    test('1投、remainingモード、701点のスナップショット', async () => {
+      // Arrange
+      mockConfig.throwUnit = 1;
+      mockConfig.questionType = 'remaining';
+      mockConfig.startingScore = 701;
+      const user = userEvent.setup();
+      const { container } = render(<DetailedSettings />);
+
+      // Act
+      await user.click(screen.getByRole('button', { name: /詳細設定/ }));
+
+      // Assert
+      expect(container).toMatchSnapshot();
+    });
+
+    test('1投、remainingモード、301点のスナップショット', async () => {
+      // Arrange
+      mockConfig.throwUnit = 1;
+      mockConfig.questionType = 'remaining';
+      mockConfig.startingScore = 301;
+      const user = userEvent.setup();
+      const { container } = render(<DetailedSettings />);
+
+      // Act
+      await user.click(screen.getByRole('button', { name: /詳細設定/ }));
+
+      // Assert
+      expect(container).toMatchSnapshot();
+    });
+
+    test('1投、bothモード、501点のスナップショット', async () => {
+      // Arrange
+      mockConfig.throwUnit = 1;
+      mockConfig.questionType = 'both';
+      mockConfig.startingScore = 501;
+      const user = userEvent.setup();
+      const { container } = render(<DetailedSettings />);
+
+      // Act
+      await user.click(screen.getByRole('button', { name: /詳細設定/ }));
+
+      // Assert
+      expect(container).toMatchSnapshot();
+    });
+
+    test('3投、scoreモード、independentのスナップショット', async () => {
+      // Arrange
+      mockConfig.throwUnit = 3;
+      mockConfig.questionType = 'score';
+      mockConfig.judgmentTiming = 'independent';
+      const user = userEvent.setup();
+      const { container } = render(<DetailedSettings />);
+
+      // Act
+      await user.click(screen.getByRole('button', { name: /詳細設定/ }));
+
+      // Assert
+      expect(container).toMatchSnapshot();
+    });
+
+    test('3投、remainingモード、independent、501点のスナップショット', async () => {
+      // Arrange
+      mockConfig.throwUnit = 3;
+      mockConfig.questionType = 'remaining';
+      mockConfig.judgmentTiming = 'independent';
+      mockConfig.startingScore = 501;
+      const user = userEvent.setup();
+      const { container } = render(<DetailedSettings />);
+
+      // Act
+      await user.click(screen.getByRole('button', { name: /詳細設定/ }));
+
+      // Assert
+      expect(container).toMatchSnapshot();
+    });
+
+    test('3投、remainingモード、cumulative、701点のスナップショット', async () => {
+      // Arrange
+      mockConfig.throwUnit = 3;
+      mockConfig.questionType = 'remaining';
+      mockConfig.judgmentTiming = 'cumulative';
+      mockConfig.startingScore = 701;
+      const user = userEvent.setup();
+      const { container } = render(<DetailedSettings />);
+
+      // Act
+      await user.click(screen.getByRole('button', { name: /詳細設定/ }));
+
+      // Assert
+      expect(container).toMatchSnapshot();
+    });
+
+    test('3投、remainingモード、cumulative、301点のスナップショット', async () => {
+      // Arrange
+      mockConfig.throwUnit = 3;
+      mockConfig.questionType = 'remaining';
+      mockConfig.judgmentTiming = 'cumulative';
+      mockConfig.startingScore = 301;
+      const user = userEvent.setup();
+      const { container } = render(<DetailedSettings />);
+
+      // Act
+      await user.click(screen.getByRole('button', { name: /詳細設定/ }));
+
+      // Assert
+      expect(container).toMatchSnapshot();
+    });
+
+    test('3投、bothモード、independent、501点のスナップショット', async () => {
+      // Arrange
+      mockConfig.throwUnit = 3;
+      mockConfig.questionType = 'both';
+      mockConfig.judgmentTiming = 'independent';
+      mockConfig.startingScore = 501;
+      const user = userEvent.setup();
+      const { container } = render(<DetailedSettings />);
+
+      // Act
+      await user.click(screen.getByRole('button', { name: /詳細設定/ }));
+
+      // Assert
+      expect(container).toMatchSnapshot();
+    });
+
+    test('3投、bothモード、cumulative、701点のスナップショット', async () => {
+      // Arrange
+      mockConfig.throwUnit = 3;
+      mockConfig.questionType = 'both';
+      mockConfig.judgmentTiming = 'cumulative';
+      mockConfig.startingScore = 701;
+      const user = userEvent.setup();
+      const { container } = render(<DetailedSettings />);
+
+      // Act
+      await user.click(screen.getByRole('button', { name: /詳細設定/ }));
+
+      // Assert
+      expect(container).toMatchSnapshot();
+    });
+
+    test('3投、bothモード、cumulative、301点のスナップショット', async () => {
+      // Arrange
+      mockConfig.throwUnit = 3;
+      mockConfig.questionType = 'both';
+      mockConfig.judgmentTiming = 'cumulative';
+      mockConfig.startingScore = 301;
+      const user = userEvent.setup();
+      const { container } = render(<DetailedSettings />);
+
+      // Act
+      await user.click(screen.getByRole('button', { name: /詳細設定/ }));
+
+      // Assert
+      expect(container).toMatchSnapshot();
+    });
   });
 
   describe('レイアウト構造', () => {
