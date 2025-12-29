@@ -26,7 +26,7 @@ index.cssからコンポーネント固有のCSSスタイルを独立した.css�
 5. **implement**: CSS分離実施
 6. **test-runner**: スナップショット差分が0件であることを確認
 7. **local-ci-checker**: 全体CIチェック
-8. **コミット作成**: 2コミット（CSS分離 + TODO.md更新）
+8. **コミット作成**: 3コミット（CSS分離 + TODO.md更新 + 評価レポート）
 9. **TODO.md更新**: タスクを完了状態に変更
 
 **重要**: 各ステップが完了してから次に進んでください。エラーが出たら報告してください。
@@ -199,7 +199,7 @@ GREEN_EXPECTED - CSS分離前に作成したスナップショットと、CSS分
 
 ### 7. コミット作成
 
-**1コンポーネントにつき2コミット**を作成します：
+**1コンポーネントにつき3コミット**を作成します：
 
 #### 7.1. CSS分離のコミット
 
@@ -232,6 +232,26 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 git add TODO.md
 
 git commit -m "docs: {コンポーネント名}のCSS分離タスクを完了とマーク
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+```
+
+#### 7.3. 評価レポートのコミット
+
+```bash
+git add .claude/
+
+git commit -m "chore: エージェント評価レポートを追加
+
+{コンポーネント名}のCSS分離で使用したエージェントの評価レポート:
+- test-writer: スナップショットテスト作成
+- implement: CSS分離実施
+- test-runner: スナップショット差分確認
+- local-ci-checker: 全体CIチェック
+
+エージェント定義ファイルも自動更新（フィードバックフック）。
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
@@ -328,8 +348,9 @@ test-writer の出力:
 - ✅ index.cssから該当スタイルが削除された
 - ✅ スナップショットテストの差分が0件
 - ✅ local-ci-checkerが全て成功（Biome/Test/Build）
-- ✅ 2つのコミットが作成された
+- ✅ 3つのコミットが作成された（CSS分離 + TODO.md更新 + 評価レポート）
 - ✅ TODO.mdが更新された
+- ✅ 評価レポートとエージェント定義の更新がコミットされた
 
 ## 次のタスクへ
 
