@@ -445,9 +445,9 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] `DetailedSettings.tsx`のスタイルを分離（`DetailedSettings.css`作成、`.detailed-settings*`, `.detailed-setting-button*`を移行）
 - [x] `TargetSelector.tsx`のスタイルを分離（`TargetSelector.css`作成、`.target-selector*`, `.target-type-button*`, `.target-number-button*`を移行）
 - [x] `DifficultySelector.tsx`のスタイルを分離（`DifficultySelector.css`作成、`.difficulty-selector*`, `.difficulty-preset-button*`, `.difficulty-slider*`を移行）
-- [ ] `SettingsPanel.tsx`のスタイルを分離（`SettingsPanel.css`作成、`.settings-panel*`を移行）
-- [ ] `SetupWizard/*.tsx`（Step1-4）のスタイルを分離（`SetupWizard.css`作成、`.setup-wizard*`を移行）
-- [ ] 設定サマリー・開始ボタンのスタイルを`SettingsPanel.css`に統合（`.settings-panel__summary*`, `.settings-panel__start-button*`を移行）
+- [x] `SettingsPanel.tsx`のスタイルを分離（`SettingsPanel.css`作成、`.settings-panel*`および`.setup-wizard*`を移行）
+- [x] `SetupWizard/*.tsx`（Step1-4）のスタイルを分離（`SettingsPanel.css`に統合済み）
+- [x] 設定サマリー・開始ボタンのスタイルを`SettingsPanel.css`に統合（`SettingsPanel.css`に含まれる）
 
 #### Practice配下のコンポーネント（5タスク）
 - [ ] `StatsBar.tsx`のスタイルを分離（`StatsBar.css`作成、`.stats-bar*`を移行）
