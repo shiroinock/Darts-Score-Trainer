@@ -322,4 +322,127 @@ describe('StatsBar', () => {
       expect(ddElements.length).toBeGreaterThan(0);
     });
   });
+
+  describe('スナップショットテスト', () => {
+    it('基本的なレンダリング結果が一致する', () => {
+      const { container } = render(<StatsBar />);
+      expect(container).toMatchSnapshot();
+    });
+
+    it('問題数モードの見た目が一致する', () => {
+      useGameStore.setState({
+        sessionConfig: {
+          mode: 'questions',
+          questionCount: TEST_CONSTANTS.QUESTIONS.COUNT_20,
+        },
+        stats: {
+          correct: TEST_CONSTANTS.STATS.CORRECT_5,
+          total: TEST_CONSTANTS.STATS.TOTAL_7,
+          currentStreak: TEST_CONSTANTS.STATS.STREAK_2,
+          bestStreak: TEST_CONSTANTS.STATS.STREAK_3,
+        },
+      });
+
+      const { container } = render(<StatsBar />);
+      expect(container).toMatchSnapshot();
+    });
+
+    it('時間制限モードの見た目が一致する', () => {
+      useGameStore.setState({
+        sessionConfig: {
+          mode: 'time',
+          timeLimit: TEST_CONSTANTS.TIME.LIMIT_5_MIN,
+        },
+        elapsedTime: TEST_CONSTANTS.TIME.ELAPSED_120_SEC,
+        stats: {
+          correct: TEST_CONSTANTS.STATS.CORRECT_7,
+          total: TEST_CONSTANTS.STATS.TOTAL_10,
+          currentStreak: TEST_CONSTANTS.STATS.STREAK_3,
+          bestStreak: TEST_CONSTANTS.STATS.STREAK_5,
+        },
+      });
+
+      const { container } = render(<StatsBar />);
+      expect(container).toMatchSnapshot();
+    });
+
+    it('01モード（残り点数表示あり）の見た目が一致する', () => {
+      useGameStore.setState({
+        config: {
+          configId: 'preset-caller-basic',
+          configName: 'コーラー基礎',
+          description: '3投ごとに残り点数を答えるモード',
+          throwUnit: 3,
+          questionType: 'remaining',
+          judgmentTiming: 'independent',
+          startingScore: TEST_CONSTANTS.SCORE.STARTING_501,
+          stdDevMM: TEST_CONSTANTS.STD_DEV.DEFAULT,
+          target: undefined,
+          icon: '🎤',
+          isPreset: true,
+        },
+        remainingScore: TEST_CONSTANTS.SCORE.REMAINING_381,
+        stats: {
+          correct: TEST_CONSTANTS.STATS.CORRECT_8,
+          total: TEST_CONSTANTS.STATS.TOTAL_10,
+          currentStreak: TEST_CONSTANTS.STATS.STREAK_5,
+          bestStreak: TEST_CONSTANTS.STATS.STREAK_5,
+        },
+      });
+
+      const { container } = render(<StatsBar />);
+      expect(container).toMatchSnapshot();
+    });
+
+    it('時間切れ状態の見た目が一致する', () => {
+      useGameStore.setState({
+        sessionConfig: {
+          mode: 'time',
+          timeLimit: TEST_CONSTANTS.TIME.LIMIT_3_MIN,
+        },
+        elapsedTime: TEST_CONSTANTS.TIME.ELAPSED_200_SEC, // 制限超過
+        stats: {
+          correct: TEST_CONSTANTS.STATS.CORRECT_5,
+          total: TEST_CONSTANTS.STATS.TOTAL_10,
+          currentStreak: 0,
+          bestStreak: TEST_CONSTANTS.STATS.STREAK_3,
+        },
+      });
+
+      const { container } = render(<StatsBar />);
+      expect(container).toMatchSnapshot();
+    });
+
+    it('全問題解答済み状態の見た目が一致する', () => {
+      useGameStore.setState({
+        sessionConfig: {
+          mode: 'questions',
+          questionCount: TEST_CONSTANTS.QUESTIONS.COUNT_10,
+        },
+        stats: {
+          correct: TEST_CONSTANTS.STATS.CORRECT_8,
+          total: TEST_CONSTANTS.STATS.TOTAL_10,
+          currentStreak: TEST_CONSTANTS.STATS.STREAK_3,
+          bestStreak: TEST_CONSTANTS.STATS.STREAK_5,
+        },
+      });
+
+      const { container } = render(<StatsBar />);
+      expect(container).toMatchSnapshot();
+    });
+
+    it('正答率50%の見た目が一致する', () => {
+      useGameStore.setState({
+        stats: {
+          correct: TEST_CONSTANTS.STATS.CORRECT_5,
+          total: TEST_CONSTANTS.STATS.TOTAL_10,
+          currentStreak: 0,
+          bestStreak: TEST_CONSTANTS.STATS.STREAK_3,
+        },
+      });
+
+      const { container } = render(<StatsBar />);
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

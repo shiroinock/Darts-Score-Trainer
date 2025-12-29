@@ -10,6 +10,7 @@
  */
 
 import { useGameStore } from '../../stores/gameStore';
+import './StatsBar.css';
 
 /**
  * 時間を「分:秒」形式にフォーマットする
