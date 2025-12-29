@@ -7,6 +7,7 @@
 
 import { useGameStore } from '../../stores/gameStore';
 import type { Target, TargetType } from '../../types';
+import './TargetSelector.css';
 
 /**
  * ターゲットタイプの選択肢
