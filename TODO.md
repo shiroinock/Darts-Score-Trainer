@@ -452,7 +452,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 #### Practice配下のコンポーネント（5タスク）
 - [x] `StatsBar.tsx`のスタイルを分離（`StatsBar.css`作成、`.stats-bar*`を移行）
 - [x] `QuestionDisplay.tsx`のスタイルを分離（`QuestionDisplay.css`作成、`.question-display*`を移行）
-- [ ] `NumPad.tsx`のスタイルを分離（`NumPad.css`作成、`.num-pad*`を移行）
+- [x] `NumPad.tsx`のスタイルを分離（`NumPad.css`作成、`.num-pad*`を移行）
 - [ ] `Feedback.tsx`のスタイルを分離（`Feedback.css`作成、`.feedback*`を移行）
 - [ ] `PracticeScreen.tsx`のスタイルを分離（`PracticeScreen.css`作成、`.practice-screen*`を移行）
 
