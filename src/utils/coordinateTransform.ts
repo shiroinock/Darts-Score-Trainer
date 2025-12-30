@@ -6,9 +6,7 @@ export class CoordinateTransform {
   private canvasWidth: number;
   private canvasHeight: number;
   private boardPhysicalRadius: number;
-  private scale: number = 0; // 小さい方の次元のスケール（getScaleで返す）
-  private scaleX: number = 0; // X方向のスケール
-  private scaleY: number = 0; // Y方向のスケール
+  private scale: number = 0; // 統一スケール（小さい方の次元 × 0.8）
   private centerX: number = 0;
   private centerY: number = 0;
 
@@ -36,12 +34,12 @@ export class CoordinateTransform {
    * @private
    */
   private calculateTransform(): void {
-    // X方向とY方向でそれぞれスケールを計算
-    this.scaleX = this.canvasWidth / (2 * this.boardPhysicalRadius);
-    this.scaleY = this.canvasHeight / (2 * this.boardPhysicalRadius);
+    // X方向とY方向でそれぞれスケールを計算（中間値）
+    const scaleX = this.canvasWidth / (2 * this.boardPhysicalRadius);
+    const scaleY = this.canvasHeight / (2 * this.boardPhysicalRadius);
 
-    // getScaleで返すスケールは小さい方の80%
-    this.scale = Math.min(this.scaleX, this.scaleY) * 0.8;
+    // 統一スケール: 小さい方の80%（正円を保つため）
+    this.scale = Math.min(scaleX, scaleY) * 0.8;
 
     // キャンバスの中心を計算
     this.centerX = this.canvasWidth / 2;

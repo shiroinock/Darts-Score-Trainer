@@ -535,6 +535,41 @@ physicalDistanceToScreen(distance: number): number {
 - 小さい方の辺に合わせてスケールを計算（正円を保つため）
 - すべての変換でこの統一スケールを使用
 
+### セグメント境界のオフセット計算
+
+角度からセグメント番号を計算する際は、**半セグメント分のオフセット**を加える必要があります：
+
+```typescript
+// ❌ バグの例：オフセットなし
+const segmentIndex = Math.floor(normalizedAngle / SEGMENT_ANGLE);
+// → 境界が9度（半セグメント分）ずれる
+
+// ✅ 正しい実装：オフセットあり
+const adjustedAngle = normalizedAngle + SEGMENT_ANGLE / 2;
+const segmentIndex = Math.floor(adjustedAngle / SEGMENT_ANGLE);
+```
+
+**理由**：
+- 描画コードでは各セグメントが**中心を基準に18度幅**で配置される
+  - セグメント20: -9° ～ +9°（中心が0°）
+  - セグメント1: +9° ～ +27°（中心が18°）
+- オフセットなしだと0°から18度幅で区切られ、境界が9度ずれる
+
+**角度正規化のベストプラクティス**：
+```typescript
+// 1. -π〜πの範囲に正規化
+let normalizedAngle = angle % (2 * Math.PI);
+if (normalizedAngle > Math.PI) normalizedAngle -= 2 * Math.PI;
+if (normalizedAngle < -Math.PI) normalizedAngle += 2 * Math.PI;
+
+// 2. 0〜2πの範囲に変換（負の角度対応）
+if (normalizedAngle < 0) normalizedAngle += 2 * Math.PI;
+
+// 3. 半セグメント分オフセットしてからインデックス計算
+const adjustedAngle = normalizedAngle + SEGMENT_ANGLE / 2;
+const segmentIndex = Math.floor(adjustedAngle / SEGMENT_ANGLE) % 20;
+```
+
 ## CSS分離タスクの実装ガイドライン
 
 ### 基本方針
