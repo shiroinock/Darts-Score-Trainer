@@ -56,8 +56,8 @@ export class CoordinateTransform {
    */
   physicalToScreen(x: number, y: number): { x: number; y: number } {
     return {
-      x: this.centerX + x * this.scaleX,
-      y: this.centerY + y * this.scaleY,
+      x: this.centerX + x * this.scale,
+      y: this.centerY + y * this.scale,
     };
   }
 
@@ -69,8 +69,8 @@ export class CoordinateTransform {
    */
   screenToPhysical(x: number, y: number): { x: number; y: number } {
     return {
-      x: (x - this.centerX) / this.scaleX,
-      y: (y - this.centerY) / this.scaleY,
+      x: (x - this.centerX) / this.scale,
+      y: (y - this.centerY) / this.scale,
     };
   }
 

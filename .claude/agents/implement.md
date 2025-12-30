@@ -493,6 +493,48 @@ const nested = config && config.deeply && config.deeply.nested && config.deeply.
    - `lastAnswer`のような状態は、`currentQuestion`から取得できる場合は冗長
    - ただし、パフォーマンスや可読性の観点から必要な場合は残す
 
+## 座標変換実装時の重要な注意点
+
+### スケール計算の統一（CoordinateTransformクラス）
+
+座標変換を実装する際は、**すべての変換メソッドで同じスケール値を使用**することが重要です：
+
+```typescript
+// ❌ バグの例：異なるスケールを使用
+physicalToScreen(x: number, y: number): { x: number; y: number } {
+  return {
+    x: this.centerX + x * this.scaleX,  // scaleXを使用
+    y: this.centerY + y * this.scaleY,  // scaleYを使用
+  };
+}
+
+physicalDistanceToScreen(distance: number): number {
+  return distance * this.scale;  // this.scaleを使用（不一致！）
+}
+
+// ✅ 正しい実装：統一されたスケールを使用
+physicalToScreen(x: number, y: number): { x: number; y: number } {
+  return {
+    x: this.centerX + x * this.scale,  // this.scaleを使用
+    y: this.centerY + y * this.scale,  // this.scaleを使用
+  };
+}
+
+physicalDistanceToScreen(distance: number): number {
+  return distance * this.scale;  // this.scaleを使用（一致！）
+}
+```
+
+**影響**：スケールの不一致により、以下の問題が発生します：
+- 非正方形キャンバスでボードが楕円形に描画される
+- ダーツマーカーの位置がボード上の実際の位置とずれる
+- 座標変換と距離変換の計算結果が矛盾する
+
+**スケール計算の原則**：
+- `this.scale = min(width, height) / (2 * BOARD_RADIUS) * SCALE_FACTOR`
+- 小さい方の辺に合わせてスケールを計算（正円を保つため）
+- すべての変換でこの統一スケールを使用
+
 ## CSS分離タスクの実装ガイドライン
 
 ### 基本方針
