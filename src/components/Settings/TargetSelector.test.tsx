@@ -103,11 +103,19 @@ describe('TargetSelector', () => {
       // Act
       render(<TargetSelector />);
 
-      // Assert
+      // Assert - 1回のクエリで全ボタンを取得して検証（パフォーマンス最適化）
+      const allButtons = screen.getAllByRole('button');
+      const numberButtons = allButtons.filter((btn) => /^\d+$/.test(btn.textContent || ''));
+
+      // 20個の数字ボタンが存在することを確認
+      expect(numberButtons).toHaveLength(20);
+
+      // NUMBERS配列の全ての値が含まれることを確認
+      const buttonNumbers = numberButtons.map((btn) => Number(btn.textContent));
       NUMBERS.forEach((number) => {
-        expect(screen.getByRole('button', { name: number.toString() })).toBeInTheDocument();
+        expect(buttonNumbers).toContain(number);
       });
-    }, 10000); // Increase timeout to 10 seconds
+    });
   });
 
   describe('タイプ選択UI', () => {
