@@ -494,49 +494,52 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 **前提条件**: Phase 8.3（CSSモジュール化）完了後に実施（各コンポーネントのCSSファイル内でメディアクエリを定義する方が効率的）
 
 #### タスク
-- [ ] スマートフォン（〜600px）対応
-- [ ] タブレット（601px〜900px）対応
-- [ ] デスクトップ（901px〜）対応
-- [ ] タッチデバイス対応
+**注記**: Phase 8.3（CSSモジュール化）の際に、各コンポーネントのCSSファイルにレスポンシブ対応のメディアクエリがすでに追加されました（2025-12-30確認）。
+- [x] スマートフォン（〜640px）対応（各コンポーネントCSSに `@media (max-width: 640px)` 追加済み）
+- [x] タブレット（641px〜1024px）対応（各コンポーネントCSSに `@media (min-width: 641px) and (max-width: 1024px)` 追加済み）
+- [x] デスクトップ（1025px〜）対応（デフォルトスタイルとして実装済み）
+- [x] タッチデバイス対応（各コンポーネントCSSに `@media (hover: none)` 追加済み）
 - [ ] ボードサイズの動的調整
 
 ### 8.6 ビューポート固定レイアウト（スクロールなし）
 **目的**: すべての画面をビューポート（100vw × 100vh）にぴったり収め、スクロールなしで表示する。コンポーネント同士が重ならないように相対的な配置を決定する。
 
+**実装完了**: 2025-12-31
+
 #### 8.6.1 App.tsx - ビューポートラッパー
-- [ ] `App.tsx`にビューポート固定ラッパーを追加（`width: 100vw; height: 100vh; overflow: hidden`）
-- [ ] 全画面共通のCSSクラス `.app` を定義（`display: flex; flex-direction: column`）
+- [x] `App.tsx`にビューポート固定ラッパーを追加（`width: 100vw; height: 100vh; overflow: hidden`）
+- [x] 全画面共通のCSSクラス `.app` を定義（`display: flex; flex-direction: column`）
 
 #### 8.6.2 SettingsPanel - ウィザード画面レイアウト
-- [ ] `SettingsPanel`の全体レイアウトを縦方向flex配置に変更
-- [ ] 進捗インジケーターの高さを固定（例: 80px）
-- [ ] ウィザードコンテンツエリアを `flex: 1` で残りスペースを占有
-- [ ] ナビゲーションボタンエリアの高さを固定（例: 80px）
-- [ ] `Step1Preset`コンポーネントの高さ調整（親の高さに収まるように）
-- [ ] `Step2Difficulty`コンポーネントの高さ調整（親の高さに収まるように）
-- [ ] `Step3Session`コンポーネントの高さ調整（親の高さに収まるように）
-- [ ] `Step4Confirm`コンポーネントの高さ調整（親の高さに収まるように、内容が多い場合はスクロール可能に）
+- [x] `SettingsPanel`の全体レイアウトを縦方向flex配置に変更
+- [x] 進捗インジケーターの高さを固定（`--layout-header-height: 80px`）
+- [x] ウィザードコンテンツエリアを `flex: 1` で残りスペースを占有
+- [x] ナビゲーションボタンエリアの高さを固定（`--layout-footer-height: 80px`）
+- [x] `Step1Preset`コンポーネントの高さ調整（親の高さに収まるように）
+- [x] `Step2Difficulty`コンポーネントの高さ調整（親の高さに収まるように）
+- [x] `Step3Session`コンポーネントの高さ調整（親の高さに収まるように）
+- [x] `Step4Confirm`コンポーネントの高さ調整（親の高さに収まるように、内容が多い場合はスクロール可能に）
 
 #### 8.6.3 PracticeScreen - 練習画面レイアウト
-- [ ] `PracticeScreen`の全体レイアウトを縦方向flex配置に変更
-- [ ] `StatsBar`の高さを固定（例: 60px）
-- [ ] メインコンテンツエリア（`.practice-screen__main`）を `flex: 1` で残りスペースを占有
-- [ ] フッターボタンエリアの高さを固定（例: 80px）
-- [ ] `DartBoard`のサイズを親コンテナに適応（アスペクト比を維持しつつ、縦横どちらかに収まる）
-- [ ] `QuestionDisplay`の高さ調整（親の高さに依存）
-- [ ] `NumPad`の高さ調整（親の高さに依存、ボタンサイズを動的に調整）
-- [ ] `Feedback`の高さ調整（親の高さに依存、内容が多い場合はスクロール可能に）
+- [x] `PracticeScreen`の全体レイアウトを縦方向flex配置に変更
+- [x] `StatsBar`の高さを固定（`--layout-stats-bar-height: 60px`）
+- [x] メインコンテンツエリア（`.practice-screen__main`）を `flex: 1` で残りスペースを占有
+- [x] フッターボタンエリアの高さを固定（`--layout-footer-height: 80px`）
+- [x] `DartBoard`のサイズを親コンテナに適応（アスペクト比を維持しつつ、縦横どちらかに収まる）
+- [x] `QuestionDisplay`の高さ調整（親の高さに依存）
+- [x] `NumPad`の高さ調整（親の高さに依存、ボタンサイズを動的に調整）
+- [x] `Feedback`の高さ調整（親の高さに依存、内容が多い場合はスクロール可能に）
 
 #### 8.6.4 ResultsScreen - 結果画面レイアウト
-- [ ] `ResultsScreen`の全体レイアウトを縦方向flex配置に変更
-- [ ] メインコンテンツエリア（`.results-screen__main`）を `flex: 1` で残りスペースを占有
-- [ ] フッターボタンエリアの高さを固定（例: 80px）
-- [ ] `SessionSummary`の内部スクロール対応（`overflow: auto`、内容が多い場合にスクロール）
+- [x] `ResultsScreen`の全体レイアウトを縦方向flex配置に変更
+- [x] メインコンテンツエリア（`.results-screen__main`）を `flex: 1` で残りスペースを占有
+- [x] フッターボタンエリアの高さを固定（`--layout-footer-height: 80px`）
+- [x] `SessionSummary`の内部スクロール対応（`overflow: auto`、内容が多い場合にスクロール）
 
 #### 8.6.5 CSS変数とレイアウト比率の定義
-- [ ] CSS変数でレイアウト高さを定義（`--header-height`, `--footer-height`, `--content-flex`など）
-- [ ] 全画面で一貫したスペーシング・マージンを定義
-- [ ] レスポンシブブレークポイントで高さ比率を調整（モバイル、タブレット、デスクトップ）
+- [x] CSS変数でレイアウト高さを定義（`--layout-header-height`, `--layout-footer-height`, `--layout-stats-bar-height`など）
+- [x] 全画面で一貫したスペーシング・マージンを定義（`--layout-content-padding`, `--layout-content-gap`）
+- [x] レスポンシブブレークポイントで高さ比率を調整（モバイル用: `*-mobile`変数）
 
 ---
 

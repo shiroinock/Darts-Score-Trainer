@@ -1,29 +1,36 @@
 /* ============================================================ */
-/* SettingsPanel Component                                     */
+/* SettingsPanel Component - ビューポート固定レイアウト         */
 /* ============================================================ */
 
 .settings-panel {
   width: 100%;
+  height: 100%; /* 親(.app)の高さを継承 */
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: var(--layout-content-padding);
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: var(--layout-content-gap);
+  overflow: hidden; /* 子要素でスクロール制御 */
 }
 
 /* ============================================================ */
 /* SetupWizard Components                                       */
 /* ============================================================ */
 
-/* 進捗インジケーター */
+/* 進捗インジケーター - 固定高さ */
 .setup-wizard__progress {
   width: 100%;
   max-width: 800px;
-  margin: 0 auto 1rem;
+  margin: 0 auto;
   padding: 0.5rem 1rem;
   flex-shrink: 0;
+  height: var(--layout-header-height);
+  min-height: var(--layout-header-height);
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .setup-wizard__progress-bar {
@@ -94,20 +101,25 @@
   color: #999;
 }
 
-/* ウィザードコンテンツエリア */
+/* ウィザードコンテンツエリア - flex: 1で残りスペースを占有 */
 .setup-wizard__content {
   width: 100%;
   flex: 1;
+  min-height: 0; /* flexbox内でのスクロール有効化 */
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
-/* ステップコンテナ */
+/* ステップコンテナ - 残りスペースを占有 */
 .setup-wizard__step {
   width: 100%;
+  flex: 1;
+  min-height: 0; /* flexbox内でのスクロール有効化 */
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
+  overflow: hidden;
 }
 
 /* ステップヘッダー */
@@ -128,11 +140,13 @@
   color: #666;
 }
 
-/* ステップコンテンツ */
+/* ステップコンテンツ - スクロール可能なエリア */
 .setup-wizard__step-content {
   width: 100%;
+  flex: 1;
+  min-height: 0; /* flexbox内でのスクロール有効化 */
   overflow-y: auto;
-  max-height: calc(100vh - 250px); /* 進捗バー + ナビゲーション分を除く */
+  padding-right: 0.5rem; /* スクロールバー用のスペース */
 }
 
 /* 詳細設定（Step4） */
@@ -140,7 +154,7 @@
   margin-top: 1.5rem;
 }
 
-/* ナビゲーションボタンコンテナ */
+/* ナビゲーションボタンコンテナ - 固定高さ */
 .setup-wizard__navigation {
   display: flex;
   justify-content: space-between;
@@ -150,6 +164,10 @@
   max-width: 800px;
   margin: 0 auto;
   padding: 1rem 0;
+  flex-shrink: 0;
+  height: var(--layout-footer-height);
+  min-height: var(--layout-footer-height);
+  box-sizing: border-box;
 }
 
 /* ウィザードボタン共通スタイル */
@@ -236,21 +254,42 @@
 
 /* モバイル対応 */
 @media (max-width: 640px) {
+  .setup-wizard__progress {
+    height: var(--layout-header-height-mobile);
+    min-height: var(--layout-header-height-mobile);
+    padding: 0.25rem 0.75rem;
+  }
+
+  .setup-wizard__progress-step {
+    width: 32px;
+    height: 32px;
+    font-size: 0.875rem;
+  }
+
   .setup-wizard__step-title {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
   }
 
   .setup-wizard__step-description {
-    font-size: 1rem;
+    font-size: 0.875rem;
+  }
+
+  .setup-wizard__step-header {
+    margin-bottom: 0.5rem;
   }
 
   .setup-wizard__navigation {
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
+    height: var(--layout-footer-height-mobile);
+    min-height: var(--layout-footer-height-mobile);
+    padding: 0.5rem 0;
   }
 
   .setup-wizard__button {
     width: 100%;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
   }
 
   .setup-wizard__button--back {
@@ -342,16 +381,16 @@
 /* モバイル: スタック配置 */
 @media (max-width: 640px) {
   .settings-panel {
-    padding: 0.75rem;
-    gap: 1.5rem;
+    padding: var(--layout-content-padding-mobile);
+    gap: var(--layout-content-gap-mobile);
   }
 
   .settings-panel__summary {
-    padding: 1rem;
+    padding: 0.75rem;
   }
 
   .settings-panel__start-button {
-    font-size: 1.25rem;
-    padding: 1.25rem 1.5rem;
+    font-size: 1.125rem;
+    padding: 1rem 1.5rem;
   }
 }
