@@ -9,6 +9,7 @@ import Sketch from 'react-p5';
 import type { Coordinates } from '../../types';
 import { BOARD_PHYSICAL, DART_COLORS } from '../../utils/constants/index.js';
 import { CoordinateTransform } from '../../utils/coordinateTransform';
+import { coordinateToScoreDetail, getScoreLabel } from '../../utils/scoreCalculator/index.js';
 import { drawBoard, drawDartMarker, drawLegend } from './dartBoardRenderer';
 
 /**
@@ -28,6 +29,8 @@ interface P5CanvasProps {
 export function P5Canvas({ coords, dartCount }: P5CanvasProps): JSX.Element {
   // CoordinateTransformインスタンスをuseRefで管理（描画間で保持）
   const transformRef = useRef<CoordinateTransform | null>(null);
+  // デバッグ用: 前回ログ出力した座標を記録（重複出力防止）
+  const lastLoggedCoordsRef = useRef<string>('');
 
   /**
    * setup関数 - 初期化時に1度だけ呼ばれる
@@ -67,6 +70,35 @@ export function P5Canvas({ coords, dartCount }: P5CanvasProps): JSX.Element {
 
     // ダーツマーカーを描画
     const dartColors = [DART_COLORS.first, DART_COLORS.second, DART_COLORS.third];
+
+    // デバッグ: 座標が変わった時だけログを出力
+    const coordsKey = JSON.stringify(coords);
+    if (coordsKey !== lastLoggedCoordsRef.current && coords.length > 0) {
+      lastLoggedCoordsRef.current = coordsKey;
+      console.group('🎯 ダーツ描画デバッグ情報');
+      console.log('キャンバスサイズ:', p5Instance.width, 'x', p5Instance.height);
+      console.log('スケール (this.scale):', transformRef.current!.getScale());
+      console.log('中心座標:', transformRef.current!.getCenter());
+
+      coords.forEach((coord, index) => {
+        const screenPos = transformRef.current!.physicalToScreen(coord.x, coord.y);
+        const scoreDetail = coordinateToScoreDetail(coord.x, coord.y);
+        const physicalDist = Math.sqrt(coord.x ** 2 + coord.y ** 2);
+
+        console.group(`ダーツ ${index + 1}`);
+        console.log('物理座標 (mm):', { x: coord.x.toFixed(2), y: coord.y.toFixed(2) });
+        console.log('中心からの物理距離 (mm):', physicalDist.toFixed(2));
+        console.log('画面座標 (px):', { x: screenPos.x.toFixed(2), y: screenPos.y.toFixed(2) });
+        const label = getScoreLabel(scoreDetail.ring, scoreDetail.segmentNumber);
+        console.log('計算されたスコア:', scoreDetail.score);
+        console.log('リング種別:', scoreDetail.ring);
+        console.log('セグメント番号:', scoreDetail.segmentNumber);
+        console.log('ラベル:', label);
+        console.groupEnd();
+      });
+      console.groupEnd();
+    }
+
     coords.forEach((coord, index) => {
       // 色配列の範囲内のみ描画
       if (index < dartColors.length) {
