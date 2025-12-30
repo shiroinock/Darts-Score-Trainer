@@ -16,7 +16,7 @@
   width: 100%;
   flex-shrink: 0;
   background-color: var(--color-bg-white);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   z-index: 10;
 }
 
@@ -80,48 +80,48 @@
 }
 
 .practice-screen__button--back {
-  background-color: #6c757d;
-  color: white;
+  background-color: var(--color-text-muted);
+  color: var(--color-bg-white);
 }
 
 .practice-screen__button--back:hover {
-  background-color: #5a6268;
+  background-color: var(--color-text-muted-dark);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+  box-shadow: var(--shadow-secondary);
 }
 
 .practice-screen__button--back:active {
   transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
+  box-shadow: var(--shadow-sm);
 }
 
 .practice-screen__button--end {
-  background-color: #dc3545;
-  color: white;
+  background-color: var(--color-error-dark);
+  color: var(--color-bg-white);
 }
 
 .practice-screen__button--end:hover {
-  background-color: #c82333;
+  background-color: var(--color-error-darker);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+  box-shadow: var(--shadow-danger);
 }
 
 .practice-screen__button--end:active {
   transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+  box-shadow: var(--shadow-sm);
 }
 
 .practice-screen__timer {
-  font-size: 1.125rem;
+  font-size: var(--font-size-md);
   font-weight: 600;
-  color: #333;
-  padding: 0.5rem 1rem;
-  background-color: #e9ecef;
-  border-radius: 8px;
+  color: var(--color-text-primary);
+  padding: var(--spacing-sm) var(--spacing-base);
+  background-color: var(--color-bg-gray-light);
+  border-radius: var(--border-radius-base);
 }
 
-/* タッチデバイス向けの調整 */
-@media (hover: none) {
+/* タッチデバイス向けの調整（デスクトップサイズのみ） */
+@media (hover: none) and (min-width: 641px) {
   .practice-screen__button--back:hover,
   .practice-screen__button--end:hover {
     transform: none;

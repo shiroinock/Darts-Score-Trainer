@@ -237,18 +237,18 @@
   box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
 }
 
-/* タッチデバイス向けの調整 */
-@media (hover: none) {
+/* タッチデバイス向けの調整（デスクトップサイズのみ） */
+@media (hover: none) and (min-width: 641px) {
   .setup-wizard__button--back:hover,
   .setup-wizard__button--next:hover,
   .setup-wizard__button--start:hover {
     transform: none;
   }
 
-  /* タッチデバイスではボタンを大きく */
+  /* タッチデバイスではボタンを大きく（デスクトップ幅のみ適用） */
   .setup-wizard__button {
-    padding: 1.25rem 2rem;
-    font-size: 1.25rem;
+    padding: var(--spacing-lg) var(--spacing-2xl);
+    font-size: var(--font-size-lg);
   }
 }
 
@@ -280,10 +280,10 @@
 
   .setup-wizard__navigation {
     flex-direction: column;
-    gap: 0.5rem;
-    height: var(--layout-footer-height-mobile);
+    gap: var(--spacing-sm);
+    height: auto;
     min-height: var(--layout-footer-height-mobile);
-    padding: 0.5rem 0;
+    padding: var(--spacing-sm) 0;
   }
 
   .setup-wizard__button {
