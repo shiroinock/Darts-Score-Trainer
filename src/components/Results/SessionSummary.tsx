@@ -11,6 +11,7 @@
 
 import type { SessionResult } from '../../types/SessionResult';
 import { getDifficultyLabel } from '../../utils/configHelpers';
+import './SessionSummary.css';
 
 /**
  * セッション終了理由を日本語に変換する
