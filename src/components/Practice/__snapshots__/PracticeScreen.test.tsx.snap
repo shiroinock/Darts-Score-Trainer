@@ -223,6 +223,514 @@ exports[`PracticeScreen > スナップショットテスト > Feedback表示中�
 </div>
 `;
 
+exports[`PracticeScreen > スナップショットテスト > displayedDartsが0個の場合の見た目が一致する 1`] = `
+<div>
+  <div
+    class="practice-screen"
+  >
+    <header
+      class="practice-screen__header"
+    >
+      <output
+        aria-label="練習統計情報"
+        class="stats-bar"
+      >
+        <div
+          class="stats-bar__grid"
+        >
+          <dl
+            class="stats-bar__item"
+          >
+            <dt
+              class="stats-bar__label"
+            >
+              正解数
+            </dt>
+            <dd
+              class="stats-bar__value"
+            >
+              0
+               / 
+              0
+            </dd>
+          </dl>
+          <dl
+            class="stats-bar__item"
+          >
+            <dt
+              class="stats-bar__label"
+            >
+              正答率
+            </dt>
+            <dd
+              class="stats-bar__value"
+            >
+              0.0%
+            </dd>
+          </dl>
+          <dl
+            class="stats-bar__item"
+          >
+            <dt
+              class="stats-bar__label"
+            >
+              連続正解
+            </dt>
+            <dd
+              class="stats-bar__value"
+            >
+              0
+            </dd>
+          </dl>
+          <dl
+            class="stats-bar__item"
+          >
+            <dt
+              class="stats-bar__label"
+            >
+              残り問題数
+            </dt>
+            <dd
+              class="stats-bar__value"
+            >
+              10問
+            </dd>
+          </dl>
+        </div>
+      </output>
+    </header>
+    <main
+      class="practice-screen__main"
+    >
+      <section
+        class="practice-screen__board-section"
+      >
+        <div
+          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100vh;"
+        >
+          <div
+            style="width: 728px; height: 728px;"
+          >
+            <div
+              data-dart-count="0"
+              data-testid="mock-p5-canvas"
+            >
+              Mock P5Canvas (
+              0
+               darts)
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        class="practice-screen__interaction-section"
+      >
+        <section
+          aria-label="問題表示"
+          class="question-display"
+        >
+          <div
+            class="question-display__questions"
+          >
+            <h3
+              class="question-display__text"
+            >
+              この投擲の得点は？
+            </h3>
+          </div>
+        </section>
+        <div
+          class="num-pad"
+        >
+          <div
+            class="num-pad__display"
+          >
+            <div
+              class="num-pad__input-value"
+            >
+              0
+            </div>
+            <div
+              class="num-pad__label"
+            >
+              点
+            </div>
+          </div>
+          <div
+            class="num-pad__grid"
+          >
+            <button
+              aria-label="1"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              1
+            </button>
+            <button
+              aria-label="2"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              2
+            </button>
+            <button
+              aria-label="3"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              3
+            </button>
+            <button
+              aria-label="4"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              4
+            </button>
+            <button
+              aria-label="5"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              5
+            </button>
+            <button
+              aria-label="6"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              6
+            </button>
+            <button
+              aria-label="7"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              7
+            </button>
+            <button
+              aria-label="8"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              8
+            </button>
+            <button
+              aria-label="9"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              9
+            </button>
+            <button
+              aria-label="Clear"
+              class="num-pad__button num-pad__button--clear"
+              type="button"
+            >
+              C
+            </button>
+            <button
+              aria-label="0"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              0
+            </button>
+            <button
+              aria-label="Backspace"
+              class="num-pad__button num-pad__button--backspace"
+              type="button"
+            >
+              ⌫
+            </button>
+          </div>
+          <button
+            aria-label="Confirm"
+            class="num-pad__confirm"
+            disabled=""
+            type="button"
+          >
+            確定
+          </button>
+        </div>
+      </section>
+    </main>
+    <footer
+      class="practice-screen__footer"
+    >
+      <button
+        aria-label="設定画面に戻る"
+        class="practice-screen__button practice-screen__button--back"
+        type="button"
+      >
+        設定に戻る
+      </button>
+      <button
+        aria-label="練習を終了"
+        class="practice-screen__button practice-screen__button--end"
+        type="button"
+      >
+        終了
+      </button>
+    </footer>
+  </div>
+</div>
+`;
+
+exports[`PracticeScreen > スナップショットテスト > displayedDartsが3個の場合の見た目が一致する 1`] = `
+<div>
+  <div
+    class="practice-screen"
+  >
+    <header
+      class="practice-screen__header"
+    >
+      <output
+        aria-label="練習統計情報"
+        class="stats-bar"
+      >
+        <div
+          class="stats-bar__grid"
+        >
+          <dl
+            class="stats-bar__item"
+          >
+            <dt
+              class="stats-bar__label"
+            >
+              正解数
+            </dt>
+            <dd
+              class="stats-bar__value"
+            >
+              0
+               / 
+              0
+            </dd>
+          </dl>
+          <dl
+            class="stats-bar__item"
+          >
+            <dt
+              class="stats-bar__label"
+            >
+              正答率
+            </dt>
+            <dd
+              class="stats-bar__value"
+            >
+              0.0%
+            </dd>
+          </dl>
+          <dl
+            class="stats-bar__item"
+          >
+            <dt
+              class="stats-bar__label"
+            >
+              連続正解
+            </dt>
+            <dd
+              class="stats-bar__value"
+            >
+              0
+            </dd>
+          </dl>
+          <dl
+            class="stats-bar__item"
+          >
+            <dt
+              class="stats-bar__label"
+            >
+              残り問題数
+            </dt>
+            <dd
+              class="stats-bar__value"
+            >
+              10問
+            </dd>
+          </dl>
+        </div>
+      </output>
+    </header>
+    <main
+      class="practice-screen__main"
+    >
+      <section
+        class="practice-screen__board-section"
+      >
+        <div
+          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100vh;"
+        >
+          <div
+            style="width: 728px; height: 728px;"
+          >
+            <div
+              data-dart-count="3"
+              data-testid="mock-p5-canvas"
+            >
+              Mock P5Canvas (
+              3
+               darts)
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        class="practice-screen__interaction-section"
+      >
+        <section
+          aria-label="問題表示"
+          class="question-display"
+        >
+          <div
+            class="question-display__questions"
+          >
+            <h3
+              class="question-display__text"
+            >
+              この投擲の得点は？
+            </h3>
+          </div>
+        </section>
+        <div
+          class="num-pad"
+        >
+          <div
+            class="num-pad__display"
+          >
+            <div
+              class="num-pad__input-value"
+            >
+              0
+            </div>
+            <div
+              class="num-pad__label"
+            >
+              点
+            </div>
+          </div>
+          <div
+            class="num-pad__grid"
+          >
+            <button
+              aria-label="1"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              1
+            </button>
+            <button
+              aria-label="2"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              2
+            </button>
+            <button
+              aria-label="3"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              3
+            </button>
+            <button
+              aria-label="4"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              4
+            </button>
+            <button
+              aria-label="5"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              5
+            </button>
+            <button
+              aria-label="6"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              6
+            </button>
+            <button
+              aria-label="7"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              7
+            </button>
+            <button
+              aria-label="8"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              8
+            </button>
+            <button
+              aria-label="9"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              9
+            </button>
+            <button
+              aria-label="Clear"
+              class="num-pad__button num-pad__button--clear"
+              type="button"
+            >
+              C
+            </button>
+            <button
+              aria-label="0"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              0
+            </button>
+            <button
+              aria-label="Backspace"
+              class="num-pad__button num-pad__button--backspace"
+              type="button"
+            >
+              ⌫
+            </button>
+          </div>
+          <button
+            aria-label="Confirm"
+            class="num-pad__confirm"
+            disabled=""
+            type="button"
+          >
+            確定
+          </button>
+        </div>
+      </section>
+    </main>
+    <footer
+      class="practice-screen__footer"
+    >
+      <button
+        aria-label="設定画面に戻る"
+        class="practice-screen__button practice-screen__button--back"
+        type="button"
+      >
+        設定に戻る
+      </button>
+      <button
+        aria-label="練習を終了"
+        class="practice-screen__button practice-screen__button--end"
+        type="button"
+      >
+        終了
+      </button>
+    </footer>
+  </div>
+</div>
+`;
+
 exports[`PracticeScreen > スナップショットテスト > gameState="practicing"で問題表示中の見た目が一致する 1`] = `
 <div>
   <div
@@ -477,6 +985,18 @@ exports[`PracticeScreen > スナップショットテスト > gameState="practic
 </div>
 `;
 
+exports[`PracticeScreen > スナップショットテスト > gameState="results"の見た目が一致する 1`] = `
+<div>
+  <div
+    class="practice-screen"
+  >
+    <p>
+      練習を開始してください
+    </p>
+  </div>
+</div>
+`;
+
 exports[`PracticeScreen > スナップショットテスト > gameState="setup"の見た目が一致する 1`] = `
 <div>
   <div
@@ -485,6 +1005,526 @@ exports[`PracticeScreen > スナップショットテスト > gameState="setup"�
     <p>
       練習を開始してください
     </p>
+  </div>
+</div>
+`;
+
+exports[`PracticeScreen > スナップショットテスト > 問題数モードで統計情報ありの見た目が一致する 1`] = `
+<div>
+  <div
+    class="practice-screen"
+  >
+    <header
+      class="practice-screen__header"
+    >
+      <output
+        aria-label="練習統計情報"
+        class="stats-bar"
+      >
+        <div
+          class="stats-bar__grid"
+        >
+          <dl
+            class="stats-bar__item"
+          >
+            <dt
+              class="stats-bar__label"
+            >
+              正解数
+            </dt>
+            <dd
+              class="stats-bar__value"
+            >
+              4
+               / 
+              5
+            </dd>
+          </dl>
+          <dl
+            class="stats-bar__item"
+          >
+            <dt
+              class="stats-bar__label"
+            >
+              正答率
+            </dt>
+            <dd
+              class="stats-bar__value"
+            >
+              80.0%
+            </dd>
+          </dl>
+          <dl
+            class="stats-bar__item"
+          >
+            <dt
+              class="stats-bar__label"
+            >
+              連続正解
+            </dt>
+            <dd
+              class="stats-bar__value"
+            >
+              2
+            </dd>
+          </dl>
+          <dl
+            class="stats-bar__item"
+          >
+            <dt
+              class="stats-bar__label"
+            >
+              残り問題数
+            </dt>
+            <dd
+              class="stats-bar__value"
+            >
+              5問
+            </dd>
+          </dl>
+        </div>
+      </output>
+    </header>
+    <main
+      class="practice-screen__main"
+    >
+      <section
+        class="practice-screen__board-section"
+      >
+        <div
+          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100vh;"
+        >
+          <div
+            style="width: 728px; height: 728px;"
+          >
+            <div
+              data-dart-count="1"
+              data-testid="mock-p5-canvas"
+            >
+              Mock P5Canvas (
+              1
+               darts)
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        class="practice-screen__interaction-section"
+      >
+        <section
+          aria-label="問題表示"
+          class="question-display"
+        >
+          <div
+            class="question-display__questions"
+          >
+            <h3
+              class="question-display__text"
+            >
+              この投擲の得点は？
+            </h3>
+          </div>
+        </section>
+        <div
+          class="num-pad"
+        >
+          <div
+            class="num-pad__display"
+          >
+            <div
+              class="num-pad__input-value"
+            >
+              0
+            </div>
+            <div
+              class="num-pad__label"
+            >
+              点
+            </div>
+          </div>
+          <div
+            class="num-pad__grid"
+          >
+            <button
+              aria-label="1"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              1
+            </button>
+            <button
+              aria-label="2"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              2
+            </button>
+            <button
+              aria-label="3"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              3
+            </button>
+            <button
+              aria-label="4"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              4
+            </button>
+            <button
+              aria-label="5"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              5
+            </button>
+            <button
+              aria-label="6"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              6
+            </button>
+            <button
+              aria-label="7"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              7
+            </button>
+            <button
+              aria-label="8"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              8
+            </button>
+            <button
+              aria-label="9"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              9
+            </button>
+            <button
+              aria-label="Clear"
+              class="num-pad__button num-pad__button--clear"
+              type="button"
+            >
+              C
+            </button>
+            <button
+              aria-label="0"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              0
+            </button>
+            <button
+              aria-label="Backspace"
+              class="num-pad__button num-pad__button--backspace"
+              type="button"
+            >
+              ⌫
+            </button>
+          </div>
+          <button
+            aria-label="Confirm"
+            class="num-pad__confirm"
+            disabled=""
+            type="button"
+          >
+            確定
+          </button>
+        </div>
+      </section>
+    </main>
+    <footer
+      class="practice-screen__footer"
+    >
+      <button
+        aria-label="設定画面に戻る"
+        class="practice-screen__button practice-screen__button--back"
+        type="button"
+      >
+        設定に戻る
+      </button>
+      <button
+        aria-label="練習を終了"
+        class="practice-screen__button practice-screen__button--end"
+        type="button"
+      >
+        終了
+      </button>
+    </footer>
+  </div>
+</div>
+`;
+
+exports[`PracticeScreen > スナップショットテスト > 時間制限モードで0秒経過時の見た目が一致する 1`] = `
+<div>
+  <div
+    class="practice-screen"
+  >
+    <header
+      class="practice-screen__header"
+    >
+      <output
+        aria-label="練習統計情報"
+        class="stats-bar"
+      >
+        <div
+          class="stats-bar__grid"
+        >
+          <dl
+            class="stats-bar__item"
+          >
+            <dt
+              class="stats-bar__label"
+            >
+              正解数
+            </dt>
+            <dd
+              class="stats-bar__value"
+            >
+              0
+               / 
+              0
+            </dd>
+          </dl>
+          <dl
+            class="stats-bar__item"
+          >
+            <dt
+              class="stats-bar__label"
+            >
+              正答率
+            </dt>
+            <dd
+              class="stats-bar__value"
+            >
+              0.0%
+            </dd>
+          </dl>
+          <dl
+            class="stats-bar__item"
+          >
+            <dt
+              class="stats-bar__label"
+            >
+              連続正解
+            </dt>
+            <dd
+              class="stats-bar__value"
+            >
+              0
+            </dd>
+          </dl>
+          <dl
+            class="stats-bar__item"
+          >
+            <dt
+              class="stats-bar__label"
+            >
+              残り時間
+            </dt>
+            <dd
+              class="stats-bar__value"
+            >
+              3:00
+            </dd>
+          </dl>
+        </div>
+      </output>
+    </header>
+    <main
+      class="practice-screen__main"
+    >
+      <section
+        class="practice-screen__board-section"
+      >
+        <div
+          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100vh;"
+        >
+          <div
+            style="width: 728px; height: 728px;"
+          >
+            <div
+              data-dart-count="1"
+              data-testid="mock-p5-canvas"
+            >
+              Mock P5Canvas (
+              1
+               darts)
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        class="practice-screen__interaction-section"
+      >
+        <section
+          aria-label="問題表示"
+          class="question-display"
+        >
+          <div
+            class="question-display__questions"
+          >
+            <h3
+              class="question-display__text"
+            >
+              この投擲の得点は？
+            </h3>
+          </div>
+        </section>
+        <div
+          class="num-pad"
+        >
+          <div
+            class="num-pad__display"
+          >
+            <div
+              class="num-pad__input-value"
+            >
+              0
+            </div>
+            <div
+              class="num-pad__label"
+            >
+              点
+            </div>
+          </div>
+          <div
+            class="num-pad__grid"
+          >
+            <button
+              aria-label="1"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              1
+            </button>
+            <button
+              aria-label="2"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              2
+            </button>
+            <button
+              aria-label="3"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              3
+            </button>
+            <button
+              aria-label="4"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              4
+            </button>
+            <button
+              aria-label="5"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              5
+            </button>
+            <button
+              aria-label="6"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              6
+            </button>
+            <button
+              aria-label="7"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              7
+            </button>
+            <button
+              aria-label="8"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              8
+            </button>
+            <button
+              aria-label="9"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              9
+            </button>
+            <button
+              aria-label="Clear"
+              class="num-pad__button num-pad__button--clear"
+              type="button"
+            >
+              C
+            </button>
+            <button
+              aria-label="0"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              0
+            </button>
+            <button
+              aria-label="Backspace"
+              class="num-pad__button num-pad__button--backspace"
+              type="button"
+            >
+              ⌫
+            </button>
+          </div>
+          <button
+            aria-label="Confirm"
+            class="num-pad__confirm"
+            disabled=""
+            type="button"
+          >
+            確定
+          </button>
+        </div>
+      </section>
+    </main>
+    <footer
+      class="practice-screen__footer"
+    >
+      <button
+        aria-label="設定画面に戻る"
+        class="practice-screen__button practice-screen__button--back"
+        type="button"
+      >
+        設定に戻る
+      </button>
+      <button
+        aria-label="練習を終了"
+        class="practice-screen__button practice-screen__button--end"
+        type="button"
+      >
+        終了
+      </button>
+      <div
+        class="practice-screen__timer"
+      >
+        <span
+          class="visually-hidden"
+        >
+          経過時間
+        </span>
+        0:00
+         / 
+        3:00
+      </div>
+    </footer>
   </div>
 </div>
 `;
@@ -747,6 +1787,272 @@ exports[`PracticeScreen > スナップショットテスト > 時間制限モー
           経過時間
         </span>
         2:05
+         / 
+        3:00
+      </div>
+    </footer>
+  </div>
+</div>
+`;
+
+exports[`PracticeScreen > スナップショットテスト > 時間制限モードで時間制限ギリギリの見た目が一致する 1`] = `
+<div>
+  <div
+    class="practice-screen"
+  >
+    <header
+      class="practice-screen__header"
+    >
+      <output
+        aria-label="練習統計情報"
+        class="stats-bar"
+      >
+        <div
+          class="stats-bar__grid"
+        >
+          <dl
+            class="stats-bar__item"
+          >
+            <dt
+              class="stats-bar__label"
+            >
+              正解数
+            </dt>
+            <dd
+              class="stats-bar__value"
+            >
+              0
+               / 
+              0
+            </dd>
+          </dl>
+          <dl
+            class="stats-bar__item"
+          >
+            <dt
+              class="stats-bar__label"
+            >
+              正答率
+            </dt>
+            <dd
+              class="stats-bar__value"
+            >
+              0.0%
+            </dd>
+          </dl>
+          <dl
+            class="stats-bar__item"
+          >
+            <dt
+              class="stats-bar__label"
+            >
+              連続正解
+            </dt>
+            <dd
+              class="stats-bar__value"
+            >
+              0
+            </dd>
+          </dl>
+          <dl
+            class="stats-bar__item"
+          >
+            <dt
+              class="stats-bar__label"
+            >
+              残り時間
+            </dt>
+            <dd
+              class="stats-bar__value"
+            >
+              0:01
+            </dd>
+          </dl>
+        </div>
+      </output>
+    </header>
+    <main
+      class="practice-screen__main"
+    >
+      <section
+        class="practice-screen__board-section"
+      >
+        <div
+          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100vh;"
+        >
+          <div
+            style="width: 728px; height: 728px;"
+          >
+            <div
+              data-dart-count="1"
+              data-testid="mock-p5-canvas"
+            >
+              Mock P5Canvas (
+              1
+               darts)
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        class="practice-screen__interaction-section"
+      >
+        <section
+          aria-label="問題表示"
+          class="question-display"
+        >
+          <div
+            class="question-display__questions"
+          >
+            <h3
+              class="question-display__text"
+            >
+              この投擲の得点は？
+            </h3>
+          </div>
+        </section>
+        <div
+          class="num-pad"
+        >
+          <div
+            class="num-pad__display"
+          >
+            <div
+              class="num-pad__input-value"
+            >
+              0
+            </div>
+            <div
+              class="num-pad__label"
+            >
+              点
+            </div>
+          </div>
+          <div
+            class="num-pad__grid"
+          >
+            <button
+              aria-label="1"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              1
+            </button>
+            <button
+              aria-label="2"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              2
+            </button>
+            <button
+              aria-label="3"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              3
+            </button>
+            <button
+              aria-label="4"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              4
+            </button>
+            <button
+              aria-label="5"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              5
+            </button>
+            <button
+              aria-label="6"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              6
+            </button>
+            <button
+              aria-label="7"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              7
+            </button>
+            <button
+              aria-label="8"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              8
+            </button>
+            <button
+              aria-label="9"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              9
+            </button>
+            <button
+              aria-label="Clear"
+              class="num-pad__button num-pad__button--clear"
+              type="button"
+            >
+              C
+            </button>
+            <button
+              aria-label="0"
+              class="num-pad__button num-pad__button--number"
+              type="button"
+            >
+              0
+            </button>
+            <button
+              aria-label="Backspace"
+              class="num-pad__button num-pad__button--backspace"
+              type="button"
+            >
+              ⌫
+            </button>
+          </div>
+          <button
+            aria-label="Confirm"
+            class="num-pad__confirm"
+            disabled=""
+            type="button"
+          >
+            確定
+          </button>
+        </div>
+      </section>
+    </main>
+    <footer
+      class="practice-screen__footer"
+    >
+      <button
+        aria-label="設定画面に戻る"
+        class="practice-screen__button practice-screen__button--back"
+        type="button"
+      >
+        設定に戻る
+      </button>
+      <button
+        aria-label="練習を終了"
+        class="practice-screen__button practice-screen__button--end"
+        type="button"
+      >
+        終了
+      </button>
+      <div
+        class="practice-screen__timer"
+      >
+        <span
+          class="visually-hidden"
+        >
+          経過時間
+        </span>
+        2:59
          / 
         3:00
       </div>

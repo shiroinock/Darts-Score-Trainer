@@ -656,5 +656,101 @@ describe('PracticeScreen', () => {
 
       expect(container).toMatchSnapshot();
     });
+
+    it('displayedDartsが0個の場合の見た目が一致する', () => {
+      useGameStore.setState({
+        gameState: 'practicing',
+        currentQuestion: createMockQuestion(),
+        displayedDarts: [],
+        sessionConfig: {
+          mode: 'questions',
+          questionCount: 10,
+        },
+      });
+
+      const { container } = render(<PracticeScreen />);
+
+      expect(container).toMatchSnapshot();
+    });
+
+    it('displayedDartsが3個の場合の見た目が一致する', () => {
+      useGameStore.setState({
+        gameState: 'practicing',
+        currentQuestion: createMockQuestion(),
+        displayedDarts: [createMockThrowT20(), createMockThrowT20(), createMockThrowT20()],
+        sessionConfig: {
+          mode: 'questions',
+          questionCount: 10,
+        },
+      });
+
+      const { container } = render(<PracticeScreen />);
+
+      expect(container).toMatchSnapshot();
+    });
+
+    it('gameState="results"の見た目が一致する', () => {
+      useGameStore.setState({
+        gameState: 'results',
+        currentQuestion: null,
+      });
+
+      const { container } = render(<PracticeScreen />);
+
+      expect(container).toMatchSnapshot();
+    });
+
+    it('時間制限モードで0秒経過時の見た目が一致する', () => {
+      useGameStore.setState({
+        gameState: 'practicing',
+        currentQuestion: createMockQuestion(),
+        sessionConfig: {
+          mode: 'time',
+          timeLimit: 3,
+        },
+        elapsedTime: 0,
+      });
+
+      const { container } = render(<PracticeScreen />);
+
+      expect(container).toMatchSnapshot();
+    });
+
+    it('時間制限モードで時間制限ギリギリの見た目が一致する', () => {
+      useGameStore.setState({
+        gameState: 'practicing',
+        currentQuestion: createMockQuestion(),
+        sessionConfig: {
+          mode: 'time',
+          timeLimit: 3,
+        },
+        elapsedTime: 179, // 2:59
+      });
+
+      const { container } = render(<PracticeScreen />);
+
+      expect(container).toMatchSnapshot();
+    });
+
+    it('問題数モードで統計情報ありの見た目が一致する', () => {
+      useGameStore.setState({
+        gameState: 'practicing',
+        currentQuestion: createMockQuestion(),
+        sessionConfig: {
+          mode: 'questions',
+          questionCount: 10,
+        },
+        stats: {
+          total: 5,
+          correct: 4,
+          currentStreak: 2,
+          bestStreak: 3,
+        },
+      });
+
+      const { container } = render(<PracticeScreen />);
+
+      expect(container).toMatchSnapshot();
+    });
   });
 });

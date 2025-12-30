@@ -20,6 +20,7 @@ import { Feedback } from './Feedback';
 import { NumPad } from './NumPad';
 import { QuestionDisplay } from './QuestionDisplay';
 import { StatsBar } from './StatsBar';
+import './PracticeScreen.css';
 
 /**
  * 秒数を「分:秒」形式にフォーマットする
