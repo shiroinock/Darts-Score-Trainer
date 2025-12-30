@@ -454,7 +454,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] `QuestionDisplay.tsx`のスタイルを分離（`QuestionDisplay.css`作成、`.question-display*`を移行）
 - [x] `NumPad.tsx`のスタイルを分離（`NumPad.css`作成、`.num-pad*`を移行）
 - [x] `Feedback.tsx`のスタイルを分離（`Feedback.css`作成、`.feedback*`を移行）
-- [ ] `PracticeScreen.tsx`のスタイルを分離（`PracticeScreen.css`作成、`.practice-screen*`を移行）
+- [x] `PracticeScreen.tsx`のスタイルを分離（`PracticeScreen.css`作成、`.practice-screen*`を移行）
 
 #### Results配下のコンポーネント（2タスク）
 - [ ] `SessionSummary.tsx`のスタイルを分離（`SessionSummary.css`作成、`.session-summary*`を移行）
