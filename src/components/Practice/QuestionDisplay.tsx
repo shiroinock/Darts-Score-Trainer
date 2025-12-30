@@ -7,6 +7,7 @@
  * - 累積モード時の「合計」表示
  */
 
+import './QuestionDisplay.css';
 import { useGameStore } from '../../stores/gameStore';
 
 /**
