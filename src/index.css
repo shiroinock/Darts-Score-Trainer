@@ -142,6 +142,7 @@
 
   /* 基本シャドウ */
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-sm-up: 0 -2px 4px rgba(0, 0, 0, 0.1); /* フッター用上向きシャドウ */
   --shadow-base: 0 4px 8px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.15);
   --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -179,6 +180,26 @@
   /* ホバー時の移動距離 */
   --transform-hover-lift: -2px;
   --transform-active-press: 0;
+
+  /* ============================================================ */
+  /* レイアウト（ビューポート固定）                                */
+  /* ============================================================ */
+
+  /* ヘッダー・フッター高さ */
+  --layout-header-height: 80px;
+  --layout-footer-height: 80px;
+  --layout-stats-bar-height: 60px;
+
+  /* モバイル用レイアウト高さ */
+  --layout-header-height-mobile: 60px;
+  --layout-footer-height-mobile: 70px;
+  --layout-stats-bar-height-mobile: 50px;
+
+  /* コンテンツエリア */
+  --layout-content-padding: 1rem;
+  --layout-content-padding-mobile: 0.75rem;
+  --layout-content-gap: 1.5rem;
+  --layout-content-gap-mobile: 1rem;
 }
 
 /* ============================================================ */
@@ -292,13 +313,26 @@ select:focus-visible {
   box-shadow: var(--focus-ring-shadow);
 }
 
+/* ============================================================ */
+/* App Container - ビューポート固定レイアウト                    */
+/* ============================================================ */
+
 .app {
-  min-height: 100vh;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh; /* iOS Safari対応: 動的ビューポート */
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
+  overflow: hidden;
+  background-color: var(--color-bg-lightest);
+}
+
+/* モバイル対応 */
+@media (max-width: 640px) {
+  .app {
+    /* モバイルでは安全なビューポート高さを使用 */
+    height: 100svh;
+  }
 }
 
 h1 {
