@@ -1,0 +1,208 @@
+/**
+ * NumPad スタイル定義
+ */
+
+.num-pad {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background-color: #fff;
+  border: 2px solid #4a90e2;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.15);
+}
+
+/* 入力表示エリア */
+.num-pad__display {
+  margin-bottom: 1.5rem;
+  padding: 1.5rem 1rem;
+  background-color: #f0f7ff;
+  border: 2px solid #d0e7ff;
+  border-radius: 8px;
+  text-align: right;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.num-pad__input-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+  line-height: 1;
+  min-width: 1ch;
+}
+
+.num-pad__label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #4a90e2;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* 数字ボタングリッド（3列×4行） */
+.num-pad__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.num-pad__button {
+  padding: 1.25rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  font-family: inherit;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.num-pad__button:hover {
+  border-color: #4a90e2;
+  background-color: #f0f7ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.num-pad__button:active {
+  transform: translateY(0);
+  background-color: #d9edff;
+}
+
+/* 数字ボタン */
+.num-pad__button--number {
+  color: #333;
+}
+
+/* クリアボタン */
+.num-pad__button--clear {
+  background-color: #fff3e6;
+  border-color: #ffcc99;
+  color: #e67e00;
+}
+
+.num-pad__button--clear:hover {
+  background-color: #ffe6cc;
+  border-color: #ffaa66;
+}
+
+/* バックスペースボタン */
+.num-pad__button--backspace {
+  background-color: #f0f0f0;
+  border-color: #ccc;
+  color: #666;
+}
+
+.num-pad__button--backspace:hover {
+  background-color: #e0e0e0;
+  border-color: #999;
+}
+
+/* 確定ボタン */
+.num-pad__confirm {
+  width: 100%;
+  padding: 1.25rem 2rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #4a90e2;
+  color: #fff;
+  font-family: inherit;
+  font-size: 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+}
+
+.num-pad__confirm:hover:not(:disabled) {
+  background-color: #357ab8;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(74, 144, 226, 0.4);
+}
+
+.num-pad__confirm:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(74, 144, 226, 0.3);
+}
+
+.num-pad__confirm:disabled {
+  background-color: #ccc;
+  color: #999;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* タッチデバイス向けの調整 */
+@media (hover: none) {
+  .num-pad__button:hover {
+    transform: none;
+  }
+
+  .num-pad__confirm:hover:not(:disabled) {
+    transform: none;
+  }
+
+  /* タッチデバイスではボタンを大きく */
+  .num-pad__button {
+    padding: 1.5rem;
+    font-size: 1.75rem;
+  }
+
+  .num-pad__confirm {
+    padding: 1.5rem 2rem;
+    font-size: 1.5rem;
+  }
+}
+
+/* モバイル対応 */
+@media (max-width: 640px) {
+  .num-pad {
+    max-width: 100%;
+    padding: 1rem;
+  }
+
+  .num-pad__display {
+    padding: 1rem;
+    min-height: 70px;
+  }
+
+  .num-pad__input-value {
+    font-size: 2rem;
+  }
+
+  .num-pad__label {
+    font-size: 0.875rem;
+  }
+
+  .num-pad__grid {
+    gap: 0.5rem;
+  }
+
+  .num-pad__button {
+    padding: 1.25rem;
+    font-size: 1.25rem;
+  }
+
+  .num-pad__confirm {
+    padding: 1rem 1.5rem;
+    font-size: 1.125rem;
+  }
+}
+
+/* タブレット対応 */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .num-pad {
+    max-width: 380px;
+  }
+}

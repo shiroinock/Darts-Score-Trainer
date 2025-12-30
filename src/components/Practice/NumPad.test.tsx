@@ -369,4 +369,60 @@ describe('NumPad', () => {
       expect(onConfirm).not.toHaveBeenCalled();
     });
   });
+
+  describe('スナップショットテスト', () => {
+    it('デフォルト状態（questionType: score）の描画結果が一致する', () => {
+      const { container } = render(<NumPad questionType="score" onConfirm={vi.fn()} />);
+      expect(container).toMatchSnapshot();
+    });
+
+    it('questionType: remaining の描画結果が一致する', () => {
+      const { container } = render(<NumPad questionType="remaining" onConfirm={vi.fn()} />);
+      expect(container).toMatchSnapshot();
+    });
+
+    it('questionType: both の描画結果が一致する', () => {
+      const { container } = render(<NumPad questionType="both" onConfirm={vi.fn()} />);
+      expect(container).toMatchSnapshot();
+    });
+
+    it('入力値がある状態の描画結果が一致する', () => {
+      const { container } = render(<NumPad questionType="score" onConfirm={vi.fn()} />);
+
+      // 120点を入力
+      fireEvent.click(screen.getByRole('button', { name: '1' }));
+      fireEvent.click(screen.getByRole('button', { name: '2' }));
+      fireEvent.click(screen.getByRole('button', { name: '0' }));
+
+      expect(container).toMatchSnapshot();
+    });
+
+    it('maxValueが設定された状態の描画結果が一致する', () => {
+      const { container } = render(
+        <NumPad questionType="remaining" onConfirm={vi.fn()} maxValue={100} />
+      );
+      expect(container).toMatchSnapshot();
+    });
+
+    it('確定ボタンが有効な状態の描画結果が一致する', () => {
+      const { container } = render(<NumPad questionType="score" onConfirm={vi.fn()} />);
+
+      // 有効な得点を入力して確定ボタンを有効化
+      fireEvent.click(screen.getByRole('button', { name: '6' }));
+      fireEvent.click(screen.getByRole('button', { name: '0' }));
+
+      expect(container).toMatchSnapshot();
+    });
+
+    it('確定ボタンが無効な状態の描画結果が一致する', () => {
+      const { container } = render(<NumPad questionType="score" onConfirm={vi.fn()} />);
+
+      // 無効な得点を入力して確定ボタンを無効状態に保つ
+      fireEvent.click(screen.getByRole('button', { name: '1' }));
+      fireEvent.click(screen.getByRole('button', { name: '6' }));
+      fireEvent.click(screen.getByRole('button', { name: '3' }));
+
+      expect(container).toMatchSnapshot();
+    });
+  });
 });

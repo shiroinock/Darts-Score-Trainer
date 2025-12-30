@@ -1,0 +1,832 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`NumPad > スナップショットテスト > maxValueが設定された状態の描画結果が一致する 1`] = `
+<div>
+  <div
+    class="num-pad"
+  >
+    <div
+      class="num-pad__display"
+    >
+      <div
+        class="num-pad__input-value"
+      >
+        0
+      </div>
+      <div
+        class="num-pad__label"
+      >
+        残り
+      </div>
+    </div>
+    <div
+      class="num-pad__grid"
+    >
+      <button
+        aria-label="1"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        1
+      </button>
+      <button
+        aria-label="2"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        2
+      </button>
+      <button
+        aria-label="3"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        3
+      </button>
+      <button
+        aria-label="4"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        4
+      </button>
+      <button
+        aria-label="5"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        5
+      </button>
+      <button
+        aria-label="6"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        6
+      </button>
+      <button
+        aria-label="7"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        7
+      </button>
+      <button
+        aria-label="8"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        8
+      </button>
+      <button
+        aria-label="9"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        9
+      </button>
+      <button
+        aria-label="Clear"
+        class="num-pad__button num-pad__button--clear"
+        type="button"
+      >
+        C
+      </button>
+      <button
+        aria-label="0"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        0
+      </button>
+      <button
+        aria-label="Backspace"
+        class="num-pad__button num-pad__button--backspace"
+        type="button"
+      >
+        ⌫
+      </button>
+    </div>
+    <button
+      aria-label="Confirm"
+      class="num-pad__confirm"
+      disabled=""
+      type="button"
+    >
+      確定
+    </button>
+  </div>
+</div>
+`;
+
+exports[`NumPad > スナップショットテスト > questionType: both の描画結果が一致する 1`] = `
+<div>
+  <div
+    class="num-pad"
+  >
+    <div
+      class="num-pad__display"
+    >
+      <div
+        class="num-pad__input-value"
+      >
+        0
+      </div>
+      <div
+        class="num-pad__label"
+      >
+        点/残り
+      </div>
+    </div>
+    <div
+      class="num-pad__grid"
+    >
+      <button
+        aria-label="1"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        1
+      </button>
+      <button
+        aria-label="2"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        2
+      </button>
+      <button
+        aria-label="3"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        3
+      </button>
+      <button
+        aria-label="4"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        4
+      </button>
+      <button
+        aria-label="5"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        5
+      </button>
+      <button
+        aria-label="6"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        6
+      </button>
+      <button
+        aria-label="7"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        7
+      </button>
+      <button
+        aria-label="8"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        8
+      </button>
+      <button
+        aria-label="9"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        9
+      </button>
+      <button
+        aria-label="Clear"
+        class="num-pad__button num-pad__button--clear"
+        type="button"
+      >
+        C
+      </button>
+      <button
+        aria-label="0"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        0
+      </button>
+      <button
+        aria-label="Backspace"
+        class="num-pad__button num-pad__button--backspace"
+        type="button"
+      >
+        ⌫
+      </button>
+    </div>
+    <button
+      aria-label="Confirm"
+      class="num-pad__confirm"
+      disabled=""
+      type="button"
+    >
+      確定
+    </button>
+  </div>
+</div>
+`;
+
+exports[`NumPad > スナップショットテスト > questionType: remaining の描画結果が一致する 1`] = `
+<div>
+  <div
+    class="num-pad"
+  >
+    <div
+      class="num-pad__display"
+    >
+      <div
+        class="num-pad__input-value"
+      >
+        0
+      </div>
+      <div
+        class="num-pad__label"
+      >
+        残り
+      </div>
+    </div>
+    <div
+      class="num-pad__grid"
+    >
+      <button
+        aria-label="1"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        1
+      </button>
+      <button
+        aria-label="2"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        2
+      </button>
+      <button
+        aria-label="3"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        3
+      </button>
+      <button
+        aria-label="4"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        4
+      </button>
+      <button
+        aria-label="5"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        5
+      </button>
+      <button
+        aria-label="6"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        6
+      </button>
+      <button
+        aria-label="7"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        7
+      </button>
+      <button
+        aria-label="8"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        8
+      </button>
+      <button
+        aria-label="9"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        9
+      </button>
+      <button
+        aria-label="Clear"
+        class="num-pad__button num-pad__button--clear"
+        type="button"
+      >
+        C
+      </button>
+      <button
+        aria-label="0"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        0
+      </button>
+      <button
+        aria-label="Backspace"
+        class="num-pad__button num-pad__button--backspace"
+        type="button"
+      >
+        ⌫
+      </button>
+    </div>
+    <button
+      aria-label="Confirm"
+      class="num-pad__confirm"
+      disabled=""
+      type="button"
+    >
+      確定
+    </button>
+  </div>
+</div>
+`;
+
+exports[`NumPad > スナップショットテスト > デフォルト状態（questionType: score）の描画結果が一致する 1`] = `
+<div>
+  <div
+    class="num-pad"
+  >
+    <div
+      class="num-pad__display"
+    >
+      <div
+        class="num-pad__input-value"
+      >
+        0
+      </div>
+      <div
+        class="num-pad__label"
+      >
+        点
+      </div>
+    </div>
+    <div
+      class="num-pad__grid"
+    >
+      <button
+        aria-label="1"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        1
+      </button>
+      <button
+        aria-label="2"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        2
+      </button>
+      <button
+        aria-label="3"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        3
+      </button>
+      <button
+        aria-label="4"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        4
+      </button>
+      <button
+        aria-label="5"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        5
+      </button>
+      <button
+        aria-label="6"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        6
+      </button>
+      <button
+        aria-label="7"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        7
+      </button>
+      <button
+        aria-label="8"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        8
+      </button>
+      <button
+        aria-label="9"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        9
+      </button>
+      <button
+        aria-label="Clear"
+        class="num-pad__button num-pad__button--clear"
+        type="button"
+      >
+        C
+      </button>
+      <button
+        aria-label="0"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        0
+      </button>
+      <button
+        aria-label="Backspace"
+        class="num-pad__button num-pad__button--backspace"
+        type="button"
+      >
+        ⌫
+      </button>
+    </div>
+    <button
+      aria-label="Confirm"
+      class="num-pad__confirm"
+      disabled=""
+      type="button"
+    >
+      確定
+    </button>
+  </div>
+</div>
+`;
+
+exports[`NumPad > スナップショットテスト > 入力値がある状態の描画結果が一致する 1`] = `
+<div>
+  <div
+    class="num-pad"
+  >
+    <div
+      class="num-pad__display"
+    >
+      <div
+        class="num-pad__input-value"
+      >
+        120
+      </div>
+      <div
+        class="num-pad__label"
+      >
+        点
+      </div>
+    </div>
+    <div
+      class="num-pad__grid"
+    >
+      <button
+        aria-label="1"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        1
+      </button>
+      <button
+        aria-label="2"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        2
+      </button>
+      <button
+        aria-label="3"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        3
+      </button>
+      <button
+        aria-label="4"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        4
+      </button>
+      <button
+        aria-label="5"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        5
+      </button>
+      <button
+        aria-label="6"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        6
+      </button>
+      <button
+        aria-label="7"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        7
+      </button>
+      <button
+        aria-label="8"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        8
+      </button>
+      <button
+        aria-label="9"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        9
+      </button>
+      <button
+        aria-label="Clear"
+        class="num-pad__button num-pad__button--clear"
+        type="button"
+      >
+        C
+      </button>
+      <button
+        aria-label="0"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        0
+      </button>
+      <button
+        aria-label="Backspace"
+        class="num-pad__button num-pad__button--backspace"
+        type="button"
+      >
+        ⌫
+      </button>
+    </div>
+    <button
+      aria-label="Confirm"
+      class="num-pad__confirm"
+      type="button"
+    >
+      確定
+    </button>
+  </div>
+</div>
+`;
+
+exports[`NumPad > スナップショットテスト > 確定ボタンが有効な状態の描画結果が一致する 1`] = `
+<div>
+  <div
+    class="num-pad"
+  >
+    <div
+      class="num-pad__display"
+    >
+      <div
+        class="num-pad__input-value"
+      >
+        60
+      </div>
+      <div
+        class="num-pad__label"
+      >
+        点
+      </div>
+    </div>
+    <div
+      class="num-pad__grid"
+    >
+      <button
+        aria-label="1"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        1
+      </button>
+      <button
+        aria-label="2"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        2
+      </button>
+      <button
+        aria-label="3"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        3
+      </button>
+      <button
+        aria-label="4"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        4
+      </button>
+      <button
+        aria-label="5"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        5
+      </button>
+      <button
+        aria-label="6"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        6
+      </button>
+      <button
+        aria-label="7"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        7
+      </button>
+      <button
+        aria-label="8"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        8
+      </button>
+      <button
+        aria-label="9"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        9
+      </button>
+      <button
+        aria-label="Clear"
+        class="num-pad__button num-pad__button--clear"
+        type="button"
+      >
+        C
+      </button>
+      <button
+        aria-label="0"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        0
+      </button>
+      <button
+        aria-label="Backspace"
+        class="num-pad__button num-pad__button--backspace"
+        type="button"
+      >
+        ⌫
+      </button>
+    </div>
+    <button
+      aria-label="Confirm"
+      class="num-pad__confirm"
+      type="button"
+    >
+      確定
+    </button>
+  </div>
+</div>
+`;
+
+exports[`NumPad > スナップショットテスト > 確定ボタンが無効な状態の描画結果が一致する 1`] = `
+<div>
+  <div
+    class="num-pad"
+  >
+    <div
+      class="num-pad__display"
+    >
+      <div
+        class="num-pad__input-value"
+      >
+        163
+      </div>
+      <div
+        class="num-pad__label"
+      >
+        点
+      </div>
+    </div>
+    <div
+      class="num-pad__grid"
+    >
+      <button
+        aria-label="1"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        1
+      </button>
+      <button
+        aria-label="2"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        2
+      </button>
+      <button
+        aria-label="3"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        3
+      </button>
+      <button
+        aria-label="4"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        4
+      </button>
+      <button
+        aria-label="5"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        5
+      </button>
+      <button
+        aria-label="6"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        6
+      </button>
+      <button
+        aria-label="7"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        7
+      </button>
+      <button
+        aria-label="8"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        8
+      </button>
+      <button
+        aria-label="9"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        9
+      </button>
+      <button
+        aria-label="Clear"
+        class="num-pad__button num-pad__button--clear"
+        type="button"
+      >
+        C
+      </button>
+      <button
+        aria-label="0"
+        class="num-pad__button num-pad__button--number"
+        type="button"
+      >
+        0
+      </button>
+      <button
+        aria-label="Backspace"
+        class="num-pad__button num-pad__button--backspace"
+        type="button"
+      >
+        ⌫
+      </button>
+    </div>
+    <button
+      aria-label="Confirm"
+      class="num-pad__confirm"
+      disabled=""
+      type="button"
+    >
+      確定
+    </button>
+  </div>
+</div>
+`;
