@@ -11,6 +11,7 @@ import { useKeyboardInput } from '../../hooks/useKeyboardInput';
 import type { QuestionType } from '../../types';
 import { MAX_INPUT_DIGITS } from '../../utils/constants';
 import { isValidRoundScore, isValidSingleThrowScore } from '../../utils/validation';
+import './NumPad.css';
 
 interface NumPadProps {
   questionType: QuestionType;
