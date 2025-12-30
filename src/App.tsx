@@ -5,8 +5,10 @@
  * - setup: 設定画面（PresetSelector + DifficultySelector + TargetSelector + StartButton）
  * - practicing: 練習画面（PracticeScreen）
  * - results: 結果画面（ResultsScreen）
+ * - debug: デバッグ画面（座標変換の検証用）
  */
 
+import { DebugScreen } from './components/Debug/DebugScreen';
 import { PracticeScreen } from './components/Practice/PracticeScreen';
 import { ResultsScreen } from './components/Results/ResultsScreen';
 import { SettingsPanel } from './components/Settings/SettingsPanel';
@@ -20,6 +22,7 @@ function App(): JSX.Element {
       {gameState === 'setup' && <SettingsPanel />}
       {gameState === 'practicing' && <PracticeScreen />}
       {gameState === 'results' && <ResultsScreen />}
+      {gameState === 'debug' && <DebugScreen />}
     </div>
   );
 }

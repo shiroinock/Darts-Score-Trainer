@@ -219,6 +219,8 @@ interface GameStore {
   nextQuestion: () => void;
   endSession: (reason?: string) => void;
   resetToSetup: () => void;
+  goToDebugScreen: () => void;
+  exitDebugScreen: () => void;
   handleBust: () => void;
   tick: () => void;
 
@@ -522,6 +524,22 @@ export const useGameStore = create<GameStore>()(
           state.currentThrowIndex = 0;
           state.remainingScore = 0;
           state.roundStartScore = 0;
+        }),
+
+      /**
+       * デバッグ画面に移動する
+       */
+      goToDebugScreen: () =>
+        set((state) => {
+          state.gameState = 'debug';
+        }),
+
+      /**
+       * デバッグ画面から設定画面に戻る
+       */
+      exitDebugScreen: () =>
+        set((state) => {
+          state.gameState = 'setup';
         }),
 
       /**

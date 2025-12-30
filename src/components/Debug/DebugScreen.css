@@ -1,0 +1,381 @@
+/**
+ * デバッグ画面のスタイル
+ */
+
+/* ======================================== */
+/* デバッグ画面全体 */
+/* ======================================== */
+
+.debug-screen {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+/* ヘッダー */
+.debug-screen__header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background-color: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.debug-screen__back-button {
+  padding: 8px 16px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.debug-screen__back-button:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+.debug-screen__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* メインコンテンツ */
+.debug-screen__main {
+  display: flex;
+  flex: 1;
+  gap: 16px;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.debug-screen__board-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.debug-screen__panel-section {
+  width: 350px;
+  overflow-y: auto;
+}
+
+/* フッター（記録一覧） */
+.debug-screen__footer {
+  padding: 16px;
+  background-color: var(--color-bg-secondary);
+  border-top: 1px solid var(--color-border);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* ======================================== */
+/* DebugBoard */
+/* ======================================== */
+
+.debug-board {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.debug-board__hint {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+/* ======================================== */
+/* DebugPanel */
+/* ======================================== */
+
+.debug-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.debug-panel__section {
+  padding: 16px;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.debug-panel__section-title {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.debug-panel__result {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.debug-panel__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.debug-panel__row--highlight {
+  padding: 8px;
+  margin: 4px 0;
+  background-color: var(--color-bg-tertiary);
+  border-radius: 4px;
+}
+
+.debug-panel__label {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.debug-panel__value {
+  font-size: 14px;
+  font-family: monospace;
+  color: var(--color-text-primary);
+}
+
+.debug-panel__value--large {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.debug-panel__divider {
+  height: 1px;
+  margin: 8px 0;
+  background-color: var(--color-border);
+}
+
+.debug-panel__placeholder {
+  margin: 0;
+  padding: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+/* フォーム */
+.debug-panel__form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.debug-panel__field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.debug-panel__field .debug-panel__label {
+  min-width: 80px;
+}
+
+.debug-panel__select {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.debug-panel__select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.debug-panel__record-button {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.debug-panel__record-button:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+}
+
+.debug-panel__record-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ======================================== */
+/* RecordList */
+/* ======================================== */
+
+.record-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.record-list__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.record-list__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.record-list__stats {
+  display: flex;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.record-list__correct {
+  color: var(--color-success);
+}
+
+.record-list__incorrect {
+  color: var(--color-danger);
+}
+
+.record-list__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.record-list__button {
+  padding: 8px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.record-list__button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.record-list__button--export {
+  color: white;
+  background-color: var(--color-primary);
+}
+
+.record-list__button--export:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+}
+
+.record-list__button--clear {
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-tertiary);
+}
+
+.record-list__button--clear:hover:not(:disabled) {
+  background-color: var(--color-border);
+}
+
+/* 記録アイテム一覧 */
+.record-list__items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.record-list__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  font-size: 14px;
+  background-color: var(--color-bg-primary);
+  border-radius: 4px;
+}
+
+.record-list__item--correct {
+  border-left: 3px solid var(--color-success);
+}
+
+.record-list__item--incorrect {
+  border-left: 3px solid var(--color-danger);
+}
+
+.record-list__item-id {
+  min-width: 30px;
+  color: var(--color-text-muted);
+}
+
+.record-list__item-detected,
+.record-list__item-actual {
+  font-family: monospace;
+}
+
+.record-list__item-arrow {
+  color: var(--color-text-muted);
+}
+
+.record-list__item-status {
+  margin-left: auto;
+  font-weight: bold;
+}
+
+.record-list__item--correct .record-list__item-status {
+  color: var(--color-success);
+}
+
+.record-list__item--incorrect .record-list__item-status {
+  color: var(--color-danger);
+}
+
+.record-list__empty {
+  margin: 0;
+  padding: 16px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+/* ======================================== */
+/* デバッグボタン（SettingsPanel用） */
+/* ======================================== */
+
+.setup-wizard__button--debug {
+  padding: 8px 16px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  background-color: transparent;
+  border: 1px dashed var(--color-border);
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.setup-wizard__button--debug:hover {
+  opacity: 1;
+  border-style: solid;
+}

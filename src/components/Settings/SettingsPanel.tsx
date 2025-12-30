@@ -17,6 +17,12 @@ import { Step3Session } from './SetupWizard/Step3Session';
 import { Step4Confirm } from './SetupWizard/Step4Confirm';
 
 /**
+ * デバッグモードを有効にするかどうか
+ * 開発時のみtrue、本番ではfalseに
+ */
+const ENABLE_DEBUG_MODE = true;
+
+/**
  * ウィザードのステップ定義
  */
 type WizardStep = 1 | 2 | 3 | 4;
@@ -46,6 +52,7 @@ export function SettingsPanel({
 }: SettingsPanelProps = {}): JSX.Element {
   const [internalStep, setInternalStep] = useState<WizardStep>(1);
   const startPractice = useGameStore((state) => state.startPractice);
+  const goToDebugScreen = useGameStore((state) => state.goToDebugScreen);
 
   // Controlled/Uncontrolledモードの判定
   const isControlled = controlledStep !== undefined;
@@ -128,6 +135,18 @@ export function SettingsPanel({
 
       {/* ナビゲーションボタン */}
       <div className="setup-wizard__navigation">
+        {/* デバッグボタン（開発用） */}
+        {ENABLE_DEBUG_MODE && (
+          <button
+            type="button"
+            className="setup-wizard__button setup-wizard__button--debug"
+            onClick={goToDebugScreen}
+            aria-label="デバッグ画面を開く"
+          >
+            Debug
+          </button>
+        )}
+
         {/* 戻るボタン（ステップ1では非表示） */}
         {currentStep > 1 && (
           <button
