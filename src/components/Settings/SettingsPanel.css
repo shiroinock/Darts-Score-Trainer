@@ -279,27 +279,23 @@
   }
 
   .setup-wizard__navigation {
-    flex-direction: column;
+    flex-direction: row;
     gap: var(--spacing-sm);
-    height: auto;
+    height: var(--layout-footer-height-mobile);
     min-height: var(--layout-footer-height-mobile);
     padding: var(--spacing-sm) 0;
   }
 
   .setup-wizard__button {
-    width: 100%;
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-  }
-
-  .setup-wizard__button--back {
-    order: 2; /* 戻るボタンを下に */
+    flex: 1;
+    min-width: 0;
+    padding: var(--spacing-sm) var(--spacing-base);
+    font-size: var(--font-size-small);
   }
 
   .setup-wizard__button--next,
   .setup-wizard__button--start {
-    order: 1; /* 次へ/開始ボタンを上に */
-    margin-left: 0; /* モバイルでは中央配置 */
+    margin-left: 0;
   }
 }
 

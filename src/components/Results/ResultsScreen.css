@@ -31,8 +31,8 @@
   gap: 1.5rem;
   padding: 0 2rem;
   background-color: var(--color-bg-white);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-base);
   max-width: 800px;
   margin: 0 auto;
   width: 100%;
@@ -43,49 +43,49 @@
 
 .results-screen__button {
   flex: 1;
-  padding: 1rem 2rem;
-  font-size: 1.125rem;
+  padding: var(--spacing-base) var(--spacing-2xl);
+  font-size: var(--font-size-md);
   font-weight: 600;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius-base);
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-base);
   min-width: 0; /* Flexboxの縮小を許可 */
 }
 
 .results-screen__button--retry {
-  background-color: #4caf50;
-  color: white;
+  background-color: var(--color-success);
+  color: var(--color-bg-white);
 }
 
 .results-screen__button--retry:active {
   transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+  box-shadow: var(--shadow-sm);
 }
 
 .results-screen__button--settings {
-  background-color: #6c757d;
-  color: white;
+  background-color: var(--color-text-muted);
+  color: var(--color-bg-white);
 }
 
 .results-screen__button--settings:active {
   transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
+  box-shadow: var(--shadow-sm);
 }
 
 /* ホバー可能なデバイスでのみhover効果を適用 */
 @media (hover: hover) {
   .results-screen__button--retry:hover {
-    background-color: #45a049;
+    background-color: var(--color-success-dark);
     transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
+    box-shadow: var(--shadow-success);
   }
 
   .results-screen__button--settings:hover {
-    background-color: #5a6268;
+    background-color: var(--color-text-muted-dark);
     transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(108, 117, 125, 0.3);
+    box-shadow: var(--shadow-secondary);
   }
 }
 
@@ -135,7 +135,7 @@
   }
 
   .results-screen__button {
-    padding: var(--spacing-0875) var(--spacing-1-75);
+    padding: var(--spacing-base) var(--spacing-xl);
     font-size: var(--font-size-base);
   }
 }
