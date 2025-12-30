@@ -866,3 +866,42 @@ local-ci スキルで定義された3つのチェック（Biome check、テス�
      - For timeout issues: Run tests individually with `npm test -- src/components/Practice/NumPad.test.tsx`
      - For ResizeObserver errors: Add ResizeObserver mock in test setup
      ```
+
+## タイムアウトしたテストの報告改善
+
+### 重要な改善点
+
+テストがタイムアウトにより失敗した場合、以下の情報を含めて報告してください：
+
+1. **タイムアウトしたテストの明確な表示**
+   ```
+   3つのテストがタイムアウトにより失敗しました：
+
+   1. `src/components/Practice/NumPad.test.tsx`
+      - テスト: "handles keyboard event handling"
+      - タイムアウト: 5000ms
+
+   2. `src/hooks/useDartBoard.test.tsx`  
+      - テスト: "renders without crashing"
+      - タイムアウト: 5000ms
+
+   3. `src/hooks/useErrorReport.test.tsx`
+      - テスト: "collects and formats error information"
+      - タイムアウト: 5000ms
+   ```
+
+2. **成功/失敗の内訳**
+   - 明確な統計情報を提供
+   - 例: "Tests (3 failed, 1,948 passed)"
+   - 失敗の原因も含める: "3 failed due to timeout"
+
+3. **推奨アクションの追加**
+   - タイムアウト問題に対する具体的な解決策
+   ```
+   推奨アクション:
+   - 個別にテストを実行して問題を特定: 
+     npm test -- src/components/Practice/NumPad.test.tsx
+   - タイムアウト値を増やす（一時的な対処）:
+     npm test -- --testTimeout=10000
+   - テストの非同期処理を確認
+   ```
