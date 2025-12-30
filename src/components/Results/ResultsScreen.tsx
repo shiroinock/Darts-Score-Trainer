@@ -12,6 +12,7 @@
 import { useGameStore } from '../../stores/gameStore';
 import type { SessionResult } from '../../types/SessionResult';
 import { SessionSummary } from './SessionSummary';
+import './ResultsScreen.css';
 
 /**
  * 練習結果画面コンポーネント
