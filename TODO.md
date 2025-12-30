@@ -481,11 +481,11 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 すべての変換で同じスケール（`this.scale`）を使用する。
 
 #### タスク
-- [ ] `coordinateTransform.ts`の`physicalToScreen`メソッドを修正（`scaleX`, `scaleY` → `scale`に統一）
-- [ ] `coordinateTransform.ts`の`screenToPhysical`メソッドを修正（`scaleX`, `scaleY` → `scale`に統一）
-- [ ] 修正後、ダーツボードが正しい円形で描画されることを確認
-- [ ] 修正後、ダーツマーカーがボード上の正しい位置に表示されることを確認
-- [ ] `coordinateTransform.test.ts`のテストが通ることを確認
+- [x] `coordinateTransform.ts`の`physicalToScreen`メソッドを修正（`scaleX`, `scaleY` → `scale`に統一）
+- [x] `coordinateTransform.ts`の`screenToPhysical`メソッドを修正（`scaleX`, `scaleY` → `scale`に統一）
+- [x] 修正後、ダーツボードが正しい円形で描画されることを確認
+- [x] 修正後、ダーツマーカーがボード上の正しい位置に表示されることを確認
+- [x] `coordinateTransform.test.ts`のテストが通ることを確認
 - [ ] 実際にアプリを起動して、視覚的にズレが解消されていることを確認
 
 ### 8.5 レスポンシブ対応

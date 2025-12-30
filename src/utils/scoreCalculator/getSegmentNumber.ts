@@ -29,10 +29,12 @@ export function getSegmentNumber(angle: number): number {
   }
 
   // セグメントインデックスを計算
-  // 真上（0ラジアン）がセグメント20（インデックス0）
-  // π/10がセグメント1（インデックス1）の開始点
-  // 各セグメントは18度（π/10）の幅
-  const segmentIndex = Math.floor(normalizedAngle / SEGMENT_ANGLE);
+  // 真上（0ラジアン）がセグメント20（インデックス0）の中心
+  // 各セグメントは18度（π/10 = SEGMENT_ANGLE）の幅
+  // セグメント20は -π/20 〜 +π/20 の範囲（中心を0とした18度幅）
+  // 境界を正しく配置するため、半セグメント分（π/20）オフセットしてから除算
+  const adjustedAngle = normalizedAngle + SEGMENT_ANGLE / 2;
+  const segmentIndex = Math.floor(adjustedAngle / SEGMENT_ANGLE);
 
   // インデックスを0-19の範囲に正規化
   const normalizedIndex = segmentIndex % 20;

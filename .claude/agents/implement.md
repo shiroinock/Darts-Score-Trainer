@@ -493,6 +493,83 @@ const nested = config && config.deeply && config.deeply.nested && config.deeply.
    - `lastAnswer`のような状態は、`currentQuestion`から取得できる場合は冗長
    - ただし、パフォーマンスや可読性の観点から必要な場合は残す
 
+## 座標変換実装時の重要な注意点
+
+### スケール計算の統一（CoordinateTransformクラス）
+
+座標変換を実装する際は、**すべての変換メソッドで同じスケール値を使用**することが重要です：
+
+```typescript
+// ❌ バグの例：異なるスケールを使用
+physicalToScreen(x: number, y: number): { x: number; y: number } {
+  return {
+    x: this.centerX + x * this.scaleX,  // scaleXを使用
+    y: this.centerY + y * this.scaleY,  // scaleYを使用
+  };
+}
+
+physicalDistanceToScreen(distance: number): number {
+  return distance * this.scale;  // this.scaleを使用（不一致！）
+}
+
+// ✅ 正しい実装：統一されたスケールを使用
+physicalToScreen(x: number, y: number): { x: number; y: number } {
+  return {
+    x: this.centerX + x * this.scale,  // this.scaleを使用
+    y: this.centerY + y * this.scale,  // this.scaleを使用
+  };
+}
+
+physicalDistanceToScreen(distance: number): number {
+  return distance * this.scale;  // this.scaleを使用（一致！）
+}
+```
+
+**影響**：スケールの不一致により、以下の問題が発生します：
+- 非正方形キャンバスでボードが楕円形に描画される
+- ダーツマーカーの位置がボード上の実際の位置とずれる
+- 座標変換と距離変換の計算結果が矛盾する
+
+**スケール計算の原則**：
+- `this.scale = min(width, height) / (2 * BOARD_RADIUS) * SCALE_FACTOR`
+- 小さい方の辺に合わせてスケールを計算（正円を保つため）
+- すべての変換でこの統一スケールを使用
+
+### セグメント境界のオフセット計算
+
+角度からセグメント番号を計算する際は、**半セグメント分のオフセット**を加える必要があります：
+
+```typescript
+// ❌ バグの例：オフセットなし
+const segmentIndex = Math.floor(normalizedAngle / SEGMENT_ANGLE);
+// → 境界が9度（半セグメント分）ずれる
+
+// ✅ 正しい実装：オフセットあり
+const adjustedAngle = normalizedAngle + SEGMENT_ANGLE / 2;
+const segmentIndex = Math.floor(adjustedAngle / SEGMENT_ANGLE);
+```
+
+**理由**：
+- 描画コードでは各セグメントが**中心を基準に18度幅**で配置される
+  - セグメント20: -9° ～ +9°（中心が0°）
+  - セグメント1: +9° ～ +27°（中心が18°）
+- オフセットなしだと0°から18度幅で区切られ、境界が9度ずれる
+
+**角度正規化のベストプラクティス**：
+```typescript
+// 1. -π〜πの範囲に正規化
+let normalizedAngle = angle % (2 * Math.PI);
+if (normalizedAngle > Math.PI) normalizedAngle -= 2 * Math.PI;
+if (normalizedAngle < -Math.PI) normalizedAngle += 2 * Math.PI;
+
+// 2. 0〜2πの範囲に変換（負の角度対応）
+if (normalizedAngle < 0) normalizedAngle += 2 * Math.PI;
+
+// 3. 半セグメント分オフセットしてからインデックス計算
+const adjustedAngle = normalizedAngle + SEGMENT_ANGLE / 2;
+const segmentIndex = Math.floor(adjustedAngle / SEGMENT_ANGLE) % 20;
+```
+
 ## CSS分離タスクの実装ガイドライン
 
 ### 基本方針

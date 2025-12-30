@@ -134,7 +134,9 @@ describe('CoordinateTransform', () => {
         const screen = transform.physicalToScreen(225, 0);
 
         // Assert
-        expect(screen.x).toBeCloseTo(800, 0);
+        // scale = 600 / 450 * 0.8 = 1.0667
+        // x = 400 + 225 * 1.0667 = 640
+        expect(screen.x).toBeCloseTo(640, 0);
         expect(screen.y).toBe(300);
       });
 
@@ -146,7 +148,9 @@ describe('CoordinateTransform', () => {
         const screen = transform.physicalToScreen(-225, 0);
 
         // Assert
-        expect(screen.x).toBeCloseTo(0, 0);
+        // scale = 600 / 450 * 0.8 = 1.0667
+        // x = 400 - 225 * 1.0667 = 160
+        expect(screen.x).toBeCloseTo(160, 0);
         expect(screen.y).toBe(300);
       });
 
@@ -158,8 +162,10 @@ describe('CoordinateTransform', () => {
         const screen = transform.physicalToScreen(0, 225);
 
         // Assert
+        // scale = 600 / 450 * 0.8 = 1.0667
+        // y = 300 + 225 * 1.0667 = 540
         expect(screen.x).toBe(400);
-        expect(screen.y).toBeCloseTo(600, 0);
+        expect(screen.y).toBeCloseTo(540, 0);
       });
 
       test('ボード上端(0,-225)はキャンバス上端付近に変換される', () => {
@@ -170,8 +176,10 @@ describe('CoordinateTransform', () => {
         const screen = transform.physicalToScreen(0, -225);
 
         // Assert
+        // scale = 600 / 450 * 0.8 = 1.0667
+        // y = 300 - 225 * 1.0667 = 60
         expect(screen.x).toBe(400);
-        expect(screen.y).toBeCloseTo(0, 0);
+        expect(screen.y).toBeCloseTo(60, 0);
       });
     });
 
@@ -184,7 +192,9 @@ describe('CoordinateTransform', () => {
         const screen = transform.physicalToScreen(300, 0);
 
         // Assert
-        expect(screen.x).toBeGreaterThan(800); // キャンバス外
+        // scale = 600 / 450 * 0.8 = 1.0667
+        // x = 400 + 300 * 1.0667 = 720（ボード直径の80%なのでキャンバス内）
+        expect(screen.x).toBeCloseTo(720, 0);
       });
 
       test('ボード外の負の座標(-300,0)も変換できる', () => {
@@ -195,7 +205,9 @@ describe('CoordinateTransform', () => {
         const screen = transform.physicalToScreen(-300, 0);
 
         // Assert
-        expect(screen.x).toBeLessThan(0); // キャンバス外
+        // scale = 600 / 450 * 0.8 = 1.0667
+        // x = 400 - 300 * 1.0667 = 80（ボード直径の80%なのでキャンバス内）
+        expect(screen.x).toBeCloseTo(80, 0);
       });
 
       test('インナーブル中心(0,0)は正確に変換される', () => {
@@ -840,6 +852,409 @@ describe('CoordinateTransform', () => {
 
       // Assert
       expect(newScale2).toBe(originalScale2);
+    });
+  });
+
+  describe('スケール統一（座標と距離の一貫性）', () => {
+    describe('非正方形キャンバスでの一貫性', () => {
+      test('physicalToScreenとphysicalDistanceToScreenが同じスケールを使用する（X方向）', () => {
+        // Arrange
+        // 横長キャンバス（800x600）の場合、scaleX ≠ scaleY なので現在の実装では差が出る
+        const transform = new CoordinateTransform(800, 600, 225);
+
+        // Act
+        // 物理座標 (100, 0) を座標変換
+        const screen = transform.physicalToScreen(100, 0);
+        const screenDistanceX = screen.x - 400; // 中心（400, 300）からのX距離
+
+        // 同じ物理距離を距離変換メソッドで変換
+        const distanceViaMethod = transform.physicalDistanceToScreen(100);
+
+        // Assert
+        // スケール統一後、両者は一致するはず
+        // 現在の実装では scaleX と this.scale が異なるため失敗する（Red）
+        expect(screenDistanceX).toBeCloseTo(distanceViaMethod, 1);
+      });
+
+      test('physicalToScreenとphysicalDistanceToScreenが同じスケールを使用する（Y方向）', () => {
+        // Arrange
+        const transform = new CoordinateTransform(800, 600, 225);
+
+        // Act
+        // 物理座標 (0, 100) を座標変換
+        const screen = transform.physicalToScreen(0, 100);
+        const screenDistanceY = screen.y - 300; // 中心からのY距離
+
+        // 同じ物理距離を距離変換メソッドで変換
+        const distanceViaMethod = transform.physicalDistanceToScreen(100);
+
+        // Assert
+        // スケール統一後、両者は一致するはず
+        // 現在の実装では scaleY と this.scale が異なるため失敗する（Red）
+        expect(screenDistanceY).toBeCloseTo(distanceViaMethod, 1);
+      });
+
+      test('縦長キャンバスでもスケールが統一される（X方向）', () => {
+        // Arrange
+        // 縦長キャンバス（600x800）でテスト
+        const transform = new CoordinateTransform(600, 800, 225);
+
+        // Act
+        const screen = transform.physicalToScreen(100, 0);
+        const screenDistanceX = screen.x - 300; // 中心からのX距離
+
+        const distanceViaMethod = transform.physicalDistanceToScreen(100);
+
+        // Assert
+        expect(screenDistanceX).toBeCloseTo(distanceViaMethod, 1);
+      });
+
+      test('縦長キャンバスでもスケールが統一される（Y方向）', () => {
+        // Arrange
+        const transform = new CoordinateTransform(600, 800, 225);
+
+        // Act
+        const screen = transform.physicalToScreen(0, 100);
+        const screenDistanceY = screen.y - 400; // 中心からのY距離
+
+        const distanceViaMethod = transform.physicalDistanceToScreen(100);
+
+        // Assert
+        expect(screenDistanceY).toBeCloseTo(distanceViaMethod, 1);
+      });
+
+      test('極端な横長キャンバス（1600x600）でもスケールが統一される', () => {
+        // Arrange
+        const transform = new CoordinateTransform(1600, 600, 225);
+
+        // Act
+        const screen = transform.physicalToScreen(100, 0);
+        const screenDistanceX = screen.x - 800; // 中心からのX距離
+
+        const distanceViaMethod = transform.physicalDistanceToScreen(100);
+
+        // Assert
+        expect(screenDistanceX).toBeCloseTo(distanceViaMethod, 1);
+      });
+    });
+
+    describe('正方形キャンバスでの確認', () => {
+      test('正方形キャンバスではもともと一貫性がある', () => {
+        // Arrange
+        // 正方形キャンバス（800x800）では scaleX = scaleY なので現在でも一致
+        const transform = new CoordinateTransform(800, 800, 225);
+
+        // Act
+        const screen = transform.physicalToScreen(100, 0);
+        const screenDistanceX = screen.x - 400;
+
+        const distanceViaMethod = transform.physicalDistanceToScreen(100);
+
+        // Assert
+        expect(screenDistanceX).toBeCloseTo(distanceViaMethod, 1);
+      });
+    });
+  });
+
+  describe('円形描画の保証', () => {
+    describe('ボード端の円形性検証', () => {
+      test('ボード端（225mm）の座標がX方向とY方向で同じ画面距離になる', () => {
+        // Arrange
+        const transform = new CoordinateTransform(800, 600, 225);
+
+        // Act
+        // ボードの右端（225, 0）
+        const right = transform.physicalToScreen(225, 0);
+        // ボードの下端（0, 225）
+        const bottom = transform.physicalToScreen(0, 225);
+
+        // 中心（400, 300）からの距離を計算
+        const distanceX = right.x - 400;
+        const distanceY = bottom.y - 300;
+
+        // Assert
+        // 円形のボードなので、X方向とY方向で同じ距離になるべき
+        // 現在の実装では scaleX ≠ scaleY なので異なる値になり失敗する（Red）
+        expect(distanceX).toBeCloseTo(distanceY, 1);
+      });
+
+      test('横長キャンバス（1600x600）でもボードは円形になる', () => {
+        // Arrange
+        const transform = new CoordinateTransform(1600, 600, 225);
+
+        // Act
+        const right = transform.physicalToScreen(225, 0);
+        const bottom = transform.physicalToScreen(0, 225);
+
+        const distanceX = right.x - 800; // 中心は800
+        const distanceY = bottom.y - 300; // 中心は300
+
+        // Assert
+        // X方向とY方向で同じ画面距離になる（円形）
+        expect(distanceX).toBeCloseTo(distanceY, 1);
+      });
+
+      test('縦長キャンバス（600x1600）でもボードは円形になる', () => {
+        // Arrange
+        const transform = new CoordinateTransform(600, 1600, 225);
+
+        // Act
+        const right = transform.physicalToScreen(225, 0);
+        const bottom = transform.physicalToScreen(0, 225);
+
+        const distanceX = right.x - 300;
+        const distanceY = bottom.y - 800;
+
+        // Assert
+        expect(distanceX).toBeCloseTo(distanceY, 1);
+      });
+
+      test('ボード左端と上端でも円形性が保たれる', () => {
+        // Arrange
+        const transform = new CoordinateTransform(800, 600, 225);
+
+        // Act
+        const left = transform.physicalToScreen(-225, 0);
+        const top = transform.physicalToScreen(0, -225);
+
+        const distanceX = 400 - left.x; // 左端なので引き算が逆
+        const distanceY = 300 - top.y; // 上端なので引き算が逆
+
+        // Assert
+        expect(distanceX).toBeCloseTo(distanceY, 1);
+      });
+    });
+
+    describe('リングの円形性検証', () => {
+      test('トリプルリング（103mm）がX方向とY方向で同じ画面距離になる', () => {
+        // Arrange
+        const transform = new CoordinateTransform(800, 600, 225);
+
+        // Act
+        const right = transform.physicalToScreen(103, 0);
+        const bottom = transform.physicalToScreen(0, 103);
+
+        const distanceX = right.x - 400;
+        const distanceY = bottom.y - 300;
+
+        // Assert
+        // トリプルリングも円形なので、X方向とY方向で同じ距離
+        expect(distanceX).toBeCloseTo(distanceY, 1);
+      });
+
+      test('ダブルリング（166mm）がX方向とY方向で同じ画面距離になる', () => {
+        // Arrange
+        const transform = new CoordinateTransform(800, 600, 225);
+
+        // Act
+        const right = transform.physicalToScreen(166, 0);
+        const bottom = transform.physicalToScreen(0, 166);
+
+        const distanceX = right.x - 400;
+        const distanceY = bottom.y - 300;
+
+        // Assert
+        expect(distanceX).toBeCloseTo(distanceY, 1);
+      });
+
+      test('インナーブル（3.175mm）がX方向とY方向で同じ画面距離になる', () => {
+        // Arrange
+        const transform = new CoordinateTransform(800, 600, 225);
+
+        // Act
+        const right = transform.physicalToScreen(3.175, 0);
+        const bottom = transform.physicalToScreen(0, 3.175);
+
+        const distanceX = right.x - 400;
+        const distanceY = bottom.y - 300;
+
+        // Assert
+        expect(distanceX).toBeCloseTo(distanceY, 1);
+      });
+
+      test('アウターブル（7.95mm）がX方向とY方向で同じ画面距離になる', () => {
+        // Arrange
+        const transform = new CoordinateTransform(800, 600, 225);
+
+        // Act
+        const right = transform.physicalToScreen(7.95, 0);
+        const bottom = transform.physicalToScreen(0, 7.95);
+
+        const distanceX = right.x - 400;
+        const distanceY = bottom.y - 300;
+
+        // Assert
+        expect(distanceX).toBeCloseTo(distanceY, 1);
+      });
+    });
+  });
+
+  describe('ダーツマーカー位置の正確性', () => {
+    describe('物理距離と画面距離の比例関係', () => {
+      test('物理座標の距離と画面座標の距離がスケールに従って比例する', () => {
+        // Arrange
+        const transform = new CoordinateTransform(800, 600, 225);
+        const scale = transform.getScale();
+
+        // Act
+        // 物理座標 (100, 0) を変換
+        const screen = transform.physicalToScreen(100, 0);
+        const screenDistanceFromCenter = screen.x - 400;
+
+        // Assert
+        // この距離は 100 * scale と一致するはず
+        // 現在の実装では scaleX を使うため scale と異なり失敗する（Red）
+        expect(screenDistanceFromCenter).toBeCloseTo(100 * scale, 1);
+      });
+
+      test('ボード中心からの物理距離と画面距離がスケールに従う（X方向）', () => {
+        // Arrange
+        const transform = new CoordinateTransform(800, 600, 225);
+        const scale = transform.getScale();
+
+        // Act
+        // 物理座標 (150, 0)
+        const screen = transform.physicalToScreen(150, 0);
+        const screenDist = Math.abs(screen.x - 400);
+
+        // Assert
+        // 物理距離 150mm × scale = 画面距離
+        expect(screenDist).toBeCloseTo(150 * scale, 1);
+      });
+
+      test('ボード中心からの物理距離と画面距離がスケールに従う（Y方向）', () => {
+        // Arrange
+        const transform = new CoordinateTransform(800, 600, 225);
+        const scale = transform.getScale();
+
+        // Act
+        // 物理座標 (0, 150)
+        const screen = transform.physicalToScreen(0, 150);
+        const screenDist = Math.abs(screen.y - 300);
+
+        // Assert
+        // 物理距離 150mm × scale = 画面距離
+        expect(screenDist).toBeCloseTo(150 * scale, 1);
+      });
+
+      test('ボード中心からの物理距離と画面距離がスケールに従う（斜め方向）', () => {
+        // Arrange
+        const transform = new CoordinateTransform(800, 600, 225);
+        const scale = transform.getScale();
+
+        // Act
+        // 物理座標 (70.7, 70.7) ≒ 距離100mm、角度45°
+        const screen = transform.physicalToScreen(70.7, 70.7);
+        const screenDist = Math.sqrt((screen.x - 400) ** 2 + (screen.y - 300) ** 2);
+
+        // Assert
+        // 物理距離 100mm × scale = 画面距離
+        // 現在の実装では scaleX と scaleY が異なるため、楕円形になり失敗する（Red）
+        expect(screenDist).toBeCloseTo(100 * scale, 0);
+      });
+
+      test('斜め45°方向のトリプルリング位置が正確に配置される', () => {
+        // Arrange
+        const transform = new CoordinateTransform(800, 600, 225);
+        const scale = transform.getScale();
+
+        // Act
+        // トリプルリング中心（103mm）の斜め45°方向
+        // (103 * cos(45°), 103 * sin(45°)) ≒ (72.8, 72.8)
+        const screen = transform.physicalToScreen(72.8, 72.8);
+        const screenDist = Math.sqrt((screen.x - 400) ** 2 + (screen.y - 300) ** 2);
+
+        // Assert
+        expect(screenDist).toBeCloseTo(103 * scale, 0);
+      });
+
+      test('斜め45°方向のダブルリング位置が正確に配置される', () => {
+        // Arrange
+        const transform = new CoordinateTransform(800, 600, 225);
+        const scale = transform.getScale();
+
+        // Act
+        // ダブルリング中心（166mm）の斜め45°方向
+        // (166 * cos(45°), 166 * sin(45°)) ≒ (117.4, 117.4)
+        const screen = transform.physicalToScreen(117.4, 117.4);
+        const screenDist = Math.sqrt((screen.x - 400) ** 2 + (screen.y - 300) ** 2);
+
+        // Assert
+        expect(screenDist).toBeCloseTo(166 * scale, 0);
+      });
+    });
+
+    describe('ダーツ着弾位置の正確性', () => {
+      test('トリプル20付近（上方向）に着弾したダーツマーカーが正確に表示される', () => {
+        // Arrange
+        const transform = new CoordinateTransform(800, 600, 225);
+        const scale = transform.getScale();
+
+        // Act
+        // トリプル20は真上（0, -103）
+        const screen = transform.physicalToScreen(0, -103);
+        const screenDistFromCenter = Math.abs(screen.y - 300);
+
+        // Assert
+        expect(screenDistFromCenter).toBeCloseTo(103 * scale, 1);
+      });
+
+      test('ダブル20付近（上方向）に着弾したダーツマーカーが正確に表示される', () => {
+        // Arrange
+        const transform = new CoordinateTransform(800, 600, 225);
+        const scale = transform.getScale();
+
+        // Act
+        // ダブル20は真上（0, -166）
+        const screen = transform.physicalToScreen(0, -166);
+        const screenDistFromCenter = Math.abs(screen.y - 300);
+
+        // Assert
+        expect(screenDistFromCenter).toBeCloseTo(166 * scale, 1);
+      });
+
+      test('わずかにずれた位置（5mm右上）も正確に表示される', () => {
+        // Arrange
+        const transform = new CoordinateTransform(800, 600, 225);
+        const scale = transform.getScale();
+
+        // Act
+        // (5, -5) の距離は sqrt(50) ≒ 7.07mm
+        const screen = transform.physicalToScreen(5, -5);
+        const screenDist = Math.sqrt((screen.x - 400) ** 2 + (screen.y - 300) ** 2);
+        const expectedScreenDist = Math.sqrt(50) * scale;
+
+        // Assert
+        expect(screenDist).toBeCloseTo(expectedScreenDist, 1);
+      });
+    });
+
+    describe('横長・縦長キャンバスでのマーカー位置', () => {
+      test('横長キャンバスでもダーツマーカーが正確に配置される', () => {
+        // Arrange
+        const transform = new CoordinateTransform(1600, 600, 225);
+        const scale = transform.getScale();
+
+        // Act
+        const screen = transform.physicalToScreen(100, 0);
+        const screenDist = Math.abs(screen.x - 800);
+
+        // Assert
+        expect(screenDist).toBeCloseTo(100 * scale, 1);
+      });
+
+      test('縦長キャンバスでもダーツマーカーが正確に配置される', () => {
+        // Arrange
+        const transform = new CoordinateTransform(600, 1600, 225);
+        const scale = transform.getScale();
+
+        // Act
+        const screen = transform.physicalToScreen(0, 100);
+        const screenDist = Math.abs(screen.y - 800);
+
+        // Assert
+        expect(screenDist).toBeCloseTo(100 * scale, 1);
+      });
     });
   });
 });
