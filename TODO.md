@@ -458,7 +458,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 
 #### Results配下のコンポーネント（2タスク）
 - [x] `SessionSummary.tsx`のスタイルを分離（`SessionSummary.css`作成、`.session-summary*`を移行）
-- [ ] `ResultsScreen.tsx`のスタイルを分離（`ResultsScreen.css`作成、`.results-screen*`を移行）
+- [x] `ResultsScreen.tsx`のスタイルを分離（`ResultsScreen.css`作成、`.results-screen*`を移行）
 
 #### 最終確認（4タスク）
 - [ ] `index.css`の最終整理（グローバルスタイルのみが残っていることを確認）
