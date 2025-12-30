@@ -812,3 +812,57 @@ local-ci スキルで定義された3つのチェック（Biome check、テス�
      - 個別テストファイルの実行を推奨
      - テスト間の依存関係の確認を促す
      - 必要に応じて `beforeEach`/`afterEach` の追加を提案
+
+## 結果報告の統一フォーマット
+
+### 重要な改善点
+
+サブエージェントの結果を報告する際、以下のフォーマットに統一してください：
+
+1. **各チェックの結果表示**
+   ```
+   **Biome Check**
+   ✓ PASSED
+   - Checked X files in Yms
+   - No style or lint issues found
+   
+   **Tests**
+   ✗ FAILED
+   - X tests passed
+   - Y tests failed (理由: timeout、rendering issues等)
+   
+   **Build**
+   ✓ PASSED
+   - Built successfully in Xs
+   ```
+
+2. **失敗したテストの詳細**
+   - 失敗したテストファイルのパスを明確に表示
+   - 失敗の原因（タイムアウト、アサーション失敗等）を明記
+   - 例:
+     ```
+     Failed Tests:
+     1. `src/components/Practice/NumPad.test.tsx` - Test timed out in 5000ms
+     2. `src/hooks/useDartBoard.test.tsx` - Rendering error: ResizeObserver is not defined
+     ```
+
+3. **横線を使用したセクション区切り**
+   ```
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Local CI Checks Complete
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ```
+
+4. **タイムアウトエラーの特別な扱い**
+   - タイムアウトが発生した場合、「Test timed out」として明確に表示
+   - タイムアウト時間も含める（例: "Test timed out in 5000ms"）
+   - テスト分離問題の可能性がある場合、その旨を注記
+
+5. **修正提案の具体化**
+   - 各失敗に対する具体的な修正方法を提示
+   - 例:
+     ```
+     Suggested Actions:
+     - For timeout issues: Run tests individually with `npm test -- src/components/Practice/NumPad.test.tsx`
+     - For ResizeObserver errors: Add ResizeObserver mock in test setup
+     ```

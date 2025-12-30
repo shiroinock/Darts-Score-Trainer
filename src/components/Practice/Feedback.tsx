@@ -16,6 +16,7 @@ import type { ThrowResult } from '../../types';
 import { FEEDBACK_ICONS } from '../../utils/constants/feedbackIcons';
 import { isGameFinished } from '../../utils/gameLogic';
 import { getScoreLabel } from '../../utils/scoreCalculator/getScoreLabel';
+import './Feedback.css';
 
 /**
  * 投擲結果からスコアラベルを生成する
