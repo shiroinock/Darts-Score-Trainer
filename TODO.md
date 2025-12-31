@@ -574,10 +574,78 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] `BustQuestion`コンポーネント作成（src/components/Practice/BustQuestion.tsx, BustQuestion.css, BustQuestion.test.tsx）
 - [x] 正解/不正解フィードバックを表示（showFeedback props で制御）
 
-**Phase C: 合計点数の質問**
-- [ ] 3本目の後: 合計点数を`NumPad`で問う
-- [ ] 正解: 3投の合計得点（バストの場合は0点）
-- [ ] フィードバック後、次のラウンドへ
+**Phase C: 合計点数の質問**（2025-12-31完了）
+- [x] 3本目の後: 合計点数を`NumPad`で問う
+- [x] 正解: 3投の合計得点（バストの場合は0点）
+- [x] フィードバック後、次のラウンドへ
+- [x] questionPhaseフィールドによる3投モードのフェーズ管理
+  - 1本目・2本目: `{ type: 'bust', throwIndex: 1 | 2 }` → BustQuestion表示
+  - 3本目: `{ type: 'score', throwIndex: 3 }` → NumPad表示
+- [x] PracticeScreenでBustQuestion/NumPadの切り替え実装
+
+**Phase D: バスト発生時のラウンド終了処理**（未実装）
+- [ ] 1本目・2本目でバスト判定が「バスト」の場合、次のダーツシミュレーションをスキップ
+- [ ] バスト発生時は残り点数をラウンド開始時の値にリセット（維持）
+- [ ] バスト発生時は次のラウンド（新しい3投）に進む
+- [ ] `handleBustFeedbackComplete`の分岐処理を追加
+  - バストの場合: `nextQuestion()` で新しいラウンドへ
+  - セーフの場合: `simulateNextThrow()` で次のダーツ表示
+
+**要修正箇所（UI側）**:
+- `PracticeScreen.tsx`の`handleBustFeedbackComplete`関数
+- 現状: 常に`simulateNextThrow()`を呼び出している
+- 修正: `bustCorrectAnswer`（正解がバストかどうか）に応じて分岐
+
+**Phase E: バスト時の正解計算ロジック修正**（未実装）
+- [ ] バスト発生時、残り点数の正解はラウンド開始時の値を維持すべき
+- [ ] 現状: バスト時に0点を正解として判定してしまう
+- [ ] 修正: `correctAnswer`の計算ロジックを見直す
+  - バストの場合: `correctAnswer = roundStartScore`（ラウンド開始時の残り点数）
+  - セーフの場合: `correctAnswer = remainingScore - cumulativeScore`
+
+**要修正箇所（Store側）**:
+- `gameStore.ts`の`generateQuestion`または`simulateNextThrow`
+- `correctAnswer`の計算時にバスト状態を考慮する
+- `Question.bustInfo.isBust`がtrueの場合、残り点数は変わらないことを反映
+
+**Phase F: チェックアウトトライ時のフィニッシュ選択肢追加**（未実装）
+- [ ] チェックアウト可能な残り点数（2-170点、ダブルアウト可能）の場合、3択UIを表示
+  - 「バスト」「セーフ」「フィニッシュ」
+- [ ] フィニッシュ判定条件: `remainingScore - throwScore === 0 && isDouble`
+- [ ] `BustQuestion`コンポーネントを拡張または新規`FinishQuestion`コンポーネント作成
+- [ ] キーボードショートカット追加: Fキーでフィニッシュ
+- [ ] 正解判定ロジックの拡張
+  - フィニッシュ: 残り点数が0になり、ダブルで上がった場合
+  - バスト: オーバー、残り1点、ダブル外しフィニッシュ
+  - セーフ: それ以外
+
+**要修正箇所**:
+- `BustQuestion.tsx`: 3択UI対応（または新規コンポーネント）
+- `PracticeScreen.tsx`: チェックアウト可能状態の判定
+- `gameStore.ts`: フィニッシュ判定を`bustInfo`に追加、または新規フィールド
+- `canFinishWithDouble(remainingScore)` 関数を活用してチェックアウト可能か判定
+
+**Phase G: フィードバック画面でのEnterキー対応**（未実装）
+- [ ] 正誤判定表示中の「次へ」ボタンをEnterキーでも進行できるようにする
+- [ ] BustQuestionのフィードバック表示時もEnterキーで次へ
+- [ ] Feedbackコンポーネント表示時もEnterキーで次へ
+- [ ] キーボードイベントリスナーの追加
+
+**要修正箇所**:
+- `PracticeScreen.tsx`: フィードバック表示中のキーボードイベント処理
+- `BustQuestion.tsx`: showFeedback時のEnterキー対応（または親で一括管理）
+- `Feedback.tsx`: Enterキー対応（または親で一括管理）
+
+**Phase H: プレイヤー練習モードでの残り点数減算**（未実装）
+- [ ] scoreモード（3投の合計点数を問う）でも残り点数を減らしていく
+- [ ] 現状: scoreモードでは残り点数が変化しない
+- [ ] 修正: 正解回答後、累積得点分だけ残り点数を減算
+- [ ] バスト発生時は残り点数をラウンド開始時の値に戻す
+
+**要修正箇所**:
+- `gameStore.ts`の`submitAnswer`または`nextQuestion`
+- scoreモードでも`remainingScore`を更新するロジックを追加
+- `questionType === 'score'`の場合の残り点数更新処理
 
 #### 9.1.2 画面レイアウトの動的サイズ対応
 **問題**: 問題文と入力コンポーネントが固定サイズで、スクロールが必要
@@ -633,6 +701,31 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
   - 既存UIとの干渉（NumPad、StatsBarなど）
   - タッチ操作の誤タップ防止
 - [ ] タップ/ホバーでズーム位置を変更可能に
+
+#### 9.1.5 アウトボード（170mm以上）の判定バグ修正
+**問題**: ダブルリング外側（170mm）〜ボード端（225mm）を`OUTER_SINGLE`として判定している
+**原因**: `getRing`関数の37-38行目で`boardEdge`（225mm）までを`OUTER_SINGLE`として返している
+**正しい挙動**: 170mm（`doubleOuter`）以上は`OUT`（0点）であるべき
+
+**修正内容**:
+- [ ] `src/utils/scoreCalculator/getRing.ts`の37-38行目を削除
+  ```typescript
+  // 削除すべきコード
+  if (distance < BOARD_PHYSICAL.rings.boardEdge) {
+    return 'OUTER_SINGLE';
+  }
+  ```
+- [ ] `getRing.test.ts`にアウトボード判定のテストを追加
+  - 170mm → OUT
+  - 171mm → OUT
+  - 200mm → OUT
+  - 225mm → OUT
+  - 226mm → OUT
+- [ ] 既存テストが壊れないことを確認
+
+**要修正箇所の特定**:
+- `grep -r "boardEdge" src/` でboardEdgeの使用箇所を確認
+- `boardEdge`は描画時のボード背景サイズ用であり、判定には使用すべきでない
 
 ### 9.2 動作確認（バグフィックス後に実施）
 - [ ] 手動テストチェックリストに従って全項目を確認
@@ -793,6 +886,61 @@ Phase 6.4のフィードバックコンポーネントに、バスト表示機�
 - [ ] E2Eテスト追加
 - [ ] ESLint + Prettier 設定
 - [ ] CI/CD パイプライン構築
+
+### 技術的改善（型安全性強化 - Branded Type導入）
+**背景**: `checkBust`関数の第2引数は`number`型だが、実際には0-60の範囲を期待している。累積スコア（最大180）を渡すと実行時エラーが発生する問題が発生（2025-12-31）。型レベルで制約を表現することで、コンパイル時にエラーを検出できるようにする。
+
+**目的**: ドメイン固有の数値制約をBranded Typeで表現し、仕組みで不正な値の使用を防ぐ
+
+#### Phase 1: Branded Type型定義の作成
+- [ ] `src/types/branded/` ディレクトリを作成
+- [ ] `SingleThrowScore` 型を定義（0-60の整数）
+  ```typescript
+  type SingleThrowScore = number & { readonly __brand: 'SingleThrowScore' };
+  ```
+- [ ] `RoundScore` 型を定義（0-180の整数）
+- [ ] `PositiveInteger` 型を定義（1以上の整数、残り点数用）
+- [ ] `PhysicalDistance` 型を定義（mm単位の距離、座標変換用）
+- [ ] `ScreenDistance` 型を定義（pixel単位の距離、描画用）
+
+#### Phase 2: 型ガード/コンストラクタ関数の作成
+- [ ] `asSingleThrowScore(value: number): SingleThrowScore` - バリデーション付きコンストラクタ
+- [ ] `asRoundScore(value: number): RoundScore` - バリデーション付きコンストラクタ
+- [ ] `asPositiveInteger(value: number): PositiveInteger` - バリデーション付きコンストラクタ
+- [ ] `isSingleThrowScore(value: number): value is SingleThrowScore` - 型ガード
+
+#### Phase 3: 既存関数シグネチャの変更
+- [ ] `checkBust(remainingScore: PositiveInteger, throwScore: SingleThrowScore, ...)` に変更
+- [ ] `calculateScore(ring, segmentNumber): SingleThrowScore` に変更
+- [ ] `coordinateToScore(x, y): SingleThrowScore` に変更
+- [ ] 座標変換関数でPhysicalDistance/ScreenDistanceを使用
+
+#### Phase 4: 呼び出し箇所の修正
+- [ ] `gameStore.ts`の投擲シミュレーション結果をBranded Typeでラップ
+- [ ] `PracticeScreen.tsx`のbust判定計算をBranded Typeでラップ
+- [ ] テストファイルでのモック値をBranded Typeでラップ
+
+**要修正箇所の特定観点**:
+1. **`number`型の引数/戻り値を持つ関数を検索**:
+   - `grep -r "throwScore: number" src/`
+   - `grep -r "remainingScore: number" src/`
+   - `grep -r "): number" src/utils/scoreCalculator/`
+2. **ドメイン固有の制約がある箇所**:
+   - 1投スコア: 0-60の特定値のみ（`getValidSingleScores()`参照）
+   - ラウンドスコア: 0-180
+   - 残り点数: 1以上（0はゲーム終了）
+   - 物理距離: mm単位（ボード寸法）
+   - 画面距離: pixel単位（描画）
+3. **型アサーション（`as`）を使っている箇所**:
+   - `grep -r " as number" src/`
+   - これらはBranded Type導入で解消できる可能性あり
+4. **実行時バリデーションがある箇所**:
+   - `if (throwScore < 0 || throwScore > 60)` のようなチェック
+   - Branded Type導入後は型レベルで保証されるため、内部関数では不要になる可能性
+
+**参考資料**:
+- TypeScript Handbook: https://www.typescriptlang.org/docs/handbook/2/template-literal-types.html
+- Branded Types pattern: https://egghead.io/blog/using-branded-types-in-typescript
 
 ---
 

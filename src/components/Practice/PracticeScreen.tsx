@@ -11,11 +11,13 @@
  * 時間切れ時の自動終了処理も担当します。
  */
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
+import { useFeedback } from '../../hooks/useFeedback';
 import { usePracticeSession } from '../../hooks/usePracticeSession';
 import { useTimer } from '../../hooks/useTimer';
 import { useGameStore } from '../../stores/gameStore';
 import { DartBoard } from '../DartBoard/DartBoard';
+import { BustQuestion } from './BustQuestion';
 import { Feedback } from './Feedback';
 import { NumPad } from './NumPad';
 import { QuestionDisplay } from './QuestionDisplay';
@@ -42,6 +44,16 @@ export function PracticeScreen(): JSX.Element {
   usePracticeSession();
   useTimer();
 
+  // フィードバック状態管理
+  const {
+    showFeedback,
+    lastAnswer,
+    bustAnswer,
+    handleConfirm,
+    handleBustAnswer,
+    handleBustFeedbackComplete,
+  } = useFeedback();
+
   // ストアから必要な状態を取得
   const gameState = useGameStore((state) => state.gameState);
   const sessionConfig = useGameStore((state) => state.sessionConfig);
@@ -51,17 +63,9 @@ export function PracticeScreen(): JSX.Element {
   const displayedDarts = useGameStore((state) => state.displayedDarts);
 
   // アクション関数を取得
-  const submitAnswer = useGameStore((state) => state.submitAnswer);
   const resetToSetup = useGameStore((state) => state.resetToSetup);
   const endSession = useGameStore((state) => state.endSession);
-  const getCurrentCorrectAnswer = useGameStore((state) => state.getCurrentCorrectAnswer);
-
-  // ローカル状態: フィードバック表示管理
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [lastAnswer, setLastAnswer] = useState<{
-    value: number;
-    isCorrect: boolean;
-  } | null>(null);
+  const getBustCorrectAnswer = useGameStore((state) => state.getBustCorrectAnswer);
 
   // 時間切れの検出と自動終了処理
   useEffect(() => {
@@ -72,41 +76,6 @@ export function PracticeScreen(): JSX.Element {
       }
     }
   }, [elapsedTime, sessionConfig, gameState, endSession]);
-
-  /**
-   * 回答確定時のハンドラー
-   */
-  const handleConfirm = (value: number): void => {
-    if (!currentQuestion) {
-      return;
-    }
-
-    // 正誤判定（submitAnswerの前に正解を取得）
-    const correctAnswer = getCurrentCorrectAnswer();
-    const isCorrect = value === correctAnswer;
-
-    // 回答を提出
-    submitAnswer(value);
-
-    // フィードバック表示用の情報を保存
-    setLastAnswer({ value, isCorrect });
-    setShowFeedback(true);
-  };
-
-  /**
-   * FeedbackコンポーネントのnextQuestionボタンが押された時のハンドラー
-   * currentQuestionの変化を監視してフィードバックを非表示にする
-   */
-  const prevQuestionRef = useRef(currentQuestion);
-  useEffect(() => {
-    // 問題が変わったらフィードバックを非表示にする
-    if (currentQuestion !== prevQuestionRef.current && showFeedback) {
-      setShowFeedback(false);
-      setLastAnswer(null);
-    }
-    // 次回のために現在の問題を保存
-    prevQuestionRef.current = currentQuestion;
-  }, [currentQuestion, showFeedback]);
 
   // 練習中でない場合は何も表示しない（防御的プログラミング）
   if (gameState !== 'practicing') {
@@ -120,6 +89,12 @@ export function PracticeScreen(): JSX.Element {
   // DartBoardに渡すダーツ座標と数
   const dartCoords = displayedDarts.map((dart) => dart.landingPoint);
   const dartCount = displayedDarts.length;
+
+  // バストフェーズかどうかを判定
+  const isBustPhase = currentQuestion?.questionPhase?.type === 'bust';
+
+  // バスト判定の正解を取得（gameStoreで計算）
+  const bustCorrectAnswer = getBustCorrectAnswer();
 
   return (
     <div className="practice-screen">
@@ -140,13 +115,42 @@ export function PracticeScreen(): JSX.Element {
           {/* 問題表示 */}
           <QuestionDisplay />
 
-          {/* フィードバック表示（回答送信後のみ） */}
-          {showFeedback && lastAnswer && (
-            <Feedback userAnswer={lastAnswer.value} isCorrect={lastAnswer.isCorrect} />
+          {/* バストフェーズの場合はBustQuestionを表示 */}
+          {isBustPhase && (
+            <>
+              <BustQuestion
+                correctAnswer={bustCorrectAnswer}
+                onAnswer={handleBustAnswer}
+                showFeedback={showFeedback}
+                userAnswer={bustAnswer ?? undefined}
+              />
+
+              {/* BustQuestionのフィードバック表示時は「次へ」ボタンを表示 */}
+              {showFeedback && bustAnswer !== null && (
+                <button
+                  type="button"
+                  className="feedback__next-button"
+                  onClick={handleBustFeedbackComplete}
+                  aria-label="Next Throw"
+                >
+                  次へ
+                </button>
+              )}
+            </>
           )}
 
-          {/* テンキー入力（フィードバック非表示時のみ） */}
-          {!showFeedback && <NumPad questionType={questionType} onConfirm={handleConfirm} />}
+          {/* スコアフェーズの場合 */}
+          {!isBustPhase && (
+            <>
+              {/* フィードバック表示（回答送信後のみ） */}
+              {showFeedback && lastAnswer && (
+                <Feedback userAnswer={lastAnswer.value} isCorrect={lastAnswer.isCorrect} />
+              )}
+
+              {/* テンキー入力（フィードバック非表示時のみ） */}
+              {!showFeedback && <NumPad questionType={questionType} onConfirm={handleConfirm} />}
+            </>
+          )}
         </section>
       </main>
 

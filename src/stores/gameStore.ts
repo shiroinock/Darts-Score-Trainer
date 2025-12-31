@@ -43,7 +43,8 @@ function determineQuestionMode(
   questionType: PracticeConfig['questionType'],
   throwUnit: number,
   totalScore: number,
-  remainingScore: number
+  remainingScore: number,
+  bustInfo?: BustInfo
 ): QuestionModeResult {
   // スコアモード
   if (questionType === 'score') {
@@ -56,9 +57,11 @@ function determineQuestionMode(
 
   // 残り点数モード
   if (questionType === 'remaining') {
+    // バスト発生時は正解を0点にする
+    const correctAnswer = bustInfo?.isBust ? 0 : remainingScore - totalScore;
     return {
       mode: 'remaining',
-      correctAnswer: remainingScore - totalScore,
+      correctAnswer,
       questionText: '残り点数は？',
     };
   }
@@ -75,9 +78,11 @@ function determineQuestionMode(
     };
   }
 
+  // バスト発生時は正解を0点にする
+  const correctAnswer = bustInfo?.isBust ? 0 : remainingScore - totalScore;
   return {
     mode: 'remaining',
-    correctAnswer: remainingScore - totalScore,
+    correctAnswer,
     questionText: '残り点数は？',
   };
 }
@@ -105,11 +110,31 @@ function checkAndUpdateBust(
   }
 
   const totalScore = currentQuestion.throws.reduce((sum, t) => sum + t.score, 0);
-  const lastThrow = currentQuestion.throws[currentQuestion.throws.length - 1];
-  const isDouble = lastThrow?.ring === 'DOUBLE';
-  const bustInfo = checkBust(remainingScore, totalScore, isDouble);
 
-  if (bustInfo.isBust) {
+  // bustInfoがある場合はそれを使用、ない場合は残り点数からバスト判定
+  let isBust = currentQuestion.bustInfo?.isBust ?? false;
+
+  // bustInfoがない場合、残り点数からバスト判定を行う
+  if (!currentQuestion.bustInfo) {
+    // オーバー判定
+    if (totalScore > remainingScore) {
+      isBust = true;
+    }
+    // 1点残し判定
+    else if (remainingScore - totalScore === 1) {
+      isBust = true;
+    }
+    // ダブルアウト判定（最後の投擲がダブルでない場合）
+    else if (remainingScore - totalScore === 0) {
+      const lastThrow = currentQuestion.throws[currentQuestion.throws.length - 1];
+      const isDouble = lastThrow?.ring === 'DOUBLE';
+      if (!isDouble) {
+        isBust = true;
+      }
+    }
+  }
+
+  if (isBust) {
     // バスト: 残り点数をラウンド開始時に戻す
     return { isBust: true, newRemainingScore: roundStartScore };
   }
@@ -120,19 +145,35 @@ function checkAndUpdateBust(
 
 /**
  * 統計情報を更新する
+ *
+ * @param stats - 統計情報
+ * @param isCorrect - 正解かどうか
+ * @param isBust - バストかどうか
+ *
+ * @remarks
+ * - 正解の場合は correct++ とストリーク更新
+ * - 不正解の場合はストリークリセット
+ * - バスト発生時は正解でもストリークリセット（バスト自体がペナルティ）
  */
 function updateStats(stats: Stats, isCorrect: boolean, isBust: boolean): void {
   stats.total++;
 
-  if (isCorrect && !isBust) {
-    // 正解かつバストでない場合のみ正解数をカウント
+  if (isCorrect) {
+    // 正解の場合は correct++ （バストで0点と答えた場合も含む）
     stats.correct++;
-    stats.currentStreak++;
-    if (stats.currentStreak > stats.bestStreak) {
-      stats.bestStreak = stats.currentStreak;
+
+    if (isBust) {
+      // バスト時は正解でもストリークをリセット（バスト自体がペナルティ）
+      stats.currentStreak = 0;
+    } else {
+      // バストでない正解のみストリークを継続
+      stats.currentStreak++;
+      if (stats.currentStreak > stats.bestStreak) {
+        stats.bestStreak = stats.currentStreak;
+      }
     }
   } else {
-    // 不正解またはバストの場合はストリークをリセット
+    // 不正解の場合はストリークをリセット
     stats.currentStreak = 0;
   }
 }
@@ -181,6 +222,69 @@ function simulateThrows(
 }
 
 /**
+ * 3投モードの表示中ダーツ数を表す型
+ *
+ * 3投モードでは、各ダーツを順次表示し、1〜3の値を取る。
+ */
+type DisplayedThrowCount = 1 | 2 | 3;
+
+/**
+ * 数値がDisplayedThrowCountかどうかを判定する型ガード
+ */
+function isDisplayedThrowCount(value: number): value is DisplayedThrowCount {
+  return value === 1 || value === 2 || value === 3;
+}
+
+/**
+ * 3投モードのquestionPhaseを計算する
+ *
+ * 3投モードでは、1本目・2本目の後にバスト判定を問い、
+ * 3本目の後に合計得点を問う。これはscoreモード・remainingモード両方に適用される。
+ *
+ * @param throwIndex - 現在表示されている投擲数（1, 2, 3）
+ * @returns 設定すべきquestionPhase
+ */
+function calculateQuestionPhase(throwIndex: DisplayedThrowCount): Question['questionPhase'] {
+  if (throwIndex === 1) {
+    // 1本目表示時: bustフェーズ
+    return { type: 'bust', throwIndex: 1 };
+  }
+  if (throwIndex === 2) {
+    // 2本目表示時: bustフェーズ
+    return { type: 'bust', throwIndex: 2 };
+  }
+  // throwIndex === 3
+  // 3本目表示時: scoreフェーズ
+  return { type: 'score', throwIndex: 3 };
+}
+
+/**
+ * 問題に含めるべきバスト情報を決定する
+ *
+ * - 3投モード: 常にバスト判定を問うため、バスト情報を保持
+ * - scoreモード: バスト判定を問わないため、undefined
+ * - その他: バスト情報を保持（remainingモード等）
+ *
+ * @param throwUnit - 投擲単位（1または3）
+ * @param mode - 問題モード（score, remaining, both）
+ * @param simulatedBustInfo - シミュレーション中に判定されたバスト情報
+ * @returns 問題に含めるバスト情報
+ */
+function determineBustInfo(
+  throwUnit: number,
+  mode: QuestionType,
+  simulatedBustInfo: BustInfo | undefined
+): BustInfo | undefined {
+  if (throwUnit === 3) {
+    return simulatedBustInfo;
+  }
+  if (mode === 'score') {
+    return undefined;
+  }
+  return simulatedBustInfo;
+}
+
+/**
  * ゲームストアの状態インターフェース
  */
 interface GameStore {
@@ -225,9 +329,10 @@ interface GameStore {
   tick: () => void;
 
   // ============================================================
-  // 計算プロパティ（2個）
+  // 計算プロパティ（3個）
   // ============================================================
   getCurrentCorrectAnswer: () => number;
+  getBustCorrectAnswer: () => boolean;
   getAccuracy: () => number;
 }
 
@@ -352,32 +457,33 @@ export const useGameStore = create<GameStore>()(
       generateQuestion: () =>
         set((state) => {
           const { config } = state;
+          const shouldCheckBust =
+            state.remainingScore > 0 && (config.throwUnit === 3 || config.questionType !== 'score');
 
-          // バスト判定が必要かどうかを事前に判定
-          // remainingScoreが0以下の場合はバスト判定不要（ゲーム終了）
-          const shouldCheckBust = config.questionType !== 'score' && state.remainingScore > 0;
-
-          // 投擲シミュレーションを実行
+          // 投擲シミュレーション
           const { throws, bustInfo: simulatedBustInfo } = simulateThrows(
             config,
             state.remainingScore,
             shouldCheckBust
           );
 
-          // 得点の合計を計算
+          // 問題情報の構築
           const totalScore = throws.reduce((sum, t) => sum + t.score, 0);
-
-          // 問題モードを決定
           const { mode, correctAnswer, questionText } = determineQuestionMode(
             config.questionType,
             config.throwUnit,
             totalScore,
-            state.remainingScore
+            state.remainingScore,
+            simulatedBustInfo
           );
 
-          // scoreモードの場合はbustInfoをクリア
-          const bustInfo = mode === 'score' ? undefined : simulatedBustInfo;
+          // バスト情報の決定
+          const bustInfo = determineBustInfo(config.throwUnit, mode, simulatedBustInfo);
 
+          // 問題フェーズの初期化
+          const questionPhase = config.throwUnit === 3 ? calculateQuestionPhase(1) : undefined;
+
+          // 問題を状態に保存
           state.currentQuestion = {
             mode,
             throws,
@@ -385,17 +491,12 @@ export const useGameStore = create<GameStore>()(
             questionText,
             startingScore: mode === 'remaining' ? state.remainingScore : undefined,
             bustInfo,
+            questionPhase,
           };
 
-          // 1投モードの場合は即座にdisplayedDartsに追加
-          if (config.throwUnit === 1) {
-            state.displayedDarts = [...throws];
-            state.currentThrowIndex = 1;
-          } else {
-            // 3投モードの場合は最初の1本のみ表示
-            state.displayedDarts = [throws[0]];
-            state.currentThrowIndex = 1;
-          }
+          // ダーツ表示の初期化
+          state.displayedDarts = config.throwUnit === 3 ? [throws[0]] : throws;
+          state.currentThrowIndex = 1;
         }),
 
       /**
@@ -410,11 +511,23 @@ export const useGameStore = create<GameStore>()(
             return;
           }
 
-          // 現在の問題が存在し、まだ表示していない投擲がある場合
-          if (currentQuestion && state.currentThrowIndex < currentQuestion.throws.length) {
-            const nextThrow = currentQuestion.throws[state.currentThrowIndex];
-            state.displayedDarts.push(nextThrow);
-            state.currentThrowIndex++;
+          // 現在の問題が存在し、まだ表示していない投擲がある場合のみ処理
+          if (!currentQuestion || state.currentThrowIndex >= currentQuestion.throws.length) {
+            return;
+          }
+
+          // 次のダーツを表示
+          const nextThrow = currentQuestion.throws[state.currentThrowIndex];
+          state.displayedDarts.push(nextThrow);
+          state.currentThrowIndex++;
+
+          // questionPhaseの更新（3投モードのみ）
+          if (
+            config.throwUnit === 3 &&
+            state.currentQuestion &&
+            isDisplayedThrowCount(state.currentThrowIndex)
+          ) {
+            state.currentQuestion.questionPhase = calculateQuestionPhase(state.currentThrowIndex);
           }
         }),
 
@@ -592,6 +705,45 @@ export const useGameStore = create<GameStore>()(
       getCurrentCorrectAnswer: () => {
         const { currentQuestion } = get();
         return currentQuestion?.correctAnswer ?? 0;
+      },
+
+      /**
+       * バスト判定の正解を取得する（3投モードのバストフェーズ用）
+       *
+       * 表示されている最後のダーツ投擲時点でのバスト判定を行う。
+       * - 1本目表示時: 1本目がバストを引き起こすか
+       * - 2本目表示時: 1本目+2本目の累積がバストを引き起こすか
+       */
+      getBustCorrectAnswer: () => {
+        const { currentQuestion, displayedDarts, roundStartScore } = get();
+
+        // バストフェーズでない場合はfalse
+        if (currentQuestion?.questionPhase?.type !== 'bust') {
+          return false;
+        }
+
+        // 表示されているダーツがない場合はfalse
+        if (displayedDarts.length === 0) {
+          return false;
+        }
+
+        // 表示されている最後のダーツ
+        const lastDisplayedDart = displayedDarts[displayedDarts.length - 1];
+
+        // その投擲時点での残り点数を計算（最後の1投を除いた累積を引く）
+        const previousCumulativeScore = displayedDarts
+          .slice(0, -1)
+          .reduce((sum, dart) => sum + dart.score, 0);
+        const currentRemainingScore = roundStartScore - previousCumulativeScore;
+
+        // バスト判定を実行（最後の1投のスコアで判定）
+        const bustResult = checkBust(
+          currentRemainingScore,
+          lastDisplayedDart.score,
+          isDoubleRing(lastDisplayedDart.ring)
+        );
+
+        return bustResult.isBust;
       },
 
       /**
