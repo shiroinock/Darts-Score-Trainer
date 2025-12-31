@@ -1190,3 +1190,53 @@ CSS関連のタスク（レイアウト調整、レスポンシブ対応など�
 1. **視覚的確認の推奨**: CSSの変更は視覚的な確認が必要であることを明記
 2. **代替テスト手段の提案**: Storybook、Chromatic、Percy等のビジュアルリグレッションツールを推奨
 3. **関連するTypeScriptファイルの確認**: CSSと連動するコンポーネント（.tsx）がある場合は、そちらのテストパターンを判定
+
+### 2026-01-01: 既存ファイル内の特定機能修正タスクの判定
+
+#### 背景
+「gameStore.tsのgenerateQuestionアクションを修正（シャッフルバッグ方式）」のテストパターン判定において、既存ファイル内の特定機能を修正するタスクに対するガイドラインが不明確であった。また、出力が途中で切れる問題が発生した。
+
+#### 問題の根本原因
+1. 既存ファイルの一部機能を修正する場合でも、ファイル全体のテストパターンを判定しようとした
+2. タスクの詳細説明に時間をかけ、JSON出力が遅れた
+3. 標準パターンファイル（gameStore.ts）に対して過剰な分析を行った
+
+#### 追加ガイドライン
+
+##### 既存ファイルの機能修正タスクの扱い
+
+**最重要ルール**: 既存ファイル内の特定機能を修正するタスクの場合、ファイルの種類に基づいて標準パターンを即座に適用すること
+
+1. **既存ファイル修正の判定基準**
+   以下の条件に該当する場合、標準パターンを即座に適用：
+   - 既にテストファイルが存在するファイルの修正
+   - ファイルタイプが明確（store/hook/utility/component）
+   - 新規ファイル作成ではなく、既存ファイルの機能追加・修正
+
+2. **gameStore.ts の機能修正に対する標準応答**
+   `gameStore.ts` の任意の機能修正（アクション追加、状態追加など）に対しては、即座に以下を出力：
+   ```json
+   {"file":"src/stores/gameStore.ts","tddMode":"test-first","testPattern":"store","placement":"colocated","testFilePath":"src/stores/gameStore.test.ts"}
+   ```
+
+3. **機能の詳細は判定に影響しない**
+   - 「シャッフルバッグ方式」「Fisher-Yatesアルゴリズム」などの実装詳細は判定に不要
+   - ファイルタイプ（store/hook/utility/component）のみで判定可能
+   - タスク概要の詳細な分析は行わない
+
+##### 超簡潔な出力形式の使用
+
+既存ファイルの機能修正に対しては、導入文なしで1行JSON形式で出力してもよい：
+
+```
+{"file":"[パス]","tddMode":"[モード]","testPattern":"[パターン]","placement":"colocated","testFilePath":"[テストパス]"}
+```
+
+##### ファイルタイプ別の標準応答
+
+| ファイルパターン | 標準応答 |
+|----------------|---------|
+| `src/stores/*.ts` | `{"tddMode":"test-first","testPattern":"store","placement":"colocated"}` |
+| `src/hooks/*.ts` | `{"tddMode":"test-first","testPattern":"hook","placement":"colocated"}` |
+| `src/utils/*.ts` | `{"tddMode":"test-first","testPattern":"unit","placement":"colocated"}` |
+| `src/components/*/*.tsx` | `{"tddMode":"test-later","testPattern":"component","placement":"colocated"}` |

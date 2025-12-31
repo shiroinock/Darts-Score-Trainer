@@ -23,6 +23,7 @@ import type {
 import { DEFAULT_TARGET, MIN_SCORE, STORAGE_KEY } from '../utils/constants/index.js';
 import { getOptimalTarget } from '../utils/dartStrategy/getOptimalTarget.js';
 import { checkBust, isDoubleRing, isGameFinished } from '../utils/gameLogic/index.js';
+import { type ExpandedTarget, getAllTargetsExpanded } from '../utils/targetCoordinates/index.js';
 import { executeThrow } from '../utils/throwSimulator/index.js';
 import { getDefaultConfig, PRESETS } from './config/presets.js';
 import { initialSessionConfig, initialStats } from './session/initialState.js';
@@ -292,11 +293,158 @@ function determineBustInfo(
 }
 
 /**
+ * RingTypeをTargetTypeに変換
+ */
+function ringTypeToTargetType(ringType: ExpandedTarget['ringType']): Target['type'] {
+  if (ringType === 'INNER_SINGLE' || ringType === 'OUTER_SINGLE') return 'SINGLE';
+  if (ringType === 'DOUBLE') return 'DOUBLE';
+  if (ringType === 'TRIPLE') return 'TRIPLE';
+  if (ringType === 'INNER_BULL' || ringType === 'OUTER_BULL') return 'BULL';
+  return 'SINGLE'; // fallback
+}
+
+/**
+ * Fisher-Yatesシャッフル（配列をランダムにシャッフル）
+ */
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+/**
+ * バッグを初期化（82ターゲットをシャッフル）
+ */
+function initializeBag(): ExpandedTarget[] {
+  const allTargets = getAllTargetsExpanded();
+  return shuffleArray(allTargets);
+}
+
+/**
+ * バッグをリシャッフル（前回の最後と今回の最初が同じにならないよう調整）
+ */
+function reshuffleBag(lastTarget: ExpandedTarget): ExpandedTarget[] {
+  const newBag = initializeBag();
+
+  // 新しいバッグの最初が前回の最後と同じ場合は、異なる要素と交換
+  if (newBag[0].label === lastTarget.label && newBag.length > 1) {
+    // 最初と異なる最初の要素を見つけて交換（無限ループリスク回避）
+    const swapIndex = newBag.findIndex((t, i) => i > 0 && t.label !== lastTarget.label);
+    if (swapIndex !== -1) {
+      [newBag[0], newBag[swapIndex]] = [newBag[swapIndex], newBag[0]];
+    }
+  }
+
+  return newBag;
+}
+
+/**
+ * シャッフルバッグモード用の投擲結果を生成
+ */
+interface ShuffleBagState {
+  targetBag: ExpandedTarget[];
+  targetBagIndex: number;
+}
+
+/**
+ * シャッフルバッグから投擲結果を生成
+ */
+function generateThrowsFromBag(
+  bagState: ShuffleBagState,
+  throwUnit: 1 | 3
+): { throws: ThrowResult[]; newBagState: ShuffleBagState } {
+  let { targetBag, targetBagIndex } = bagState;
+
+  // インデックスが範囲外の場合、リシャッフル
+  if (targetBagIndex >= targetBag.length) {
+    const lastTarget = targetBag[targetBag.length - 1];
+    targetBag = reshuffleBag(lastTarget);
+    targetBagIndex = 0;
+  }
+
+  // 現在のターゲットを取得
+  const currentTarget = targetBag[targetBagIndex];
+
+  // 投擲結果を生成（ターゲットの中心座標を使用、シミュレーションなし）
+  const throws: ThrowResult[] = [];
+  for (let i = 0; i < throwUnit; i++) {
+    const throwResult: ThrowResult = {
+      target: {
+        type: ringTypeToTargetType(currentTarget.ringType),
+        number: currentTarget.number === 0 ? null : currentTarget.number,
+        label: currentTarget.label,
+      },
+      landingPoint: { x: currentTarget.x, y: currentTarget.y },
+      score: currentTarget.score,
+      ring: currentTarget.ringType,
+      segmentNumber: currentTarget.number,
+    };
+    throws.push(throwResult);
+  }
+
+  return {
+    throws,
+    newBagState: { targetBag, targetBagIndex },
+  };
+}
+
+/**
+ * 問題オブジェクトを構築する
+ */
+function buildQuestion(
+  throws: ThrowResult[],
+  config: PracticeConfig,
+  remainingScore: number,
+  roundStartScore: number,
+  simulatedBustInfo: BustInfo | undefined
+): Question {
+  const totalScore = throws.reduce((sum, t) => sum + t.score, 0);
+  const { mode, correctAnswer, questionText } = determineQuestionMode(
+    config.questionType,
+    config.throwUnit,
+    totalScore,
+    remainingScore,
+    roundStartScore,
+    simulatedBustInfo
+  );
+  const bustInfo = determineBustInfo(config.throwUnit, mode, simulatedBustInfo);
+  const questionPhase = config.throwUnit === 3 ? calculateQuestionPhase(1) : undefined;
+
+  return {
+    mode,
+    throws,
+    correctAnswer,
+    questionText,
+    startingScore: mode === 'remaining' ? remainingScore : undefined,
+    bustInfo,
+    questionPhase,
+  };
+}
+
+/**
+ * シャッフルバッグモード用の状態検証
+ */
+function validateShuffleBagState(
+  targetBag: ExpandedTarget[] | undefined,
+  targetBagIndex: number | undefined
+): asserts targetBag is ExpandedTarget[] {
+  if (!targetBag || targetBagIndex === undefined) {
+    throw new Error('targetBag または targetBagIndex が未初期化です');
+  }
+  if (targetBag.length === 0) {
+    throw new Error('targetBag が空です');
+  }
+}
+
+/**
  * ゲームストアの状態インターフェース
  */
 interface GameStore {
   // ============================================================
-  // 基本状態（11個）
+  // 基本状態（13個）
   // ============================================================
   gameState: GameState;
   config: PracticeConfig;
@@ -310,6 +458,8 @@ interface GameStore {
   elapsedTime: number;
   isTimerRunning: boolean;
   practiceStartTime?: number;
+  targetBag?: ExpandedTarget[];
+  targetBagIndex?: number;
 
   // ============================================================
   // 設定アクション（5個）
@@ -365,6 +515,8 @@ export const useGameStore = create<GameStore>()(
       elapsedTime: 0,
       isTimerRunning: false,
       practiceStartTime: undefined,
+      targetBag: undefined,
+      targetBagIndex: undefined,
 
       // ============================================================
       // 設定アクション
@@ -452,6 +604,16 @@ export const useGameStore = create<GameStore>()(
           // startingScoreは必須なので、全モードで設定
           state.remainingScore = state.config.startingScore;
           state.roundStartScore = state.remainingScore;
+
+          // シャッフルバッグの初期化
+          if (state.config.randomizeTarget === true) {
+            state.targetBag = initializeBag();
+            state.targetBagIndex = 0;
+          } else {
+            // randomizeTargetがfalse/undefinedの場合はクリア
+            state.targetBag = undefined;
+            state.targetBagIndex = undefined;
+          }
         });
 
         // 最初の問題を生成（set完了後に実行）
@@ -464,45 +626,38 @@ export const useGameStore = create<GameStore>()(
       generateQuestion: () =>
         set((state) => {
           const { config } = state;
-          const shouldCheckBust =
-            state.remainingScore > 0 && (config.throwUnit === 3 || config.questionType !== 'score');
+          let throws: ThrowResult[];
+          let simulatedBustInfo: BustInfo | undefined;
 
-          // 投擲シミュレーション
-          const { throws, bustInfo: simulatedBustInfo } = simulateThrows(
+          // randomizeTarget: trueの場合、シャッフルバッグから取得
+          if (config.randomizeTarget === true) {
+            validateShuffleBagState(state.targetBag, state.targetBagIndex);
+            const result = generateThrowsFromBag(
+              { targetBag: state.targetBag, targetBagIndex: state.targetBagIndex ?? 0 },
+              config.throwUnit
+            );
+            throws = result.throws;
+            state.targetBag = result.newBagState.targetBag;
+            state.targetBagIndex = result.newBagState.targetBagIndex;
+            simulatedBustInfo = undefined;
+          } else {
+            // 従来通りの投擲シミュレーション
+            const shouldCheckBust =
+              state.remainingScore > 0 &&
+              (config.throwUnit === 3 || config.questionType !== 'score');
+            const simulationResult = simulateThrows(config, state.remainingScore, shouldCheckBust);
+            throws = simulationResult.throws;
+            simulatedBustInfo = simulationResult.bustInfo;
+          }
+
+          // 問題オブジェクト構築とダーツ表示初期化
+          state.currentQuestion = buildQuestion(
+            throws,
             config,
-            state.remainingScore,
-            shouldCheckBust
-          );
-
-          // 問題情報の構築
-          const totalScore = throws.reduce((sum, t) => sum + t.score, 0);
-          const { mode, correctAnswer, questionText } = determineQuestionMode(
-            config.questionType,
-            config.throwUnit,
-            totalScore,
             state.remainingScore,
             state.roundStartScore,
             simulatedBustInfo
           );
-
-          // バスト情報の決定
-          const bustInfo = determineBustInfo(config.throwUnit, mode, simulatedBustInfo);
-
-          // 問題フェーズの初期化
-          const questionPhase = config.throwUnit === 3 ? calculateQuestionPhase(1) : undefined;
-
-          // 問題を状態に保存
-          state.currentQuestion = {
-            mode,
-            throws,
-            correctAnswer,
-            questionText,
-            startingScore: mode === 'remaining' ? state.remainingScore : undefined,
-            bustInfo,
-            questionPhase,
-          };
-
-          // ダーツ表示の初期化
           state.displayedDarts = config.throwUnit === 3 ? [throws[0]] : throws;
           state.currentThrowIndex = 1;
         }),
@@ -575,12 +730,19 @@ export const useGameStore = create<GameStore>()(
           updateStats(state.stats, isCorrect, isBust);
 
           // 問題数モードで最終問題に到達した場合、セッションを終了
+          // Note: シャッフルバッグモードでは問題数制限を無効化
           if (
+            state.config.randomizeTarget !== true &&
             state.sessionConfig.mode === 'questions' &&
             state.stats.total >= (state.sessionConfig.questionCount || 0)
           ) {
             state.gameState = 'results';
             state.isTimerRunning = false;
+          }
+
+          // シャッフルバッグモードの場合、インデックスをインクリメント
+          if (state.config.randomizeTarget === true && state.targetBagIndex !== undefined) {
+            state.targetBagIndex++;
           }
         });
       },
@@ -644,6 +806,8 @@ export const useGameStore = create<GameStore>()(
           state.currentThrowIndex = 0;
           state.remainingScore = 0;
           state.roundStartScore = 0;
+          state.targetBag = undefined;
+          state.targetBagIndex = undefined;
         }),
 
       /**

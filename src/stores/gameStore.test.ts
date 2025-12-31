@@ -3022,6 +3022,8 @@ describe('gameStore', () => {
             throwUnit: 3,
             questionType: 'score',
             startingScore: 501,
+            target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            randomizeTarget: false, // 従来の投擲シミュレーションを使用
           });
           result.current.startPractice();
         });
@@ -6049,6 +6051,760 @@ describe('gameStore', () => {
         // Assert: 不正解でも残り点数は減算される
         const newRemainingScore = result.current.remainingScore;
         expect(newRemainingScore).toBe(initialRemainingScore - totalScore);
+      });
+    });
+  });
+
+  /**
+   * シャッフルバッグ方式による問題生成（randomizeTarget: true）
+   *
+   * 従来の投擲シミュレーション方式ではなく、82ターゲットをシャッフルして
+   * 順次出題する方式のテスト。
+   *
+   * 【機能仕様】
+   * 1. 82ターゲット（getAllTargetsExpanded()）をFisher-Yatesでシャッフル
+   * 2. バッグから順番に取り出して出題
+   * 3. バッグが空になったらリシャッフル
+   * 4. リシャッフル時、前回最後と今回最初が同じにならないよう調整
+   */
+  describe('【RED】シャッフルバッグ方式による問題生成', () => {
+    describe('初期化テスト', () => {
+      test('【RED】randomizeTarget: true で startPractice() 時にtargetBagが82要素で初期化される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            randomizeTarget: true,
+          });
+        });
+
+        // Act
+        act(() => {
+          result.current.startPractice();
+        });
+
+        // Assert
+        expect(result.current.targetBag).toBeDefined();
+        expect(result.current.targetBag).toHaveLength(82);
+      });
+
+      test('【RED】randomizeTarget: true で startPractice() 時にtargetBagIndexが0で初期化される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            randomizeTarget: true,
+          });
+        });
+
+        // Act
+        act(() => {
+          result.current.startPractice();
+        });
+
+        // Assert
+        expect(result.current.targetBagIndex).toBe(0);
+      });
+
+      test('【RED】randomizeTarget: false の場合、targetBagは初期化されない', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            randomizeTarget: false,
+          });
+        });
+
+        // Act
+        act(() => {
+          result.current.startPractice();
+        });
+
+        // Assert
+        expect(result.current.targetBag).toBeUndefined();
+        expect(result.current.targetBagIndex).toBeUndefined();
+      });
+
+      test('【RED】randomizeTarget: undefined の場合、targetBagは初期化されない', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            randomizeTarget: undefined,
+          });
+        });
+
+        // Act
+        act(() => {
+          result.current.startPractice();
+        });
+
+        // Assert
+        expect(result.current.targetBag).toBeUndefined();
+        expect(result.current.targetBagIndex).toBeUndefined();
+      });
+    });
+
+    describe('問題生成テスト', () => {
+      test('【RED】generateQuestion() で targetBagIndex が1増加する', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            randomizeTarget: true,
+          });
+          result.current.startPractice();
+        });
+
+        const initialIndex = result.current.targetBagIndex ?? 0;
+        expect(initialIndex).toBe(0);
+
+        // Act: 1問目を生成（startPractice内で既に生成済み）
+        // 次の問題を生成
+        act(() => {
+          result.current.simulateNextThrow();
+          result.current.submitAnswer(0); // 回答して次の問題へ
+        });
+
+        // Assert
+        const newIndex = result.current.targetBagIndex;
+        expect(newIndex).toBe(initialIndex + 1);
+      });
+
+      test('【RED】出題されるターゲットが targetBag[index] と一致する', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            randomizeTarget: true,
+          });
+          result.current.startPractice();
+        });
+
+        // Act: 最初の問題を確認
+        const currentIndex = result.current.targetBagIndex ?? 0;
+        const expectedTarget = result.current.targetBag?.[currentIndex];
+        const currentQuestion = result.current.currentQuestion;
+
+        // Assert
+        expect(currentQuestion).toBeDefined();
+        expect(currentQuestion?.throws).toHaveLength(1);
+        expect(currentQuestion?.throws[0].landingPoint.x).toBeCloseTo(expectedTarget?.x ?? 0, 5);
+        expect(currentQuestion?.throws[0].landingPoint.y).toBeCloseTo(expectedTarget?.y ?? 0, 5);
+        expect(currentQuestion?.throws[0].score).toBe(expectedTarget?.score);
+      });
+
+      test('【RED】バッグ内の82問を順次出題後、リシャッフルされる', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            randomizeTarget: true,
+          });
+          result.current.startPractice();
+        });
+
+        const firstBag = [...(result.current.targetBag ?? [])];
+
+        // Act: 82問を出題（submitAnswer後にnextQuestionを明示的に呼ぶ）
+        for (let i = 0; i < 82; i++) {
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.submitAnswer(0);
+            result.current.nextQuestion(); // 次の問題へ
+          });
+        }
+
+        // Assert: リシャッフル後のバッグも82要素
+        const secondBag = result.current.targetBag;
+        expect(secondBag).toHaveLength(82);
+
+        // Assert: バッグの内容が変わっている（順序が異なる）
+        // 注: シャッフルのため、必ずしも全て異なるとは限らないが、高い確率で異なる
+        const isDifferent = firstBag.some((target, index) => {
+          const secondTarget = secondBag?.[index];
+          return target.label !== secondTarget?.label;
+        });
+        expect(isDifferent).toBe(true);
+      });
+    });
+
+    describe('リシャッフル条件テスト', () => {
+      test('【RED】82問目を出題後、バッグがリシャッフルされる', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            randomizeTarget: true,
+          });
+          result.current.startPractice();
+        });
+
+        const firstBag = [...(result.current.targetBag ?? [])];
+
+        // Act: 81問を出題（インデックス0-80まで）
+        for (let i = 0; i < 81; i++) {
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.submitAnswer(0);
+            result.current.nextQuestion(); // 次の問題へ
+          });
+        }
+
+        // この時点でインデックスは81（82問目）
+        expect(result.current.targetBagIndex).toBe(81);
+
+        // 82問目を出題
+        act(() => {
+          result.current.simulateNextThrow();
+          result.current.submitAnswer(0);
+          result.current.nextQuestion(); // 次の問題へ（リシャッフルが発生）
+        });
+
+        // Assert: リシャッフルされてインデックスが0にリセット
+        // Note: nextQuestion内でgenerateQuestionが呼ばれ、インデックス0を使って問題生成後にインデックスが1に増加
+        // しかし、リシャッフル直後なのでインデックスは0から再開
+        expect(result.current.targetBagIndex).toBe(0);
+
+        // Assert: バッグが新しくシャッフルされている
+        const secondBag = result.current.targetBag;
+        const isDifferent = firstBag.some((target, index) => {
+          const secondTarget = secondBag?.[index];
+          return target.label !== secondTarget?.label;
+        });
+        expect(isDifferent).toBe(true);
+      });
+
+      test('【RED】リシャッフル後のバッグも82要素', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            randomizeTarget: true,
+          });
+          result.current.startPractice();
+        });
+
+        // Act: 82問を出題してリシャッフル
+        for (let i = 0; i < 82; i++) {
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.submitAnswer(0);
+            result.current.nextQuestion(); // 次の問題へ
+          });
+        }
+
+        // Assert
+        expect(result.current.targetBag).toHaveLength(82);
+      });
+
+      test('【RED】リシャッフル後、連続性が確保される（前回最後 ≠ 今回最初）', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            randomizeTarget: true,
+          });
+          result.current.startPractice();
+        });
+
+        // Act: 81問を出題
+        for (let i = 0; i < 81; i++) {
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.submitAnswer(0);
+            result.current.nextQuestion(); // 次の問題へ
+          });
+        }
+
+        // 82問目（最後）のターゲットを記録
+        const lastTargetOfFirstBag = result.current.targetBag?.[81];
+
+        // 82問目を出題してリシャッフル
+        act(() => {
+          result.current.simulateNextThrow();
+          result.current.submitAnswer(0);
+          result.current.nextQuestion(); // 次の問題へ（リシャッフルが発生）
+        });
+
+        // リシャッフル後の最初のターゲット
+        const firstTargetOfSecondBag = result.current.targetBag?.[0];
+
+        // Assert: 前回最後と今回最初が異なる
+        expect(lastTargetOfFirstBag?.label).not.toBe(firstTargetOfSecondBag?.label);
+      });
+    });
+
+    describe('網羅性テスト', () => {
+      test('【RED】82問出題すると、全82ターゲットが1回ずつ出題される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            randomizeTarget: true,
+          });
+          result.current.startPractice();
+        });
+
+        // Act: 82問を出題し、各問題のターゲットラベルを記録
+        const seenLabels = new Set<string>();
+
+        for (let i = 0; i < 82; i++) {
+          const targetLabel = result.current.targetBag?.[i]?.label;
+          if (targetLabel) {
+            seenLabels.add(targetLabel);
+          }
+
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.submitAnswer(0);
+            result.current.nextQuestion(); // 次の問題へ
+          });
+        }
+
+        // Assert: 82種類全てのターゲットが出題された
+        expect(seenLabels.size).toBe(82);
+      });
+
+      test('【RED】同じターゲットが連続しない', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            randomizeTarget: true,
+          });
+          result.current.startPractice();
+        });
+
+        // Act: 複数問を出題し、連続性を確認
+        let previousLabel: string | undefined;
+
+        for (let i = 0; i < 82; i++) {
+          const currentLabel = result.current.targetBag?.[i]?.label;
+
+          // Assert: 前の問題と異なる
+          if (previousLabel !== undefined) {
+            expect(currentLabel).not.toBe(previousLabel);
+          }
+
+          previousLabel = currentLabel;
+
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.submitAnswer(0);
+            result.current.nextQuestion(); // 次の問題へ
+          });
+        }
+      });
+    });
+
+    describe('シミュレーション無効化テスト', () => {
+      test('【RED】randomizeTarget: true の場合、stdDevMM に関係なく同じターゲット座標が使用される', () => {
+        // Arrange: stdDevMM=50（初心者レベル）で設定
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 50, // 大きな標準偏差
+            randomizeTarget: true,
+          });
+          result.current.startPractice();
+        });
+
+        // Act: 問題を生成
+        const currentIndex = result.current.targetBagIndex ?? 0;
+        const expectedTarget = result.current.targetBag?.[currentIndex];
+        const currentQuestion = result.current.currentQuestion;
+
+        // Assert: ターゲットの中心座標が使用される（シミュレーションによる散らばりなし）
+        expect(currentQuestion?.throws[0].landingPoint.x).toBeCloseTo(expectedTarget?.x ?? 0, 5);
+        expect(currentQuestion?.throws[0].landingPoint.y).toBeCloseTo(expectedTarget?.y ?? 0, 5);
+      });
+
+      test('【RED】投擲シミュレーションではなく、ターゲットの中心座標がそのまま使用される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            randomizeTarget: true,
+          });
+          result.current.startPractice();
+        });
+
+        // Act: 複数の問題で座標の一致を確認
+        for (let i = 0; i < 5; i++) {
+          const currentIndex = result.current.targetBagIndex ?? 0;
+          const expectedTarget = result.current.targetBag?.[currentIndex];
+          const currentQuestion = result.current.currentQuestion;
+
+          // Assert: 座標が正確に一致（散らばりなし）
+          expect(currentQuestion?.throws[0].landingPoint.x).toBeCloseTo(expectedTarget?.x ?? 0, 10);
+          expect(currentQuestion?.throws[0].landingPoint.y).toBeCloseTo(expectedTarget?.y ?? 0, 10);
+          expect(currentQuestion?.throws[0].score).toBe(expectedTarget?.score);
+
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.submitAnswer(0);
+            result.current.nextQuestion(); // 次の問題へ
+          });
+        }
+      });
+    });
+
+    describe('既存動作との互換性テスト', () => {
+      test('【RED】randomizeTarget: false の場合、従来通り投擲シミュレーションが使用される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            randomizeTarget: false,
+          });
+          result.current.startPractice();
+        });
+
+        // Act: 問題を生成
+        const currentQuestion = result.current.currentQuestion;
+
+        // Assert: targetBagが存在しない
+        expect(result.current.targetBag).toBeUndefined();
+
+        // Assert: 問題は生成される（従来通りのシミュレーション）
+        expect(currentQuestion).toBeDefined();
+        expect(currentQuestion?.throws).toHaveLength(1);
+        expect(currentQuestion?.throws[0].score).toBeGreaterThanOrEqual(0);
+      });
+
+      test('【RED】randomizeTarget: undefined の場合、従来通り投擲シミュレーションが使用される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            randomizeTarget: undefined,
+          });
+          result.current.startPractice();
+        });
+
+        // Act: 問題を生成
+        const currentQuestion = result.current.currentQuestion;
+
+        // Assert: targetBagが存在しない
+        expect(result.current.targetBag).toBeUndefined();
+
+        // Assert: 問題は生成される（従来通りのシミュレーション）
+        expect(currentQuestion).toBeDefined();
+        expect(currentQuestion?.throws).toHaveLength(1);
+        expect(currentQuestion?.throws[0].score).toBeGreaterThanOrEqual(0);
+      });
+
+      test('【RED】randomizeTarget: false で複数問題を生成すると、各問題で異なる散らばりが発生する', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            randomizeTarget: false,
+          });
+          result.current.startPractice();
+        });
+
+        // Act: 複数の問題を生成し、着弾座標を記録
+        const landingPoints: Array<{ x: number; y: number }> = [];
+
+        for (let i = 0; i < 10; i++) {
+          const currentQuestion = result.current.currentQuestion;
+          if (currentQuestion?.throws[0]) {
+            landingPoints.push({
+              x: currentQuestion.throws[0].landingPoint.x,
+              y: currentQuestion.throws[0].landingPoint.y,
+            });
+          }
+
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.submitAnswer(0);
+            result.current.nextQuestion(); // 次の問題へ
+          });
+        }
+
+        // Assert: 少なくとも一部の座標が異なる（シミュレーションによる散らばり）
+        const uniquePoints = new Set(landingPoints.map((p) => `${p.x},${p.y}`));
+        expect(uniquePoints.size).toBeGreaterThan(1);
+      });
+    });
+
+    describe('throwUnit: 3 との組み合わせテスト', () => {
+      test('【RED】randomizeTarget: true かつ throwUnit: 3 の場合、3投全てが同じターゲットを使用する', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            randomizeTarget: true,
+          });
+          result.current.startPractice();
+        });
+
+        // Act: 3投を生成
+        act(() => {
+          result.current.simulateNextThrow();
+          result.current.simulateNextThrow();
+        });
+
+        const currentQuestion = result.current.currentQuestion;
+        const currentIndex = result.current.targetBagIndex ?? 0;
+        const expectedTarget = result.current.targetBag?.[currentIndex];
+
+        // Assert: 3投全てが同じターゲット座標
+        expect(currentQuestion?.throws).toHaveLength(3);
+        currentQuestion?.throws.forEach((throwResult) => {
+          expect(throwResult.landingPoint.x).toBeCloseTo(expectedTarget?.x ?? 0, 5);
+          expect(throwResult.landingPoint.y).toBeCloseTo(expectedTarget?.y ?? 0, 5);
+          expect(throwResult.score).toBe(expectedTarget?.score);
+        });
+      });
+
+      test('【RED】throwUnit: 3 で1ラウンド完了後、次のターゲットに移る', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            randomizeTarget: true,
+          });
+          result.current.startPractice();
+        });
+
+        const initialIndex = result.current.targetBagIndex ?? 0;
+
+        // Act: 3投を完了して回答、次の問題へ
+        act(() => {
+          result.current.simulateNextThrow();
+          result.current.simulateNextThrow();
+          result.current.submitAnswer(0);
+          result.current.nextQuestion(); // 次の問題へ
+        });
+
+        const newIndex = result.current.targetBagIndex;
+
+        // Assert: インデックスが1増加
+        // nextQuestion → generateQuestion → generateThrowsFromBag でインデックスがそのまま使用される
+        expect(newIndex).toBe(initialIndex + 1);
+      });
+    });
+
+    describe('リセット動作テスト', () => {
+      test('【RED】resetToSetup() で targetBag と targetBagIndex がクリアされる', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            randomizeTarget: true,
+          });
+          result.current.startPractice();
+        });
+
+        expect(result.current.targetBag).toHaveLength(82);
+        expect(result.current.targetBagIndex).toBe(0);
+
+        // Act
+        act(() => {
+          result.current.resetToSetup();
+        });
+
+        // Assert: クリアされる
+        expect(result.current.targetBag).toBeUndefined();
+        expect(result.current.targetBagIndex).toBeUndefined();
+      });
+
+      test('【RED】startPractice() を再実行すると、新しいバッグが生成される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            randomizeTarget: true,
+          });
+          result.current.startPractice();
+        });
+
+        const firstBag = [...(result.current.targetBag ?? [])];
+
+        // Act: リセットして再開始
+        act(() => {
+          result.current.resetToSetup();
+          result.current.startPractice();
+        });
+
+        const secondBag = result.current.targetBag;
+
+        // Assert: 新しいバッグが生成される（シャッフルにより順序が異なる可能性が高い）
+        expect(secondBag).toHaveLength(82);
+        const isDifferent = firstBag.some((target, index) => {
+          const secondTarget = secondBag?.[index];
+          return target.label !== secondTarget?.label;
+        });
+        expect(isDifferent).toBe(true);
+      });
+    });
+
+    describe('エッジケース', () => {
+      test('【RED】targetBag が空配列の場合、エラーをスローする', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        // 強制的に空配列を設定
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            randomizeTarget: true,
+          });
+        });
+
+        act(() => {
+          useGameStore.setState({ targetBag: [] });
+        });
+
+        // Act & Assert
+        expect(() => {
+          act(() => {
+            result.current.generateQuestion();
+          });
+        }).toThrow();
+      });
+
+      test('【RED】targetBagIndex が範囲外の場合、リシャッフルされる', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+            randomizeTarget: true,
+          });
+          result.current.startPractice();
+        });
+
+        // 強制的にインデックスを範囲外に設定
+        act(() => {
+          useGameStore.setState({ targetBagIndex: 100 });
+        });
+
+        // Act: 問題生成
+        act(() => {
+          result.current.generateQuestion();
+        });
+
+        // Assert: リシャッフルされてインデックスがリセット
+        expect(result.current.targetBagIndex).toBe(0);
+        expect(result.current.targetBag).toHaveLength(82);
       });
     });
   });
