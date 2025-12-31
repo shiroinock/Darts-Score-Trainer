@@ -10,6 +10,14 @@ import { useEffect } from 'react';
 import './BustQuestion.css';
 
 /**
+ * キーボードショートカット定数
+ */
+const KEYBOARD_SHORTCUTS = {
+  BUST: ['b', 'B'],
+  SAFE: ['s', 'S'],
+} as const;
+
+/**
  * BustQuestionコンポーネントのプロパティ
  */
 interface BustQuestionProps {
@@ -72,17 +80,17 @@ export function BustQuestion({
   useEffect(() => {
     // フィードバック表示中はキーボード入力を無効化
     if (showFeedback) {
-      return;
+      return undefined;
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
       // B/bキーでバスト
-      if (event.key === 'b' || event.key === 'B') {
+      if (KEYBOARD_SHORTCUTS.BUST.includes(event.key as 'b' | 'B')) {
         event.preventDefault();
         onAnswer(true);
       }
       // S/sキーでセーフ
-      else if (event.key === 's' || event.key === 'S') {
+      else if (KEYBOARD_SHORTCUTS.SAFE.includes(event.key as 's' | 'S')) {
         event.preventDefault();
         onAnswer(false);
       }
