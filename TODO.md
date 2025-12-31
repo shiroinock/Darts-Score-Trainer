@@ -601,21 +601,28 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - 実装ファイル: src/stores/gameStore.ts (determineQuestionMode関数, 62行目, 83行目)
 - テストファイル: src/stores/gameStore.test.ts (Phase E テスト 13ケース追加)
 
-**Phase F: チェックアウトトライ時のフィニッシュ選択肢追加**（未実装）
-- [ ] チェックアウト可能な残り点数（2-170点、ダブルアウト可能）の場合、3択UIを表示
+**Phase F: チェックアウトトライ時のフィニッシュ選択肢追加**（2025-01-01完了）
+- [x] チェックアウト可能な残り点数（2-170点、ダブルアウト可能）の場合、3択UIを表示
   - 「バスト」「セーフ」「フィニッシュ」
-- [ ] フィニッシュ判定条件: `remainingScore - throwScore === 0 && isDouble`
-- [ ] `BustQuestion`コンポーネントを拡張または新規`FinishQuestion`コンポーネント作成
-- [ ] キーボードショートカット追加: Fキーでフィニッシュ
-- [ ] 正解判定ロジックの拡張
+  - 実装: `src/components/Practice/BustQuestion.tsx` の `showFinishOption` props
+- [x] フィニッシュ判定条件: `remainingScore - throwScore === 0 && isDouble`
+  - 実装: `src/stores/gameStore.ts:766-770` の `getBustCorrectAnswer()` 関数
+- [x] `BustQuestion`コンポーネントを拡張
+  - 既存実装: `src/components/Practice/BustQuestion.tsx` に3択UI対応済み
+- [x] キーボードショートカット追加: Fキーでフィニッシュ
+  - 実装: `src/components/Practice/BustQuestion.tsx:121-124`
+- [x] 正解判定ロジックの拡張
   - フィニッシュ: 残り点数が0になり、ダブルで上がった場合
   - バスト: オーバー、残り1点、ダブル外しフィニッシュ
   - セーフ: それ以外
+  - 実装: `src/stores/gameStore.ts` の `getBustCorrectAnswer()` 関数
+- [x] フィニッシュ判定のテスト追加
+  - テスト: `src/stores/gameStore.test.ts` に5件のテストケース追加
 
-**要修正箇所**:
-- `BustQuestion.tsx`: 3択UI対応（または新規コンポーネント）
-- `PracticeScreen.tsx`: チェックアウト可能状態の判定
-- `gameStore.ts`: フィニッシュ判定を`bustInfo`に追加、または新規フィールド
+**実装済み箇所**:
+- `BustQuestion.tsx`: 3択UI対応（showFinishOption props）
+- `PracticeScreen.tsx`: チェックアウト可能状態の判定（showFinishOption計算、ONE_DART_FINISHABLE使用）
+- `gameStore.ts`: フィニッシュ判定を`getBustCorrectAnswer()`に実装
 - `canFinishWithDouble(remainingScore)` 関数を活用してチェックアウト可能か判定
 
 **Phase G: フィードバック画面でのEnterキー対応**（未実装）
