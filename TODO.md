@@ -583,6 +583,19 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
   - 3本目: `{ type: 'score', throwIndex: 3 }` → NumPad表示
 - [x] PracticeScreenでBustQuestion/NumPadの切り替え実装
 
+**Phase D: バスト発生時のラウンド終了処理**（未実装）
+- [ ] 1本目・2本目でバスト判定が「バスト」の場合、次のダーツシミュレーションをスキップ
+- [ ] バスト発生時は残り点数をラウンド開始時の値にリセット
+- [ ] バスト発生時は次のラウンド（新しい3投）に進む
+- [ ] `handleBustFeedbackComplete`の分岐処理を追加
+  - バストの場合: `nextQuestion()` で新しいラウンドへ
+  - セーフの場合: `simulateNextThrow()` で次のダーツ表示
+
+**要修正箇所**:
+- `PracticeScreen.tsx`の`handleBustFeedbackComplete`関数
+- 現状: 常に`simulateNextThrow()`を呼び出している
+- 修正: `bustCorrectAnswer`（正解がバストかどうか）に応じて分岐
+
 #### 9.1.2 画面レイアウトの動的サイズ対応
 **問題**: 問題文と入力コンポーネントが固定サイズで、スクロールが必要
 **方針**: コンポーネントを親コンテナに対してレスポンシブにし、スクロール不要に
