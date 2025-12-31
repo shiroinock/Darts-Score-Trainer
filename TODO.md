@@ -585,16 +585,28 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 
 **Phase D: バスト発生時のラウンド終了処理**（未実装）
 - [ ] 1本目・2本目でバスト判定が「バスト」の場合、次のダーツシミュレーションをスキップ
-- [ ] バスト発生時は残り点数をラウンド開始時の値にリセット
+- [ ] バスト発生時は残り点数をラウンド開始時の値にリセット（維持）
 - [ ] バスト発生時は次のラウンド（新しい3投）に進む
 - [ ] `handleBustFeedbackComplete`の分岐処理を追加
   - バストの場合: `nextQuestion()` で新しいラウンドへ
   - セーフの場合: `simulateNextThrow()` で次のダーツ表示
 
-**要修正箇所**:
+**要修正箇所（UI側）**:
 - `PracticeScreen.tsx`の`handleBustFeedbackComplete`関数
 - 現状: 常に`simulateNextThrow()`を呼び出している
 - 修正: `bustCorrectAnswer`（正解がバストかどうか）に応じて分岐
+
+**Phase E: バスト時の正解計算ロジック修正**（未実装）
+- [ ] バスト発生時、残り点数の正解はラウンド開始時の値を維持すべき
+- [ ] 現状: バスト時に0点を正解として判定してしまう
+- [ ] 修正: `correctAnswer`の計算ロジックを見直す
+  - バストの場合: `correctAnswer = roundStartScore`（ラウンド開始時の残り点数）
+  - セーフの場合: `correctAnswer = remainingScore - cumulativeScore`
+
+**要修正箇所（Store側）**:
+- `gameStore.ts`の`generateQuestion`または`simulateNextThrow`
+- `correctAnswer`の計算時にバスト状態を考慮する
+- `Question.bustInfo.isBust`がtrueの場合、残り点数は変わらないことを反映
 
 #### 9.1.2 画面レイアウトの動的サイズ対応
 **問題**: 問題文と入力コンポーネントが固定サイズで、スクロールが必要
