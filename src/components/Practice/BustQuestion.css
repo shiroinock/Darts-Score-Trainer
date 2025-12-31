@@ -1,27 +1,29 @@
 /**
  * BustQuestion スタイル定義
+ *
+ * index.css の共通CSS変数を使用
  */
 
 .bust-question {
   width: 100%;
   max-width: 600px;
-  margin: 0 auto 2rem;
-  padding: 2rem;
-  background-color: #fff;
-  border: 2px solid #4a90e2;
-  border-radius: 12px;
+  margin: 0 auto var(--spacing-2xl);
+  padding: var(--spacing-2xl);
+  background-color: var(--color-bg-white);
+  border: var(--border-width-base) solid var(--color-primary);
+  border-radius: var(--border-radius-lg);
   box-shadow: 0 4px 12px rgba(74, 144, 226, 0.15);
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--spacing-xl);
   align-items: center;
 }
 
 /* 質問タイトル */
 .bust-question__title {
-  font-size: 1.5rem;
+  font-size: var(--font-size-xl);
   font-weight: 700;
-  color: #333;
+  color: var(--color-text-primary);
   margin: 0;
   text-align: center;
 }
@@ -30,111 +32,111 @@
 .bust-question__result {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1.5rem;
-  border-radius: 12px;
+  gap: var(--spacing-base);
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-lg);
   width: 100%;
 }
 
 .bust-question__result--correct {
-  background-color: #e6f9f0;
-  border: 2px solid #4caf50;
+  background-color: var(--color-success-light);
+  border: var(--border-width-base) solid var(--color-success);
 }
 
 .bust-question__result--incorrect {
-  background-color: #ffe6e6;
-  border: 2px solid #f44336;
+  background-color: var(--color-error-light);
+  border: var(--border-width-base) solid var(--color-error);
 }
 
 .bust-question__icon {
-  font-size: 3rem;
+  font-size: var(--font-size-5xl);
   line-height: 1;
 }
 
 .bust-question__result--correct .bust-question__icon {
-  color: #4caf50;
+  color: var(--color-success);
 }
 
 .bust-question__result--incorrect .bust-question__icon {
-  color: #f44336;
+  color: var(--color-error);
 }
 
 .bust-question__text {
-  font-size: 1.75rem;
+  font-size: var(--font-size-2xl);
   font-weight: 700;
-  color: #333;
+  color: var(--color-text-primary);
 }
 
 /* 回答ボタン */
 .bust-question__buttons {
   display: flex;
-  gap: 1rem;
+  gap: var(--spacing-base);
   width: 100%;
   max-width: 500px;
 }
 
 .bust-question__button {
   flex: 1;
-  padding: 1.5rem 1rem;
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  background-color: #fff;
+  padding: var(--spacing-xl) var(--spacing-base);
+  border: var(--border-width-base) solid var(--color-border-light);
+  border-radius: var(--border-radius-base);
+  background-color: var(--color-bg-white);
   font-family: inherit;
-  font-size: 1.25rem;
+  font-size: var(--font-size-lg);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--spacing-sm);
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
 
 .bust-question__button:not(:disabled):hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(var(--transform-hover-lift));
+  box-shadow: var(--shadow-base);
 }
 
 .bust-question__button:not(:disabled):active {
-  transform: translateY(0);
+  transform: translateY(var(--transform-active-press));
 }
 
 /* バストボタン */
 .bust-question__button--bust {
-  color: #f44336;
-  border-color: #f44336;
+  color: var(--color-error);
+  border-color: var(--color-error);
 }
 
 .bust-question__button--bust:not(:disabled):hover {
-  background-color: #ffe6e6;
-  border-color: #f44336;
+  background-color: var(--color-error-light);
+  border-color: var(--color-error);
 }
 
 /* セーフボタン */
 .bust-question__button--safe {
-  color: #4caf50;
-  border-color: #4caf50;
+  color: var(--color-success);
+  border-color: var(--color-success);
 }
 
 .bust-question__button--safe:not(:disabled):hover {
-  background-color: #e6f9f0;
-  border-color: #4caf50;
+  background-color: var(--color-success-light);
+  border-color: var(--color-success);
 }
 
 /* 選択済みボタン（正解） */
 .bust-question__button--selected-correct {
-  background-color: #e6f9f0;
-  border-color: #4caf50;
-  border-width: 3px;
+  background-color: var(--color-success-light);
+  border-color: var(--color-success);
+  border-width: var(--border-width-thick);
 }
 
 /* 選択済みボタン（不正解） */
 .bust-question__button--selected-incorrect {
-  background-color: #ffe6e6;
-  border-color: #f44336;
-  border-width: 3px;
+  background-color: var(--color-error-light);
+  border-color: var(--color-error);
+  border-width: var(--border-width-thick);
 }
 
 /* 無効化ボタン */
@@ -145,9 +147,9 @@
 
 /* ショートカットキー表示 */
 .bust-question__shortcut {
-  font-size: 0.875rem;
+  font-size: var(--font-size-small);
   font-weight: 500;
-  color: #999;
+  color: var(--color-text-tertiary);
 }
 
 /* 正解表示 */
@@ -155,32 +157,32 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--spacing-md);
 }
 
 .bust-question__answer-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
-  background-color: #f0f7ff;
-  border: 2px solid #d0e7ff;
-  border-radius: 8px;
+  padding: var(--spacing-base) var(--spacing-xl);
+  background-color: var(--color-primary-light);
+  border: var(--border-width-base) solid var(--color-primary-lightest);
+  border-radius: var(--border-radius-base);
   margin: 0;
 }
 
 .bust-question__answer-label {
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   font-weight: 600;
-  color: #666;
+  color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .bust-question__answer-value {
-  font-size: 1.75rem;
+  font-size: var(--font-size-2xl);
   font-weight: 700;
-  color: #4a90e2;
+  color: var(--color-primary);
   margin: 0;
 }
 
@@ -192,67 +194,67 @@
 
   /* タッチデバイスではボタンを大きく */
   .bust-question__button {
-    padding: 1.75rem 1rem;
-    font-size: 1.5rem;
+    padding: var(--spacing-1-75) var(--spacing-base);
+    font-size: var(--font-size-xl);
   }
 }
 
 /* モバイル対応 */
 @media (max-width: 640px) {
   .bust-question {
-    padding: 1.5rem 1rem;
-    margin-bottom: 1.5rem;
-    gap: 1rem;
+    padding: var(--spacing-xl) var(--spacing-base);
+    margin-bottom: var(--spacing-xl);
+    gap: var(--spacing-base);
   }
 
   .bust-question__title {
-    font-size: 1.25rem;
+    font-size: var(--font-size-lg);
   }
 
   .bust-question__result {
-    padding: 1rem;
-    gap: 0.75rem;
+    padding: var(--spacing-base);
+    gap: var(--spacing-md);
   }
 
   .bust-question__icon {
-    font-size: 2rem;
+    font-size: var(--font-size-3xl);
   }
 
   .bust-question__text {
-    font-size: 1.25rem;
+    font-size: var(--font-size-lg);
   }
 
   .bust-question__buttons {
     flex-direction: column;
-    gap: 0.75rem;
+    gap: var(--spacing-md);
   }
 
   .bust-question__button {
-    padding: 1.25rem 1rem;
-    font-size: 1.125rem;
+    padding: var(--spacing-lg) var(--spacing-base);
+    font-size: var(--font-size-md);
   }
 
   .bust-question__shortcut {
-    font-size: 0.75rem;
+    font-size: var(--font-size-sm);
   }
 
   .bust-question__answer-item {
-    padding: 0.75rem 1rem;
+    padding: var(--spacing-md) var(--spacing-base);
   }
 
   .bust-question__answer-label {
-    font-size: 0.875rem;
+    font-size: var(--font-size-small);
   }
 
   .bust-question__answer-value {
-    font-size: 1.5rem;
+    font-size: var(--font-size-xl);
   }
 }
 
 /* タブレット対応 */
 @media (min-width: 641px) and (max-width: 1024px) {
   .bust-question {
-    padding: 1.75rem 1.5rem;
+    padding: var(--spacing-1-75) var(--spacing-xl);
   }
 
   .bust-question__title {
@@ -260,10 +262,10 @@
   }
 
   .bust-question__text {
-    font-size: 1.5rem;
+    font-size: var(--font-size-xl);
   }
 
   .bust-question__answer-value {
-    font-size: 1.5rem;
+    font-size: var(--font-size-xl);
   }
 }

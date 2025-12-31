@@ -6,7 +6,7 @@
  * フィードバック表示時には正解/不正解を示します。
  */
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import './BustQuestion.css';
 
 /**
@@ -75,6 +75,15 @@ export function BustQuestion({
   userAnswer,
 }: BustQuestionProps): JSX.Element {
   /**
+   * onAnswerコールバックの最新値を保持するref
+   * イベントリスナーの再登録を防ぐ
+   */
+  const onAnswerRef = useRef(onAnswer);
+  useEffect(() => {
+    onAnswerRef.current = onAnswer;
+  }, [onAnswer]);
+
+  /**
    * キーボードショートカット（B/Sキー）
    */
   useEffect(() => {
@@ -87,12 +96,12 @@ export function BustQuestion({
       // B/bキーでバスト
       if (KEYBOARD_SHORTCUTS.BUST.includes(event.key as 'b' | 'B')) {
         event.preventDefault();
-        onAnswer(true);
+        onAnswerRef.current(true);
       }
       // S/sキーでセーフ
       else if (KEYBOARD_SHORTCUTS.SAFE.includes(event.key as 's' | 'S')) {
         event.preventDefault();
-        onAnswer(false);
+        onAnswerRef.current(false);
       }
     };
 
@@ -100,7 +109,7 @@ export function BustQuestion({
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [showFeedback, onAnswer]);
+  }, [showFeedback]);
 
   /**
    * ボタンクリックハンドラ
