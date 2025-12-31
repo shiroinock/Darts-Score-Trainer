@@ -638,6 +638,31 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
   - タッチ操作の誤タップ防止
 - [ ] タップ/ホバーでズーム位置を変更可能に
 
+#### 9.1.5 アウトボード（170mm以上）の判定バグ修正
+**問題**: ダブルリング外側（170mm）〜ボード端（225mm）を`OUTER_SINGLE`として判定している
+**原因**: `getRing`関数の37-38行目で`boardEdge`（225mm）までを`OUTER_SINGLE`として返している
+**正しい挙動**: 170mm（`doubleOuter`）以上は`OUT`（0点）であるべき
+
+**修正内容**:
+- [ ] `src/utils/scoreCalculator/getRing.ts`の37-38行目を削除
+  ```typescript
+  // 削除すべきコード
+  if (distance < BOARD_PHYSICAL.rings.boardEdge) {
+    return 'OUTER_SINGLE';
+  }
+  ```
+- [ ] `getRing.test.ts`にアウトボード判定のテストを追加
+  - 170mm → OUT
+  - 171mm → OUT
+  - 200mm → OUT
+  - 225mm → OUT
+  - 226mm → OUT
+- [ ] 既存テストが壊れないことを確認
+
+**要修正箇所の特定**:
+- `grep -r "boardEdge" src/` でboardEdgeの使用箇所を確認
+- `boardEdge`は描画時のボード背景サイズ用であり、判定には使用すべきでない
+
 ### 9.2 動作確認（バグフィックス後に実施）
 - [ ] 手動テストチェックリストに従って全項目を確認
   - 詳細: [docs/MANUAL_TEST_CHECKLIST.md](docs/MANUAL_TEST_CHECKLIST.md)
