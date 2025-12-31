@@ -1356,6 +1356,280 @@ describe('gameStore', () => {
         expect(bustResult).toBe('bust');
       }
     });
+
+    describe('フィニッシュ判定', () => {
+      test('ダブルで残り0点になる場合は"finish"を返す（D20で40点上がり）', () => {
+        // Arrange
+        useGameStore.setState({
+          config: {
+            configId: 'test-finish',
+            configName: 'テスト',
+            description: 'テスト',
+            icon: '🎯',
+            throwUnit: 3,
+            questionType: 'remaining',
+            judgmentTiming: 'independent',
+            startingScore: 501,
+            target: { type: 'DOUBLE', number: 20, label: 'D20' },
+            stdDevMM: 15,
+            isPreset: false,
+            createdAt: '2025-01-01T00:00:00.000Z',
+            lastPlayedAt: undefined,
+          },
+          gameState: 'practicing',
+          remainingScore: 40, // 残り40点
+          roundStartScore: 40, // ラウンド開始時も40点
+          displayedDarts: [
+            {
+              target: { type: 'DOUBLE', number: 20, label: 'D20' },
+              landingPoint: { x: 0, y: -165 },
+              score: 40,
+              ring: 'DOUBLE',
+              segmentNumber: 20,
+            },
+          ],
+          currentQuestion: {
+            mode: 'remaining',
+            throws: [
+              {
+                target: { type: 'DOUBLE', number: 20, label: 'D20' },
+                landingPoint: { x: 0, y: -165 },
+                score: 40,
+                ring: 'DOUBLE',
+                segmentNumber: 20,
+              },
+            ],
+            correctAnswer: 0,
+            questionText: 'Test question',
+            questionPhase: { type: 'bust', throwIndex: 1 },
+          },
+        });
+
+        // Act
+        const result = useGameStore.getState().getBustCorrectAnswer();
+
+        // Assert
+        expect(result).toBe('finish');
+      });
+
+      test('ダブル1で残り2点を上がる場合は"finish"を返す', () => {
+        // Arrange
+        useGameStore.setState({
+          config: {
+            configId: 'test-finish',
+            configName: 'テスト',
+            description: 'テスト',
+            icon: '🎯',
+            throwUnit: 3,
+            questionType: 'remaining',
+            judgmentTiming: 'independent',
+            startingScore: 501,
+            target: { type: 'DOUBLE', number: 1, label: 'D1' },
+            stdDevMM: 15,
+            isPreset: false,
+            createdAt: '2025-01-01T00:00:00.000Z',
+            lastPlayedAt: undefined,
+          },
+          gameState: 'practicing',
+          remainingScore: 2, // 残り2点
+          roundStartScore: 2,
+          displayedDarts: [
+            {
+              target: { type: 'DOUBLE', number: 1, label: 'D1' },
+              landingPoint: { x: 100, y: 100 },
+              score: 2,
+              ring: 'DOUBLE',
+              segmentNumber: 1,
+            },
+          ],
+          currentQuestion: {
+            mode: 'remaining',
+            throws: [
+              {
+                target: { type: 'DOUBLE', number: 1, label: 'D1' },
+                landingPoint: { x: 100, y: 100 },
+                score: 2,
+                ring: 'DOUBLE',
+                segmentNumber: 1,
+              },
+            ],
+            correctAnswer: 0,
+            questionText: 'Test question',
+            questionPhase: { type: 'bust', throwIndex: 1 },
+          },
+        });
+
+        // Act
+        const result = useGameStore.getState().getBustCorrectAnswer();
+
+        // Assert
+        expect(result).toBe('finish');
+      });
+
+      test('インナーブルで残り50点を上がる場合は"finish"を返す（ブルもダブル扱い）', () => {
+        // Arrange
+        useGameStore.setState({
+          config: {
+            configId: 'test-finish',
+            configName: 'テスト',
+            description: 'テスト',
+            icon: '🎯',
+            throwUnit: 3,
+            questionType: 'remaining',
+            judgmentTiming: 'independent',
+            startingScore: 501,
+            target: { type: 'BULL', number: null, label: 'BULL' },
+            stdDevMM: 15,
+            isPreset: false,
+            createdAt: '2025-01-01T00:00:00.000Z',
+            lastPlayedAt: undefined,
+          },
+          gameState: 'practicing',
+          remainingScore: 50, // 残り50点
+          roundStartScore: 50,
+          displayedDarts: [
+            {
+              target: { type: 'BULL', number: null, label: 'BULL' },
+              landingPoint: { x: 0, y: 0 },
+              score: 50,
+              ring: 'INNER_BULL',
+              segmentNumber: undefined,
+            },
+          ],
+          currentQuestion: {
+            mode: 'remaining',
+            throws: [
+              {
+                target: { type: 'BULL', number: null, label: 'BULL' },
+                landingPoint: { x: 0, y: 0 },
+                score: 50,
+                ring: 'INNER_BULL',
+                segmentNumber: undefined,
+              },
+            ],
+            correctAnswer: 0,
+            questionText: 'Test question',
+            questionPhase: { type: 'bust', throwIndex: 1 },
+          },
+        });
+
+        // Act
+        const result = useGameStore.getState().getBustCorrectAnswer();
+
+        // Assert
+        expect(result).toBe('finish');
+      });
+
+      test('シングルで残り0点になる場合は"bust"を返す（ダブルアウトルール違反）', () => {
+        // Arrange
+        useGameStore.setState({
+          config: {
+            configId: 'test-finish',
+            configName: 'テスト',
+            description: 'テスト',
+            icon: '🎯',
+            throwUnit: 3,
+            questionType: 'remaining',
+            judgmentTiming: 'independent',
+            startingScore: 501,
+            target: { type: 'SINGLE', number: 20, label: 'S20' },
+            stdDevMM: 15,
+            isPreset: false,
+            createdAt: '2025-01-01T00:00:00.000Z',
+            lastPlayedAt: undefined,
+          },
+          gameState: 'practicing',
+          remainingScore: 20, // 残り20点
+          roundStartScore: 20,
+          displayedDarts: [
+            {
+              target: { type: 'SINGLE', number: 20, label: 'S20' },
+              landingPoint: { x: 0, y: -150 },
+              score: 20,
+              ring: 'OUTER_SINGLE',
+              segmentNumber: 20,
+            },
+          ],
+          currentQuestion: {
+            mode: 'remaining',
+            throws: [
+              {
+                target: { type: 'SINGLE', number: 20, label: 'S20' },
+                landingPoint: { x: 0, y: -150 },
+                score: 20,
+                ring: 'OUTER_SINGLE',
+                segmentNumber: 20,
+              },
+            ],
+            correctAnswer: 1,
+            questionText: 'Test question',
+            questionPhase: { type: 'bust', throwIndex: 1 },
+          },
+        });
+
+        // Act
+        const result = useGameStore.getState().getBustCorrectAnswer();
+
+        // Assert
+        // シングルで0点は double_out_required でバストになる
+        expect(result).toBe('bust');
+      });
+
+      test('トリプルで残り0点になる場合は"bust"を返す（ダブルアウトルール違反）', () => {
+        // Arrange
+        useGameStore.setState({
+          config: {
+            configId: 'test-finish',
+            configName: 'テスト',
+            description: 'テスト',
+            icon: '🎯',
+            throwUnit: 3,
+            questionType: 'remaining',
+            judgmentTiming: 'independent',
+            startingScore: 501,
+            target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            stdDevMM: 15,
+            isPreset: false,
+            createdAt: '2025-01-01T00:00:00.000Z',
+            lastPlayedAt: undefined,
+          },
+          gameState: 'practicing',
+          remainingScore: 60, // 残り60点
+          roundStartScore: 60,
+          displayedDarts: [
+            {
+              target: { type: 'TRIPLE', number: 20, label: 'T20' },
+              landingPoint: { x: 0, y: -103 },
+              score: 60,
+              ring: 'TRIPLE',
+              segmentNumber: 20,
+            },
+          ],
+          currentQuestion: {
+            mode: 'remaining',
+            throws: [
+              {
+                target: { type: 'TRIPLE', number: 20, label: 'T20' },
+                landingPoint: { x: 0, y: -103 },
+                score: 60,
+                ring: 'TRIPLE',
+                segmentNumber: 20,
+              },
+            ],
+            correctAnswer: 1,
+            questionText: 'Test question',
+            questionPhase: { type: 'bust', throwIndex: 1 },
+          },
+        });
+
+        // Act
+        const result = useGameStore.getState().getBustCorrectAnswer();
+
+        // Assert
+        // トリプルで0点は double_out_required でバストになる
+        expect(result).toBe('bust');
+      });
+    });
   });
 
   describe('getAccuracy', () => {

@@ -996,3 +996,77 @@ CSS分離リファクタリングタスクの特徴：
 - TODO.mdの詳細な内容
 - 関連しない関数やコンポーネントの説明
 - 実装方針の提案（判定結果のみを出力）
+
+### 2026-01-01: 複数ファイル判定時の出力完全性強化
+
+#### 背景
+Phase F「チェックアウトトライ時のフィニッシュ選択肢追加」の判定において、出力がJSON開始直後で切れてしまう問題が発生した。複数ファイル（4ファイル）の判定を求められた際に、出力が完了しなかった。
+
+#### 問題の根本原因
+1. 複数ファイルの判定時に、各ファイルの分析に時間をかけすぎた
+2. 導入テキスト（「〜について分析した結果です」等）が長すぎた
+3. JSON出力の開始が遅れ、途中で切れた
+
+#### 追加ガイドライン
+
+##### 複数ファイル判定時の出力戦略
+
+**最重要ルール**: JSON出力を最優先で開始すること
+
+1. **導入文は1行以内**
+   - ❌ 悪い例: 「Phase F「チェックアウトトライ時のフィニッシュ選択肢追加」に関連する主要な実装対象ファイルについて、TDDの観点から分析した結果です。」
+   - ✅ 良い例: 「判定結果:」
+
+2. **即座にJSON出力を開始**
+   - ファイルの分析が完了次第、すぐにJSONを出力
+   - 分析の途中経過は出力しない
+
+3. **簡潔なrationale**
+   - 各ファイルの `rationale` は20文字以内を目標
+   - 詳細な説明は不要
+
+##### 複数ファイル判定時の出力形式
+
+```json
+{
+  "files": [
+    {
+      "path": "src/stores/gameStore.ts",
+      "tddMode": "test-first",
+      "testPattern": "store",
+      "placement": "colocated",
+      "rationale": "状態遷移ロジック",
+      "testFilePath": "src/stores/gameStore.test.ts"
+    },
+    {
+      "path": "src/components/Practice/BustQuestion.tsx",
+      "tddMode": "test-later",
+      "testPattern": "component",
+      "placement": "colocated",
+      "rationale": "UI拡張",
+      "testFilePath": "src/components/Practice/BustQuestion.test.tsx"
+    }
+  ]
+}
+```
+
+##### 出力文字数の厳格な制限
+
+- **合計出力: 1500文字以内**
+- 導入文: 50文字以内
+- 各ファイルの判定: 200文字以内
+- ファイル数が多い場合は、重要なファイルを優先
+
+##### 判定を省略してよいケース
+
+以下のファイルは、標準的なパターンとして簡易判定してよい：
+- `gameStore.ts` → test-first, store, colocated
+- `*Screen.tsx` / `*Question.tsx` → test-later, component, colocated
+- `src/utils/` 内の純粋関数 → test-first, unit, colocated
+
+##### エラーリカバリー
+
+出力が途中で切れるリスクがある場合：
+1. まず最小限の判定結果を出力
+2. 余裕があれば詳細を追加
+3. 詳細よりも完全性を優先
