@@ -625,6 +625,28 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - `gameStore.ts`: フィニッシュ判定を`bustInfo`に追加、または新規フィールド
 - `canFinishWithDouble(remainingScore)` 関数を活用してチェックアウト可能か判定
 
+**Phase G: フィードバック画面でのEnterキー対応**（未実装）
+- [ ] 正誤判定表示中の「次へ」ボタンをEnterキーでも進行できるようにする
+- [ ] BustQuestionのフィードバック表示時もEnterキーで次へ
+- [ ] Feedbackコンポーネント表示時もEnterキーで次へ
+- [ ] キーボードイベントリスナーの追加
+
+**要修正箇所**:
+- `PracticeScreen.tsx`: フィードバック表示中のキーボードイベント処理
+- `BustQuestion.tsx`: showFeedback時のEnterキー対応（または親で一括管理）
+- `Feedback.tsx`: Enterキー対応（または親で一括管理）
+
+**Phase H: プレイヤー練習モードでの残り点数減算**（未実装）
+- [ ] scoreモード（3投の合計点数を問う）でも残り点数を減らしていく
+- [ ] 現状: scoreモードでは残り点数が変化しない
+- [ ] 修正: 正解回答後、累積得点分だけ残り点数を減算
+- [ ] バスト発生時は残り点数をラウンド開始時の値に戻す
+
+**要修正箇所**:
+- `gameStore.ts`の`submitAnswer`または`nextQuestion`
+- scoreモードでも`remainingScore`を更新するロジックを追加
+- `questionType === 'score'`の場合の残り点数更新処理
+
 #### 9.1.2 画面レイアウトの動的サイズ対応
 **問題**: 問題文と入力コンポーネントが固定サイズで、スクロールが必要
 **方針**: コンポーネントを親コンテナに対してレスポンシブにし、スクロール不要に
