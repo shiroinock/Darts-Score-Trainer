@@ -7,3 +7,13 @@
 export const SEGMENTS = [
   20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5,
 ] as const;
+
+/**
+ * セグメント番号の最小値
+ */
+export const MIN_SEGMENT_NUMBER = 1;
+
+/**
+ * セグメント番号の最大値
+ */
+export const MAX_SEGMENT_NUMBER = 20;

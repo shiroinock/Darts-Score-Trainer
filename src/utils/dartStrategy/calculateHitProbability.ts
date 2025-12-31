@@ -8,7 +8,7 @@
  * 大量のサンプル点を生成し、ターゲットエリアに入る割合を計算します。
  */
 
-import { BOARD_PHYSICAL } from '../constants/index.js';
+import { BOARD_PHYSICAL, MAX_SEGMENT_NUMBER, MIN_SEGMENT_NUMBER } from '../constants/index.js';
 import { getSegmentNumber } from '../scoreCalculator/getSegmentNumber.js';
 import { generateNormalDistribution } from '../throwSimulator/generateNormalDistribution.js';
 
@@ -16,9 +16,7 @@ import { generateNormalDistribution } from '../throwSimulator/generateNormalDist
  * 定数定義
  */
 const MONTE_CARLO_SAMPLES = 10000; // モンテカルロシミュレーションのサンプル数
-const MIN_VALID_STD_DEV = 0; // 標準偏差の最小値（排他的）
-const MIN_SEGMENT_NUMBER = 1;
-const MAX_SEGMENT_NUMBER = 20;
+const MIN_STD_DEV_EXCLUSIVE = 0; // 標準偏差の最小値（この値は含まない）
 
 /**
  * エリアタイプ定義（テストで使用される文字列型）
@@ -105,9 +103,9 @@ function validateInputs(
   }
 
   // stdDevMMの検証
-  if (!Number.isFinite(stdDevMM) || stdDevMM <= MIN_VALID_STD_DEV) {
+  if (!Number.isFinite(stdDevMM) || stdDevMM <= MIN_STD_DEV_EXCLUSIVE) {
     throw new Error(
-      `Invalid stdDevMM: ${stdDevMM}. Must be a finite positive number greater than ${MIN_VALID_STD_DEV}.`
+      `Invalid stdDevMM: ${stdDevMM}. Must be a finite positive number greater than ${MIN_STD_DEV_EXCLUSIVE}.`
     );
   }
 
@@ -158,27 +156,42 @@ function isInTargetArea(x: number, y: number, areaType: AreaType, segmentNumber?
         distance > BOARD_PHYSICAL.rings.innerBull && distance <= BOARD_PHYSICAL.rings.outerBull
       );
 
-    case 'TRIPLE':
+    case 'TRIPLE': {
+      // validateInputsでチェック済みのため、segmentNumberは必ずnumber型
+      if (typeof segmentNumber !== 'number') {
+        throw new Error('Unexpected: segmentNumber is required for TRIPLE');
+      }
       return isInSegmentedRing(
         x,
         y,
         distance,
         BOARD_PHYSICAL.rings.tripleInner,
         BOARD_PHYSICAL.rings.tripleOuter,
-        segmentNumber!
+        segmentNumber
       );
+    }
 
-    case 'DOUBLE':
+    case 'DOUBLE': {
+      // validateInputsでチェック済みのため、segmentNumberは必ずnumber型
+      if (typeof segmentNumber !== 'number') {
+        throw new Error('Unexpected: segmentNumber is required for DOUBLE');
+      }
       return isInSegmentedRing(
         x,
         y,
         distance,
         BOARD_PHYSICAL.rings.doubleInner,
         BOARD_PHYSICAL.rings.doubleOuter,
-        segmentNumber!
+        segmentNumber
       );
+    }
 
     case 'SINGLE': {
+      // validateInputsでチェック済みのため、segmentNumberは必ずnumber型
+      if (typeof segmentNumber !== 'number') {
+        throw new Error('Unexpected: segmentNumber is required for SINGLE');
+      }
+
       // シングルエリアは2つの範囲がある
       // 1. インナーシングル: OUTER_BULL〜TRIPLE_INNER
       // 2. アウターシングル: TRIPLE_OUTER〜DOUBLE_INNER
@@ -192,7 +205,7 @@ function isInTargetArea(x: number, y: number, areaType: AreaType, segmentNumber?
       }
 
       // セグメント判定
-      return isInSegment(x, y, segmentNumber!);
+      return isInSegment(x, y, segmentNumber);
     }
 
     default:
