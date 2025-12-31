@@ -5,22 +5,25 @@
 .feedback {
   width: 100%;
   max-width: 600px;
-  margin: 0 auto 2rem;
-  padding: 2rem;
+  margin: 0 auto;
+  padding: 1rem;
   background-color: #fff;
   border: 2px solid #4a90e2;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(74, 144, 226, 0.15);
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 0.75rem;
   align-items: center;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 /* ゲームクリア表示 */
 .feedback__game-clear {
   text-align: center;
-  padding: 1.5rem;
+  padding: 0.75rem;
   background: linear-gradient(135deg, #fff9e6 0%, #ffe6cc 100%);
   border: 2px solid #ffcc00;
   border-radius: 12px;
@@ -28,8 +31,8 @@
 }
 
 .feedback__game-clear-icon {
-  font-size: 4rem;
-  margin-bottom: 0.5rem;
+  font-size: 2.5rem;
+  margin-bottom: 0.25rem;
   animation: bounce 1s ease infinite;
 }
 
@@ -44,14 +47,14 @@
 }
 
 .feedback__game-clear-title {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #333;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
 }
 
 .feedback__game-clear-text {
-  font-size: 1.25rem;
+  font-size: 1rem;
   color: #666;
   margin: 0;
 }
@@ -60,8 +63,8 @@
 .feedback__result {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1.5rem;
+  gap: 0.75rem;
+  padding: 0.75rem;
   border-radius: 12px;
   width: 100%;
 }
@@ -77,7 +80,7 @@
 }
 
 .feedback__icon {
-  font-size: 3rem;
+  font-size: 2rem;
   line-height: 1;
 }
 
@@ -90,7 +93,7 @@
 }
 
 .feedback__text {
-  font-size: 1.75rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: #333;
 }
@@ -100,14 +103,14 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .feedback__answer-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
+  padding: 0.5rem 1rem;
   background-color: #f0f7ff;
   border: 2px solid #d0e7ff;
   border-radius: 8px;
@@ -115,7 +118,7 @@
 }
 
 .feedback__answer-label {
-  font-size: 1rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: #666;
   text-transform: uppercase;
@@ -123,7 +126,7 @@
 }
 
 .feedback__answer-value {
-  font-size: 1.75rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: #4a90e2;
   margin: 0;
@@ -132,18 +135,18 @@
 /* スコア詳細表示 */
 .feedback__score-details {
   width: 100%;
-  padding: 1rem 1.5rem;
+  padding: 0.5rem 1rem;
   background-color: #fafafa;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
 }
 
 .feedback__score-details-text {
-  font-size: 1rem;
+  font-size: 0.875rem;
   color: #333;
   text-align: center;
   margin: 0;
-  line-height: 1.6;
+  line-height: 1.4;
   word-wrap: break-word;
 }
 
@@ -151,8 +154,8 @@
 .feedback__streak {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 1.5rem;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
   background: linear-gradient(135deg, #fff3e6 0%, #ffe6cc 100%);
   border: 2px solid #ff9800;
   border-radius: 8px;
@@ -161,7 +164,7 @@
 }
 
 .feedback__streak-icon {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   animation: pulse 1.5s ease-in-out infinite;
 }
 
@@ -176,7 +179,7 @@
 }
 
 .feedback__streak-text {
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #e67e00;
 }
@@ -222,17 +225,18 @@
 .feedback__next-button {
   width: 100%;
   max-width: 400px;
-  padding: 1.25rem 2rem;
+  padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 8px;
   background-color: #4a90e2;
   color: #fff;
   font-family: inherit;
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+  flex-shrink: 0;
 }
 
 .feedback__next-button:hover {
@@ -256,70 +260,69 @@
 /* モバイル対応 */
 @media (max-width: 640px) {
   .feedback {
-    padding: 1.5rem 1rem;
-    margin-bottom: 1.5rem;
-    gap: 1rem;
+    padding: 0.75rem 0.5rem;
+    gap: 0.5rem;
   }
 
   .feedback__game-clear {
-    padding: 1rem;
+    padding: 0.5rem;
   }
 
   .feedback__game-clear-icon {
-    font-size: 3rem;
-  }
-
-  .feedback__game-clear-title {
-    font-size: 1.5rem;
-  }
-
-  .feedback__game-clear-text {
-    font-size: 1rem;
-  }
-
-  .feedback__result {
-    padding: 1rem;
-    gap: 0.75rem;
-  }
-
-  .feedback__icon {
     font-size: 2rem;
   }
 
-  .feedback__text {
-    font-size: 1.25rem;
+  .feedback__game-clear-title {
+    font-size: 1.125rem;
   }
 
-  .feedback__answer-item {
-    padding: 0.75rem 1rem;
-  }
-
-  .feedback__answer-label {
+  .feedback__game-clear-text {
     font-size: 0.875rem;
   }
 
-  .feedback__answer-value {
+  .feedback__result {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .feedback__icon {
     font-size: 1.5rem;
   }
 
+  .feedback__text {
+    font-size: 1rem;
+  }
+
+  .feedback__answer-item {
+    padding: 0.375rem 0.75rem;
+  }
+
+  .feedback__answer-label {
+    font-size: 0.75rem;
+  }
+
+  .feedback__answer-value {
+    font-size: 1rem;
+  }
+
   .feedback__score-details {
-    padding: 0.75rem 1rem;
+    padding: 0.375rem 0.75rem;
   }
 
   .feedback__score-details-text {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
   }
 
   .feedback__streak {
-    padding: 0.75rem 1rem;
+    padding: 0.375rem 0.75rem;
   }
 
   .feedback__streak-icon {
-    font-size: 1.25rem;
+    font-size: 1rem;
   }
 
   .feedback__streak-text {
-    font-size: 1rem;
+    font-size: 0.875rem;
   }
 
   .feedback__bust {
@@ -340,22 +343,23 @@
   }
 
   .feedback__next-button {
-    padding: 1rem 1.5rem;
-    font-size: 1.125rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
   }
 }
 
 /* タブレット対応 */
 @media (min-width: 641px) and (max-width: 1024px) {
   .feedback {
-    padding: 1.75rem 1.5rem;
+    padding: 0.875rem 0.75rem;
+    gap: 0.625rem;
   }
 
   .feedback__text {
-    font-size: 1.5rem;
+    font-size: 1.125rem;
   }
 
   .feedback__answer-value {
-    font-size: 1.5rem;
+    font-size: 1.125rem;
   }
 }
