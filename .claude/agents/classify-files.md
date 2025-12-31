@@ -1126,3 +1126,67 @@ Phase H「プレイヤー練習モードでの残り点数減算」の `gameStor
 ##### 出力が切れた場合の自己診断
 
 エージェントは自身の出力を監視し、JSON が完成していない場合は再出力を試みること。ただし、外部からの中断には対応できないため、最初から簡潔な出力を心がける。
+
+### 2026-01-01: CSSファイルのみのリストに対する早期エラー応答
+
+#### 背景
+Phase 9.1.2「画面レイアウトの動的サイズ対応」のテストパターン判定において、対象ファイルが全てCSSファイル（`QuestionDisplay.css`, `NumPad.css`, `PracticeScreen.css`）であったにもかかわらず、エージェントが通常の判定処理を開始し、出力が途中で切れてしまった。
+
+#### 問題の根本原因
+1. CSSファイルはテストパターン判定対象外であることは記載されていたが、「全てのファイルがCSSの場合」の早期応答ルールが明確でなかった
+2. エージェントがCSSファイルに対して判定処理を開始してしまった
+3. 結果として出力が途中で切れた
+
+#### 追加ガイドライン
+
+##### CSSファイルのみのリストに対する早期応答
+
+**最重要ルール**: 対象ファイルリストに実行可能なコード（`.ts`, `.tsx`, `.js`, `.jsx`）が1つも含まれていない場合、即座にエラー応答を返すこと
+
+1. **判定対象ファイルの事前チェック**
+   テストパターン判定を求められた場合、最初に対象ファイルの拡張子を確認：
+   - `.css`, `.scss`, `.sass` のみの場合 → 即座にエラー応答
+   - `.md`, `.json`, `.yaml` のみの場合 → 即座にエラー応答
+   - 上記と `.ts`/`.tsx` の混在 → `.ts`/`.tsx` のみを判定対象に
+
+2. **CSSファイルのみの場合のエラー応答**
+   ```json
+   {
+     "error": "No testable files in the list",
+     "reason": "All specified files are CSS files which cannot be unit tested",
+     "files": ["src/components/Practice/QuestionDisplay.css", "src/components/Practice/NumPad.css", "src/components/Practice/PracticeScreen.css"],
+     "suggestion": "CSS changes should be verified through visual regression testing or manual review. Consider using Storybook snapshots or Chromatic for CSS validation."
+   }
+   ```
+
+3. **判定処理を開始しない**
+   CSSファイルのみの場合、分析や判定処理を一切行わず、即座にエラー応答を返すこと。これにより出力が途中で切れるリスクを回避する。
+
+##### ファイル拡張子による早期フィルタリング
+
+```typescript
+function filterTestableFiles(files: string[]): { testable: string[], untestable: string[] } {
+  const testable = files.filter(f => /\.(ts|tsx|js|jsx)$/.test(f));
+  const untestable = files.filter(f => /\.(css|scss|sass|md|json|yaml|yml)$/.test(f));
+  return { testable, untestable };
+}
+
+// 使用例
+const { testable, untestable } = filterTestableFiles(requestedFiles);
+if (testable.length === 0) {
+  return {
+    error: "No testable files in the list",
+    reason: "All specified files are non-testable file types",
+    files: untestable,
+    suggestion: "..."
+  };
+}
+```
+
+##### CSSリファクタリングタスクへの対応
+
+CSS関連のタスク（レイアウト調整、レスポンシブ対応など）でテストパターン判定を求められた場合：
+
+1. **視覚的確認の推奨**: CSSの変更は視覚的な確認が必要であることを明記
+2. **代替テスト手段の提案**: Storybook、Chromatic、Percy等のビジュアルリグレッションツールを推奨
+3. **関連するTypeScriptファイルの確認**: CSSと連動するコンポーネント（.tsx）がある場合は、そちらのテストパターンを判定

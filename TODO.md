@@ -649,15 +649,20 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - `src/stores/gameStore.ts`: `checkAndUpdateBust`関数を修正（全モードで残り点数を減算）
 - `src/stores/gameStore.test.ts`: Phase Hのテスト12ケース追加、ヘルパー関数追加
 
-#### 9.1.2 画面レイアウトの動的サイズ対応
+#### 9.1.2 画面レイアウトの動的サイズ対応（2026-01-01完了）
 **問題**: 問題文と入力コンポーネントが固定サイズで、スクロールが必要
 **方針**: コンポーネントを親コンテナに対してレスポンシブにし、スクロール不要に
 
-- [ ] `QuestionDisplay.css`: `max-width: 800px` → `max-width: 100%`
-- [ ] `NumPad.css`: `max-width: 400px` → `max-width: 100%`または`min(400px, 100%)`
-- [ ] `.practice-screen__interaction-section`に`overflow-x: hidden`を追加
-- [ ] 小型デバイスでのフォントサイズ調整（CSS変数使用）
-- [ ] NumPadボタンのサイズを親幅に応じて調整（`aspect-ratio: 1`維持）
+- [x] `QuestionDisplay.css`: `max-width: 800px` → `max-width: 100%`
+- [x] `NumPad.css`: `max-width: 400px` → デスクトップ400px、モバイル100%
+- [x] `.practice-screen__interaction-section`に`overflow-x: hidden`を追加
+- [x] 小型デバイスでのフォントサイズ調整（CSS変数使用）
+- [x] NumPadボタンのサイズを親幅に応じて調整（`aspect-ratio: 1`維持）
+
+**実装箇所**:
+- `src/components/Practice/QuestionDisplay.css`
+- `src/components/Practice/NumPad.css`
+- `src/components/Practice/PracticeScreen.css`
 
 #### 9.1.3 基礎練習モードのランダム出題化（82ターゲット対応）
 **問題**: 20だけを狙うと回答パターンに偏りが出る
