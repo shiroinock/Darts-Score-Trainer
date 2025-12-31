@@ -11,11 +11,11 @@
  * 時間切れ時の自動終了処理も担当します。
  */
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
+import { useFeedback } from '../../hooks/useFeedback';
 import { usePracticeSession } from '../../hooks/usePracticeSession';
 import { useTimer } from '../../hooks/useTimer';
 import { useGameStore } from '../../stores/gameStore';
-import { checkBust, isDoubleRing } from '../../utils/gameLogic/index.js';
 import { DartBoard } from '../DartBoard/DartBoard';
 import { BustQuestion } from './BustQuestion';
 import { Feedback } from './Feedback';
@@ -44,6 +44,16 @@ export function PracticeScreen(): JSX.Element {
   usePracticeSession();
   useTimer();
 
+  // フィードバック状態管理
+  const {
+    showFeedback,
+    lastAnswer,
+    bustAnswer,
+    handleConfirm,
+    handleBustAnswer,
+    handleBustFeedbackComplete,
+  } = useFeedback();
+
   // ストアから必要な状態を取得
   const gameState = useGameStore((state) => state.gameState);
   const sessionConfig = useGameStore((state) => state.sessionConfig);
@@ -51,24 +61,11 @@ export function PracticeScreen(): JSX.Element {
   const currentQuestion = useGameStore((state) => state.currentQuestion);
   const questionType = useGameStore((state) => state.config.questionType);
   const displayedDarts = useGameStore((state) => state.displayedDarts);
-  const roundStartScore = useGameStore((state) => state.roundStartScore);
 
   // アクション関数を取得
-  const submitAnswer = useGameStore((state) => state.submitAnswer);
-  const simulateNextThrow = useGameStore((state) => state.simulateNextThrow);
   const resetToSetup = useGameStore((state) => state.resetToSetup);
   const endSession = useGameStore((state) => state.endSession);
-  const getCurrentCorrectAnswer = useGameStore((state) => state.getCurrentCorrectAnswer);
-
-  // ローカル状態: フィードバック表示管理
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [lastAnswer, setLastAnswer] = useState<{
-    value: number;
-    isCorrect: boolean;
-  } | null>(null);
-
-  // BustQuestion用の回答状態
-  const [bustAnswer, setBustAnswer] = useState<boolean | null>(null);
+  const getBustCorrectAnswer = useGameStore((state) => state.getBustCorrectAnswer);
 
   // 時間切れの検出と自動終了処理
   useEffect(() => {
@@ -79,69 +76,6 @@ export function PracticeScreen(): JSX.Element {
       }
     }
   }, [elapsedTime, sessionConfig, gameState, endSession]);
-
-  /**
-   * バスト判定の回答ハンドラー
-   */
-  const handleBustAnswer = (isBust: boolean): void => {
-    if (!currentQuestion) {
-      return;
-    }
-
-    // 回答を保存
-    setBustAnswer(isBust);
-
-    // フィードバックを表示
-    setShowFeedback(true);
-  };
-
-  /**
-   * 回答確定時のハンドラー（NumPad用）
-   */
-  const handleConfirm = (value: number): void => {
-    if (!currentQuestion) {
-      return;
-    }
-
-    // 正誤判定（submitAnswerの前に正解を取得）
-    const correctAnswer = getCurrentCorrectAnswer();
-    const isCorrect = value === correctAnswer;
-
-    // 回答を提出
-    submitAnswer(value);
-
-    // フィードバック表示用の情報を保存
-    setLastAnswer({ value, isCorrect });
-    setShowFeedback(true);
-  };
-
-  /**
-   * FeedbackコンポーネントのnextQuestionボタンが押された時のハンドラー
-   * currentQuestionの変化を監視してフィードバックを非表示にする
-   */
-  const prevQuestionRef = useRef(currentQuestion);
-  useEffect(() => {
-    // 問題が変わったらフィードバックを非表示にする
-    if (currentQuestion !== prevQuestionRef.current && showFeedback) {
-      setShowFeedback(false);
-      setLastAnswer(null);
-      setBustAnswer(null);
-    }
-    // 次回のために現在の問題を保存
-    prevQuestionRef.current = currentQuestion;
-  }, [currentQuestion, showFeedback]);
-
-  /**
-   * BustQuestionのフィードバック完了後、次のダーツを表示
-   */
-  const handleBustFeedbackComplete = (): void => {
-    // フィードバックを非表示
-    setShowFeedback(false);
-    setBustAnswer(null);
-
-    // 次のダーツを表示
-    simulateNextThrow();
-  };
 
   // 練習中でない場合は何も表示しない（防御的プログラミング）
   if (gameState !== 'practicing') {
@@ -159,30 +93,8 @@ export function PracticeScreen(): JSX.Element {
   // バストフェーズかどうかを判定
   const isBustPhase = currentQuestion?.questionPhase?.type === 'bust';
 
-  // バスト判定の正解を計算（最後の1投に対して判定）
-  const bustCorrectAnswer = (() => {
-    if (!isBustPhase || displayedDarts.length === 0) {
-      return false;
-    }
-
-    // 表示されている最後のダーツ
-    const lastDisplayedDart = displayedDarts[displayedDarts.length - 1];
-
-    // その投擲時点での残り点数を計算（最後の1投を除いた累積を引く）
-    const previousCumulativeScore = displayedDarts
-      .slice(0, -1)
-      .reduce((sum, dart) => sum + dart.score, 0);
-    const currentRemainingScore = roundStartScore - previousCumulativeScore;
-
-    // バスト判定を実行（最後の1投のスコアで判定）
-    const bustResult = checkBust(
-      currentRemainingScore,
-      lastDisplayedDart.score,
-      isDoubleRing(lastDisplayedDart.ring)
-    );
-
-    return bustResult.isBust;
-  })();
+  // バスト判定の正解を取得（gameStoreで計算）
+  const bustCorrectAnswer = getBustCorrectAnswer();
 
   return (
     <div className="practice-screen">

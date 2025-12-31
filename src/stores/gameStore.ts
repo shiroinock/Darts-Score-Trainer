@@ -222,15 +222,29 @@ function simulateThrows(
 }
 
 /**
+ * 3投モードの表示中ダーツ数を表す型
+ *
+ * 3投モードでは、各ダーツを順次表示し、1〜3の値を取る。
+ */
+type DisplayedThrowCount = 1 | 2 | 3;
+
+/**
+ * 数値がDisplayedThrowCountかどうかを判定する型ガード
+ */
+function isDisplayedThrowCount(value: number): value is DisplayedThrowCount {
+  return value === 1 || value === 2 || value === 3;
+}
+
+/**
  * 3投モードのquestionPhaseを計算する
  *
  * 3投モードでは、1本目・2本目の後にバスト判定を問い、
  * 3本目の後に合計得点を問う。これはscoreモード・remainingモード両方に適用される。
  *
  * @param throwIndex - 現在表示されている投擲数（1, 2, 3）
- * @returns 設定すべきquestionPhase、または設定不要の場合はundefined
+ * @returns 設定すべきquestionPhase
  */
-function calculateQuestionPhase(throwIndex: number): Question['questionPhase'] {
+function calculateQuestionPhase(throwIndex: DisplayedThrowCount): Question['questionPhase'] {
   if (throwIndex === 1) {
     // 1本目表示時: bustフェーズ
     return { type: 'bust', throwIndex: 1 };
@@ -239,11 +253,9 @@ function calculateQuestionPhase(throwIndex: number): Question['questionPhase'] {
     // 2本目表示時: bustフェーズ
     return { type: 'bust', throwIndex: 2 };
   }
-  if (throwIndex === 3) {
-    // 3本目表示時: scoreフェーズ
-    return { type: 'score', throwIndex: 3 };
-  }
-  return undefined;
+  // throwIndex === 3
+  // 3本目表示時: scoreフェーズ
+  return { type: 'score', throwIndex: 3 };
 }
 
 /**
@@ -317,9 +329,10 @@ interface GameStore {
   tick: () => void;
 
   // ============================================================
-  // 計算プロパティ（2個）
+  // 計算プロパティ（3個）
   // ============================================================
   getCurrentCorrectAnswer: () => number;
+  getBustCorrectAnswer: () => boolean;
   getAccuracy: () => number;
 }
 
@@ -509,7 +522,11 @@ export const useGameStore = create<GameStore>()(
           state.currentThrowIndex++;
 
           // questionPhaseの更新（3投モードのみ）
-          if (config.throwUnit === 3 && state.currentQuestion) {
+          if (
+            config.throwUnit === 3 &&
+            state.currentQuestion &&
+            isDisplayedThrowCount(state.currentThrowIndex)
+          ) {
             state.currentQuestion.questionPhase = calculateQuestionPhase(state.currentThrowIndex);
           }
         }),
@@ -688,6 +705,45 @@ export const useGameStore = create<GameStore>()(
       getCurrentCorrectAnswer: () => {
         const { currentQuestion } = get();
         return currentQuestion?.correctAnswer ?? 0;
+      },
+
+      /**
+       * バスト判定の正解を取得する（3投モードのバストフェーズ用）
+       *
+       * 表示されている最後のダーツ投擲時点でのバスト判定を行う。
+       * - 1本目表示時: 1本目がバストを引き起こすか
+       * - 2本目表示時: 1本目+2本目の累積がバストを引き起こすか
+       */
+      getBustCorrectAnswer: () => {
+        const { currentQuestion, displayedDarts, roundStartScore } = get();
+
+        // バストフェーズでない場合はfalse
+        if (currentQuestion?.questionPhase?.type !== 'bust') {
+          return false;
+        }
+
+        // 表示されているダーツがない場合はfalse
+        if (displayedDarts.length === 0) {
+          return false;
+        }
+
+        // 表示されている最後のダーツ
+        const lastDisplayedDart = displayedDarts[displayedDarts.length - 1];
+
+        // その投擲時点での残り点数を計算（最後の1投を除いた累積を引く）
+        const previousCumulativeScore = displayedDarts
+          .slice(0, -1)
+          .reduce((sum, dart) => sum + dart.score, 0);
+        const currentRemainingScore = roundStartScore - previousCumulativeScore;
+
+        // バスト判定を実行（最後の1投のスコアで判定）
+        const bustResult = checkBust(
+          currentRemainingScore,
+          lastDisplayedDart.score,
+          isDoubleRing(lastDisplayedDart.ring)
+        );
+
+        return bustResult.isBust;
       },
 
       /**
