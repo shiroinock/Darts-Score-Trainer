@@ -169,7 +169,32 @@ log_report "## 評価結果"
 log_report ""
 
 echo "📋 Claude に評価を依頼中..."
-EVALUATION_RESULT=$(cat "$TEMP_PROMPT" | claude --allowedTools "Edit,Read" -p 2>&1)
+# claudeコマンドを探索
+find_claude_cmd() {
+  local candidates=(
+    "$HOME/.claude/local/claude"
+    "/usr/local/bin/claude"
+    "/opt/homebrew/bin/claude"
+  )
+  for cmd in "${candidates[@]}"; do
+    if [ -x "$cmd" ]; then
+      echo "$cmd"
+      return 0
+    fi
+  done
+  # PATHから検索（フォールバック）
+  command -v claude 2>/dev/null
+}
+
+CLAUDE_CMD=$(find_claude_cmd)
+if [ -z "$CLAUDE_CMD" ]; then
+  log_report "⚠️ claudeコマンドが見つかりません"
+  echo "⚠️ claudeコマンドが見つかりません。評価をスキップします。"
+  rm -f "$TEMP_PROMPT"
+  exit 0
+fi
+
+EVALUATION_RESULT=$(cat "$TEMP_PROMPT" | "$CLAUDE_CMD" --allowedTools "Edit,Read" -p 2>&1)
 rm -f "$TEMP_PROMPT"
 
 log_report "$EVALUATION_RESULT"

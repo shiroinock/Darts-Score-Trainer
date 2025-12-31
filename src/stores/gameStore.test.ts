@@ -2572,7 +2572,7 @@ describe('gameStore', () => {
         expect(result.current.currentQuestion?.bustInfo).toBeUndefined();
       });
 
-      test('scoreモードで大きな得点が出てもbustInfoは設定されない', () => {
+      test('scoreモードで大きな得点が出てもbustInfoが設定される（3投モードのbust判定用）', () => {
         // Arrange
         const { result } = renderHook(() => useGameStore());
         act(() => {
@@ -2597,8 +2597,8 @@ describe('gameStore', () => {
           result.current.generateQuestion();
         });
 
-        // Assert: scoreモードではbustInfoが設定されない
-        expect(result.current.currentQuestion?.bustInfo).toBeUndefined();
+        // Assert: 3投モードではscoreモードでもbustInfoが設定される（bust判定用）
+        expect(result.current.currentQuestion?.bustInfo).toBeDefined();
       });
     });
   });
@@ -3248,6 +3248,929 @@ describe('gameStore', () => {
           // Assert: 変化なし
           expect(result.current.displayedDarts).toHaveLength(1);
           expect(result.current.currentThrowIndex).toBe(1);
+        });
+      });
+    });
+
+    // ============================================================
+    // Phase A: バスト判定（3投モード、1本目の後）
+    // ============================================================
+    describe('Phase A: バスト判定（3投モード、1本目の後）', () => {
+      describe('questionPhaseフィールドの設定', () => {
+        test('3投モードで1本目表示後、questionPhase.type = "bust", throwIndex = 1 が設定される', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'remaining',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // Assert: 1本目表示後、questionPhase.type = 'bust', throwIndex = 1
+          expect(result.current.currentQuestion?.questionPhase).toBeDefined();
+          expect(result.current.currentQuestion?.questionPhase?.type).toBe('bust');
+          expect(result.current.currentQuestion?.questionPhase?.throwIndex).toBe(1);
+        });
+
+        test('3投モードのscoreモードでも1本目でquestionPhase(bust)が設定される', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'score',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // Assert: scoreモードでもbust判定のquestionPhaseが設定される
+          expect(result.current.currentQuestion?.questionPhase?.type).toBe('bust');
+          expect(result.current.currentQuestion?.questionPhase?.throwIndex).toBe(1);
+        });
+
+        test('1投モードでは1本目でもquestionPhaseは設定されない', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 1,
+              questionType: 'remaining',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // Assert: 1投モードではquestionPhaseは設定されない
+          expect(result.current.currentQuestion?.questionPhase).toBeUndefined();
+        });
+      });
+
+      describe('displayedDartsとcurrentThrowIndexの状態', () => {
+        test('1本目表示後、displayedDartsには1本のみ、currentThrowIndex = 1', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'remaining',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // Assert
+          expect(result.current.displayedDarts).toHaveLength(1);
+          expect(result.current.currentThrowIndex).toBe(1);
+        });
+      });
+
+      describe('バスト判定ロジック（remainingモード）', () => {
+        test('1本目でバストが発生した場合、bustInfoが設定される', () => {
+          // Arrange: 残り点数を少なくしてバストしやすくする
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'remaining',
+              startingScore: 10, // 低い点数でバストしやすくする
+            });
+            result.current.startPractice();
+          });
+
+          // Assert: バストが発生した場合、bustInfoが設定される
+          const question = result.current.currentQuestion;
+          const firstThrow = question?.throws[0];
+
+          if (firstThrow && firstThrow.score > 10) {
+            // 1本目で既にオーバー
+            expect(question?.bustInfo?.isBust).toBe(true);
+          }
+        });
+
+        test('1本目でバストしない場合、bustInfoはundefined', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'remaining',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // Assert: 通常は1本目でバストしないため、bustInfoはundefined
+          const question = result.current.currentQuestion;
+          const firstThrow = question?.throws[0];
+
+          if (firstThrow && firstThrow.score <= 501) {
+            // 1本目でバストしていない
+            expect(question?.bustInfo).toBeUndefined();
+          }
+        });
+      });
+    });
+
+    // ============================================================
+    // Phase B: バスト判定（3投モード、2本目の後）
+    // ============================================================
+    describe('Phase B: バスト判定（3投モード、2本目の後）', () => {
+      describe('questionPhaseフィールドの設定', () => {
+        test('3投モードで2本目表示後、questionPhase.type = "bust", throwIndex = 2 が設定される', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'remaining',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // Act: 2本目表示
+          act(() => {
+            result.current.simulateNextThrow();
+          });
+
+          // Assert: 2本目表示後、questionPhase.type = 'bust', throwIndex = 2
+          expect(result.current.currentQuestion?.questionPhase).toBeDefined();
+          expect(result.current.currentQuestion?.questionPhase?.type).toBe('bust');
+          expect(result.current.currentQuestion?.questionPhase?.throwIndex).toBe(2);
+        });
+
+        test('3投モードのscoreモードでも2本目でquestionPhase(bust)が設定される', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'score',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // Act: 2本目表示
+          act(() => {
+            result.current.simulateNextThrow();
+          });
+
+          // Assert: scoreモードでもbust判定のquestionPhaseが設定される
+          expect(result.current.currentQuestion?.questionPhase?.type).toBe('bust');
+          expect(result.current.currentQuestion?.questionPhase?.throwIndex).toBe(2);
+        });
+      });
+
+      describe('displayedDartsとcurrentThrowIndexの状態', () => {
+        test('2本目表示後、displayedDartsには2本、currentThrowIndex = 2', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'remaining',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // Act: 2本目表示
+          act(() => {
+            result.current.simulateNextThrow();
+          });
+
+          // Assert
+          expect(result.current.displayedDarts).toHaveLength(2);
+          expect(result.current.currentThrowIndex).toBe(2);
+        });
+      });
+
+      describe('バスト判定ロジック（remainingモード）', () => {
+        test('2本目でバストが発生した場合、bustInfoが設定される', () => {
+          // Arrange: 残り点数を少なくしてバストしやすくする
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'remaining',
+              startingScore: 20, // 低い点数でバストしやすくする
+            });
+            result.current.startPractice();
+          });
+
+          // Act: 2本目表示
+          act(() => {
+            result.current.simulateNextThrow();
+          });
+
+          // Assert: バストが発生した場合、bustInfoが設定される
+          const question = result.current.currentQuestion;
+          const throws = question?.throws ?? [];
+          const totalScore = throws.slice(0, 2).reduce((sum, t) => sum + t.score, 0);
+
+          if (totalScore > 20) {
+            // 2本目までの合計でオーバー
+            expect(question?.bustInfo?.isBust).toBe(true);
+          }
+        });
+
+        test('2本目でバストしない場合、bustInfoはundefined', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'remaining',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // Act: 2本目表示
+          act(() => {
+            result.current.simulateNextThrow();
+          });
+
+          // Assert: 通常は2本目でバストしないため、bustInfoはundefined
+          const question = result.current.currentQuestion;
+          const throws = question?.throws ?? [];
+          const totalScore = throws.slice(0, 2).reduce((sum, t) => sum + t.score, 0);
+
+          if (totalScore <= 501) {
+            // 2本目までの合計でバストしていない
+            expect(question?.bustInfo).toBeUndefined();
+          }
+        });
+      });
+
+      describe('フェーズ遷移の確認', () => {
+        test('1本目から2本目へのフェーズ遷移でquestionPhase.throwIndexが1から2に変わる', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'remaining',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // 1本目のquestionPhaseを記録
+          const phase1 = result.current.currentQuestion?.questionPhase;
+          expect(phase1?.type).toBe('bust');
+          expect(phase1?.throwIndex).toBe(1);
+
+          // Act: 2本目表示
+          act(() => {
+            result.current.simulateNextThrow();
+          });
+
+          // Assert: 2本目のquestionPhaseに更新される
+          const phase2 = result.current.currentQuestion?.questionPhase;
+          expect(phase2?.type).toBe('bust');
+          expect(phase2?.throwIndex).toBe(2);
+        });
+      });
+    });
+
+    // ============================================================
+    // Phase C: 合計点数の質問（3投モード、3本目の後）
+    // ============================================================
+    describe('Phase C: 合計点数の質問（scoreフェーズ）', () => {
+      describe('questionPhaseフィールドの設定', () => {
+        test('3投モードのscoreモードで3本目表示後、questionPhase.type = "score" が設定される', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'score',
+              startingScore: 501, // scoreモードなので残り点数は不要
+            });
+            result.current.startPractice();
+          });
+
+          // Act: 3本すべて表示
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.simulateNextThrow();
+          });
+
+          // Assert: questionPhase.type が 'score' で throwIndex が 3 になる
+          expect(result.current.currentQuestion?.questionPhase).toBeDefined();
+          expect(result.current.currentQuestion?.questionPhase?.type).toBe('score');
+          expect(result.current.currentQuestion?.questionPhase?.throwIndex).toBe(3);
+        });
+
+        test('1投モードではquestionPhaseが設定されない', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 1,
+              questionType: 'score',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // Assert: 1投モードではquestionPhaseは設定されない
+          expect(result.current.currentQuestion?.questionPhase).toBeUndefined();
+        });
+      });
+
+      describe('正解計算ロジック: 通常ケース', () => {
+        test('3投の合計点数が正解となる（バストなし）', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'score',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // Act: 3本すべて表示
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.simulateNextThrow();
+          });
+
+          // Assert: correctAnswerは3投の合計得点
+          const throws = result.current.currentQuestion?.throws ?? [];
+          const expectedTotal = throws.reduce((sum, t) => sum + t.score, 0);
+
+          expect(result.current.currentQuestion?.correctAnswer).toBe(expectedTotal);
+          expect(result.current.getCurrentCorrectAnswer()).toBe(expectedTotal);
+        });
+
+        test('3投の合計が0点の場合も正解は0点', () => {
+          // Arrange: すべてボード外を想定（モックで0点を強制することは難しいため、実際の投擲結果に依存）
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'score',
+              startingScore: 501,
+              stdDevMM: 100, // 散らばりを大きくしてボード外の可能性を高める
+            });
+            result.current.startPractice();
+          });
+
+          // Act: 3本すべて表示
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.simulateNextThrow();
+          });
+
+          // Assert: 合計点数が正解（0点の可能性もある）
+          const throws = result.current.currentQuestion?.throws ?? [];
+          const expectedTotal = throws.reduce((sum, t) => sum + t.score, 0);
+
+          expect(result.current.currentQuestion?.correctAnswer).toBe(expectedTotal);
+          // 合計点数は0-180点の範囲
+          expect(expectedTotal).toBeGreaterThanOrEqual(0);
+          expect(expectedTotal).toBeLessThanOrEqual(180);
+        });
+
+        test('3投の合計が最大180点になる可能性（T20×3）', () => {
+          // Arrange: T20を狙う設定で散らばりを小さくする
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'score',
+              startingScore: 501,
+              target: { type: 'TRIPLE', number: 20, label: 'T20' },
+              stdDevMM: 5, // 非常に高精度
+            });
+            result.current.startPractice();
+          });
+
+          // Act: 3本すべて表示
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.simulateNextThrow();
+          });
+
+          // Assert: 合計点数が正解（180点の可能性もある）
+          const throws = result.current.currentQuestion?.throws ?? [];
+          const expectedTotal = throws.reduce((sum, t) => sum + t.score, 0);
+
+          expect(result.current.currentQuestion?.correctAnswer).toBe(expectedTotal);
+          expect(expectedTotal).toBeLessThanOrEqual(180);
+        });
+      });
+
+      describe('正解計算ロジック: バストケース（remainingモード）', () => {
+        test('バスト発生時、正解は0点となる', () => {
+          // Arrange: 残り点数を少なくしてバストしやすくする
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'remaining', // remainingモードでバスト判定を有効化
+              startingScore: 50, // 低い点数でバストしやすくする
+            });
+            result.current.startPractice();
+          });
+
+          // 現在の残り点数を確認
+          const currentRemaining = result.current.remainingScore;
+
+          // Act: 3本すべて表示
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.simulateNextThrow();
+          });
+
+          // Assert: バストが発生した場合、正解は0点
+          const question = result.current.currentQuestion;
+          if (question?.bustInfo?.isBust) {
+            expect(question.correctAnswer).toBe(0);
+            expect(result.current.getCurrentCorrectAnswer()).toBe(0);
+          } else {
+            // バストしなかった場合は残り点数の計算
+            const totalScore = question?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
+            const expectedRemaining = currentRemaining - totalScore;
+            expect(question?.correctAnswer).toBe(expectedRemaining);
+          }
+        });
+
+        test('残り点数オーバーでバスト時、正解は0点', () => {
+          // Arrange: 残り点数を非常に少なくする
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'remaining',
+              startingScore: 10, // 非常に低い残り点数
+            });
+            result.current.startPractice();
+          });
+
+          // Act: 3本すべて表示
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.simulateNextThrow();
+          });
+
+          // Assert: オーバーした場合、バストで0点
+          const question = result.current.currentQuestion;
+          const totalScore = question?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
+
+          if (totalScore > 10) {
+            // オーバー確実の場合
+            expect(question?.bustInfo?.isBust).toBe(true);
+            expect(question?.correctAnswer).toBe(0);
+          }
+        });
+
+        test('残り点数が1点になった場合もバスト（フィニッシュ不可能）', () => {
+          // Arrange: 残り点数を3点に設定
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'remaining',
+              startingScore: 3, // 残り3点
+            });
+            result.current.startPractice();
+          });
+
+          // Act: 3本すべて表示
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.simulateNextThrow();
+          });
+
+          // Assert: 合計が2点なら残り1点でバスト
+          const question = result.current.currentQuestion;
+          const totalScore = question?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
+
+          if (totalScore === 2) {
+            // 残り1点になる場合
+            expect(question?.bustInfo?.isBust).toBe(true);
+            expect(question?.bustInfo?.reason).toBe('remaining_one');
+            expect(question?.correctAnswer).toBe(0);
+          }
+        });
+      });
+
+      describe('正解計算ロジック: ダブルアウト違反ケース', () => {
+        test('ダブルアウトルールで最終投がダブルでない場合はバスト', () => {
+          // Arrange: 残り点数をちょうどダブルでフィニッシュできる値に設定
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'remaining',
+              startingScore: 40, // D20でフィニッシュ可能
+            });
+            result.current.startPractice();
+          });
+
+          // Act: 3本すべて表示
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.simulateNextThrow();
+          });
+
+          // Assert: 残り点数がちょうど0になってもダブルでなければバスト
+          const question = result.current.currentQuestion;
+          const totalScore = question?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
+          const lastThrow = question?.throws[2];
+
+          if (totalScore === 40 && lastThrow?.ring !== 'DOUBLE') {
+            // ちょうど0になったがダブルでない
+            expect(question?.bustInfo?.isBust).toBe(true);
+            expect(question?.bustInfo?.reason).toBe('not_double_out');
+            expect(question?.correctAnswer).toBe(0);
+          }
+        });
+      });
+
+      describe('questionTextの生成', () => {
+        test('scoreモードの場合、"3投の合計は何点？" のようなテキストが設定される', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'score',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // Act: 3本すべて表示
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.simulateNextThrow();
+          });
+
+          // Assert: questionTextに合計点数を問う文言が含まれる
+          const questionText = result.current.currentQuestion?.questionText ?? '';
+          expect(questionText).toContain('合計');
+          expect(questionText).toContain('点');
+        });
+
+        test('remainingモードの場合、"残り何点？" のようなテキストが設定される', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'remaining',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // Act: 3本すべて表示
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.simulateNextThrow();
+          });
+
+          // Assert: questionTextに残り点数を問う文言が含まれる
+          const questionText = result.current.currentQuestion?.questionText ?? '';
+          expect(questionText).toContain('残り');
+          expect(questionText).toContain('点');
+        });
+      });
+
+      describe('統合シナリオ: 3投モードの完全なセッションフロー', () => {
+        test('シナリオA: 3投モードでの正常なセッションフロー（remainingモード）', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'remaining',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // 1本目表示後の状態検証
+          expect(result.current.displayedDarts).toHaveLength(1);
+          expect(result.current.currentThrowIndex).toBe(1);
+          expect(result.current.currentQuestion?.questionPhase?.type).toBe('bust');
+          expect(result.current.currentQuestion?.questionPhase?.throwIndex).toBe(1);
+
+          // Act: 2本目表示
+          act(() => {
+            result.current.simulateNextThrow();
+          });
+
+          // 2本目表示後の状態検証
+          expect(result.current.displayedDarts).toHaveLength(2);
+          expect(result.current.currentThrowIndex).toBe(2);
+          expect(result.current.currentQuestion?.questionPhase?.type).toBe('bust');
+          expect(result.current.currentQuestion?.questionPhase?.throwIndex).toBe(2);
+
+          // Act: 3本目表示
+          act(() => {
+            result.current.simulateNextThrow();
+          });
+
+          // 3本目表示後の状態検証
+          expect(result.current.displayedDarts).toHaveLength(3);
+          expect(result.current.currentThrowIndex).toBe(3);
+          expect(result.current.currentQuestion?.questionPhase?.type).toBe('score');
+          expect(result.current.currentQuestion?.questionPhase?.throwIndex).toBe(3);
+
+          // Act: 回答送信と次の問題へ
+          const correctAnswer = result.current.getCurrentCorrectAnswer();
+          act(() => {
+            result.current.submitAnswer(correctAnswer);
+            result.current.nextQuestion();
+          });
+
+          // 次のラウンドの1本目表示後の状態検証
+          expect(result.current.displayedDarts).toHaveLength(1);
+          expect(result.current.currentThrowIndex).toBe(1);
+          expect(result.current.currentQuestion?.questionPhase?.type).toBe('bust');
+          expect(result.current.currentQuestion?.questionPhase?.throwIndex).toBe(1);
+        });
+
+        test('シナリオB: 3投モードのscoreモードでも各フェーズでquestionPhaseが設定される', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'score',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // 1本目表示後: questionPhase.type = 'bust', throwIndex = 1
+          expect(result.current.currentQuestion?.questionPhase?.type).toBe('bust');
+          expect(result.current.currentQuestion?.questionPhase?.throwIndex).toBe(1);
+
+          // Act: 2本目表示
+          act(() => {
+            result.current.simulateNextThrow();
+          });
+
+          // 2本目表示後: questionPhase.type = 'bust', throwIndex = 2
+          expect(result.current.currentQuestion?.questionPhase?.type).toBe('bust');
+          expect(result.current.currentQuestion?.questionPhase?.throwIndex).toBe(2);
+
+          // Act: 3本目表示
+          act(() => {
+            result.current.simulateNextThrow();
+          });
+
+          // 3本目表示後: questionPhase.type = 'score' が設定される
+          expect(result.current.currentQuestion?.questionPhase?.type).toBe('score');
+          expect(result.current.currentQuestion?.questionPhase?.throwIndex).toBe(3);
+        });
+
+        test('シナリオC: remainingモードでバスト発生時のフロー', () => {
+          // Arrange: バストしやすい低い点数
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'remaining',
+              startingScore: 15, // 低い残り点数でバストしやすくする
+            });
+            result.current.startPractice();
+          });
+
+          // 1本目表示後: questionPhase.type = 'bust', throwIndex = 1
+          expect(result.current.currentQuestion?.questionPhase?.type).toBe('bust');
+          expect(result.current.currentQuestion?.questionPhase?.throwIndex).toBe(1);
+
+          // Act: 2本目表示
+          act(() => {
+            result.current.simulateNextThrow();
+          });
+
+          // 2本目表示後: questionPhase.type = 'bust', throwIndex = 2
+          expect(result.current.currentQuestion?.questionPhase?.type).toBe('bust');
+          expect(result.current.currentQuestion?.questionPhase?.throwIndex).toBe(2);
+
+          // Act: 3本目表示
+          act(() => {
+            result.current.simulateNextThrow();
+          });
+
+          // 3本目表示後: バストが発生した場合でもquestionPhase.type = 'score'
+          expect(result.current.currentQuestion?.questionPhase?.type).toBe('score');
+          expect(result.current.currentQuestion?.questionPhase?.throwIndex).toBe(3);
+
+          // バストが発生した場合、正解は0点
+          const question = result.current.currentQuestion;
+          if (question?.bustInfo?.isBust) {
+            expect(question.correctAnswer).toBe(0);
+          }
+        });
+      });
+
+      describe('統合シナリオ: submitAnswerとの連携', () => {
+        test('3投合計の正解を提出すると正解として記録される', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'score',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // Act: 3本すべて表示
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.simulateNextThrow();
+          });
+
+          const correctAnswer = result.current.getCurrentCorrectAnswer();
+
+          // Act: 正解を提出
+          act(() => {
+            result.current.submitAnswer(correctAnswer);
+          });
+
+          // Assert: 統計情報が更新される
+          expect(result.current.stats.correct).toBe(1);
+          expect(result.current.stats.total).toBe(1);
+          expect(result.current.stats.currentStreak).toBe(1);
+        });
+
+        test('3投合計の不正解を提出すると不正解として記録される', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'score',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // Act: 3本すべて表示
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.simulateNextThrow();
+          });
+
+          const correctAnswer = result.current.getCurrentCorrectAnswer();
+          const wrongAnswer = correctAnswer === 0 ? 10 : 0; // 確実に異なる値
+
+          // Act: 不正解を提出
+          act(() => {
+            result.current.submitAnswer(wrongAnswer);
+          });
+
+          // Assert: totalのみ増加
+          expect(result.current.stats.correct).toBe(0);
+          expect(result.current.stats.total).toBe(1);
+          expect(result.current.stats.currentStreak).toBe(0);
+        });
+
+        test('バスト時に0点を提出すると正解として記録される', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'remaining',
+              startingScore: 10, // バストしやすい低い点数
+            });
+            result.current.startPractice();
+          });
+
+          // Act: 3本すべて表示
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.simulateNextThrow();
+          });
+
+          // バストしているかチェック
+          const question = result.current.currentQuestion;
+          if (question?.bustInfo?.isBust) {
+            // Act: 0点を提出
+            act(() => {
+              result.current.submitAnswer(0);
+            });
+
+            // Assert: 正解として記録される
+            expect(result.current.stats.correct).toBe(1);
+            expect(result.current.stats.total).toBe(1);
+          }
+        });
+      });
+
+      describe('エッジケース', () => {
+        test('3投すべて0点（ボード外）の場合、正解は0点', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'score',
+              startingScore: 501,
+              stdDevMM: 200, // 極端に大きな散らばり
+            });
+            result.current.startPractice();
+          });
+
+          // Act: 3本すべて表示
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.simulateNextThrow();
+          });
+
+          // Assert: すべて0点の可能性
+          const throws = result.current.currentQuestion?.throws ?? [];
+          const allZero = throws.every((t) => t.score === 0);
+
+          if (allZero) {
+            expect(result.current.currentQuestion?.correctAnswer).toBe(0);
+          }
+        });
+
+        test('questionPhase設定前（1本目、2本目）はquestionPhaseがundefinedまたはbust', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'score',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // 1本目表示時点ではquestionPhaseは未設定またはbust
+          const questionPhase1 = result.current.currentQuestion?.questionPhase;
+          expect(questionPhase1?.type !== 'score' || questionPhase1 === undefined).toBe(true);
+
+          // Act: 2本目表示
+          act(() => {
+            result.current.simulateNextThrow();
+          });
+
+          // 2本目表示時点でもquestionPhaseはまだscore以外
+          const questionPhase2 = result.current.currentQuestion?.questionPhase;
+          expect(questionPhase2?.type !== 'score' || questionPhase2 === undefined).toBe(true);
+
+          // Act: 3本目表示
+          act(() => {
+            result.current.simulateNextThrow();
+          });
+
+          // 3本目表示後、questionPhase.type = 'score' になる
+          const questionPhase3 = result.current.currentQuestion?.questionPhase;
+          expect(questionPhase3?.type).toBe('score');
+          expect(questionPhase3?.throwIndex).toBe(3);
         });
       });
     });

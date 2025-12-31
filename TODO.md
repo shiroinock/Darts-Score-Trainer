@@ -574,10 +574,14 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] `BustQuestion`コンポーネント作成（src/components/Practice/BustQuestion.tsx, BustQuestion.css, BustQuestion.test.tsx）
 - [x] 正解/不正解フィードバックを表示（showFeedback props で制御）
 
-**Phase C: 合計点数の質問**
-- [ ] 3本目の後: 合計点数を`NumPad`で問う
-- [ ] 正解: 3投の合計得点（バストの場合は0点）
-- [ ] フィードバック後、次のラウンドへ
+**Phase C: 合計点数の質問**（2025-12-31完了）
+- [x] 3本目の後: 合計点数を`NumPad`で問う
+- [x] 正解: 3投の合計得点（バストの場合は0点）
+- [x] フィードバック後、次のラウンドへ
+- [x] questionPhaseフィールドによる3投モードのフェーズ管理
+  - 1本目・2本目: `{ type: 'bust', throwIndex: 1 | 2 }` → BustQuestion表示
+  - 3本目: `{ type: 'score', throwIndex: 3 }` → NumPad表示
+- [x] PracticeScreenでBustQuestion/NumPadの切り替え実装
 
 #### 9.1.2 画面レイアウトの動的サイズ対応
 **問題**: 問題文と入力コンポーネントが固定サイズで、スクロールが必要
