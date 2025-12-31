@@ -4,7 +4,7 @@
  * ダーツボードの描画とダーツマーカーの表示を担当
  */
 import type p5Types from 'p5';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Sketch from 'react-p5';
 import type { Coordinates } from '../../types';
 import { BOARD_PHYSICAL, DART_COLORS } from '../../utils/constants/index.js';
@@ -20,17 +20,23 @@ interface P5CanvasProps {
   coords: Coordinates[];
   /** ダーツ数（凡例表示制御用、0-3） */
   dartCount: number;
+  /** キャンバスの幅（ピクセル） */
+  width: number;
+  /** キャンバスの高さ（ピクセル） */
+  height: number;
 }
 
 /**
  * P5Canvasコンポーネント
- * @param props ダーツ位置とダーツ数
+ * @param props ダーツ位置、ダーツ数、キャンバスサイズ
  */
-export function P5Canvas({ coords, dartCount }: P5CanvasProps): JSX.Element {
+export function P5Canvas({ coords, dartCount, width, height }: P5CanvasProps): JSX.Element {
   // CoordinateTransformインスタンスをuseRefで管理（描画間で保持）
   const transformRef = useRef<CoordinateTransform | null>(null);
   // デバッグ用: 前回ログ出力した座標を記録（重複出力防止）
   const lastLoggedCoordsRef = useRef<string>('');
+  // p5インスタンスをuseRefで管理（リサイズ時に使用）
+  const p5InstanceRef = useRef<p5Types | null>(null);
 
   /**
    * setup関数 - 初期化時に1度だけ呼ばれる
@@ -39,11 +45,10 @@ export function P5Canvas({ coords, dartCount }: P5CanvasProps): JSX.Element {
    */
   // biome-ignore lint/suspicious/noExplicitAny: react-p5の型定義の制限
   const setup = (p5: any, canvasParentRef: Element): void => {
-    // キャンバスサイズを計算（ボード全体が見えるように）
-    const width = p5.windowWidth;
-    const height = p5.windowHeight;
+    // p5インスタンスを保存
+    p5InstanceRef.current = p5 as unknown as p5Types;
 
-    // キャンバスを作成
+    // キャンバスを作成（propsから受け取ったサイズを使用）
     p5.createCanvas(width, height).parent(canvasParentRef);
 
     // CoordinateTransformインスタンスの初期化
@@ -114,22 +119,21 @@ export function P5Canvas({ coords, dartCount }: P5CanvasProps): JSX.Element {
     }
   };
 
-  /**
-   * windowResized関数 - ウィンドウリサイズ時に呼ばれる
-   * @param p5 p5インスタンス（react-p5の型制約によりany）
-   */
-  // biome-ignore lint/suspicious/noExplicitAny: react-p5の型定義の制限
-  const windowResized = (p5: any): void => {
+  // propsのサイズ変更を監視してキャンバスをリサイズ
+  useEffect(() => {
+    const p5Instance = p5InstanceRef.current;
+    if (!p5Instance) {
+      return;
+    }
+
     // キャンバスサイズを更新
-    const width = p5.windowWidth;
-    const height = p5.windowHeight;
-    p5.resizeCanvas(width, height);
+    p5Instance.resizeCanvas(width, height);
 
     // CoordinateTransformのキャンバスサイズを更新
     if (transformRef.current) {
       transformRef.current.updateCanvasSize(width, height);
     }
-  };
+  }, [width, height]);
 
-  return <Sketch setup={setup} draw={draw} windowResized={windowResized} />;
+  return <Sketch setup={setup} draw={draw} />;
 }

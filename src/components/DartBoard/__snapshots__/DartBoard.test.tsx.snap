@@ -2,17 +2,23 @@
 
 exports[`DartBoard > スナップショットテスト > 1投のダーツ表示状態のスナップショット 1`] = `
 <div
-  style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100vh;"
+  style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
 >
   <div
-    style="width: 728px; height: 728px;"
+    style="width: 560px; height: 560px;"
   >
     <div
       data-coords="[{"x":0,"y":-103}]"
       data-dart-count="1"
+      data-height="560"
       data-testid="mock-p5-canvas"
+      data-width="560"
     >
-      Mock P5Canvas
+      Mock P5Canvas (
+      560
+      x
+      560
+      )
     </div>
   </div>
 </div>
@@ -20,36 +26,30 @@ exports[`DartBoard > スナップショットテスト > 1投のダーツ表示�
 
 exports[`DartBoard > スナップショットテスト > 3投のダーツ表示状態のスナップショット（凡例表示） 1`] = `
 <div
-  style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100vh;"
+  style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
 >
   <div
-    style="width: 728px; height: 728px;"
+    style="width: 560px; height: 560px;"
   >
     <div
       data-coords="[{"x":0,"y":-103},{"x":50,"y":50},{"x":-30,"y":-30}]"
       data-dart-count="3"
+      data-height="560"
       data-testid="mock-p5-canvas"
+      data-width="560"
     >
-      Mock P5Canvas
+      Mock P5Canvas (
+      560
+      x
+      560
+      )
     </div>
   </div>
 </div>
 `;
 
-exports[`DartBoard > スナップショットテスト > デフォルト状態（ダーツなし）のスナップショット 1`] = `
+exports[`DartBoard > スナップショットテスト > デフォルト状態（コンテナサイズ0、ダーツなし）のスナップショット 1`] = `
 <div
-  style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100vh;"
->
-  <div
-    style="width: 728px; height: 728px;"
-  >
-    <div
-      data-coords="[]"
-      data-dart-count="0"
-      data-testid="mock-p5-canvas"
-    >
-      Mock P5Canvas
-    </div>
-  </div>
-</div>
+  style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
+/>
 `;

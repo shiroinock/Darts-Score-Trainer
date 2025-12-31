@@ -540,6 +540,45 @@ function isRenderingOnlyFile(file: FileInfo): boolean {
 ##### エラー時の出力形式
 エラーや特殊なケースでは、必ず完全なJSON形式で応答すること。出力が途中で切れることを防ぐため、簡潔な形式を使用。
 
+### 2025-12-31: 動的レイアウト調整コンポーネントの判定基準追加
+
+#### 背景
+Phase 8.5「ボードサイズの動的調整」のテストパターン判定において、以下の改善点を発見：
+1. 動的レイアウト調整機能を持つコンポーネントの判定基準が不明確
+2. ResizeObserver や windowResized などの動的サイズ調整に関する判定基準が不足
+
+#### 追加ガイドライン
+
+##### 動的レイアウトコンポーネントの判定基準
+```typescript
+// 動的レイアウト調整コンポーネントの特徴
+function isDynamicLayoutComponent(file: FileInfo): boolean {
+  return (
+    // ResizeObserver または window.resize イベントを使用
+    (file.content.includes('ResizeObserver') || 
+     file.content.includes('window.addEventListener') ||
+     file.content.includes('windowResized')) &&
+    // サイズ計算関数を持つ
+    hasCalculateSizeFunction(file) &&
+    // コンポーネントまたはキャンバス要素
+    (file.path.includes('/components/') || file.content.includes('canvas'))
+  );
+}
+```
+
+##### 動的レイアウトコンポーネントのテストパターン
+動的にサイズ調整を行うコンポーネント：
+- **test-later必須**: 実装後の視覚的確認とリサイズ動作の確認が必要
+- **componentパターン**: リサイズイベントのシミュレーションが必要
+- **統合テストも検討**: p5.jsキャンバスの場合は統合テストが適切
+
+##### テスト実装時の注意点
+動的レイアウト調整のテストでは以下に注意：
+- ウィンドウサイズの変更をモック/シミュレート
+- 計算されたサイズが正しく適用されることを確認
+- デバウンス/スロットリングがある場合はタイミングも考慮
+- レスポンシブデザインの各ブレークポイントでのテスト
+
 ## 改善履歴
 
 ### 2025-11-30: ファイル名パターンと責務の整合性チェック強化

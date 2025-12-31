@@ -124,6 +124,40 @@ describe('PracticeScreen', () => {
 
     // モックをクリア
     vi.clearAllMocks();
+
+    // DartBoardのレンダリングのため、ResizeObserverをモック化
+    // test-setup.tsのグローバルモックをより具体的な実装で上書き
+    let resizeCallback: ResizeObserverCallback | null = null;
+    global.ResizeObserver = class ResizeObserver {
+      constructor(callback: ResizeObserverCallback) {
+        resizeCallback = callback;
+      }
+      observe(target: Element): void {
+        // DartBoardコンテナのサイズを設定
+        Object.defineProperty(target, 'clientWidth', {
+          configurable: true,
+          value: 728,
+        });
+        Object.defineProperty(target, 'clientHeight', {
+          configurable: true,
+          value: 728,
+        });
+        // 即座にコールバックを呼び出してサイズを設定
+        if (resizeCallback) {
+          resizeCallback(
+            [
+              {
+                target,
+                contentRect: { width: 728, height: 728 } as DOMRectReadOnly,
+              } as ResizeObserverEntry,
+            ],
+            this as ResizeObserver
+          );
+        }
+      }
+      unobserve = vi.fn();
+      disconnect = vi.fn();
+    };
   });
 
   afterEach(() => {
