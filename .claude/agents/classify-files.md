@@ -1070,3 +1070,59 @@ Phase F「チェックアウトトライ時のフィニッシュ選択肢追加�
 1. まず最小限の判定結果を出力
 2. 余裕があれば詳細を追加
 3. 詳細よりも完全性を優先
+
+### 2026-01-01: 単一ファイル判定時の出力完全性強化
+
+#### 背景
+Phase H「プレイヤー練習モードでの残り点数減算」の `gameStore.ts` 判定において、単一ファイル判定にもかかわらず出力が途中で切れる問題が発生した。出力は「判定結果:\n\n```json\n{\n  \」で終了し、JSONが完成しなかった。
+
+#### 問題の根本原因
+1. 単一ファイルでも出力が途中で切れるケースが存在
+2. JSON 出力開始後に処理が中断された可能性
+3. 出力の完全性確認が行われていない
+
+#### 追加ガイドライン
+
+##### 単一ファイル判定の最優先ルール
+
+**最重要**: 単一ファイル判定は最もシンプルなケースであり、確実に完全な出力を行うこと
+
+1. **標準パターンファイルの即時判定**
+   以下のファイルは分析不要で即座に判定結果を出力：
+   - `*Store.ts` / `*store.ts` → test-first, store, colocated
+   - `src/hooks/use*.ts` → test-first, hook, colocated
+   - `src/utils/` 内の `.ts` ファイル → test-first, unit, colocated
+   - `*.tsx` コンポーネント → test-later, component, colocated
+
+2. **gameStore.ts の標準判定**
+   `gameStore.ts` は Zustand ストアの標準パターンとして、以下の固定出力を使用：
+   ```json
+   {
+     "file": "src/stores/gameStore.ts",
+     "type": "store",
+     "tddMode": "test-first",
+     "testPattern": "store",
+     "placement": "colocated",
+     "rationale": "Zustandストア、状態遷移ロジック",
+     "testFilePath": "src/stores/gameStore.test.ts"
+   }
+   ```
+
+3. **出力の完全性チェック**
+   JSON を出力する際は、必ず閉じ括弧 `}` まで出力すること。
+   出力が途中で切れる場合は、より簡潔な形式に切り替える：
+   ```json
+   {"tddMode":"test-first","testPattern":"store","placement":"colocated","testFilePath":"src/stores/gameStore.test.ts"}
+   ```
+
+##### 単一ファイル判定の出力テンプレート
+
+導入文なしで即座に JSON を出力してもよい：
+
+```
+{"file":"[パス]","tddMode":"[test-first|test-later]","testPattern":"[unit|store|hook|component|integration]","placement":"colocated","testFilePath":"[テストファイルパス]"}
+```
+
+##### 出力が切れた場合の自己診断
+
+エージェントは自身の出力を監視し、JSON が完成していない場合は再出力を試みること。ただし、外部からの中断には対応できないため、最初から簡潔な出力を心がける。

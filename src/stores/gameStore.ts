@@ -102,21 +102,21 @@ interface BustCheckResult {
  */
 function checkAndUpdateBust(
   currentQuestion: Question | null,
-  questionType: PracticeConfig['questionType'],
   remainingScore: number,
   roundStartScore: number
 ): BustCheckResult {
-  // 残り点数モードでない場合はバストなし
-  if (currentQuestion?.mode !== 'remaining' || questionType === 'score') {
+  if (!currentQuestion) {
     return { isBust: false, newRemainingScore: remainingScore };
   }
 
   const totalScore = currentQuestion.throws.reduce((sum, t) => sum + t.score, 0);
 
+  // バスト判定を行う
   // bustInfoがある場合はそれを使用、ない場合は残り点数からバスト判定
   let isBust = currentQuestion.bustInfo?.isBust ?? false;
 
   // bustInfoがない場合、残り点数からバスト判定を行う
+  // scoreモードでも残り点数管理のためにバスト判定を実施
   if (!currentQuestion.bustInfo) {
     // オーバー判定
     if (totalScore > remainingScore) {
@@ -129,7 +129,7 @@ function checkAndUpdateBust(
     // ダブルアウト判定（最後の投擲がダブルでない場合）
     else if (remainingScore - totalScore === 0) {
       const lastThrow = currentQuestion.throws[currentQuestion.throws.length - 1];
-      const isDouble = lastThrow?.ring === 'DOUBLE';
+      const isDouble = lastThrow?.ring === 'DOUBLE' || lastThrow?.ring === 'OUTER_BULL';
       if (!isDouble) {
         isBust = true;
       }
@@ -566,7 +566,6 @@ export const useGameStore = create<GameStore>()(
           // バスト判定と残り点数更新
           const { isBust, newRemainingScore } = checkAndUpdateBust(
             state.currentQuestion,
-            state.config.questionType,
             state.remainingScore,
             state.roundStartScore
           );
