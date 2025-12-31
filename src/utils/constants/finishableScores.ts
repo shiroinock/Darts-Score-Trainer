@@ -1,10 +1,23 @@
+import { CHECKOUT_MAX_SINGLE_DART_SCORE, CHECKOUT_MIN_SCORE } from './gameRules';
+
 /**
- * 1投でフィニッシュ可能な点数のセット（2-50の偶数）
+ * インナーブル（ダブルブル）のスコア
+ */
+const INNER_BULL_SCORE = 50;
+
+/**
+ * 1投でフィニッシュ可能な点数のセット
  *
  * ダブルアウトルールでは、以下の点数が1投でフィニッシュ可能：
- * - 2-40点の偶数（D1-D20）
- * - 50点（BULL）
+ * - CHECKOUT_MIN_SCORE(2) - CHECKOUT_MAX_SINGLE_DART_SCORE(40)点の偶数（D1-D20）
+ * - 50点（インナーブル）
  */
 export const ONE_DART_FINISHABLE = new Set([
-  2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 50,
+  // 2-40の偶数（ダブル1〜ダブル20）
+  ...Array.from(
+    { length: (CHECKOUT_MAX_SINGLE_DART_SCORE - CHECKOUT_MIN_SCORE) / 2 + 1 },
+    (_, i) => CHECKOUT_MIN_SCORE + i * 2
+  ),
+  // インナーブル
+  INNER_BULL_SCORE,
 ]);
