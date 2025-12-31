@@ -1,0 +1,412 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`BustQuestion > スナップショットテスト > フィードバック表示（不正解時：セーフ選択）の見た目が一致する 1`] = `
+<div>
+  <section
+    aria-label="バスト判定"
+    class="bust-question"
+  >
+    <div
+      class="bust-question__result bust-question__result--incorrect"
+    >
+      <div
+        aria-hidden="true"
+        class="bust-question__icon"
+      >
+        ✗
+      </div>
+      <div
+        class="bust-question__text"
+      >
+        不正解
+      </div>
+    </div>
+    <div
+      class="bust-question__buttons"
+    >
+      <button
+        aria-label="バスト (Bキー)"
+        aria-pressed="false"
+        class="bust-question__button bust-question__button--bust"
+        disabled=""
+        type="button"
+      >
+        バスト
+        <span
+          aria-hidden="true"
+          class="bust-question__shortcut"
+        >
+          (B)
+        </span>
+      </button>
+      <button
+        aria-label="セーフ (Sキー)"
+        aria-pressed="true"
+        class="bust-question__button bust-question__button--safe bust-question__button--selected-incorrect"
+        disabled=""
+        type="button"
+      >
+        セーフ
+        <span
+          aria-hidden="true"
+          class="bust-question__shortcut"
+        >
+          (S)
+        </span>
+      </button>
+    </div>
+    <div
+      class="bust-question__answer-section"
+    >
+      <dl
+        class="bust-question__answer-item"
+      >
+        <dt
+          class="bust-question__answer-label"
+        >
+          あなたの回答
+        </dt>
+        <dd
+          class="bust-question__answer-value"
+        >
+          セーフ
+        </dd>
+      </dl>
+      <dl
+        class="bust-question__answer-item"
+      >
+        <dt
+          class="bust-question__answer-label"
+        >
+          正解
+        </dt>
+        <dd
+          class="bust-question__answer-value"
+        >
+          バスト
+        </dd>
+      </dl>
+    </div>
+  </section>
+</div>
+`;
+
+exports[`BustQuestion > スナップショットテスト > フィードバック表示（不正解時：バスト選択）の見た目が一致する 1`] = `
+<div>
+  <section
+    aria-label="バスト判定"
+    class="bust-question"
+  >
+    <div
+      class="bust-question__result bust-question__result--incorrect"
+    >
+      <div
+        aria-hidden="true"
+        class="bust-question__icon"
+      >
+        ✗
+      </div>
+      <div
+        class="bust-question__text"
+      >
+        不正解
+      </div>
+    </div>
+    <div
+      class="bust-question__buttons"
+    >
+      <button
+        aria-label="バスト (Bキー)"
+        aria-pressed="true"
+        class="bust-question__button bust-question__button--bust bust-question__button--selected-incorrect"
+        disabled=""
+        type="button"
+      >
+        バスト
+        <span
+          aria-hidden="true"
+          class="bust-question__shortcut"
+        >
+          (B)
+        </span>
+      </button>
+      <button
+        aria-label="セーフ (Sキー)"
+        aria-pressed="false"
+        class="bust-question__button bust-question__button--safe"
+        disabled=""
+        type="button"
+      >
+        セーフ
+        <span
+          aria-hidden="true"
+          class="bust-question__shortcut"
+        >
+          (S)
+        </span>
+      </button>
+    </div>
+    <div
+      class="bust-question__answer-section"
+    >
+      <dl
+        class="bust-question__answer-item"
+      >
+        <dt
+          class="bust-question__answer-label"
+        >
+          あなたの回答
+        </dt>
+        <dd
+          class="bust-question__answer-value"
+        >
+          バスト
+        </dd>
+      </dl>
+      <dl
+        class="bust-question__answer-item"
+      >
+        <dt
+          class="bust-question__answer-label"
+        >
+          正解
+        </dt>
+        <dd
+          class="bust-question__answer-value"
+        >
+          セーフ
+        </dd>
+      </dl>
+    </div>
+  </section>
+</div>
+`;
+
+exports[`BustQuestion > スナップショットテスト > フィードバック表示（正解時）の見た目が一致する 1`] = `
+<div>
+  <section
+    aria-label="バスト判定"
+    class="bust-question"
+  >
+    <div
+      class="bust-question__result bust-question__result--correct"
+    >
+      <div
+        aria-hidden="true"
+        class="bust-question__icon"
+      >
+        ✓
+      </div>
+      <div
+        class="bust-question__text"
+      >
+        正解
+      </div>
+    </div>
+    <div
+      class="bust-question__buttons"
+    >
+      <button
+        aria-label="バスト (Bキー)"
+        aria-pressed="true"
+        class="bust-question__button bust-question__button--bust bust-question__button--selected-correct"
+        disabled=""
+        type="button"
+      >
+        バスト
+        <span
+          aria-hidden="true"
+          class="bust-question__shortcut"
+        >
+          (B)
+        </span>
+      </button>
+      <button
+        aria-label="セーフ (Sキー)"
+        aria-pressed="false"
+        class="bust-question__button bust-question__button--safe"
+        disabled=""
+        type="button"
+      >
+        セーフ
+        <span
+          aria-hidden="true"
+          class="bust-question__shortcut"
+        >
+          (S)
+        </span>
+      </button>
+    </div>
+    <div
+      class="bust-question__answer-section"
+    >
+      <dl
+        class="bust-question__answer-item"
+      >
+        <dt
+          class="bust-question__answer-label"
+        >
+          あなたの回答
+        </dt>
+        <dd
+          class="bust-question__answer-value"
+        >
+          バスト
+        </dd>
+      </dl>
+      <dl
+        class="bust-question__answer-item"
+      >
+        <dt
+          class="bust-question__answer-label"
+        >
+          正解
+        </dt>
+        <dd
+          class="bust-question__answer-value"
+        >
+          バスト
+        </dd>
+      </dl>
+    </div>
+  </section>
+</div>
+`;
+
+exports[`BustQuestion > スナップショットテスト > フィードバック表示（正解時：セーフが正解）の見た目が一致する 1`] = `
+<div>
+  <section
+    aria-label="バスト判定"
+    class="bust-question"
+  >
+    <div
+      class="bust-question__result bust-question__result--correct"
+    >
+      <div
+        aria-hidden="true"
+        class="bust-question__icon"
+      >
+        ✓
+      </div>
+      <div
+        class="bust-question__text"
+      >
+        正解
+      </div>
+    </div>
+    <div
+      class="bust-question__buttons"
+    >
+      <button
+        aria-label="バスト (Bキー)"
+        aria-pressed="false"
+        class="bust-question__button bust-question__button--bust"
+        disabled=""
+        type="button"
+      >
+        バスト
+        <span
+          aria-hidden="true"
+          class="bust-question__shortcut"
+        >
+          (B)
+        </span>
+      </button>
+      <button
+        aria-label="セーフ (Sキー)"
+        aria-pressed="true"
+        class="bust-question__button bust-question__button--safe bust-question__button--selected-correct"
+        disabled=""
+        type="button"
+      >
+        セーフ
+        <span
+          aria-hidden="true"
+          class="bust-question__shortcut"
+        >
+          (S)
+        </span>
+      </button>
+    </div>
+    <div
+      class="bust-question__answer-section"
+    >
+      <dl
+        class="bust-question__answer-item"
+      >
+        <dt
+          class="bust-question__answer-label"
+        >
+          あなたの回答
+        </dt>
+        <dd
+          class="bust-question__answer-value"
+        >
+          セーフ
+        </dd>
+      </dl>
+      <dl
+        class="bust-question__answer-item"
+      >
+        <dt
+          class="bust-question__answer-label"
+        >
+          正解
+        </dt>
+        <dd
+          class="bust-question__answer-value"
+        >
+          セーフ
+        </dd>
+      </dl>
+    </div>
+  </section>
+</div>
+`;
+
+exports[`BustQuestion > スナップショットテスト > 初期状態（回答前）の見た目が一致する 1`] = `
+<div>
+  <section
+    aria-label="バスト判定"
+    class="bust-question"
+  >
+    <h2
+      class="bust-question__title"
+    >
+      この投擲はバストですか?
+    </h2>
+    <div
+      class="bust-question__buttons"
+    >
+      <button
+        aria-label="バスト (Bキー)"
+        aria-pressed="false"
+        class="bust-question__button bust-question__button--bust"
+        type="button"
+      >
+        バスト
+        <span
+          aria-hidden="true"
+          class="bust-question__shortcut"
+        >
+          (B)
+        </span>
+      </button>
+      <button
+        aria-label="セーフ (Sキー)"
+        aria-pressed="false"
+        class="bust-question__button bust-question__button--safe"
+        type="button"
+      >
+        セーフ
+        <span
+          aria-hidden="true"
+          class="bust-question__shortcut"
+        >
+          (S)
+        </span>
+      </button>
+    </div>
+  </section>
+</div>
+`;

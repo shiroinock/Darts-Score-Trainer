@@ -1,0 +1,271 @@
+/**
+ * BustQuestion スタイル定義
+ *
+ * index.css の共通CSS変数を使用
+ */
+
+.bust-question {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto var(--spacing-2xl);
+  padding: var(--spacing-2xl);
+  background-color: var(--color-bg-white);
+  border: var(--border-width-base) solid var(--color-primary);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+  align-items: center;
+}
+
+/* 質問タイトル */
+.bust-question__title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+  text-align: center;
+}
+
+/* 正誤表示 */
+.bust-question__result {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-base);
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-lg);
+  width: 100%;
+}
+
+.bust-question__result--correct {
+  background-color: var(--color-success-light);
+  border: var(--border-width-base) solid var(--color-success);
+}
+
+.bust-question__result--incorrect {
+  background-color: var(--color-error-light);
+  border: var(--border-width-base) solid var(--color-error);
+}
+
+.bust-question__icon {
+  font-size: var(--font-size-5xl);
+  line-height: 1;
+}
+
+.bust-question__result--correct .bust-question__icon {
+  color: var(--color-success);
+}
+
+.bust-question__result--incorrect .bust-question__icon {
+  color: var(--color-error);
+}
+
+.bust-question__text {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+/* 回答ボタン */
+.bust-question__buttons {
+  display: flex;
+  gap: var(--spacing-base);
+  width: 100%;
+  max-width: 500px;
+}
+
+.bust-question__button {
+  flex: 1;
+  padding: var(--spacing-xl) var(--spacing-base);
+  border: var(--border-width-base) solid var(--color-border-light);
+  border-radius: var(--border-radius-base);
+  background-color: var(--color-bg-white);
+  font-family: inherit;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bust-question__button:not(:disabled):hover {
+  transform: translateY(var(--transform-hover-lift));
+  box-shadow: var(--shadow-base);
+}
+
+.bust-question__button:not(:disabled):active {
+  transform: translateY(var(--transform-active-press));
+}
+
+/* バストボタン */
+.bust-question__button--bust {
+  color: var(--color-error);
+  border-color: var(--color-error);
+}
+
+.bust-question__button--bust:not(:disabled):hover {
+  background-color: var(--color-error-light);
+  border-color: var(--color-error);
+}
+
+/* セーフボタン */
+.bust-question__button--safe {
+  color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.bust-question__button--safe:not(:disabled):hover {
+  background-color: var(--color-success-light);
+  border-color: var(--color-success);
+}
+
+/* 選択済みボタン（正解） */
+.bust-question__button--selected-correct {
+  background-color: var(--color-success-light);
+  border-color: var(--color-success);
+  border-width: var(--border-width-thick);
+}
+
+/* 選択済みボタン（不正解） */
+.bust-question__button--selected-incorrect {
+  background-color: var(--color-error-light);
+  border-color: var(--color-error);
+  border-width: var(--border-width-thick);
+}
+
+/* 無効化ボタン */
+.bust-question__button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* ショートカットキー表示 */
+.bust-question__shortcut {
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+}
+
+/* 正解表示 */
+.bust-question__answer-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.bust-question__answer-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-base) var(--spacing-xl);
+  background-color: var(--color-primary-light);
+  border: var(--border-width-base) solid var(--color-primary-lightest);
+  border-radius: var(--border-radius-base);
+  margin: 0;
+}
+
+.bust-question__answer-label {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.bust-question__answer-value {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+/* タッチデバイス向けの調整 */
+@media (hover: none) {
+  .bust-question__button:not(:disabled):hover {
+    transform: none;
+  }
+
+  /* タッチデバイスではボタンを大きく */
+  .bust-question__button {
+    padding: var(--spacing-1-75) var(--spacing-base);
+    font-size: var(--font-size-xl);
+  }
+}
+
+/* モバイル対応 */
+@media (max-width: 640px) {
+  .bust-question {
+    padding: var(--spacing-xl) var(--spacing-base);
+    margin-bottom: var(--spacing-xl);
+    gap: var(--spacing-base);
+  }
+
+  .bust-question__title {
+    font-size: var(--font-size-lg);
+  }
+
+  .bust-question__result {
+    padding: var(--spacing-base);
+    gap: var(--spacing-md);
+  }
+
+  .bust-question__icon {
+    font-size: var(--font-size-3xl);
+  }
+
+  .bust-question__text {
+    font-size: var(--font-size-lg);
+  }
+
+  .bust-question__buttons {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .bust-question__button {
+    padding: var(--spacing-lg) var(--spacing-base);
+    font-size: var(--font-size-md);
+  }
+
+  .bust-question__shortcut {
+    font-size: var(--font-size-sm);
+  }
+
+  .bust-question__answer-item {
+    padding: var(--spacing-md) var(--spacing-base);
+  }
+
+  .bust-question__answer-label {
+    font-size: var(--font-size-small);
+  }
+
+  .bust-question__answer-value {
+    font-size: var(--font-size-xl);
+  }
+}
+
+/* タブレット対応 */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .bust-question {
+    padding: var(--spacing-1-75) var(--spacing-xl);
+  }
+
+  .bust-question__title {
+    font-size: 1.375rem;
+  }
+
+  .bust-question__text {
+    font-size: var(--font-size-xl);
+  }
+
+  .bust-question__answer-value {
+    font-size: var(--font-size-xl);
+  }
+}

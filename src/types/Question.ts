@@ -21,4 +21,12 @@ export interface Question {
   startingScore?: number;
   /** バスト情報（バストが発生した場合） */
   bustInfo?: BustInfo;
+  /**
+   * 問題フェーズ（3投モードの出題タイミング情報）
+   *
+   * 3投モードにおける出題のタイミングと種類を示します：
+   * - bust（バスト判定）: 1本目・2本目の後にバスト判定を2択で問う
+   * - score（合計点数）: 3本目の後に合計点数を問う
+   */
+  questionPhase?: { type: 'bust'; throwIndex: 1 | 2 } | { type: 'score'; throwIndex: 3 };
 }

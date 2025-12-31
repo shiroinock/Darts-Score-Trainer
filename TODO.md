@@ -559,20 +559,20 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] `simulateNextThrow`で次の1本を追加し、`currentThrowIndex++`
 
 **Phase B: バスト判定UIの追加**
-- [ ] `Question`型に`questionPhase`を追加
+- [x] `Question`型に`questionPhase`を追加（src/types/Question.ts:24-33, src/types/Question.test.ts:547-876）
   ```typescript
   // throwIndexを含めることで、どの投擲後の質問かが型レベルで明確
   questionPhase?:
     | { type: 'bust'; throwIndex: 1 | 2 }  // 1本目・2本目のバスト判定
     | { type: 'score'; throwIndex: 3 }     // 3本目の合計点数
   ```
-- [ ] 1本目・2本目の後: バスト判定を2択で問う
+- [x] 1本目・2本目の後: バスト判定を2択で問う
   - ボタンラベル: 「バスト」/「セーフ」（日本語UI）
   - キーボード操作: Bキーでバスト、Sキーでセーフ
   - ARIA属性でスクリーンリーダー対応
-- [ ] バスト判定の正解: 現在の残り点数と投擲結果から計算
-- [ ] `BustQuestion`コンポーネント作成（`src/components/Practice/BustQuestion.tsx`）
-- [ ] 正解/不正解フィードバックを表示
+- [x] バスト判定の正解: 現在の残り点数と投擲結果から計算（コンポーネントのpropsで受け取る設計）
+- [x] `BustQuestion`コンポーネント作成（src/components/Practice/BustQuestion.tsx, BustQuestion.css, BustQuestion.test.tsx）
+- [x] 正解/不正解フィードバックを表示（showFeedback props で制御）
 
 **Phase C: 合計点数の質問**
 - [ ] 3本目の後: 合計点数を`NumPad`で問う
