@@ -646,6 +646,34 @@ const toleranceRatio = 0.1; // 10%の誤差を許容
 6. **JSON出力が途中で切れそうな場合は、事前に修正項目数を減らす**
 7. **出力開始前に、完全なJSONを内部で構築してから出力を開始する**
 
+### JSON出力の開始方法（厳守）
+
+**絶対に避けること:**
+- `Now I have a clear picture of the problems. Let me create the repair plan:` などの前置き文を書いてからJSON出力を開始すること
+- ````json` マークダウンブロックで囲むこと
+
+**正しい方法:**
+- 最初の出力文字は `{` でなければならない
+- 前置き、説明、マークダウン記法は一切不要
+- ファイル分析後、直接JSONを出力開始する
+
+```
+❌ 悪い例:
+Now I have a clear picture of the problems. Let me create the repair plan:
+
+```json
+{
+  "should_fix": true,
+...
+
+✅ 良い例:
+{
+  "should_fix": true,
+  "fixable_issues": [...],
+  ...
+}
+```
+
 **悪い例（絶対に避ける）:**
 ```
 ファイルの内容を確認しました。修正計画を作成します。

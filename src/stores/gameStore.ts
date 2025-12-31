@@ -207,10 +207,15 @@ function simulateThrows(
 
     // バスト判定（remainingモードのみ、最初のバストのみ記録）
     if (shouldCheckBust && !bustInfo) {
-      const isDouble = isDoubleRing(throwResult.ring);
-      const checkResult = checkBust(currentRemaining, throwResult.score, isDouble);
-      if (checkResult.isBust) {
-        bustInfo = checkResult;
+      // 残り点数が0以下の場合は前の投擲でバスト済み
+      if (currentRemaining <= 0) {
+        bustInfo = { isBust: true, reason: 'over' };
+      } else {
+        const isDouble = isDoubleRing(throwResult.ring);
+        const checkResult = checkBust(currentRemaining, throwResult.score, isDouble);
+        if (checkResult.isBust) {
+          bustInfo = checkResult;
+        }
       }
     }
 
@@ -735,6 +740,11 @@ export const useGameStore = create<GameStore>()(
           .slice(0, -1)
           .reduce((sum, dart) => sum + dart.score, 0);
         const currentRemainingScore = roundStartScore - previousCumulativeScore;
+
+        // 前の投擲ですでにバストしている場合は、即座にtrueを返す
+        if (currentRemainingScore <= 0) {
+          return true;
+        }
 
         // バスト判定を実行（最後の1投のスコアで判定）
         const bustResult = checkBust(
