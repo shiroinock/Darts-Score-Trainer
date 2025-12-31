@@ -4,7 +4,7 @@
 
 .question-display {
   width: 100%;
-  max-width: 800px;
+  max-width: 100%;
   margin: 0 auto 2rem;
   padding: 2rem 1.5rem;
   background-color: #fff;
@@ -48,22 +48,22 @@
 /* モバイル対応 */
 @media (max-width: 640px) {
   .question-display {
-    padding: 1.5rem 1rem;
-    margin-bottom: 1.5rem;
+    padding: 1rem 0.75rem;
+    margin-bottom: 1rem;
   }
 
   .question-display__throw-label {
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .question-display__cumulative-label {
     font-size: 0.875rem;
     margin-bottom: 0.375rem;
   }
 
+  .question-display__cumulative-label {
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+
   .question-display__text {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
   }
 }
 

@@ -53,6 +53,7 @@
   min-width: 0; /* Flexboxの縮小を許可 */
   min-height: 0; /* Flexboxの縮小を許可 */
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* フッター - 固定高さ */

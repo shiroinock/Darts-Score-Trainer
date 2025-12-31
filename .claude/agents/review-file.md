@@ -871,6 +871,54 @@ Haikuモデルの出力制限（約8000トークン）を考慮：
 3. 超簡潔フォーマットでJSON完了
 4. **追加コメントなしで終了**
 
+## CSSファイルのレビュー（2026-01-01追記）
+
+### CSSレビューの特徴
+CSSファイルはTypeScriptファイルとは異なる観点でレビューが必要です。code-conventions skillやvalidation-policy skillは適用不可（N/A）です。
+
+### CSSレビューの必須観点
+プロンプトでCSSレビューが指定された場合、以下の観点を適用：
+
+1. **レスポンシブ設計**
+   - モバイルファースト設計への準拠
+   - メディアクエリの適切な使用（640px, 1024pxのブレークポイント）
+   - `min()`, `max()`, `clamp()`等の動的サイズ関数の活用
+
+2. **レイアウトの健全性**
+   - `overflow: hidden`/`auto`の適切な使用
+   - `aspect-ratio`の活用（固定比率が必要な場合）
+   - Flexbox/Gridの適切な使用
+
+3. **既存スタイルとの整合性**
+   - CSS変数（`var(--*)`)の使用
+   - 命名規則（BEM等）の遵守
+   - 単位の一貫性（rem, em, px）
+
+4. **モバイル対応**
+   - タッチターゲットサイズ（最小44px）
+   - フォントサイズの可読性（最小14px）
+   - ホバー状態の代替（`@media (hover: none)`）
+
+### CSS専用の簡潔出力形式
+CSSファイルレビュー時の出力形式：
+
+```json
+{
+  "files": ["file1.css", "file2.css"],
+  "result": "PASS",
+  "responsive_check": "OK",
+  "mobile_first": "OK",
+  "consistency": "OK",
+  "issues": [],
+  "notes": "動的サイズ対応完了"
+}
+```
+
+### CSSレビュー時のトークン節約
+- code-conventions/validation-policy skillの読み込み不要
+- 最大3ファイルまで同時レビュー可能
+- 各ファイルのissueは最大1件に制限
+
 ## 大きなファイルの読み込みエラー対応（2025-12-31追記）
 
 ### 問題

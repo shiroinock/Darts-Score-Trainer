@@ -54,6 +54,10 @@
 }
 
 .num-pad__button {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 1.25rem;
   border: 2px solid #ddd;
   border-radius: 8px;
@@ -174,15 +178,15 @@
 
   .num-pad__display {
     padding: 1rem;
-    min-height: 70px;
+    min-height: 60px;
   }
 
   .num-pad__input-value {
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
 
   .num-pad__label {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
   }
 
   .num-pad__grid {
@@ -190,13 +194,13 @@
   }
 
   .num-pad__button {
-    padding: 1.25rem;
-    font-size: 1.25rem;
+    padding: 0.75rem;
+    font-size: 1.125rem;
   }
 
   .num-pad__confirm {
-    padding: 1rem 1.5rem;
-    font-size: 1.125rem;
+    padding: 0.875rem 1.25rem;
+    font-size: 1rem;
   }
 }
 
