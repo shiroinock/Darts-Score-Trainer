@@ -551,11 +551,12 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 **問題**: 3投モードでダーツが描画されず、残り点数も更新されているように見えない
 **方針**: 1本ずつ順次表示、各投擲でバスト判定を2択で問い、3本目に合計点数を問う
 
-**Phase A: ダーツ表示の修正**
-- [ ] `generateQuestion`時に3本のダーツを事前にシミュレーション（現状維持）
-- [ ] `allThrows: ThrowResult[]`として全投擲を保持（内部用）
-- [ ] `displayedDarts`は`currentThrowIndex`までの投擲のみを含む
-- [ ] 各回答後に`currentThrowIndex`をインクリメントし、次のダーツを表示
+**Phase A: ダーツ表示の修正**（2025-12-31完了）
+- [x] `generateQuestion`時に3本のダーツを事前にシミュレーション（現状維持）
+- [x] `allThrows: ThrowResult[]`として全投擲を保持（内部用、`currentQuestion.throws`）
+- [x] `displayedDarts`は`currentThrowIndex`までの投擲のみを含む
+- [x] 3投モードでgenerateQuestion時に最初の1本を表示し、`currentThrowIndex = 1`
+- [x] `simulateNextThrow`で次の1本を追加し、`currentThrowIndex++`
 
 **Phase B: バスト判定UIの追加**
 - [ ] `Question`型に`questionPhase`を追加

@@ -589,7 +589,7 @@ describe('gameStore', () => {
       });
 
       // Assert
-      expect(result.current.displayedDarts).toHaveLength(1);
+      expect(result.current.displayedDarts).toHaveLength(2);
     });
 
     test('currentThrowIndexが更新される', () => {
@@ -599,7 +599,7 @@ describe('gameStore', () => {
         result.current.setConfig({ throwUnit: 3 });
         result.current.startPractice();
       });
-      expect(result.current.currentThrowIndex).toBe(0);
+      expect(result.current.currentThrowIndex).toBe(1);
 
       // Act
       act(() => {
@@ -607,7 +607,7 @@ describe('gameStore', () => {
       });
 
       // Assert
-      expect(result.current.currentThrowIndex).toBe(1);
+      expect(result.current.currentThrowIndex).toBe(2);
     });
 
     test('3投すべて表示された後はcurrentThrowIndexが3になる', () => {
@@ -872,7 +872,7 @@ describe('gameStore', () => {
         result.current.simulateNextThrow();
         result.current.simulateNextThrow();
       });
-      expect(result.current.currentThrowIndex).toBe(2);
+      expect(result.current.currentThrowIndex).toBe(3);
 
       // Act
       act(() => {
@@ -880,7 +880,7 @@ describe('gameStore', () => {
       });
 
       // Assert
-      expect(result.current.currentThrowIndex).toBe(0);
+      expect(result.current.currentThrowIndex).toBe(1);
     });
 
     test('displayedDartsがリセットされる', () => {
@@ -892,15 +892,15 @@ describe('gameStore', () => {
         result.current.simulateNextThrow();
         result.current.simulateNextThrow();
       });
-      expect(result.current.displayedDarts.length).toBeGreaterThan(0);
+      expect(result.current.displayedDarts.length).toBe(3);
 
       // Act
       act(() => {
         result.current.nextQuestion();
       });
 
-      // Assert
-      expect(result.current.displayedDarts).toEqual([]);
+      // Assert: 新しい問題で最初の1本が表示される
+      expect(result.current.displayedDarts).toHaveLength(1);
     });
   });
 
@@ -2903,8 +2903,8 @@ describe('gameStore', () => {
 
         // Assert: DEFAULT_TARGETが使用される（エラーが発生しない）
         expect(result.current.currentQuestion).not.toBeNull();
-        // 3投モードの場合、generateQuestion直後はdisplayedDartsは空
-        expect(result.current.displayedDarts).toHaveLength(0);
+        // 3投モードの場合、generateQuestion直後は最初の1本が表示される
+        expect(result.current.displayedDarts).toHaveLength(1);
       });
 
       test('remainingScore=0でDEFAULT_TARGETにフォールバック', () => {
@@ -2934,8 +2934,8 @@ describe('gameStore', () => {
 
         // Assert: DEFAULT_TARGETが使用される（エラーが発生しない）
         expect(result.current.currentQuestion).not.toBeNull();
-        // 3投モードの場合、generateQuestion直後はdisplayedDartsは空
-        expect(result.current.displayedDarts).toHaveLength(0);
+        // 3投モードの場合、generateQuestion直後は最初の1本が表示される
+        expect(result.current.displayedDarts).toHaveLength(1);
       });
 
       test('throwsRemaining=1でフィニッシュ不可能な点数（163点）の場合', () => {
@@ -3072,6 +3072,183 @@ describe('gameStore', () => {
           result.current.endSession('user requested');
         });
         expect(result.current.gameState).toBe('results');
+      });
+    });
+
+    // Phase 9.1.1 Phase A: ダーツ表示の修正（6個）
+    describe('Phase 9.1.1 Phase A: ダーツ表示の修正', () => {
+      describe('generateQuestion時のdisplayedDarts', () => {
+        test('3投モードでgenerateQuestion時に最初の1本だけがdisplayedDartsに含まれる', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'score',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // Assert: 3投事前シミュレーション後、最初の1本のみが表示される
+          expect(result.current.currentQuestion).not.toBeNull();
+          expect(result.current.currentQuestion?.throws).toHaveLength(3); // 事前シミュレーション済み
+          expect(result.current.displayedDarts).toHaveLength(1); // 最初の1本のみ表示
+          expect(result.current.displayedDarts[0]).toEqual(
+            result.current.currentQuestion?.throws[0]
+          );
+        });
+
+        test('3投モードでgenerateQuestion時にcurrentThrowIndexが1になる', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'score',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // Assert: currentThrowIndexは1（最初の1本を表示済み）
+          expect(result.current.currentThrowIndex).toBe(1);
+        });
+      });
+
+      describe('simulateNextThrow呼び出しでのダーツ追加', () => {
+        test('3投モードでsimulateNextThrow呼び出しで2本目が追加される', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'score',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // generateQuestion直後は1本目のみ表示
+          expect(result.current.displayedDarts).toHaveLength(1);
+          expect(result.current.currentThrowIndex).toBe(1);
+
+          // Act: simulateNextThrowで2本目を追加
+          act(() => {
+            result.current.simulateNextThrow();
+          });
+
+          // Assert: 2本目が追加され、currentThrowIndexが2になる
+          expect(result.current.displayedDarts).toHaveLength(2);
+          expect(result.current.currentThrowIndex).toBe(2);
+          expect(result.current.displayedDarts[1]).toEqual(
+            result.current.currentQuestion?.throws[1]
+          );
+        });
+
+        test('3投モードでsimulateNextThrow2回呼び出しで3本すべてが表示される', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'score',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // generateQuestion直後は1本目のみ表示
+          expect(result.current.displayedDarts).toHaveLength(1);
+          expect(result.current.currentThrowIndex).toBe(1);
+
+          // Act: simulateNextThrowを2回呼び出し
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.simulateNextThrow();
+          });
+
+          // Assert: 3本すべてが表示される
+          expect(result.current.displayedDarts).toHaveLength(3);
+          expect(result.current.currentThrowIndex).toBe(3);
+          expect(result.current.displayedDarts[0]).toEqual(
+            result.current.currentQuestion?.throws[0]
+          );
+          expect(result.current.displayedDarts[1]).toEqual(
+            result.current.currentQuestion?.throws[1]
+          );
+          expect(result.current.displayedDarts[2]).toEqual(
+            result.current.currentQuestion?.throws[2]
+          );
+        });
+
+        test('3投モードでsimulateNextThrow3回目以降は何も起きない（境界値）', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 3,
+              questionType: 'score',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // 3本すべて表示するまでsimulateNextThrowを呼び出す
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.simulateNextThrow();
+          });
+
+          // 3本すべて表示されている状態
+          expect(result.current.displayedDarts).toHaveLength(3);
+          expect(result.current.currentThrowIndex).toBe(3);
+
+          // Act: さらにsimulateNextThrowを呼び出す（4回目）
+          act(() => {
+            result.current.simulateNextThrow();
+          });
+
+          // Assert: 何も起きない（displayedDartsは3本のまま）
+          expect(result.current.displayedDarts).toHaveLength(3);
+          expect(result.current.currentThrowIndex).toBe(3);
+        });
+      });
+
+      describe('1投モードの既存動作維持（回帰テスト）', () => {
+        test('1投モードの既存動作が維持される', () => {
+          // Arrange
+          const { result } = renderHook(() => useGameStore());
+
+          act(() => {
+            result.current.setConfig({
+              throwUnit: 1,
+              questionType: 'score',
+              startingScore: 501,
+            });
+            result.current.startPractice();
+          });
+
+          // Assert: 1投モードではgenerateQuestion直後に1本表示される
+          expect(result.current.currentQuestion).not.toBeNull();
+          expect(result.current.currentQuestion?.throws).toHaveLength(1);
+          expect(result.current.displayedDarts).toHaveLength(1);
+          expect(result.current.currentThrowIndex).toBe(1);
+
+          // Act: simulateNextThrowを呼び出しても何も起きない（1投モード）
+          act(() => {
+            result.current.simulateNextThrow();
+          });
+
+          // Assert: 変化なし
+          expect(result.current.displayedDarts).toHaveLength(1);
+          expect(result.current.currentThrowIndex).toBe(1);
+        });
       });
     });
   });

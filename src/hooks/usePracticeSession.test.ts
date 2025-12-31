@@ -147,7 +147,7 @@ describe('usePracticeSession', () => {
       expect(displayedDarts).toHaveLength(1);
     });
 
-    test('3投モードでは開始時にダーツは表示されない', () => {
+    test('3投モードでは開始時に最初の1本のダーツが表示される', () => {
       // Arrange
       act(() => {
         useGameStore.setState({
@@ -168,7 +168,9 @@ describe('usePracticeSession', () => {
 
       // Assert
       const displayedDarts = useGameStore.getState().displayedDarts;
-      expect(displayedDarts).toHaveLength(0);
+      const currentThrowIndex = useGameStore.getState().currentThrowIndex;
+      expect(displayedDarts).toHaveLength(1);
+      expect(currentThrowIndex).toBe(1);
     });
   });
 
@@ -567,16 +569,18 @@ describe('usePracticeSession', () => {
         useGameStore.getState().startPractice();
       });
 
-      expect(useGameStore.getState().displayedDarts).toHaveLength(0);
+      // 開始時点で1本目が表示されている
+      expect(useGameStore.getState().displayedDarts).toHaveLength(1);
+      expect(useGameStore.getState().currentThrowIndex).toBe(1);
 
       // Act
       act(() => {
         useGameStore.getState().simulateNextThrow();
       });
 
-      // Assert
-      expect(useGameStore.getState().displayedDarts).toHaveLength(1);
-      expect(useGameStore.getState().currentThrowIndex).toBe(1);
+      // Assert: 2本目が追加される
+      expect(useGameStore.getState().displayedDarts).toHaveLength(2);
+      expect(useGameStore.getState().currentThrowIndex).toBe(2);
     });
 
     test('3投すべて表示するとcurrentThrowIndexが3になる', () => {
@@ -664,16 +668,17 @@ describe('usePracticeSession', () => {
         useGameStore.getState().simulateNextThrow();
       });
 
-      expect(useGameStore.getState().currentThrowIndex).toBe(LOOP_COUNT_2);
+      // 初期1 + simulateNextThrow 2回 = 3
+      expect(useGameStore.getState().currentThrowIndex).toBe(3);
 
       // Act
       act(() => {
         useGameStore.getState().nextQuestion();
       });
 
-      // Assert
-      expect(useGameStore.getState().currentThrowIndex).toBe(0);
-      expect(useGameStore.getState().displayedDarts).toHaveLength(0);
+      // Assert: 新しい問題で1本目が表示される
+      expect(useGameStore.getState().currentThrowIndex).toBe(1);
+      expect(useGameStore.getState().displayedDarts).toHaveLength(1);
     });
   });
 
