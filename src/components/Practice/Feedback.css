@@ -7,9 +7,9 @@
   max-width: 600px;
   margin: 0 auto;
   padding: 1rem;
-  background-color: #fff;
-  border: 2px solid #4a90e2;
-  border-radius: 12px;
+  background-color: var(--color-bg-white);
+  border: var(--border-width-base) solid var(--color-primary);
+  border-radius: var(--border-radius-lg);
   box-shadow: 0 4px 12px rgba(74, 144, 226, 0.15);
   display: flex;
   flex-direction: column;
@@ -17,16 +17,19 @@
   align-items: center;
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
 }
 
 /* ゲームクリア表示 */
 .feedback__game-clear {
   text-align: center;
   padding: 0.75rem;
-  background: linear-gradient(135deg, #fff9e6 0%, #ffe6cc 100%);
-  border: 2px solid #ffcc00;
-  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    var(--color-warning-light) 0%,
+    var(--color-accent-yellow-light) 100%
+  );
+  border: var(--border-width-base) solid var(--color-accent-yellow);
+  border-radius: var(--border-radius-lg);
   width: 100%;
 }
 
@@ -49,13 +52,13 @@
 .feedback__game-clear-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #333;
+  color: var(--color-text-primary);
   margin-bottom: 0.25rem;
 }
 
 .feedback__game-clear-text {
   font-size: 1rem;
-  color: #666;
+  color: var(--color-text-secondary);
   margin: 0;
 }
 
@@ -65,18 +68,18 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem;
-  border-radius: 12px;
+  border-radius: var(--border-radius-lg);
   width: 100%;
 }
 
 .feedback__result--correct {
-  background-color: #e6f9f0;
-  border: 2px solid #4caf50;
+  background-color: var(--color-success-light);
+  border: var(--border-width-base) solid var(--color-success);
 }
 
 .feedback__result--incorrect {
-  background-color: #ffe6e6;
-  border: 2px solid #f44336;
+  background-color: var(--color-error-light);
+  border: var(--border-width-base) solid var(--color-error);
 }
 
 .feedback__icon {
@@ -85,17 +88,17 @@
 }
 
 .feedback__result--correct .feedback__icon {
-  color: #4caf50;
+  color: var(--color-success);
 }
 
 .feedback__result--incorrect .feedback__icon {
-  color: #f44336;
+  color: var(--color-error);
 }
 
 .feedback__text {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #333;
+  color: var(--color-text-primary);
 }
 
 /* 正解表示 */
@@ -111,16 +114,16 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 1rem;
-  background-color: #f0f7ff;
-  border: 2px solid #d0e7ff;
-  border-radius: 8px;
+  background-color: var(--color-primary-light);
+  border: var(--border-width-base) solid var(--color-primary-lightest);
+  border-radius: var(--border-radius-base);
   margin: 0;
 }
 
 .feedback__answer-label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #666;
+  color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -128,7 +131,7 @@
 .feedback__answer-value {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #4a90e2;
+  color: var(--color-primary);
   margin: 0;
 }
 
@@ -136,14 +139,14 @@
 .feedback__score-details {
   width: 100%;
   padding: 0.5rem 1rem;
-  background-color: #fafafa;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  background-color: var(--color-bg-lighter);
+  border: 1px solid var(--color-border-lighter);
+  border-radius: var(--border-radius-base);
 }
 
 .feedback__score-details-text {
   font-size: 0.875rem;
-  color: #333;
+  color: var(--color-text-primary);
   text-align: center;
   margin: 0;
   line-height: 1.4;
@@ -156,9 +159,13 @@
   align-items: center;
   gap: 0.375rem;
   padding: 0.5rem 1rem;
-  background: linear-gradient(135deg, #fff3e6 0%, #ffe6cc 100%);
-  border: 2px solid #ff9800;
-  border-radius: 8px;
+  background: linear-gradient(
+    135deg,
+    var(--color-bust-bg-start) 0%,
+    var(--color-accent-yellow-light) 100%
+  );
+  border: var(--border-width-base) solid var(--color-warning);
+  border-radius: var(--border-radius-base);
   width: 100%;
   justify-content: center;
 }
@@ -181,7 +188,7 @@
 .feedback__streak-text {
   font-size: 1rem;
   font-weight: 600;
-  color: #e67e00;
+  color: var(--color-accent-orange);
 }
 
 /* バスト表示 */
@@ -227,9 +234,9 @@
   max-width: 400px;
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 8px;
-  background-color: #4a90e2;
-  color: #fff;
+  border-radius: var(--border-radius-base);
+  background-color: var(--color-primary);
+  color: var(--color-bg-white);
   font-family: inherit;
   font-size: 1rem;
   font-weight: 600;
@@ -240,7 +247,7 @@
 }
 
 .feedback__next-button:hover {
-  background-color: #357ab8;
+  background-color: var(--color-primary-dark);
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(74, 144, 226, 0.4);
 }
