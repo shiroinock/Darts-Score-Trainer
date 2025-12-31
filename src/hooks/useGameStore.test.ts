@@ -313,7 +313,7 @@ describe('useGameStore hooks', () => {
         expect(result.current).toHaveLength(1);
       });
 
-      test('3投モードで初期状態は空配列である', () => {
+      test('3投モードで初期状態は最初の1本のダーツが表示される', () => {
         // Arrange
         const { result } = renderHook(() => useDisplayedDarts());
 
@@ -324,7 +324,8 @@ describe('useGameStore hooks', () => {
         });
 
         // Assert
-        expect(result.current).toEqual([]);
+        expect(result.current).toHaveLength(1);
+        expect(useGameStore.getState().currentThrowIndex).toBe(1);
       });
     });
   });
@@ -511,14 +512,17 @@ describe('useGameStore hooks', () => {
           useGameStore.getState().startPractice();
         });
 
-        // Act: 1投目をシミュレート
+        // 開始時点で1本目が表示されている
+        expect(useGameStore.getState().displayedDarts).toHaveLength(1);
+
+        // Act: 次のダーツをシミュレート
         act(() => {
           result.current();
         });
 
-        // Assert
+        // Assert: 2本目が追加される
         const displayedDarts = useGameStore.getState().displayedDarts;
-        expect(displayedDarts).toHaveLength(1);
+        expect(displayedDarts).toHaveLength(2);
       });
     });
 

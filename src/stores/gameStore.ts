@@ -392,9 +392,9 @@ export const useGameStore = create<GameStore>()(
             state.displayedDarts = [...throws];
             state.currentThrowIndex = 1;
           } else {
-            // 3投モードの場合はリセット
-            state.displayedDarts = [];
-            state.currentThrowIndex = 0;
+            // 3投モードの場合は最初の1本のみ表示
+            state.displayedDarts = [throws[0]];
+            state.currentThrowIndex = 1;
           }
         }),
 
