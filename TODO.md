@@ -583,18 +583,15 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
   - 3本目: `{ type: 'score', throwIndex: 3 }` → NumPad表示
 - [x] PracticeScreenでBustQuestion/NumPadの切り替え実装
 
-**Phase D: バスト発生時のラウンド終了処理**（未実装）
-- [ ] 1本目・2本目でバスト判定が「バスト」の場合、次のダーツシミュレーションをスキップ
-- [ ] バスト発生時は残り点数をラウンド開始時の値にリセット（維持）
-- [ ] バスト発生時は次のラウンド（新しい3投）に進む
-- [ ] `handleBustFeedbackComplete`の分岐処理を追加
+**Phase D: バスト発生時のラウンド終了処理**（2025-12-31完了）
+- [x] 1本目・2本目でバスト判定が「バスト」の場合、次のダーツシミュレーションをスキップ
+- [x] バスト発生時は残り点数をラウンド開始時の値にリセット（維持）
+- [x] バスト発生時は次のラウンド（新しい3投）に進む
+- [x] `handleBustFeedbackComplete`の分岐処理を追加
   - バストの場合: `nextQuestion()` で新しいラウンドへ
   - セーフの場合: `simulateNextThrow()` で次のダーツ表示
-
-**要修正箇所（UI側）**:
-- `PracticeScreen.tsx`の`handleBustFeedbackComplete`関数
-- 現状: 常に`simulateNextThrow()`を呼び出している
-- 修正: `bustCorrectAnswer`（正解がバストかどうか）に応じて分岐
+- 実装ファイル: src/hooks/useFeedback.ts (handleBustFeedbackComplete関数)
+- テストファイル: src/hooks/useFeedback.test.ts (14テスト)
 
 **Phase E: バスト時の正解計算ロジック修正**（未実装）
 - [ ] バスト発生時、残り点数の正解はラウンド開始時の値を維持すべき

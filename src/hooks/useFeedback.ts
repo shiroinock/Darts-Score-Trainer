@@ -51,6 +51,8 @@ export function useFeedback(): UseFeedbackResult {
   const submitAnswer = useGameStore((state) => state.submitAnswer);
   const simulateNextThrow = useGameStore((state) => state.simulateNextThrow);
   const getCurrentCorrectAnswer = useGameStore((state) => state.getCurrentCorrectAnswer);
+  const getBustCorrectAnswer = useGameStore((state) => state.getBustCorrectAnswer);
+  const nextQuestion = useGameStore((state) => state.nextQuestion);
 
   // 問題変更時にフィードバックをリセット
   const prevQuestionRef = useRef<Question | null>(currentQuestion);
@@ -103,12 +105,25 @@ export function useFeedback(): UseFeedbackResult {
 
   /**
    * バストフィードバック完了後のハンドラー
+   *
+   * 正解がバストの場合は次のラウンド（新しい3投）へ進み、
+   * 正解がセーフの場合は次のダーツを表示します。
    */
   const handleBustFeedbackComplete = useCallback((): void => {
     setShowFeedback(false);
     setBustAnswer(null);
-    simulateNextThrow();
-  }, [simulateNextThrow]);
+
+    // バスト判定の正解を取得
+    const bustCorrectAnswer = getBustCorrectAnswer();
+
+    if (bustCorrectAnswer === true) {
+      // 正解がバストの場合 → 次のラウンド（新しい3投）へ
+      nextQuestion();
+    } else {
+      // 正解がセーフの場合 → 次のダーツを表示
+      simulateNextThrow();
+    }
+  }, [getBustCorrectAnswer, nextQuestion, simulateNextThrow]);
 
   return {
     showFeedback,
