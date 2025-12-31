@@ -558,8 +558,17 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [ ] 各回答後に`currentThrowIndex`をインクリメントし、次のダーツを表示
 
 **Phase B: バスト判定UIの追加**
-- [ ] `Question`型に`questionPhase: 'bust' | 'score'`を追加
-- [ ] 1本目・2本目の後: バスト判定を2択で問う（Yes/No ボタン）
+- [ ] `Question`型に`questionPhase`を追加
+  ```typescript
+  // throwIndexを含めることで、どの投擲後の質問かが型レベルで明確
+  questionPhase?:
+    | { type: 'bust'; throwIndex: 1 | 2 }  // 1本目・2本目のバスト判定
+    | { type: 'score'; throwIndex: 3 }     // 3本目の合計点数
+  ```
+- [ ] 1本目・2本目の後: バスト判定を2択で問う
+  - ボタンラベル: 「バスト」/「セーフ」（日本語UI）
+  - キーボード操作: Bキーでバスト、Sキーでセーフ
+  - ARIA属性でスクリーンリーダー対応
 - [ ] バスト判定の正解: 現在の残り点数と投擲結果から計算
 - [ ] `BustQuestion`コンポーネント作成（`src/components/Practice/BustQuestion.tsx`）
 - [ ] 正解/不正解フィードバックを表示
@@ -586,9 +595,13 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [ ] `RingType`を使った82ターゲット定義を追加（`src/utils/targetCoordinates/getAllTargetsExpanded.ts`）
   - INNER_SINGLE 1-20, OUTER_SINGLE 1-20, DOUBLE 1-20, TRIPLE 1-20, INNER_BULL, OUTER_BULL
 - [ ] `PracticeConfig`型に`randomizeTarget: boolean`フラグを追加（オプショナル、デフォルトfalse）
+  - 注: `randomizeTarget: true`の場合、`stdDevMM`は使用されない（シミュレーションなし）
 - [ ] `basicプリセット`に`randomizeTarget: true`を設定
 - [ ] `gameStore.ts`の`generateQuestion`アクションを修正（ランダム選択ロジック）
-- [ ] テスト作成：ランダム出題時のターゲット分布確認
+- [ ] テスト作成：ランダム出題の品質保証
+  - 均等性: 1000回実行時、各ターゲットの出現確率が1/82 ± 15%に収まる
+  - 連続回避: 同じターゲットが3回以上連続で選ばれない
+  - 全カバレッジ: 500回以上の試行で全82ターゲットが少なくとも1回は選ばれる
 
 #### 9.1.4 スパイダー近傍のダーツ表示改善
 **問題**: スパイダー上にダーツが被ると、どちらのセグメントか判別困難
@@ -596,7 +609,9 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 
 **Phase A: スパイダーから離れた位置に出題**
 - [ ] `getTargetCoordinates`を修正：セグメント中央付近のみを返す
-- [ ] リング境界からの最小距離を設定（例: 7mm = マーカー半径5mm + マージン2mm）
+- [ ] リング境界からの最小距離を設定
+  - 7mm = DART_MARKER_RADII.outer(5mm) + マージン(2mm)
+  - 注: 物理座標系（mm単位）での計算。CLAUDE.md参照
 - [ ] セグメント境界からの最小角度を設定
 - [ ] `adjustForSpider`の調整量を増加（1mm → 7mm）
 
@@ -604,7 +619,10 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [ ] `ZoomView`コンポーネントを作成（`src/components/DartBoard/ZoomView.tsx`）
 - [ ] ダーツ着地点を中心に拡大表示（2-3倍ズーム）
 - [ ] スパイダーラインとダーツの位置関係を明確に表示
-- [ ] 画面上の配置を検討（ボード右上、または別パネル）
+- [ ] 画面上の配置を決定（以下の観点で評価）
+  - モバイルデバイスでの視認性
+  - 既存UIとの干渉（NumPad、StatsBarなど）
+  - タッチ操作の誤タップ防止
 - [ ] タップ/ホバーでズーム位置を変更可能に
 
 ### 9.2 動作確認（バグフィックス後に実施）
@@ -615,7 +633,12 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 
 ### 9.3 追加対応（動作確認で問題が見つかった場合）
 - [ ] パフォーマンス問題: p5.js描画の最適化、React.memo/useMemo/useCallback適用
+  - 判断基準: 60fps未満の描画、100ms超のインタラクション遅延
+  - 計測方法: Chrome DevTools Performance タブで確認
+  - 優先度判断: モバイルデバイス（iPhone SE等）での体感速度を重視
 - [ ] バンドルサイズ問題: 依存関係の見直し、コード分割
+  - 判断基準: gzip後500KB超
+  - 計測方法: `npm run build` 後の出力サイズ確認
 - [ ] その他発見したバグ: 随時対応
 
 ---
@@ -730,6 +753,13 @@ Phase 6.4のフィードバックコンポーネントに、バスト表示機�
 - [ ] グラフ・チャート可視化
 - [ ] 投擲アニメーション
 - [ ] 英語対応（i18n）
+- [ ] **手動テスト記録の自動化**
+  - 目的: `docs/MANUAL_TEST_CHECKLIST.md` のテスト実施記録を自動的に管理
+  - 実装案:
+    - GitHub Issues/PRと連携してテスト実施状況を記録
+    - テスト結果をJSONファイルに出力し、履歴を追跡
+    - チェックリストのマークダウンを自動更新するスクリプト
+  - 評価基準: テスト実施時間の50%削減、記録漏れの防止
 
 ### 技術的改善（Biome関連 - PR #44レビュー指摘事項）
 - [x] CI/CDへの統合（重要度: 高）
