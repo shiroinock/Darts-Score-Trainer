@@ -18,6 +18,7 @@ import { useTimer } from '../../hooks/useTimer';
 import { useGameStore } from '../../stores/gameStore';
 import { END_REASONS } from '../../types';
 import { ONE_DART_FINISHABLE } from '../../utils/constants';
+import { isGameFinished } from '../../utils/gameLogic';
 import { DartBoard } from '../DartBoard/DartBoard';
 import { BustQuestion } from './BustQuestion';
 import { Feedback } from './Feedback';
@@ -64,11 +65,17 @@ export function PracticeScreen(): JSX.Element {
   const questionType = useGameStore((state) => state.config.questionType);
   const displayedDarts = useGameStore((state) => state.displayedDarts);
   const roundStartScore = useGameStore((state) => state.roundStartScore);
+  const remainingScore = useGameStore((state) => state.remainingScore);
+  const startingScore = useGameStore((state) => state.config.startingScore);
 
   // アクション関数を取得
   const resetToSetup = useGameStore((state) => state.resetToSetup);
   const endSession = useGameStore((state) => state.endSession);
   const getBustCorrectAnswer = useGameStore((state) => state.getBustCorrectAnswer);
+  const nextQuestion = useGameStore((state) => state.nextQuestion);
+
+  // バストフェーズかどうかを判定
+  const isBustPhase = currentQuestion?.questionPhase?.type === 'bust';
 
   // 時間切れの検出と自動終了処理
   useEffect(() => {
@@ -80,8 +87,50 @@ export function PracticeScreen(): JSX.Element {
     }
   }, [elapsedTime, sessionConfig, gameState, endSession]);
 
-  // バストフェーズかどうかを判定
-  const isBustPhase = currentQuestion?.questionPhase?.type === 'bust';
+  // Enterキーでフィードバック後に次へ進む
+  useEffect(() => {
+    // フィードバック非表示時は何もしない
+    if (!showFeedback) {
+      return undefined;
+    }
+
+    // ゲームクリア時はEnterキーを無効化
+    const isGameCleared =
+      questionType === 'remaining' && isGameFinished(remainingScore) && startingScore > 0;
+    if (isGameCleared) {
+      return undefined;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+
+        // バストフェーズの場合
+        if (isBustPhase && bustAnswer !== null) {
+          handleBustFeedbackComplete();
+        }
+        // スコアフェーズの場合
+        else if (!isBustPhase && lastAnswer) {
+          nextQuestion();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [
+    showFeedback,
+    isBustPhase,
+    bustAnswer,
+    lastAnswer,
+    questionType,
+    remainingScore,
+    startingScore,
+    handleBustFeedbackComplete,
+    nextQuestion,
+  ]);
 
   // フィニッシュ選択肢を表示するかどうかを計算
   // 現在のダーツ投擲時点での残り点数が1本でフィニッシュ可能かどうか
