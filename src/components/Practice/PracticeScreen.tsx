@@ -159,7 +159,7 @@ export function PracticeScreen(): JSX.Element {
   // バストフェーズかどうかを判定
   const isBustPhase = currentQuestion?.questionPhase?.type === 'bust';
 
-  // バスト判定の正解を計算（現在表示されているダーツまでの累積）
+  // バスト判定の正解を計算（最後の1投に対して判定）
   const bustCorrectAnswer = (() => {
     if (!isBustPhase || displayedDarts.length === 0) {
       return false;
@@ -168,13 +168,16 @@ export function PracticeScreen(): JSX.Element {
     // 表示されている最後のダーツ
     const lastDisplayedDart = displayedDarts[displayedDarts.length - 1];
 
-    // 累積得点を計算
-    const cumulativeScore = displayedDarts.reduce((sum, dart) => sum + dart.score, 0);
+    // その投擲時点での残り点数を計算（最後の1投を除いた累積を引く）
+    const previousCumulativeScore = displayedDarts
+      .slice(0, -1)
+      .reduce((sum, dart) => sum + dart.score, 0);
+    const currentRemainingScore = roundStartScore - previousCumulativeScore;
 
-    // バスト判定を実行
+    // バスト判定を実行（最後の1投のスコアで判定）
     const bustResult = checkBust(
-      roundStartScore,
-      cumulativeScore,
+      currentRemainingScore,
+      lastDisplayedDart.score,
       isDoubleRing(lastDisplayedDart.ring)
     );
 
