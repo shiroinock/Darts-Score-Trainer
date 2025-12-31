@@ -194,15 +194,16 @@ describe('getAllTargetsExpanded', () => {
       expect(innerBull?.y).toBe(0);
     });
 
-    test('OUTER_BULLの座標は原点(0, 0)である', () => {
+    test('OUTER_BULLの座標はOUTER_BULLエリアの中間点である', () => {
       // Arrange & Act
       const targets = getAllTargetsExpanded();
       const outerBull = targets.find((t) => t.ringType === 'OUTER_BULL');
 
       // Assert
-      // OUTER_BULLもブルエリアの中心を代表座標とする
+      // OUTER_BULLエリアの中間点: (6.35 + 16) / 2 = 11.175mm を12時方向（y負方向）に配置
+      // INNER_BULLと視覚的に区別するため原点ではない
       expect(outerBull?.x).toBe(0);
-      expect(outerBull?.y).toBe(0);
+      expect(outerBull?.y).toBeCloseTo(-11.175, 2);
     });
 
     test('INNER_SINGLEの座標が適切な半径範囲内（約16-99mm）', () => {

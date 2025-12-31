@@ -13,7 +13,7 @@
  */
 
 import type { RingType } from '../../types/RingType.js';
-import { TARGET_RADII } from '../constants/index.js';
+import { BOARD_PHYSICAL, TARGET_RADII } from '../constants/index.js';
 import { getSegmentAngle } from './getSegmentAngle.js';
 
 /**
@@ -143,11 +143,14 @@ export function getAllTargetsExpanded(): ExpandedTarget[] {
   });
 
   // OUTER_BULL (1個)
+  // OUTER_BULLの代表座標は、INNER_BULL境界とOUTER_BULL境界の中間点
+  // (6.35 + 16) / 2 = 11.175mm を12時方向（y負方向）に配置
+  const outerBullRadius = (BOARD_PHYSICAL.rings.innerBull + BOARD_PHYSICAL.rings.outerBull) / 2;
   targets.push({
     ringType: 'OUTER_BULL',
     number: 0,
     x: 0,
-    y: 0,
+    y: -outerBullRadius,
     label: '25',
     score: 25,
   });
