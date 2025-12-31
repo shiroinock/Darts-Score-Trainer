@@ -2,7 +2,7 @@
  * DartBoardコンポーネント
  * P5Canvasをラップし、レスポンシブなサイズ計算と表示を担当
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Coordinates } from '../../types';
 import { P5Canvas } from './P5Canvas';
 
@@ -17,17 +17,17 @@ interface DartBoardProps {
 }
 
 /**
- * ウィンドウサイズから適切なキャンバスサイズを計算
+ * コンテナサイズから適切なキャンバスサイズを計算
  * 正方形のキャンバスを維持し、マージンを考慮
- * @param windowWidth ウィンドウ幅
- * @param windowHeight ウィンドウ高さ
+ * @param containerWidth コンテナ幅
+ * @param containerHeight コンテナ高さ
  * @returns キャンバスサイズ（幅と高さは同じ）
  */
-function calculateCanvasSize(windowWidth: number, windowHeight: number): number {
+function calculateCanvasSize(containerWidth: number, containerHeight: number): number {
   // マージンを考慮（各辺に20pxのマージン）
   const MARGIN = 40;
-  const availableWidth = windowWidth - MARGIN;
-  const availableHeight = windowHeight - MARGIN;
+  const availableWidth = containerWidth - MARGIN;
+  const availableHeight = containerHeight - MARGIN;
 
   // 幅と高さの小さい方を使用して正方形を維持
   return Math.min(availableWidth, availableHeight);
@@ -38,51 +38,70 @@ function calculateCanvasSize(windowWidth: number, windowHeight: number): number 
  * @param props ダーツ位置とダーツ数
  */
 export function DartBoard({ coords, dartCount }: DartBoardProps): JSX.Element {
-  // ウィンドウサイズの状態管理
-  const [windowSize, setWindowSize] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
+  // 親コンテナへの参照
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // コンテナサイズの状態管理
+  const [containerSize, setContainerSize] = useState({
+    width: 0,
+    height: 0,
   });
 
-  // ウィンドウリサイズ時のハンドラー
+  // ResizeObserverで親コンテナのサイズを監視
   useEffect(() => {
-    const handleResize = (): void => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
+    const container = containerRef.current;
+    if (!container) {
+      return;
+    }
+
+    // 初期サイズを設定
+    const updateSize = (): void => {
+      setContainerSize({
+        width: container.clientWidth,
+        height: container.clientHeight,
       });
     };
 
-    // リサイズイベントリスナーを登録
-    window.addEventListener('resize', handleResize);
+    // ResizeObserverを使用してコンテナサイズの変更を監視
+    const resizeObserver = new ResizeObserver(() => {
+      updateSize();
+    });
+
+    resizeObserver.observe(container);
+
+    // 初回実行
+    updateSize();
 
     // クリーンアップ
     return () => {
-      window.removeEventListener('resize', handleResize);
+      resizeObserver.disconnect();
     };
   }, []);
 
   // キャンバスサイズを計算
-  const canvasSize = calculateCanvasSize(windowSize.width, windowSize.height);
+  const canvasSize = calculateCanvasSize(containerSize.width, containerSize.height);
 
   return (
     <div
+      ref={containerRef}
       style={{
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
-        height: '100vh',
+        height: '100%',
       }}
     >
-      <div
-        style={{
-          width: canvasSize,
-          height: canvasSize,
-        }}
-      >
-        <P5Canvas coords={coords} dartCount={dartCount} />
-      </div>
+      {canvasSize > 0 && (
+        <div
+          style={{
+            width: canvasSize,
+            height: canvasSize,
+          }}
+        >
+          <P5Canvas coords={coords} dartCount={dartCount} width={canvasSize} height={canvasSize} />
+        </div>
+      )}
     </div>
   );
 }

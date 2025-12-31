@@ -632,3 +632,77 @@ index.cssからコンポーネント固有のスタイルを独立したCSSフ�
 .component-name__element { ... }
 .component-name--modifier { ... }
 ```
+
+## ResizeObserver実装時の注意点
+
+### 親コンテナサイズの監視
+
+ウィンドウサイズではなく親コンテナのサイズに基づいてコンポーネントをリサイズする場合：
+
+1. **ResizeObserverの使用**
+   ```typescript
+   useEffect(() => {
+     if (!containerRef.current) return;
+     
+     const resizeObserver = new ResizeObserver((entries) => {
+       const entry = entries[0];
+       const { width, height } = entry.contentRect;
+       // サイズ計算と更新処理
+     });
+     
+     resizeObserver.observe(containerRef.current);
+     
+     return () => {
+       resizeObserver.disconnect();
+     };
+   }, []);
+   ```
+
+2. **props経由でのサイズ伝達**
+   - 親コンポーネントでサイズを計算
+   - 子コンポーネントにwidth/heightをpropsで渡す
+   - 子コンポーネントでuseEffectを使ってpropsの変更を監視
+
+3. **初期化待機**
+   ```typescript
+   // コンテナサイズが0の場合は初期化を待つ
+   if (canvasSize.width === 0 || canvasSize.height === 0) {
+     return null;
+   }
+   ```
+
+## 報告書作成のガイドライン
+
+### 簡潔な完了報告を心がける
+
+実装完了時の報告は以下の要素に絞って簡潔に：
+
+1. **変更したファイル一覧**（箇条書き）
+2. **実装した機能の概要**（1-2文で要約）
+3. **動作確認結果**（ビルド・テスト・開発サーバーの状態）
+
+以下は避けてください：
+- ❌ 実装の詳細な説明
+- ❌ コードの動作原理の解説
+- ❌ 将来の拡張性について
+- ❌ タスクで要求されていない追加情報
+
+### 良い報告例
+
+```
+## 実装完了
+
+### 変更ファイル
+- src/components/DartBoard/DartBoard.tsx
+- src/components/DartBoard/P5Canvas.tsx
+- src/__tests__/integration/p5-canvas-wrapper.test.tsx
+- src/components/DartBoard/P5Canvas.stories.tsx
+
+### 実装内容
+ResizeObserverを使用して親コンテナサイズに基づくキャンバスリサイズを実装しました。
+
+### 動作確認
+✅ ビルド成功
+✅ テスト成功（29/29）
+✅ 開発サーバー起動確認
+```

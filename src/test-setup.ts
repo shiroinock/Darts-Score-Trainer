@@ -14,3 +14,10 @@ afterEach(() => {
 // p5.js のモック（描画テストで使用）
 // @ts-expect-error - グローバル変数の定義
 global.p5 = vi.fn();
+
+// ResizeObserver のモック（DartBoard等のテストで使用）
+global.ResizeObserver = class ResizeObserver {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+};

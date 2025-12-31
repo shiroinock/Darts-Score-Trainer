@@ -26,11 +26,11 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const EmptyBoard: Story = {
-  args: { coords: [], dartCount: 0 },
+  args: { coords: [], dartCount: 0, width: 600, height: 600 },
 };
 
 export const SingleDartOnTriple20: Story = {
-  args: { coords: [{ x: 0, y: -103 }], dartCount: 1 },
+  args: { coords: [{ x: 0, y: -103 }], dartCount: 1, width: 600, height: 600 },
 };
 
 export const ThreeDartsWithLegend: Story = {
@@ -41,9 +41,11 @@ export const ThreeDartsWithLegend: Story = {
       { x: -30, y: -95 },
     ],
     dartCount: 3,
+    width: 600,
+    height: 600,
   },
 };
 
 export const BullsEyeHit: Story = {
-  args: { coords: [{ x: 0, y: 0 }], dartCount: 1 },
+  args: { coords: [{ x: 0, y: 0 }], dartCount: 1, width: 600, height: 600 },
 };

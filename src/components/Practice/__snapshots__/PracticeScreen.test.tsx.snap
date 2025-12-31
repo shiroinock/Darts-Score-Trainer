@@ -83,10 +83,10 @@ exports[`PracticeScreen > スナップショットテスト > Feedback表示中�
         class="practice-screen__board-section"
       >
         <div
-          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100vh;"
+          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
         >
           <div
-            style="width: 728px; height: 728px;"
+            style="width: 688px; height: 688px;"
           >
             <div
               data-dart-count="1"
@@ -306,10 +306,10 @@ exports[`PracticeScreen > スナップショットテスト > displayedDartsが0
         class="practice-screen__board-section"
       >
         <div
-          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100vh;"
+          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
         >
           <div
-            style="width: 728px; height: 728px;"
+            style="width: 688px; height: 688px;"
           >
             <div
               data-dart-count="0"
@@ -560,10 +560,10 @@ exports[`PracticeScreen > スナップショットテスト > displayedDartsが3
         class="practice-screen__board-section"
       >
         <div
-          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100vh;"
+          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
         >
           <div
-            style="width: 728px; height: 728px;"
+            style="width: 688px; height: 688px;"
           >
             <div
               data-dart-count="3"
@@ -814,10 +814,10 @@ exports[`PracticeScreen > スナップショットテスト > gameState="practic
         class="practice-screen__board-section"
       >
         <div
-          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100vh;"
+          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
         >
           <div
-            style="width: 728px; height: 728px;"
+            style="width: 688px; height: 688px;"
           >
             <div
               data-dart-count="1"
@@ -1092,10 +1092,10 @@ exports[`PracticeScreen > スナップショットテスト > 問題数モード
         class="practice-screen__board-section"
       >
         <div
-          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100vh;"
+          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
         >
           <div
-            style="width: 728px; height: 728px;"
+            style="width: 688px; height: 688px;"
           >
             <div
               data-dart-count="1"
@@ -1346,10 +1346,10 @@ exports[`PracticeScreen > スナップショットテスト > 時間制限モー
         class="practice-screen__board-section"
       >
         <div
-          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100vh;"
+          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
         >
           <div
-            style="width: 728px; height: 728px;"
+            style="width: 688px; height: 688px;"
           >
             <div
               data-dart-count="1"
@@ -1612,10 +1612,10 @@ exports[`PracticeScreen > スナップショットテスト > 時間制限モー
         class="practice-screen__board-section"
       >
         <div
-          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100vh;"
+          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
         >
           <div
-            style="width: 728px; height: 728px;"
+            style="width: 688px; height: 688px;"
           >
             <div
               data-dart-count="1"
@@ -1878,10 +1878,10 @@ exports[`PracticeScreen > スナップショットテスト > 時間制限モー
         class="practice-screen__board-section"
       >
         <div
-          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100vh;"
+          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
         >
           <div
-            style="width: 728px; height: 728px;"
+            style="width: 688px; height: 688px;"
           >
             <div
               data-dart-count="1"

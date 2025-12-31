@@ -16,7 +16,6 @@ import { BOARD_PHYSICAL, DART_COLORS } from '../../utils/constants/index.js';
 interface SketchProps {
   setup?: (p5: p5Types, canvasParentRef: Element) => void;
   draw?: (p5: p5Types) => void;
-  windowResized?: (p5: p5Types) => void;
 }
 
 /**
@@ -25,7 +24,6 @@ interface SketchProps {
 declare global {
   interface Window {
     __mockP5Instance?: p5Types;
-    __mockWindowResized?: () => void;
   }
 }
 
@@ -35,7 +33,7 @@ const testGlobal = globalThis as typeof globalThis & Window;
 // react-p5のSketchコンポーネントをモック化
 vi.mock('react-p5', () => {
   return {
-    default: ({ setup, draw, windowResized }: SketchProps) => {
+    default: ({ setup, draw }: SketchProps) => {
       // モックのp5インスタンスを作成（型アサーションで完全なp5型として扱う）
       const mockP5 = {
         windowWidth: 800,
@@ -75,12 +73,6 @@ vi.mock('react-p5', () => {
         draw(mockP5);
       }
 
-      // windowResized関数を保持しておく
-      if (windowResized) {
-        // グローバルに保存してテストから呼び出せるようにする
-        testGlobal.__mockWindowResized = () => windowResized(mockP5);
-      }
-
       // モックのp5インスタンスをグローバルに保存してテストから参照できるようにする
       testGlobal.__mockP5Instance = mockP5;
 
@@ -109,7 +101,6 @@ describe('p5-canvas-wrapper integration', () => {
     vi.clearAllMocks();
     // グローバル変数をクリア
     delete testGlobal.__mockP5Instance;
-    delete testGlobal.__mockWindowResized;
   });
 
   describe('正常系 - Sketchコンポーネントのマウント確認', () => {
@@ -118,7 +109,9 @@ describe('p5-canvas-wrapper integration', () => {
       const coords: Coordinates[] = [];
 
       // Act & Assert
-      expect(() => render(<P5Canvas coords={coords} dartCount={0} />)).not.toThrow();
+      expect(() =>
+        render(<P5Canvas coords={coords} dartCount={0} width={800} height={600} />)
+      ).not.toThrow();
     });
 
     test('空のダーツ配列でもレンダリングに成功する', () => {
@@ -126,7 +119,9 @@ describe('p5-canvas-wrapper integration', () => {
       const coords: Coordinates[] = [];
 
       // Act
-      const { container } = render(<P5Canvas coords={coords} dartCount={0} />);
+      const { container } = render(
+        <P5Canvas coords={coords} dartCount={0} width={800} height={600} />
+      );
 
       // Assert
       expect(container).toBeDefined();
@@ -141,7 +136,9 @@ describe('p5-canvas-wrapper integration', () => {
       ];
 
       // Act
-      const { container } = render(<P5Canvas coords={coords} dartCount={3} />);
+      const { container } = render(
+        <P5Canvas coords={coords} dartCount={3} width={800} height={600} />
+      );
 
       // Assert
       expect(container).toBeDefined();
@@ -154,7 +151,7 @@ describe('p5-canvas-wrapper integration', () => {
       const coords: Coordinates[] = [];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={0} />);
+      render(<P5Canvas coords={coords} dartCount={0} width={800} height={600} />);
 
       // Assert
       const mockP5 = testGlobal.__mockP5Instance!;
@@ -167,7 +164,7 @@ describe('p5-canvas-wrapper integration', () => {
       const coords: Coordinates[] = [];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={0} />);
+      render(<P5Canvas coords={coords} dartCount={0} width={800} height={600} />);
 
       // Assert
       const mockP5 = testGlobal.__mockP5Instance!;
@@ -179,7 +176,7 @@ describe('p5-canvas-wrapper integration', () => {
       const coords: Coordinates[] = [];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={0} />);
+      render(<P5Canvas coords={coords} dartCount={0} width={800} height={600} />);
 
       // Assert
       // CoordinateTransformの初期化は間接的に検証
@@ -194,7 +191,7 @@ describe('p5-canvas-wrapper integration', () => {
       const coords: Coordinates[] = [];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={0} />);
+      render(<P5Canvas coords={coords} dartCount={0} width={800} height={600} />);
 
       // Assert
       const mockP5 = testGlobal.__mockP5Instance!;
@@ -210,7 +207,7 @@ describe('p5-canvas-wrapper integration', () => {
       const coords: Coordinates[] = [];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={0} />);
+      render(<P5Canvas coords={coords} dartCount={0} width={800} height={600} />);
 
       // Assert
       expect(drawBoard).toHaveBeenCalledTimes(1);
@@ -221,7 +218,7 @@ describe('p5-canvas-wrapper integration', () => {
       const coords: Coordinates[] = [];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={0} />);
+      render(<P5Canvas coords={coords} dartCount={0} width={800} height={600} />);
 
       // Assert
       const mockP5 = testGlobal.__mockP5Instance;
@@ -239,7 +236,7 @@ describe('p5-canvas-wrapper integration', () => {
       const coords: Coordinates[] = [];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={0} />);
+      render(<P5Canvas coords={coords} dartCount={0} width={800} height={600} />);
 
       // Assert
       const mockP5 = testGlobal.__mockP5Instance;
@@ -247,55 +244,8 @@ describe('p5-canvas-wrapper integration', () => {
     });
   });
 
-  describe('正常系 - windowResized()によるキャンバスサイズ更新テスト', () => {
-    test('windowResized()でresizeCanvas()が呼び出される', () => {
-      // Arrange
-      const coords: Coordinates[] = [];
-      render(<P5Canvas coords={coords} dartCount={0} />);
-
-      // Act
-      const windowResizedFn = testGlobal.__mockWindowResized!;
-      expect(windowResizedFn).toBeDefined();
-      windowResizedFn();
-
-      // Assert
-      const mockP5 = testGlobal.__mockP5Instance!;
-      expect(mockP5.resizeCanvas).toHaveBeenCalledTimes(1);
-      expect(mockP5.resizeCanvas).toHaveBeenCalledWith(800, 600);
-    });
-
-    test('windowResized()でCoordinateTransformのupdateCanvasSizeが呼び出される', () => {
-      // Arrange
-      const coords: Coordinates[] = [];
-      render(<P5Canvas coords={coords} dartCount={0} />);
-
-      // Act
-      const windowResizedFn = testGlobal.__mockWindowResized!;
-      windowResizedFn();
-
-      // Assert
-      // updateCanvasSizeの呼び出しは間接的に検証
-      // resizeCanvasが呼ばれることで、内部でupdateCanvasSizeも呼ばれていることを確認
-      const mockP5 = testGlobal.__mockP5Instance!;
-      expect(mockP5.resizeCanvas).toHaveBeenCalled();
-    });
-
-    test('windowResized()が複数回呼ばれても正常に動作する', () => {
-      // Arrange
-      const coords: Coordinates[] = [];
-      render(<P5Canvas coords={coords} dartCount={0} />);
-
-      // Act
-      const windowResizedFn = testGlobal.__mockWindowResized!;
-      windowResizedFn();
-      windowResizedFn();
-      windowResizedFn();
-
-      // Assert
-      const mockP5 = testGlobal.__mockP5Instance!;
-      expect(mockP5.resizeCanvas).toHaveBeenCalledTimes(3);
-    });
-  });
+  // 注: windowResizedハンドラーは削除され、propsベースのリサイズに変更されました
+  // そのため、windowResized関連のテストは不要になりました
 
   describe('正常系 - propsで渡されたダーツ座標の描画反映確認', () => {
     test('空のダーツ配列の場合、drawDartMarkerが呼ばれない', () => {
@@ -303,7 +253,7 @@ describe('p5-canvas-wrapper integration', () => {
       const coords: Coordinates[] = [];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={0} />);
+      render(<P5Canvas coords={coords} dartCount={0} width={800} height={600} />);
 
       // Assert
       expect(drawDartMarker).not.toHaveBeenCalled();
@@ -316,7 +266,7 @@ describe('p5-canvas-wrapper integration', () => {
       ];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={1} />);
+      render(<P5Canvas coords={coords} dartCount={1} width={800} height={600} />);
 
       // Assert
       expect(drawDartMarker).toHaveBeenCalledTimes(1);
@@ -331,7 +281,7 @@ describe('p5-canvas-wrapper integration', () => {
       ];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={3} />);
+      render(<P5Canvas coords={coords} dartCount={3} width={800} height={600} />);
 
       // Assert
       expect(drawDartMarker).toHaveBeenCalledTimes(3);
@@ -345,7 +295,7 @@ describe('p5-canvas-wrapper integration', () => {
       ];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={2} />);
+      render(<P5Canvas coords={coords} dartCount={2} width={800} height={600} />);
 
       // Assert
       const firstCall = vi.mocked(drawDartMarker).mock.calls[0];
@@ -364,7 +314,7 @@ describe('p5-canvas-wrapper integration', () => {
       ];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={3} />);
+      render(<P5Canvas coords={coords} dartCount={3} width={800} height={600} />);
 
       // Assert
       const firstCall = vi.mocked(drawDartMarker).mock.calls[0];
@@ -385,7 +335,7 @@ describe('p5-canvas-wrapper integration', () => {
       ];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={3} />);
+      render(<P5Canvas coords={coords} dartCount={3} width={800} height={600} />);
 
       // Assert
       const firstCall = vi.mocked(drawDartMarker).mock.calls[0];
@@ -408,7 +358,7 @@ describe('p5-canvas-wrapper integration', () => {
       ];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={5} />);
+      render(<P5Canvas coords={coords} dartCount={5} width={800} height={600} />);
 
       // Assert
       // 色配列の長さ（3）までしか描画されない
@@ -422,7 +372,7 @@ describe('p5-canvas-wrapper integration', () => {
       const coords: Coordinates[] = [];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={0} />);
+      render(<P5Canvas coords={coords} dartCount={0} width={800} height={600} />);
 
       // Assert
       expect(drawLegend).not.toHaveBeenCalled();
@@ -433,7 +383,7 @@ describe('p5-canvas-wrapper integration', () => {
       const coords: Coordinates[] = [{ x: 0, y: 0 }];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={1} />);
+      render(<P5Canvas coords={coords} dartCount={1} width={800} height={600} />);
 
       // Assert
       expect(drawLegend).not.toHaveBeenCalled();
@@ -447,7 +397,7 @@ describe('p5-canvas-wrapper integration', () => {
       ];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={2} />);
+      render(<P5Canvas coords={coords} dartCount={2} width={800} height={600} />);
 
       // Assert
       expect(drawLegend).not.toHaveBeenCalled();
@@ -462,7 +412,7 @@ describe('p5-canvas-wrapper integration', () => {
       ];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={3} />);
+      render(<P5Canvas coords={coords} dartCount={3} width={800} height={600} />);
 
       // Assert
       expect(drawLegend).toHaveBeenCalledTimes(1);
@@ -477,7 +427,7 @@ describe('p5-canvas-wrapper integration', () => {
       ];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={3} />);
+      render(<P5Canvas coords={coords} dartCount={3} width={800} height={600} />);
 
       // Assert
       const mockP5 = testGlobal.__mockP5Instance;
@@ -485,36 +435,17 @@ describe('p5-canvas-wrapper integration', () => {
     });
   });
 
-  describe('正常系 - レスポンシブ動作（ウィンドウリサイズ時の適切なスケーリング）', () => {
+  describe('正常系 - レスポンシブ動作（props経由のキャンバスサイズ設定）', () => {
     test('異なるキャンバスサイズ（小）でもsetup()が正常に動作する', () => {
       // Arrange
       const coords: Coordinates[] = [];
 
-      // モックのウィンドウサイズを変更
-      const originalMockP5Width = 800;
-      const originalMockP5Height = 600;
-
       // Act
-      render(<P5Canvas coords={coords} dartCount={0} />);
+      render(<P5Canvas coords={coords} dartCount={0} width={800} height={600} />);
 
       // Assert
       const mockP5 = testGlobal.__mockP5Instance!;
-      expect(mockP5.createCanvas).toHaveBeenCalledWith(originalMockP5Width, originalMockP5Height);
-    });
-
-    test('リサイズ後も描画関数が正常に呼び出される', () => {
-      // Arrange
-      const coords: Coordinates[] = [];
-      render(<P5Canvas coords={coords} dartCount={0} />);
-      vi.clearAllMocks(); // 初期描画のモック呼び出しをクリア
-
-      // Act
-      const windowResizedFn = testGlobal.__mockWindowResized!;
-      windowResizedFn();
-
-      // Assert
-      const mockP5 = testGlobal.__mockP5Instance!;
-      expect(mockP5.resizeCanvas).toHaveBeenCalled();
+      expect(mockP5.createCanvas).toHaveBeenCalledWith(800, 600);
     });
   });
 
@@ -524,7 +455,7 @@ describe('p5-canvas-wrapper integration', () => {
       const coords: Coordinates[] = [];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={0} />);
+      render(<P5Canvas coords={coords} dartCount={0} width={800} height={600} />);
 
       // Assert
       const mockP5 = testGlobal.__mockP5Instance;
@@ -544,7 +475,7 @@ describe('p5-canvas-wrapper integration', () => {
       const coords: Coordinates[] = [{ x: 10, y: 20 }];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={1} />);
+      render(<P5Canvas coords={coords} dartCount={1} width={800} height={600} />);
 
       // Assert
       const call = vi.mocked(drawDartMarker).mock.calls[0];
@@ -567,7 +498,7 @@ describe('p5-canvas-wrapper integration', () => {
       ];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={3} />);
+      render(<P5Canvas coords={coords} dartCount={3} width={800} height={600} />);
 
       // Assert
       const call = vi.mocked(drawLegend).mock.calls[0];
@@ -585,7 +516,7 @@ describe('p5-canvas-wrapper integration', () => {
       const coords: Coordinates[] = [];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={0} />);
+      render(<P5Canvas coords={coords} dartCount={0} width={800} height={600} />);
 
       // Assert
       // transformが初期化されている場合のみdrawBoardが呼ばれる
@@ -609,7 +540,7 @@ describe('p5-canvas-wrapper integration', () => {
       vi.mocked(drawLegend).mockImplementation(() => callOrder.push('drawLegend'));
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={3} />);
+      render(<P5Canvas coords={coords} dartCount={3} width={800} height={600} />);
 
       // Assert
       expect(callOrder).toEqual([
@@ -628,7 +559,7 @@ describe('p5-canvas-wrapper integration', () => {
       const coords: Coordinates[] = [];
 
       // Act
-      render(<P5Canvas coords={coords} dartCount={0} />);
+      render(<P5Canvas coords={coords} dartCount={0} width={800} height={600} />);
 
       // Assert
       // CoordinateTransformが正しい半径で初期化されていることを間接的に確認
