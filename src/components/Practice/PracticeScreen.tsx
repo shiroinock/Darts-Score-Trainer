@@ -16,6 +16,7 @@ import { useFeedback } from '../../hooks/useFeedback';
 import { usePracticeSession } from '../../hooks/usePracticeSession';
 import { useTimer } from '../../hooks/useTimer';
 import { useGameStore } from '../../stores/gameStore';
+import { END_REASONS } from '../../types';
 import { ONE_DART_FINISHABLE } from '../../utils/constants';
 import { DartBoard } from '../DartBoard/DartBoard';
 import { BustQuestion } from './BustQuestion';
@@ -74,7 +75,7 @@ export function PracticeScreen(): JSX.Element {
     if (sessionConfig.mode === 'time' && sessionConfig.timeLimit !== undefined) {
       const timeLimit = sessionConfig.timeLimit * 60; // 分を秒に変換
       if (elapsedTime >= timeLimit && gameState === 'practicing') {
-        endSession('時間切れ');
+        endSession(END_REASONS.TIMEOUT);
       }
     }
   }, [elapsedTime, sessionConfig, gameState, endSession]);
@@ -186,7 +187,7 @@ export function PracticeScreen(): JSX.Element {
         <button
           type="button"
           className="practice-screen__button practice-screen__button--end"
-          onClick={() => endSession('ユーザーによる終了')}
+          onClick={() => endSession(END_REASONS.USER_ABORT)}
           aria-label="練習を終了"
         >
           終了

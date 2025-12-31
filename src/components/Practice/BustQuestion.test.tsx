@@ -521,6 +521,138 @@ describe('BustQuestion', () => {
     });
   });
 
+  describe('フィニッシュ選択肢', () => {
+    it('showFinishOption=trueの場合、質問テキストが「この投擲の結果は?」に変わる', () => {
+      render(<BustQuestion correctAnswer="finish" onAnswer={vi.fn()} showFinishOption={true} />);
+
+      expect(screen.getByText('この投擲の結果は?')).toBeInTheDocument();
+      expect(screen.queryByText('この投擲はバストですか?')).not.toBeInTheDocument();
+    });
+
+    it('showFinishOption=trueの場合、「フィニッシュ」ボタンが表示される', () => {
+      render(<BustQuestion correctAnswer="finish" onAnswer={vi.fn()} showFinishOption={true} />);
+
+      expect(screen.getByRole('button', { name: /フィニッシュ/i })).toBeInTheDocument();
+    });
+
+    it('showFinishOption=falseの場合、「フィニッシュ」ボタンは表示されない', () => {
+      render(<BustQuestion correctAnswer="bust" onAnswer={vi.fn()} showFinishOption={false} />);
+
+      expect(screen.queryByRole('button', { name: /フィニッシュ/i })).not.toBeInTheDocument();
+    });
+
+    it('「フィニッシュ」ボタンにショートカット表記「(F)」が表示される', () => {
+      render(<BustQuestion correctAnswer="finish" onAnswer={vi.fn()} showFinishOption={true} />);
+
+      expect(screen.getByText('(F)')).toBeInTheDocument();
+    });
+
+    it('「フィニッシュ」ボタンをクリックするとonAnswer("finish")が呼ばれる', () => {
+      const onAnswer = vi.fn();
+      render(<BustQuestion correctAnswer="finish" onAnswer={onAnswer} showFinishOption={true} />);
+
+      const finishButton = screen.getByRole('button', { name: /フィニッシュ/i });
+      fireEvent.click(finishButton);
+
+      expect(onAnswer).toHaveBeenCalledTimes(1);
+      expect(onAnswer).toHaveBeenCalledWith('finish');
+    });
+
+    it('Fキーで「フィニッシュ」回答が送信される', () => {
+      const onAnswer = vi.fn();
+      render(<BustQuestion correctAnswer="finish" onAnswer={onAnswer} showFinishOption={true} />);
+
+      fireEvent.keyDown(window, { key: 'f' });
+
+      expect(onAnswer).toHaveBeenCalledTimes(1);
+      expect(onAnswer).toHaveBeenCalledWith('finish');
+    });
+
+    it('大文字Fキーでも「フィニッシュ」回答が送信される', () => {
+      const onAnswer = vi.fn();
+      render(<BustQuestion correctAnswer="finish" onAnswer={onAnswer} showFinishOption={true} />);
+
+      fireEvent.keyDown(window, { key: 'F' });
+
+      expect(onAnswer).toHaveBeenCalledTimes(1);
+      expect(onAnswer).toHaveBeenCalledWith('finish');
+    });
+
+    it('showFinishOption=falseの場合、Fキーは無視される', () => {
+      const onAnswer = vi.fn();
+      render(<BustQuestion correctAnswer="bust" onAnswer={onAnswer} showFinishOption={false} />);
+
+      fireEvent.keyDown(window, { key: 'f' });
+
+      expect(onAnswer).not.toHaveBeenCalled();
+    });
+
+    it('フィードバック表示時、「フィニッシュ」ボタンが無効化される', () => {
+      render(
+        <BustQuestion
+          correctAnswer="finish"
+          onAnswer={vi.fn()}
+          showFeedback={true}
+          userAnswer="finish"
+          showFinishOption={true}
+        />
+      );
+
+      const finishButton = screen.getByRole('button', { name: /フィニッシュ/i });
+      expect(finishButton).toBeDisabled();
+    });
+
+    it('フィニッシュが正解で正解した場合、bust-question__button--selected-correctクラスが適用される', () => {
+      const { container } = render(
+        <BustQuestion
+          correctAnswer="finish"
+          onAnswer={vi.fn()}
+          showFeedback={true}
+          userAnswer="finish"
+          showFinishOption={true}
+        />
+      );
+
+      const finishButton = container.querySelector('.bust-question__button--finish');
+      expect(finishButton?.classList.contains('bust-question__button--selected-correct')).toBe(
+        true
+      );
+    });
+
+    it('フィニッシュを選んだが不正解の場合、bust-question__button--selected-incorrectクラスが適用される', () => {
+      const { container } = render(
+        <BustQuestion
+          correctAnswer="bust"
+          onAnswer={vi.fn()}
+          showFeedback={true}
+          userAnswer="finish"
+          showFinishOption={true}
+        />
+      );
+
+      const finishButton = container.querySelector('.bust-question__button--finish');
+      expect(finishButton?.classList.contains('bust-question__button--selected-incorrect')).toBe(
+        true
+      );
+    });
+
+    it('「フィニッシュ」ボタンにaria-label="フィニッシュ (Fキー)"が設定されている', () => {
+      render(<BustQuestion correctAnswer="finish" onAnswer={vi.fn()} showFinishOption={true} />);
+
+      const finishButton = screen.getByRole('button', { name: /フィニッシュ \(Fキー\)/i });
+      expect(finishButton).toHaveAttribute('aria-label', 'フィニッシュ (Fキー)');
+    });
+
+    it('showFinishOption=trueの場合、bust-question__buttons--ternaryクラスが適用される', () => {
+      const { container } = render(
+        <BustQuestion correctAnswer="finish" onAnswer={vi.fn()} showFinishOption={true} />
+      );
+
+      const buttonsContainer = container.querySelector('.bust-question__buttons--ternary');
+      expect(buttonsContainer).toBeInTheDocument();
+    });
+  });
+
   describe('スナップショットテスト', () => {
     it('初期状態（回答前）の見た目が一致する', () => {
       const { container } = render(<BustQuestion correctAnswer="bust" onAnswer={vi.fn()} />);

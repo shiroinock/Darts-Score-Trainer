@@ -8,6 +8,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useGameStore } from '../stores/gameStore';
 import type { BustQuestionAnswer, Question } from '../types';
+import { END_REASONS } from '../types';
 
 /**
  * スコア回答の情報
@@ -124,7 +125,7 @@ export function useFeedback(): UseFeedbackResult {
       nextQuestion();
     } else if (bustCorrectAnswer === 'finish') {
       // 正解がフィニッシュの場合 → ゲーム終了
-      endSession('finish');
+      endSession(END_REASONS.FINISH);
     } else {
       // 正解がセーフの場合 → 次のダーツを表示
       simulateNextThrow();

@@ -733,7 +733,11 @@ export const useGameStore = create<GameStore>()(
         }
 
         // 表示されているダーツがない場合は'safe'
+        // Note: バストフェーズなのにダーツが表示されていないケースは通常発生しない
         if (displayedDarts.length === 0) {
+          if (import.meta.env.DEV) {
+            console.warn('getBustCorrectAnswer: バストフェーズなのにダーツが表示されていません');
+          }
           return 'safe';
         }
 

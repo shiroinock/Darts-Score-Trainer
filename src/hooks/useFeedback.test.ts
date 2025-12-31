@@ -9,6 +9,7 @@ import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { useGameStore } from '../stores/gameStore';
 import type { Question } from '../types';
+import { END_REASONS } from '../types';
 import { useFeedback } from './useFeedback';
 
 // Zustandストアをモック
@@ -291,7 +292,7 @@ describe('useFeedback', () => {
     });
 
     describe('正解がフィニッシュの場合（bustCorrectAnswer === "finish"）', () => {
-      test('endSession("finish")が呼び出される', () => {
+      test('endSession(END_REASONS.FINISH)が呼び出される', () => {
         // Arrange
         const { result } = renderHook(() => useFeedback());
         mockGetBustCorrectAnswer.mockReturnValue('finish');
@@ -308,7 +309,7 @@ describe('useFeedback', () => {
 
         // Assert
         expect(mockEndSession).toHaveBeenCalledTimes(1);
-        expect(mockEndSession).toHaveBeenCalledWith('finish');
+        expect(mockEndSession).toHaveBeenCalledWith(END_REASONS.FINISH);
         expect(mockNextQuestion).not.toHaveBeenCalled();
         expect(mockSimulateNextThrow).not.toHaveBeenCalled();
       });
