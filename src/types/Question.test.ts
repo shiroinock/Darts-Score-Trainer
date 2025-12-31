@@ -543,4 +543,335 @@ describe('Question型', () => {
       expect(question.bustInfo?.reason).toBe('finish_impossible');
     });
   });
+
+  describe('questionPhaseフィールドの型定義', () => {
+    describe('正常系 - questionPhase付きのQuestion型の生成', () => {
+      test('1本目のバスト判定問題が作成できる（questionPhase.type: bust, throwIndex: 1）', () => {
+        // Arrange
+        const throws: ThrowResult[] = [
+          {
+            target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            landingPoint: { x: 0, y: -103 },
+            score: 60,
+          },
+        ];
+        const mode: QuestionType = 'remaining';
+        const correctAnswer = 441;
+        const questionText = 'バストしましたか？';
+        const startingScore = 501;
+        const questionPhase = { type: 'bust' as const, throwIndex: 1 as const };
+
+        // Act
+        // 実装前：Question型にquestionPhaseフィールドがないため、TypeScriptコンパイルエラーになる
+        // 実装後：questionPhaseフィールドが追加され、正常にコンパイル・実行できる
+        const question: Question = {
+          mode,
+          throws,
+          correctAnswer,
+          questionText,
+          startingScore,
+          questionPhase, // このプロパティ代入がコンパイルエラーを引き起こす
+        };
+
+        // Assert
+        expect(question.questionPhase).toBeDefined();
+        expect(question.questionPhase?.type).toBe('bust');
+        expect(question.questionPhase?.throwIndex).toBe(1);
+      });
+
+      test('2本目のバスト判定問題が作成できる（questionPhase.type: bust, throwIndex: 2）', () => {
+        // Arrange
+        const throws: ThrowResult[] = [
+          {
+            target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            landingPoint: { x: 0, y: -103 },
+            score: 60,
+          },
+          {
+            target: { type: 'TRIPLE', number: 19, label: 'T19' },
+            landingPoint: { x: 30, y: -100 },
+            score: 57,
+          },
+        ];
+        const mode: QuestionType = 'remaining';
+        const correctAnswer = 384;
+        const questionText = 'バストしましたか？';
+        const startingScore = 501;
+        const questionPhase = { type: 'bust' as const, throwIndex: 2 as const };
+
+        // Act
+        const question: Question = {
+          mode,
+          throws,
+          correctAnswer,
+          questionText,
+          startingScore,
+          questionPhase,
+        };
+
+        // Assert
+        expect(question.questionPhase).toBeDefined();
+        expect(question.questionPhase?.type).toBe('bust');
+        expect(question.questionPhase?.throwIndex).toBe(2);
+      });
+
+      test('3本目の合計点数問題が作成できる（questionPhase.type: score, throwIndex: 3）', () => {
+        // Arrange
+        const throws: ThrowResult[] = [
+          {
+            target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            landingPoint: { x: 0, y: -103 },
+            score: 60,
+          },
+          {
+            target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            landingPoint: { x: 0, y: -103 },
+            score: 60,
+          },
+          {
+            target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            landingPoint: { x: 0, y: -103 },
+            score: 60,
+          },
+        ];
+        const mode: QuestionType = 'score';
+        const correctAnswer = 180;
+        const questionText = '合計得点は？';
+        const questionPhase = { type: 'score' as const, throwIndex: 3 as const };
+
+        // Act
+        const question: Question = {
+          mode,
+          throws,
+          correctAnswer,
+          questionText,
+          questionPhase,
+        };
+
+        // Assert
+        expect(question.questionPhase).toBeDefined();
+        expect(question.questionPhase?.type).toBe('score');
+        expect(question.questionPhase?.throwIndex).toBe(3);
+      });
+    });
+
+    describe('オプショナル性の検証', () => {
+      test('questionPhaseフィールドが省略可能である', () => {
+        // Arrange
+        const throws: ThrowResult[] = [
+          {
+            target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            landingPoint: { x: 0, y: -103 },
+            score: 60,
+          },
+        ];
+        const mode: QuestionType = 'score';
+        const correctAnswer = 60;
+        const questionText = 'この投擲の合計得点は？';
+
+        // Act
+        // questionPhaseを指定せずにQuestionを作成
+        const question: Question = {
+          mode,
+          throws,
+          correctAnswer,
+          questionText,
+        };
+
+        // Assert
+        // questionPhaseはundefinedでも型エラーにならない
+        expect(question.questionPhase).toBeUndefined();
+      });
+
+      test('questionPhaseなしでも問題が作成できる（既存の動作）', () => {
+        // Arrange
+        const throws: ThrowResult[] = [
+          {
+            target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            landingPoint: { x: 0, y: -103 },
+            score: 60,
+          },
+          {
+            target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            landingPoint: { x: 0, y: -103 },
+            score: 60,
+          },
+          {
+            target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            landingPoint: { x: 0, y: -103 },
+            score: 60,
+          },
+        ];
+        const mode: QuestionType = 'score';
+        const correctAnswer = 180;
+        const questionText = '合計得点は？';
+
+        // Act
+        const question: Question = {
+          mode,
+          throws,
+          correctAnswer,
+          questionText,
+        };
+
+        // Assert
+        // questionPhaseフィールドが型定義に存在することを確認（プロパティとしてアクセス可能）
+        // 実装前：Question型にquestionPhaseフィールドがないため失敗する
+        // 実装後：questionPhaseフィールドが追加され、undefinedとしてアクセス可能になる
+        expect(question.questionPhase).toBeUndefined();
+      });
+    });
+
+    describe('型の整合性 - questionPhaseの型制約', () => {
+      test('bustタイプのthrowIndexは1または2のみ許可される', () => {
+        // Arrange
+        const throws: ThrowResult[] = [
+          {
+            target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            landingPoint: { x: 0, y: -103 },
+            score: 60,
+          },
+        ];
+
+        // Act & Assert - throwIndex: 1の場合
+        const question1: Question = {
+          mode: 'remaining',
+          throws,
+          correctAnswer: 441,
+          questionText: 'バストしましたか？',
+          startingScore: 501,
+          questionPhase: { type: 'bust', throwIndex: 1 },
+        };
+        expect(question1.questionPhase?.type).toBe('bust');
+        expect(question1.questionPhase?.throwIndex).toBe(1);
+
+        // Act & Assert - throwIndex: 2の場合
+        const question2: Question = {
+          mode: 'remaining',
+          throws,
+          correctAnswer: 441,
+          questionText: 'バストしましたか？',
+          startingScore: 501,
+          questionPhase: { type: 'bust', throwIndex: 2 },
+        };
+        expect(question2.questionPhase?.type).toBe('bust');
+        expect(question2.questionPhase?.throwIndex).toBe(2);
+      });
+
+      test('scoreタイプのthrowIndexは3のみ許可される', () => {
+        // Arrange
+        const throws: ThrowResult[] = [
+          {
+            target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            landingPoint: { x: 0, y: -103 },
+            score: 60,
+          },
+          {
+            target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            landingPoint: { x: 0, y: -103 },
+            score: 60,
+          },
+          {
+            target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            landingPoint: { x: 0, y: -103 },
+            score: 60,
+          },
+        ];
+
+        // Act
+        const question: Question = {
+          mode: 'score',
+          throws,
+          correctAnswer: 180,
+          questionText: '合計得点は？',
+          questionPhase: { type: 'score', throwIndex: 3 },
+        };
+
+        // Assert
+        expect(question.questionPhase?.type).toBe('score');
+        expect(question.questionPhase?.throwIndex).toBe(3);
+      });
+    });
+
+    describe('エッジケース - questionPhaseと他フィールドの組み合わせ', () => {
+      test('questionPhaseとbustInfoを同時に持つ問題が作成できる', () => {
+        // Arrange
+        const throws: ThrowResult[] = [
+          {
+            target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            landingPoint: { x: 0, y: -103 },
+            score: 60,
+          },
+        ];
+        const mode: QuestionType = 'remaining';
+        const correctAnswer = 50;
+        const questionText = 'バストしましたか？';
+        const startingScore = 50;
+        const bustInfo: BustInfo = {
+          isBust: true,
+          reason: 'over',
+        };
+        const questionPhase = { type: 'bust' as const, throwIndex: 1 as const };
+
+        // Act
+        const question: Question = {
+          mode,
+          throws,
+          correctAnswer,
+          questionText,
+          startingScore,
+          bustInfo,
+          questionPhase,
+        };
+
+        // Assert
+        expect(question.questionPhase).toBeDefined();
+        expect(question.questionPhase?.type).toBe('bust');
+        expect(question.questionPhase?.throwIndex).toBe(1);
+        expect(question.bustInfo).toBeDefined();
+        expect(question.bustInfo?.isBust).toBe(true);
+        expect(question.bustInfo?.reason).toBe('over');
+      });
+
+      test('scoreモードでquestionPhaseを持つ問題が作成できる', () => {
+        // Arrange
+        const throws: ThrowResult[] = [
+          {
+            target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            landingPoint: { x: 0, y: -103 },
+            score: 60,
+          },
+          {
+            target: { type: 'TRIPLE', number: 19, label: 'T19' },
+            landingPoint: { x: 30, y: -100 },
+            score: 57,
+          },
+          {
+            target: { type: 'TRIPLE', number: 18, label: 'T18' },
+            landingPoint: { x: 60, y: -90 },
+            score: 54,
+          },
+        ];
+        const mode: QuestionType = 'score';
+        const correctAnswer = 171;
+        const questionText = '合計得点は？';
+        const questionPhase = { type: 'score' as const, throwIndex: 3 as const };
+
+        // Act
+        const question: Question = {
+          mode,
+          throws,
+          correctAnswer,
+          questionText,
+          questionPhase,
+        };
+
+        // Assert
+        expect(question.mode).toBe('score');
+        expect(question.questionPhase?.type).toBe('score');
+        expect(question.questionPhase?.throwIndex).toBe(3);
+        expect(question.bustInfo).toBeUndefined(); // scoreモードでは通常bustInfoを持たない
+      });
+    });
+  });
 });

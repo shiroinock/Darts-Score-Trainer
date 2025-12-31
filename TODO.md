@@ -559,7 +559,7 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - [x] `simulateNextThrow`で次の1本を追加し、`currentThrowIndex++`
 
 **Phase B: バスト判定UIの追加**
-- [ ] `Question`型に`questionPhase`を追加
+- [x] `Question`型に`questionPhase`を追加（src/types/Question.ts:24-33, src/types/Question.test.ts:547-876）
   ```typescript
   // throwIndexを含めることで、どの投擲後の質問かが型レベルで明確
   questionPhase?:
