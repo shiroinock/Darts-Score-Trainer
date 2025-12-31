@@ -708,6 +708,52 @@ Now I have a clear picture of the problems. Let me create the repair plan:
 }
 ```
 
+## 長い分析過程を経た後のJSON出力
+
+### 問題の分析が長くなる場合の対処
+
+ファイル読み取りや型定義の分析が複数ステップにわたる場合でも、**JSON出力は必ず完全に行う**。
+
+**悪いパターン（実際に発生した問題）:**
+```
+わかりました。型定義は正しく、`Question.mode`は必ず有効な...修正計画を作成します。
+
+```json
+{
+  \
+```
+↑ 分析テキストの後にJSON出力が始まったが途中で切れている
+
+**正しいパターン:**
+1. 分析は内部で完了させる
+2. 出力は`{`から始めて`}`で終わる完全なJSONのみ
+3. 途中で説明を挟まない
+
+### 複雑な型問題の修正計画テンプレート
+
+型エラー（特に`T | undefined`が`T`に割り当てられない問題）の修正計画：
+
+```json
+{
+  "should_fix": true,
+  "fixable_issues": [
+    {
+      "file": "src/stores/gameStore.ts",
+      "line": "該当行",
+      "issue": "Type 'X | undefined' is not assignable to type 'X'",
+      "fix_instruction": "オプショナルチェーンの結果がundefinedの場合のガード処理を追加。または、nullish coalescingでデフォルト値を設定。",
+      "code_example": {
+        "before": "mode: currentQuestion?.mode",
+        "after": "mode: currentQuestion?.mode ?? 'score'"
+      }
+    }
+  ],
+  "unfixable_issues": [],
+  "new_files": [],
+  "summary": "修正可能: 1件, 修正不可能: 0件"
+}
+```
+
 ## NumPadコンポーネント固有の修正指示
 
 ### マジックナンバーの定数化

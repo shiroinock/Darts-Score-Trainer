@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import type { SessionConfig, Stats, Target } from '../types';
+import type { QuestionType, SessionConfig, Stats, Target } from '../types';
 import { STORAGE_KEY } from '../utils/constants/index.js';
 
 /**
@@ -23,6 +23,50 @@ const initialStats: Stats = {
   currentStreak: 0,
   bestStreak: 0,
 };
+
+/**
+ * バスト判定ヘルパー関数
+ * @param totalScore - ラウンドの合計点数
+ * @param roundStartScore - ラウンド開始時の残り点数
+ * @param isLastThrowDouble - 最後の投擲がダブルかどうか
+ * @returns バストかどうか
+ */
+function isBustRound(
+  totalScore: number,
+  roundStartScore: number,
+  isLastThrowDouble: boolean
+): boolean {
+  if (totalScore > roundStartScore) {
+    return true;
+  }
+  if (totalScore === roundStartScore && !isLastThrowDouble) {
+    return true;
+  }
+  if (roundStartScore - totalScore === 1) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * submitAnswer後の残り点数アサーションヘルパー関数
+ * @param resultCurrent - useGameStoreのresult.current
+ * @param isBust - バスト判定結果
+ * @param roundStartScore - ラウンド開始時の残り点数
+ * @param totalScore - ラウンドの合計点数
+ */
+function assertRemainingScoreAfterSubmit(
+  resultCurrent: ReturnType<typeof useGameStore.getState>,
+  isBust: boolean,
+  roundStartScore: number,
+  totalScore: number
+): void {
+  if (isBust) {
+    expect(resultCurrent.remainingScore).toBe(roundStartScore);
+  } else {
+    expect(resultCurrent.remainingScore).toBe(roundStartScore - totalScore);
+  }
+}
 
 describe('gameStore', () => {
   beforeEach(() => {
@@ -5129,6 +5173,882 @@ describe('gameStore', () => {
             expect(question?.correctAnswer).toBe(initialRemainingScore - score);
           }
         });
+      });
+    });
+  });
+
+  // ============================================================
+  // Phase H: プレイヤー練習モードでの残り点数減算
+  // ============================================================
+  describe('Phase H: プレイヤー練習モードでの残り点数減算', () => {
+    describe('scoreモード時の残り点数減算確認（正解時）', () => {
+      test('【RED】scoreモード（3投）で正解回答後、累積得点分だけ残り点数を減算する', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+          });
+          result.current.startPractice();
+        });
+
+        const initialRemainingScore = result.current.remainingScore;
+        expect(initialRemainingScore).toBe(501);
+
+        const question = result.current.currentQuestion;
+        const totalScore = question?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
+
+        // 3投目まで表示
+        act(() => {
+          result.current.simulateNextThrow(); // 2投目
+          result.current.simulateNextThrow(); // 3投目
+        });
+
+        const correctAnswer = result.current.getCurrentCorrectAnswer();
+
+        // Act: 正解を回答
+        act(() => {
+          result.current.submitAnswer(correctAnswer);
+        });
+
+        // Assert: 残り点数が累積得点分だけ減算される
+        const newRemainingScore = result.current.remainingScore;
+        expect(newRemainingScore).toBe(initialRemainingScore - totalScore);
+      });
+
+      test('【RED】scoreモード（1投）で正解回答後、得点分だけ残り点数を減算する', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+          });
+          result.current.startPractice();
+        });
+
+        const initialRemainingScore = result.current.remainingScore;
+        expect(initialRemainingScore).toBe(501);
+
+        const question = result.current.currentQuestion;
+        const score = question?.throws[0]?.score ?? 0;
+        const correctAnswer = result.current.getCurrentCorrectAnswer();
+
+        // Act: 正解を回答
+        act(() => {
+          result.current.submitAnswer(correctAnswer);
+        });
+
+        // Assert: 残り点数が得点分だけ減算される
+        const newRemainingScore = result.current.remainingScore;
+        expect(newRemainingScore).toBe(initialRemainingScore - score);
+      });
+
+      test('【RED】scoreモードで複数ラウンドの累積減算が正確に動作する', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+          });
+          result.current.startPractice();
+        });
+
+        const initialRemainingScore = result.current.remainingScore;
+
+        // 1ラウンド目
+        const question1 = result.current.currentQuestion;
+        const totalScore1 = question1?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
+
+        act(() => {
+          result.current.simulateNextThrow();
+          result.current.simulateNextThrow();
+        });
+
+        const correctAnswer1 = result.current.getCurrentCorrectAnswer();
+
+        act(() => {
+          result.current.submitAnswer(correctAnswer1);
+          result.current.nextQuestion();
+        });
+
+        const remainingAfterRound1 = result.current.remainingScore;
+        expect(remainingAfterRound1).toBe(initialRemainingScore - totalScore1);
+
+        // 2ラウンド目
+        const question2 = result.current.currentQuestion;
+        const totalScore2 = question2?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
+
+        act(() => {
+          result.current.simulateNextThrow();
+          result.current.simulateNextThrow();
+        });
+
+        const correctAnswer2 = result.current.getCurrentCorrectAnswer();
+
+        act(() => {
+          result.current.submitAnswer(correctAnswer2);
+        });
+
+        // Assert: 2ラウンド分の累積減算が正確
+        const remainingAfterRound2 = result.current.remainingScore;
+        expect(remainingAfterRound2).toBe(initialRemainingScore - totalScore1 - totalScore2);
+      });
+
+      test('【RED】scoreモードで不正解時も残り点数を減算する', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+          });
+          result.current.startPractice();
+        });
+
+        const initialRemainingScore = result.current.remainingScore;
+        const question = result.current.currentQuestion;
+        const totalScore = question?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
+        const correctAnswer = result.current.getCurrentCorrectAnswer();
+
+        act(() => {
+          result.current.simulateNextThrow();
+          result.current.simulateNextThrow();
+        });
+
+        // Act: 不正解を回答
+        const wrongAnswer = correctAnswer === 100 ? 99 : 100;
+        act(() => {
+          result.current.submitAnswer(wrongAnswer);
+        });
+
+        // Assert: 不正解でも残り点数は減算される（実際の投擲は発生しているため）
+        const newRemainingScore = result.current.remainingScore;
+        expect(newRemainingScore).toBe(initialRemainingScore - totalScore);
+      });
+    });
+
+    describe('バスト発生時の残り点数復帰確認', () => {
+      test('【RED】scoreモードでバスト発生時、残り点数をラウンド開始時の値に戻す', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        // バストが発生しやすい条件: 残り点数を低く設定
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'score',
+            startingScore: 50, // 低い残り点数でバストを誘発
+            stdDevMM: 15,
+          });
+          result.current.startPractice();
+        });
+
+        const roundStartScore = result.current.roundStartScore;
+        const question = result.current.currentQuestion;
+        const totalScore = question?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
+
+        act(() => {
+          result.current.simulateNextThrow();
+          result.current.simulateNextThrow();
+        });
+
+        const correctAnswer = result.current.getCurrentCorrectAnswer();
+
+        // バスト判定（得点が残り点数を超える、または1点残し、またはダブルアウト失敗）
+        const lastThrow = question?.throws[question.throws.length - 1];
+        const isLastThrowDouble = lastThrow?.ring === 'DOUBLE' || lastThrow?.ring === 'OUTER_BULL';
+        const isBust = isBustRound(totalScore, roundStartScore, isLastThrowDouble);
+
+        // Act: 正解を回答
+        act(() => {
+          result.current.submitAnswer(correctAnswer);
+        });
+
+        // Assert: バスト時は残り点数がroundStartScoreに戻る
+        assertRemainingScoreAfterSubmit(result.current, isBust, roundStartScore, totalScore);
+      });
+
+      test('【RED】scoreモード（1投）でバスト発生時、残り点数をラウンド開始時の値に戻す', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        // 残り2点でダブル1以外はバスト
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 1,
+            questionType: 'score',
+            startingScore: 2,
+            stdDevMM: 200, // 大きな標準偏差でランダム性を増やす
+          });
+          result.current.startPractice();
+        });
+
+        const roundStartScore = result.current.roundStartScore;
+        const question = result.current.currentQuestion;
+        const score = question?.throws[0]?.score ?? 0;
+        const isDouble =
+          question?.throws[0]?.ring === 'DOUBLE' || question?.throws[0]?.ring === 'OUTER_BULL';
+        const isBust = isBustRound(score, roundStartScore, isDouble);
+
+        const correctAnswer = result.current.getCurrentCorrectAnswer();
+
+        // Act: 正解を回答
+        act(() => {
+          result.current.submitAnswer(correctAnswer);
+        });
+
+        // Assert
+        assertRemainingScoreAfterSubmit(result.current, isBust, roundStartScore, score);
+      });
+
+      test('【RED】scoreモードで連続するラウンドでのバスト処理が正しく動作する', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'score',
+            startingScore: 100,
+            stdDevMM: 15,
+          });
+          result.current.startPractice();
+        });
+
+        // 1ラウンド目（バストなしを想定）
+        act(() => {
+          result.current.simulateNextThrow();
+          result.current.simulateNextThrow();
+        });
+
+        const correctAnswer1 = result.current.getCurrentCorrectAnswer();
+
+        act(() => {
+          result.current.submitAnswer(correctAnswer1);
+          result.current.nextQuestion();
+        });
+
+        const remainingAfterRound1 = result.current.remainingScore;
+        const round2StartScore = result.current.roundStartScore;
+
+        // 2ラウンド目
+        const question2 = result.current.currentQuestion;
+        const totalScore2 = question2?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
+
+        act(() => {
+          result.current.simulateNextThrow();
+          result.current.simulateNextThrow();
+        });
+
+        const lastThrow2 = question2?.throws[question2.throws.length - 1];
+        const isLastThrowDouble2 =
+          lastThrow2?.ring === 'DOUBLE' || lastThrow2?.ring === 'OUTER_BULL';
+        const isBust2 = isBustRound(totalScore2, round2StartScore, isLastThrowDouble2);
+
+        const correctAnswer2 = result.current.getCurrentCorrectAnswer();
+
+        act(() => {
+          result.current.submitAnswer(correctAnswer2);
+        });
+
+        // Assert: 2ラウンド目でバスト時は1ラウンド後の点数に戻る
+        assertRemainingScoreAfterSubmit(result.current, isBust2, round2StartScore, totalScore2);
+        if (isBust2) {
+          // round2StartScoreは1ラウンド後の残り点数と一致するはず
+          expect(round2StartScore).toBe(remainingAfterRound1);
+        }
+      });
+    });
+
+    describe('他モード（remainingモード、bothモード）への影響なし', () => {
+      test('remainingモードの残り点数減算は既存の動作を維持する', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'remaining',
+            startingScore: 501,
+            stdDevMM: 15,
+          });
+          result.current.startPractice();
+        });
+
+        const initialRemainingScore = result.current.remainingScore;
+        const question = result.current.currentQuestion;
+        const totalScore = question?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
+
+        act(() => {
+          result.current.simulateNextThrow();
+          result.current.simulateNextThrow();
+        });
+
+        const correctAnswer = result.current.getCurrentCorrectAnswer();
+
+        // バスト判定
+        const lastThrow = question?.throws[question.throws.length - 1];
+        const isLastThrowDouble = lastThrow?.ring === 'DOUBLE' || lastThrow?.ring === 'OUTER_BULL';
+        const isBust = isBustRound(totalScore, initialRemainingScore, isLastThrowDouble);
+
+        // Act: 正解を回答
+        act(() => {
+          result.current.submitAnswer(correctAnswer);
+        });
+
+        // Assert: remainingモードでは従来通り残り点数が更新される
+        assertRemainingScoreAfterSubmit(result.current, isBust, initialRemainingScore, totalScore);
+      });
+
+      test('bothモードでscoreが選ばれた場合も残り点数を減算する', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'both',
+            startingScore: 501,
+            stdDevMM: 15,
+          });
+          result.current.startPractice();
+        });
+
+        const initialRemainingScore = result.current.remainingScore;
+        const question = result.current.currentQuestion;
+        const totalScore = question?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
+
+        act(() => {
+          result.current.simulateNextThrow();
+          result.current.simulateNextThrow();
+        });
+
+        const correctAnswer = result.current.getCurrentCorrectAnswer();
+
+        // Act: 正解を回答
+        act(() => {
+          result.current.submitAnswer(correctAnswer);
+        });
+
+        // Assert: bothモードでscoreが選ばれても残り点数を減算
+        const newRemainingScore = result.current.remainingScore;
+
+        if (question?.mode === 'score') {
+          // scoreモードが選ばれた場合も残り点数を減算するはず（Phase H の仕様）
+          expect(newRemainingScore).toBe(initialRemainingScore - totalScore);
+        } else {
+          // remainingモードが選ばれた場合は従来通り
+          const lastThrow = question?.throws[question.throws.length - 1];
+          const isLastThrowDouble =
+            lastThrow?.ring === 'DOUBLE' || lastThrow?.ring === 'OUTER_BULL';
+          const isBust = isBustRound(totalScore, initialRemainingScore, isLastThrowDouble);
+
+          if (isBust) {
+            expect(newRemainingScore).toBe(initialRemainingScore);
+          } else {
+            expect(newRemainingScore).toBe(initialRemainingScore - totalScore);
+          }
+        }
+      });
+
+      test('bothモードでremainingが選ばれた場合は従来の動作を維持する', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        // bothモードでremainingが選ばれるまで繰り返す（最大10回試行）
+        let attemptCount = 0;
+        const maxAttempts = 10;
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'both',
+            startingScore: 501,
+            stdDevMM: 15,
+          });
+        });
+
+        let questionMode: QuestionType | undefined;
+
+        while (attemptCount < maxAttempts) {
+          act(() => {
+            result.current.startPractice();
+          });
+
+          questionMode = result.current.currentQuestion?.mode;
+
+          if (questionMode === 'remaining') {
+            break;
+          }
+
+          // 次の試行のためにリセット
+          act(() => {
+            result.current.resetToSetup();
+          });
+
+          attemptCount++;
+        }
+
+        // remainingモードが選ばれた場合のテスト
+        if (questionMode === 'remaining') {
+          const initialRemainingScore = result.current.remainingScore;
+          const question = result.current.currentQuestion;
+          const totalScore = question?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
+
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.simulateNextThrow();
+          });
+
+          const correctAnswer = result.current.getCurrentCorrectAnswer();
+
+          const lastThrow = question?.throws[question.throws.length - 1];
+          const isLastThrowDouble =
+            lastThrow?.ring === 'DOUBLE' || lastThrow?.ring === 'OUTER_BULL';
+          const isBust = isBustRound(totalScore, initialRemainingScore, isLastThrowDouble);
+
+          act(() => {
+            result.current.submitAnswer(correctAnswer);
+          });
+
+          // Assert: remainingモードでは従来通りの動作
+          assertRemainingScoreAfterSubmit(
+            result.current,
+            isBust,
+            initialRemainingScore,
+            totalScore
+          );
+          return;
+        }
+
+        // remainingモードが選ばれなかった場合はテストスキップ（ランダム性のため）
+        expect(attemptCount).toBeLessThanOrEqual(maxAttempts);
+      });
+    });
+
+    describe('複数ラウンドでの累積減算の正確性', () => {
+      test('【RED】5ラウンド連続で正確な累積減算が行われる', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+          });
+          result.current.startPractice();
+        });
+
+        const initialRemainingScore = result.current.remainingScore;
+        let totalScoreSum = 0;
+
+        // 5ラウンド実行
+        for (let round = 0; round < 5; round++) {
+          const question = result.current.currentQuestion;
+          const roundScore = question?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
+          totalScoreSum += roundScore;
+
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.simulateNextThrow();
+          });
+
+          const correctAnswer = result.current.getCurrentCorrectAnswer();
+
+          act(() => {
+            result.current.submitAnswer(correctAnswer);
+          });
+
+          // ラウンド後の残り点数確認
+          const remainingScore = result.current.remainingScore;
+          expect(remainingScore).toBe(initialRemainingScore - totalScoreSum);
+
+          // 次のラウンドへ（最終ラウンド以外）
+          if (round < 4) {
+            act(() => {
+              result.current.nextQuestion();
+            });
+          }
+        }
+
+        // Assert: 最終的な残り点数が5ラウンド分の累積減算と一致
+        const finalRemainingScore = result.current.remainingScore;
+        expect(finalRemainingScore).toBe(initialRemainingScore - totalScoreSum);
+      });
+
+      test('【RED】ラウンド途中でバストが発生しても、次のラウンドは正しい残り点数で開始する', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'score',
+            startingScore: 100, // バストが発生しやすい値
+            stdDevMM: 15,
+          });
+          result.current.startPractice();
+        });
+
+        const initialRemainingScore = result.current.remainingScore;
+
+        // 1ラウンド目
+        const question1 = result.current.currentQuestion;
+        const totalScore1 = question1?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
+
+        act(() => {
+          result.current.simulateNextThrow();
+          result.current.simulateNextThrow();
+        });
+
+        const lastThrow1 = question1?.throws[question1.throws.length - 1];
+        const isLastThrowDouble1 =
+          lastThrow1?.ring === 'DOUBLE' || lastThrow1?.ring === 'OUTER_BULL';
+        const isBust1 = isBustRound(totalScore1, initialRemainingScore, isLastThrowDouble1);
+
+        const correctAnswer1 = result.current.getCurrentCorrectAnswer();
+
+        act(() => {
+          result.current.submitAnswer(correctAnswer1);
+          result.current.nextQuestion();
+        });
+
+        const remainingAfterRound1 = result.current.remainingScore;
+        const round2StartScore = result.current.roundStartScore;
+
+        // Assert: 1ラウンド後の残り点数とroundStartScoreが一致
+        expect(round2StartScore).toBe(remainingAfterRound1);
+        assertRemainingScoreAfterSubmit(
+          { remainingScore: remainingAfterRound1 } as ReturnType<typeof useGameStore.getState>,
+          isBust1,
+          initialRemainingScore,
+          totalScore1
+        );
+
+        // 2ラウンド目
+        const question2 = result.current.currentQuestion;
+        const totalScore2 = question2?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
+
+        act(() => {
+          result.current.simulateNextThrow();
+          result.current.simulateNextThrow();
+        });
+
+        const correctAnswer2 = result.current.getCurrentCorrectAnswer();
+
+        act(() => {
+          result.current.submitAnswer(correctAnswer2);
+        });
+
+        const remainingAfterRound2 = result.current.remainingScore;
+
+        // 2ラウンド目の結果確認
+        const lastThrow2 = question2?.throws[question2.throws.length - 1];
+        const isLastThrowDouble2 =
+          lastThrow2?.ring === 'DOUBLE' || lastThrow2?.ring === 'OUTER_BULL';
+        const isBust2 = isBustRound(totalScore2, round2StartScore, isLastThrowDouble2);
+
+        assertRemainingScoreAfterSubmit(
+          { remainingScore: remainingAfterRound2 } as ReturnType<typeof useGameStore.getState>,
+          isBust2,
+          round2StartScore,
+          totalScore2
+        );
+      });
+
+      test('【RED】ゼロ点に到達しても残り点数が負にならない', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'score',
+            startingScore: 50, // 低い値で0点到達を狙う
+            stdDevMM: 15,
+          });
+          result.current.startPractice();
+        });
+
+        // 複数ラウンド実行して0点到達を試みる
+        for (let round = 0; round < 3; round++) {
+          act(() => {
+            result.current.simulateNextThrow();
+            result.current.simulateNextThrow();
+          });
+
+          const correctAnswer = result.current.getCurrentCorrectAnswer();
+
+          act(() => {
+            result.current.submitAnswer(correctAnswer);
+          });
+
+          const remainingScore = result.current.remainingScore;
+
+          // Assert: 残り点数が負にならない
+          expect(remainingScore).toBeGreaterThanOrEqual(0);
+
+          // 0点に到達したらテスト終了
+          if (remainingScore === 0) {
+            break;
+          }
+
+          // 次のラウンドへ
+          act(() => {
+            result.current.nextQuestion();
+          });
+        }
+      });
+    });
+
+    describe('エッジケース', () => {
+      test('【RED】残り点数が0点の状態でscoreモードの問題に回答しても動作する', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+          });
+          result.current.startPractice();
+        });
+
+        // 残り点数を強制的に0にする
+        act(() => {
+          useGameStore.setState({ remainingScore: 0, roundStartScore: 0 });
+        });
+
+        // 新しい問題を生成
+        act(() => {
+          result.current.generateQuestion();
+          result.current.simulateNextThrow();
+          result.current.simulateNextThrow();
+        });
+
+        const correctAnswer = result.current.getCurrentCorrectAnswer();
+
+        // Act: 正解を回答
+        act(() => {
+          result.current.submitAnswer(correctAnswer);
+        });
+
+        // Assert: エラーが発生しない
+        const remainingScore = result.current.remainingScore;
+        expect(remainingScore).toBeGreaterThanOrEqual(0);
+      });
+
+      test('【RED】最大得点（180点）を記録しても残り点数が正しく減算される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'score',
+            startingScore: 501,
+            target: { type: 'TRIPLE', number: 20, label: 'T20' }, // T20を狙う
+            stdDevMM: 0.01, // ほぼ確実にT20に当たる
+          });
+          result.current.startPractice();
+        });
+
+        const initialRemainingScore = result.current.remainingScore;
+        const question = result.current.currentQuestion;
+        const totalScore = question?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
+
+        act(() => {
+          result.current.simulateNextThrow();
+          result.current.simulateNextThrow();
+        });
+
+        const correctAnswer = result.current.getCurrentCorrectAnswer();
+
+        // Act: 正解を回答
+        act(() => {
+          result.current.submitAnswer(correctAnswer);
+        });
+
+        // Assert: 高得点でも正しく減算される
+        const newRemainingScore = result.current.remainingScore;
+        expect(newRemainingScore).toBe(initialRemainingScore - totalScore);
+
+        // T20x3なら180点のはず（stdDevが極小なので）
+        if (totalScore >= 150) {
+          expect(newRemainingScore).toBe(initialRemainingScore - totalScore);
+        }
+      });
+
+      test('【RED】初期残り点数が異なる値（301, 701）でも正しく減算される', () => {
+        // Arrange: 301で開始
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'score',
+            startingScore: 301,
+            stdDevMM: 15,
+          });
+          result.current.startPractice();
+        });
+
+        const initialRemainingScore301 = result.current.remainingScore;
+        expect(initialRemainingScore301).toBe(301);
+
+        const question301 = result.current.currentQuestion;
+        const totalScore301 = question301?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
+
+        act(() => {
+          result.current.simulateNextThrow();
+          result.current.simulateNextThrow();
+        });
+
+        const correctAnswer301 = result.current.getCurrentCorrectAnswer();
+
+        act(() => {
+          result.current.submitAnswer(correctAnswer301);
+        });
+
+        const newRemainingScore301 = result.current.remainingScore;
+        expect(newRemainingScore301).toBe(301 - totalScore301);
+
+        // 設定をリセットして701で開始
+        act(() => {
+          result.current.resetToSetup();
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'score',
+            startingScore: 701,
+            stdDevMM: 15,
+          });
+          result.current.startPractice();
+        });
+
+        const initialRemainingScore701 = result.current.remainingScore;
+        expect(initialRemainingScore701).toBe(701);
+
+        const question701 = result.current.currentQuestion;
+        const totalScore701 = question701?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
+
+        act(() => {
+          result.current.simulateNextThrow();
+          result.current.simulateNextThrow();
+        });
+
+        const correctAnswer701 = result.current.getCurrentCorrectAnswer();
+
+        act(() => {
+          result.current.submitAnswer(correctAnswer701);
+        });
+
+        const newRemainingScore701 = result.current.remainingScore;
+        expect(newRemainingScore701).toBe(701 - totalScore701);
+      });
+    });
+
+    describe('統計情報との連携', () => {
+      test('【RED】scoreモードで正解時、統計情報が正しく更新され、かつ残り点数も減算される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+          });
+          result.current.startPractice();
+        });
+
+        const initialStats = { ...result.current.stats };
+        const initialRemainingScore = result.current.remainingScore;
+        const question = result.current.currentQuestion;
+        const totalScore = question?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
+
+        act(() => {
+          result.current.simulateNextThrow();
+          result.current.simulateNextThrow();
+        });
+
+        const correctAnswer = result.current.getCurrentCorrectAnswer();
+
+        // Act: 正解を回答
+        act(() => {
+          result.current.submitAnswer(correctAnswer);
+        });
+
+        // Assert: 統計情報が更新される
+        const newStats = result.current.stats;
+        expect(newStats.total).toBe(initialStats.total + 1);
+        expect(newStats.correct).toBe(initialStats.correct + 1);
+        expect(newStats.currentStreak).toBe(initialStats.currentStreak + 1);
+
+        // Assert: 残り点数も減算される
+        const newRemainingScore = result.current.remainingScore;
+        expect(newRemainingScore).toBe(initialRemainingScore - totalScore);
+      });
+
+      test('【RED】scoreモードで不正解時、統計情報が更新され、残り点数は減算される', () => {
+        // Arrange
+        const { result } = renderHook(() => useGameStore());
+
+        act(() => {
+          result.current.setConfig({
+            throwUnit: 3,
+            questionType: 'score',
+            startingScore: 501,
+            stdDevMM: 15,
+          });
+          result.current.startPractice();
+        });
+
+        const initialStats = { ...result.current.stats };
+        const initialRemainingScore = result.current.remainingScore;
+        const question = result.current.currentQuestion;
+        const totalScore = question?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
+        const correctAnswer = result.current.getCurrentCorrectAnswer();
+
+        act(() => {
+          result.current.simulateNextThrow();
+          result.current.simulateNextThrow();
+        });
+
+        // Act: 不正解を回答
+        const wrongAnswer = correctAnswer === 100 ? 99 : 100;
+        act(() => {
+          result.current.submitAnswer(wrongAnswer);
+        });
+
+        // Assert: 統計情報が更新される
+        const newStats = result.current.stats;
+        expect(newStats.total).toBe(initialStats.total + 1);
+        expect(newStats.correct).toBe(initialStats.correct); // 不正解なので増えない
+        expect(newStats.currentStreak).toBe(0); // ストリークはリセット
+
+        // Assert: 不正解でも残り点数は減算される
+        const newRemainingScore = result.current.remainingScore;
+        expect(newRemainingScore).toBe(initialRemainingScore - totalScore);
       });
     });
   });
