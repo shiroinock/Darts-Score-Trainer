@@ -7,6 +7,7 @@
 
 // ゲームロジック
 export type { BustInfo } from './BustInfo';
+export type { BustQuestionAnswer } from './BustQuestionAnswer';
 // 座標系
 export type { Coordinates } from './Coordinates';
 export type { GameState } from './GameState';

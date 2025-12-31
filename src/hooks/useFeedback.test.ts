@@ -23,6 +23,7 @@ describe('useFeedback', () => {
   const mockGetCurrentCorrectAnswer = vi.fn();
   const mockGetBustCorrectAnswer = vi.fn();
   const mockNextQuestion = vi.fn();
+  const mockEndSession = vi.fn();
 
   // モックされた問題
   const mockQuestion: Question = {
@@ -52,6 +53,7 @@ describe('useFeedback', () => {
           getCurrentCorrectAnswer: mockGetCurrentCorrectAnswer,
           getBustCorrectAnswer: mockGetBustCorrectAnswer,
           nextQuestion: mockNextQuestion,
+          endSession: mockEndSession,
         })
     );
   });
@@ -112,6 +114,7 @@ describe('useFeedback', () => {
             getCurrentCorrectAnswer: mockGetCurrentCorrectAnswer,
             getBustCorrectAnswer: mockGetBustCorrectAnswer,
             nextQuestion: mockNextQuestion,
+            endSession: mockEndSession,
           })
       );
 
@@ -130,32 +133,46 @@ describe('useFeedback', () => {
   });
 
   describe('handleBustAnswer（バスト判定回答）', () => {
-    test('バスト判定回答（true）を送信すると、フィードバックが表示される', () => {
+    test('バスト判定回答（"bust"）を送信すると、フィードバックが表示される', () => {
       // Arrange
       const { result } = renderHook(() => useFeedback());
 
       // Act
       act(() => {
-        result.current.handleBustAnswer(true);
+        result.current.handleBustAnswer('bust');
       });
 
       // Assert
       expect(result.current.showFeedback).toBe(true);
-      expect(result.current.bustAnswer).toBe(true);
+      expect(result.current.bustAnswer).toBe('bust');
     });
 
-    test('バスト判定回答（false）を送信すると、フィードバックが表示される', () => {
+    test('バスト判定回答（"safe"）を送信すると、フィードバックが表示される', () => {
       // Arrange
       const { result } = renderHook(() => useFeedback());
 
       // Act
       act(() => {
-        result.current.handleBustAnswer(false);
+        result.current.handleBustAnswer('safe');
       });
 
       // Assert
       expect(result.current.showFeedback).toBe(true);
-      expect(result.current.bustAnswer).toBe(false);
+      expect(result.current.bustAnswer).toBe('safe');
+    });
+
+    test('バスト判定回答（"finish"）を送信すると、フィードバックが表示される', () => {
+      // Arrange
+      const { result } = renderHook(() => useFeedback());
+
+      // Act
+      act(() => {
+        result.current.handleBustAnswer('finish');
+      });
+
+      // Assert
+      expect(result.current.showFeedback).toBe(true);
+      expect(result.current.bustAnswer).toBe('finish');
     });
 
     test('問題がない場合は何もしない', () => {
@@ -169,6 +186,7 @@ describe('useFeedback', () => {
             getCurrentCorrectAnswer: mockGetCurrentCorrectAnswer,
             getBustCorrectAnswer: mockGetBustCorrectAnswer,
             nextQuestion: mockNextQuestion,
+            endSession: mockEndSession,
           })
       );
 
@@ -176,7 +194,7 @@ describe('useFeedback', () => {
 
       // Act
       act(() => {
-        result.current.handleBustAnswer(true);
+        result.current.handleBustAnswer('bust');
       });
 
       // Assert
@@ -186,15 +204,15 @@ describe('useFeedback', () => {
   });
 
   describe('handleBustFeedbackComplete（バストフィードバック完了）', () => {
-    describe('正解がバストの場合（bustCorrectAnswer === true）', () => {
+    describe('正解がバストの場合（bustCorrectAnswer === "bust"）', () => {
       test('nextQuestion()が呼び出される', () => {
         // Arrange
         const { result } = renderHook(() => useFeedback());
-        mockGetBustCorrectAnswer.mockReturnValue(true);
+        mockGetBustCorrectAnswer.mockReturnValue('bust');
 
         // バスト判定回答を設定
         act(() => {
-          result.current.handleBustAnswer(true);
+          result.current.handleBustAnswer('bust');
         });
 
         // Act
@@ -205,16 +223,17 @@ describe('useFeedback', () => {
         // Assert
         expect(mockNextQuestion).toHaveBeenCalledTimes(1);
         expect(mockSimulateNextThrow).not.toHaveBeenCalled();
+        expect(mockEndSession).not.toHaveBeenCalled();
       });
 
       test('フィードバック状態がリセットされる', () => {
         // Arrange
         const { result } = renderHook(() => useFeedback());
-        mockGetBustCorrectAnswer.mockReturnValue(true);
+        mockGetBustCorrectAnswer.mockReturnValue('bust');
 
         // バスト判定回答を設定
         act(() => {
-          result.current.handleBustAnswer(true);
+          result.current.handleBustAnswer('bust');
         });
 
         // Act
@@ -228,15 +247,15 @@ describe('useFeedback', () => {
       });
     });
 
-    describe('正解がセーフの場合（bustCorrectAnswer === false）', () => {
+    describe('正解がセーフの場合（bustCorrectAnswer === "safe"）', () => {
       test('simulateNextThrow()が呼び出される', () => {
         // Arrange
         const { result } = renderHook(() => useFeedback());
-        mockGetBustCorrectAnswer.mockReturnValue(false);
+        mockGetBustCorrectAnswer.mockReturnValue('safe');
 
         // バスト判定回答を設定
         act(() => {
-          result.current.handleBustAnswer(false);
+          result.current.handleBustAnswer('safe');
         });
 
         // Act
@@ -247,16 +266,61 @@ describe('useFeedback', () => {
         // Assert
         expect(mockSimulateNextThrow).toHaveBeenCalledTimes(1);
         expect(mockNextQuestion).not.toHaveBeenCalled();
+        expect(mockEndSession).not.toHaveBeenCalled();
       });
 
       test('フィードバック状態がリセットされる', () => {
         // Arrange
         const { result } = renderHook(() => useFeedback());
-        mockGetBustCorrectAnswer.mockReturnValue(false);
+        mockGetBustCorrectAnswer.mockReturnValue('safe');
 
         // バスト判定回答を設定
         act(() => {
-          result.current.handleBustAnswer(false);
+          result.current.handleBustAnswer('safe');
+        });
+
+        // Act
+        act(() => {
+          result.current.handleBustFeedbackComplete();
+        });
+
+        // Assert
+        expect(result.current.showFeedback).toBe(false);
+        expect(result.current.bustAnswer).toBeNull();
+      });
+    });
+
+    describe('正解がフィニッシュの場合（bustCorrectAnswer === "finish"）', () => {
+      test('endSession("finish")が呼び出される', () => {
+        // Arrange
+        const { result } = renderHook(() => useFeedback());
+        mockGetBustCorrectAnswer.mockReturnValue('finish');
+
+        // フィニッシュ判定回答を設定
+        act(() => {
+          result.current.handleBustAnswer('finish');
+        });
+
+        // Act
+        act(() => {
+          result.current.handleBustFeedbackComplete();
+        });
+
+        // Assert
+        expect(mockEndSession).toHaveBeenCalledTimes(1);
+        expect(mockEndSession).toHaveBeenCalledWith('finish');
+        expect(mockNextQuestion).not.toHaveBeenCalled();
+        expect(mockSimulateNextThrow).not.toHaveBeenCalled();
+      });
+
+      test('フィードバック状態がリセットされる', () => {
+        // Arrange
+        const { result } = renderHook(() => useFeedback());
+        mockGetBustCorrectAnswer.mockReturnValue('finish');
+
+        // フィニッシュ判定回答を設定
+        act(() => {
+          result.current.handleBustAnswer('finish');
         });
 
         // Act
@@ -271,14 +335,14 @@ describe('useFeedback', () => {
     });
 
     describe('状態リセットの一貫性', () => {
-      test('バスト時もセーフ時も setBustAnswer(null) と setShowFeedback(false) が呼び出される', () => {
+      test('バスト時もセーフ時もフィニッシュ時も setBustAnswer(null) と setShowFeedback(false) が呼び出される', () => {
         // Arrange
         const { result } = renderHook(() => useFeedback());
 
         // Test 1: バスト時
-        mockGetBustCorrectAnswer.mockReturnValue(true);
+        mockGetBustCorrectAnswer.mockReturnValue('bust');
         act(() => {
-          result.current.handleBustAnswer(true);
+          result.current.handleBustAnswer('bust');
         });
 
         // Act & Assert
@@ -289,9 +353,22 @@ describe('useFeedback', () => {
         expect(result.current.bustAnswer).toBeNull();
 
         // Test 2: セーフ時
-        mockGetBustCorrectAnswer.mockReturnValue(false);
+        mockGetBustCorrectAnswer.mockReturnValue('safe');
         act(() => {
-          result.current.handleBustAnswer(false);
+          result.current.handleBustAnswer('safe');
+        });
+
+        // Act & Assert
+        act(() => {
+          result.current.handleBustFeedbackComplete();
+        });
+        expect(result.current.showFeedback).toBe(false);
+        expect(result.current.bustAnswer).toBeNull();
+
+        // Test 3: フィニッシュ時
+        mockGetBustCorrectAnswer.mockReturnValue('finish');
+        act(() => {
+          result.current.handleBustAnswer('finish');
         });
 
         // Act & Assert
@@ -340,6 +417,7 @@ describe('useFeedback', () => {
             getCurrentCorrectAnswer: mockGetCurrentCorrectAnswer,
             getBustCorrectAnswer: mockGetBustCorrectAnswer,
             nextQuestion: mockNextQuestion,
+            endSession: mockEndSession,
           })
       );
 
@@ -382,6 +460,7 @@ describe('useFeedback', () => {
             getCurrentCorrectAnswer: mockGetCurrentCorrectAnswer,
             getBustCorrectAnswer: mockGetBustCorrectAnswer,
             nextQuestion: mockNextQuestion,
+            endSession: mockEndSession,
           })
       );
 

@@ -10,6 +10,7 @@ import { persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import type {
   BustInfo,
+  BustQuestionAnswer,
   GameState,
   PracticeConfig,
   Question,
@@ -44,6 +45,7 @@ function determineQuestionMode(
   throwUnit: number,
   totalScore: number,
   remainingScore: number,
+  roundStartScore: number,
   bustInfo?: BustInfo
 ): QuestionModeResult {
   // スコアモード
@@ -57,8 +59,8 @@ function determineQuestionMode(
 
   // 残り点数モード
   if (questionType === 'remaining') {
-    // バスト発生時は正解を0点にする
-    const correctAnswer = bustInfo?.isBust ? 0 : remainingScore - totalScore;
+    // バスト発生時は正解をroundStartScoreにする
+    const correctAnswer = bustInfo?.isBust ? roundStartScore : remainingScore - totalScore;
     return {
       mode: 'remaining',
       correctAnswer,
@@ -78,8 +80,8 @@ function determineQuestionMode(
     };
   }
 
-  // バスト発生時は正解を0点にする
-  const correctAnswer = bustInfo?.isBust ? 0 : remainingScore - totalScore;
+  // バスト発生時は正解をroundStartScoreにする
+  const correctAnswer = bustInfo?.isBust ? roundStartScore : remainingScore - totalScore;
   return {
     mode: 'remaining',
     correctAnswer,
@@ -337,7 +339,7 @@ interface GameStore {
   // 計算プロパティ（3個）
   // ============================================================
   getCurrentCorrectAnswer: () => number;
-  getBustCorrectAnswer: () => boolean;
+  getBustCorrectAnswer: () => BustQuestionAnswer;
   getAccuracy: () => number;
 }
 
@@ -479,6 +481,7 @@ export const useGameStore = create<GameStore>()(
             config.throwUnit,
             totalScore,
             state.remainingScore,
+            state.roundStartScore,
             simulatedBustInfo
           );
 
@@ -718,18 +721,20 @@ export const useGameStore = create<GameStore>()(
        * 表示されている最後のダーツ投擲時点でのバスト判定を行う。
        * - 1本目表示時: 1本目がバストを引き起こすか
        * - 2本目表示時: 1本目+2本目の累積がバストを引き起こすか
+       *
+       * @returns 'bust' | 'safe' | 'finish'
        */
-      getBustCorrectAnswer: () => {
+      getBustCorrectAnswer: (): BustQuestionAnswer => {
         const { currentQuestion, displayedDarts, roundStartScore } = get();
 
-        // バストフェーズでない場合はfalse
+        // バストフェーズでない場合は'safe'
         if (currentQuestion?.questionPhase?.type !== 'bust') {
-          return false;
+          return 'safe';
         }
 
-        // 表示されているダーツがない場合はfalse
+        // 表示されているダーツがない場合は'safe'
         if (displayedDarts.length === 0) {
-          return false;
+          return 'safe';
         }
 
         // 表示されている最後のダーツ
@@ -741,19 +746,26 @@ export const useGameStore = create<GameStore>()(
           .reduce((sum, dart) => sum + dart.score, 0);
         const currentRemainingScore = roundStartScore - previousCumulativeScore;
 
-        // 前の投擲ですでにバストしている場合は、即座にtrueを返す
+        // 前の投擲ですでにバストしている場合は、即座に'bust'を返す
         if (currentRemainingScore <= 0) {
-          return true;
+          return 'bust';
         }
 
         // バスト判定を実行（最後の1投のスコアで判定）
-        const bustResult = checkBust(
-          currentRemainingScore,
-          lastDisplayedDart.score,
-          isDoubleRing(lastDisplayedDart.ring)
-        );
+        const isDouble = isDoubleRing(lastDisplayedDart.ring);
+        const bustResult = checkBust(currentRemainingScore, lastDisplayedDart.score, isDouble);
 
-        return bustResult.isBust;
+        if (bustResult.isBust) {
+          return 'bust';
+        }
+
+        // フィニッシュ判定：残り0点でダブルの場合
+        const newRemainingScore = currentRemainingScore - lastDisplayedDart.score;
+        if (newRemainingScore === 0 && isDouble) {
+          return 'finish';
+        }
+
+        return 'safe';
       },
 
       /**

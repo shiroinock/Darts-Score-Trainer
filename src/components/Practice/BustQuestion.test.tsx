@@ -10,109 +10,109 @@ import { BustQuestion } from './BustQuestion';
 describe('BustQuestion', () => {
   describe('初期表示', () => {
     it('質問テキスト「この投擲はバストですか?」が表示される', () => {
-      render(<BustQuestion correctAnswer={true} onAnswer={vi.fn()} />);
+      render(<BustQuestion correctAnswer="bust" onAnswer={vi.fn()} />);
 
       expect(screen.getByText('この投擲はバストですか?')).toBeInTheDocument();
     });
 
     it('「バスト」ボタンが表示される', () => {
-      render(<BustQuestion correctAnswer={true} onAnswer={vi.fn()} />);
+      render(<BustQuestion correctAnswer="bust" onAnswer={vi.fn()} />);
 
       expect(screen.getByRole('button', { name: /バスト/i })).toBeInTheDocument();
     });
 
     it('「セーフ」ボタンが表示される', () => {
-      render(<BustQuestion correctAnswer={false} onAnswer={vi.fn()} />);
+      render(<BustQuestion correctAnswer="safe" onAnswer={vi.fn()} />);
 
       expect(screen.getByRole('button', { name: /セーフ/i })).toBeInTheDocument();
     });
 
     it('「バスト」ボタンにショートカット表記「(B)」が表示される', () => {
-      render(<BustQuestion correctAnswer={true} onAnswer={vi.fn()} />);
+      render(<BustQuestion correctAnswer="bust" onAnswer={vi.fn()} />);
 
       expect(screen.getByText('(B)')).toBeInTheDocument();
     });
 
     it('「セーフ」ボタンにショートカット表記「(S)」が表示される', () => {
-      render(<BustQuestion correctAnswer={false} onAnswer={vi.fn()} />);
+      render(<BustQuestion correctAnswer="safe" onAnswer={vi.fn()} />);
 
       expect(screen.getByText('(S)')).toBeInTheDocument();
     });
   });
 
   describe('ボタンクリック動作', () => {
-    it('「バスト」ボタンをクリックするとonAnswer(true)が呼ばれる', () => {
+    it('「バスト」ボタンをクリックするとonAnswer("bust")が呼ばれる', () => {
       const onAnswer = vi.fn();
-      render(<BustQuestion correctAnswer={true} onAnswer={onAnswer} />);
+      render(<BustQuestion correctAnswer="bust" onAnswer={onAnswer} />);
 
       const bustButton = screen.getByRole('button', { name: /バスト/i });
       fireEvent.click(bustButton);
 
       expect(onAnswer).toHaveBeenCalledTimes(1);
-      expect(onAnswer).toHaveBeenCalledWith(true);
+      expect(onAnswer).toHaveBeenCalledWith('bust');
     });
 
-    it('「セーフ」ボタンをクリックするとonAnswer(false)が呼ばれる', () => {
+    it('「セーフ」ボタンをクリックするとonAnswer("safe")が呼ばれる', () => {
       const onAnswer = vi.fn();
-      render(<BustQuestion correctAnswer={false} onAnswer={onAnswer} />);
+      render(<BustQuestion correctAnswer="safe" onAnswer={onAnswer} />);
 
       const safeButton = screen.getByRole('button', { name: /セーフ/i });
       fireEvent.click(safeButton);
 
       expect(onAnswer).toHaveBeenCalledTimes(1);
-      expect(onAnswer).toHaveBeenCalledWith(false);
+      expect(onAnswer).toHaveBeenCalledWith('safe');
     });
   });
 
   describe('キーボード操作', () => {
     it('Bキーで「バスト」回答が送信される', () => {
       const onAnswer = vi.fn();
-      render(<BustQuestion correctAnswer={true} onAnswer={onAnswer} />);
+      render(<BustQuestion correctAnswer="bust" onAnswer={onAnswer} />);
 
       fireEvent.keyDown(window, { key: 'b' });
 
       expect(onAnswer).toHaveBeenCalledTimes(1);
-      expect(onAnswer).toHaveBeenCalledWith(true);
+      expect(onAnswer).toHaveBeenCalledWith('bust');
     });
 
     it('大文字Bキーでも「バスト」回答が送信される', () => {
       const onAnswer = vi.fn();
-      render(<BustQuestion correctAnswer={true} onAnswer={onAnswer} />);
+      render(<BustQuestion correctAnswer="bust" onAnswer={onAnswer} />);
 
       fireEvent.keyDown(window, { key: 'B' });
 
       expect(onAnswer).toHaveBeenCalledTimes(1);
-      expect(onAnswer).toHaveBeenCalledWith(true);
+      expect(onAnswer).toHaveBeenCalledWith('bust');
     });
 
     it('Sキーで「セーフ」回答が送信される', () => {
       const onAnswer = vi.fn();
-      render(<BustQuestion correctAnswer={false} onAnswer={onAnswer} />);
+      render(<BustQuestion correctAnswer="safe" onAnswer={onAnswer} />);
 
       fireEvent.keyDown(window, { key: 's' });
 
       expect(onAnswer).toHaveBeenCalledTimes(1);
-      expect(onAnswer).toHaveBeenCalledWith(false);
+      expect(onAnswer).toHaveBeenCalledWith('safe');
     });
 
     it('大文字Sキーでも「セーフ」回答が送信される', () => {
       const onAnswer = vi.fn();
-      render(<BustQuestion correctAnswer={false} onAnswer={onAnswer} />);
+      render(<BustQuestion correctAnswer="safe" onAnswer={onAnswer} />);
 
       fireEvent.keyDown(window, { key: 'S' });
 
       expect(onAnswer).toHaveBeenCalledTimes(1);
-      expect(onAnswer).toHaveBeenCalledWith(false);
+      expect(onAnswer).toHaveBeenCalledWith('safe');
     });
 
     it('フィードバック表示中はキーボード入力が無効化される', () => {
       const onAnswer = vi.fn();
       render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={onAnswer}
           showFeedback={true}
-          userAnswer={true}
+          userAnswer="bust"
         />
       );
 
@@ -127,10 +127,10 @@ describe('BustQuestion', () => {
     it('正解アイコン「✓」が表示される', () => {
       render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={true}
+          userAnswer="bust"
         />
       );
 
@@ -140,10 +140,10 @@ describe('BustQuestion', () => {
     it('「正解」テキストが表示される', () => {
       render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={true}
+          userAnswer="bust"
         />
       );
 
@@ -154,15 +154,15 @@ describe('BustQuestion', () => {
     it('「あなたの回答」に「バスト」が表示される', () => {
       render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={true}
+          userAnswer="bust"
         />
       );
 
       expect(screen.getByText('あなたの回答')).toBeInTheDocument();
-      // userAnswer=true → バスト
+      // userAnswer="bust" → バスト
       const answers = screen.getAllByText('バスト');
       expect(answers.length).toBeGreaterThanOrEqual(1);
     });
@@ -170,10 +170,10 @@ describe('BustQuestion', () => {
     it('「正解」に正解値が表示される', () => {
       render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={true}
+          userAnswer="bust"
         />
       );
 
@@ -184,10 +184,10 @@ describe('BustQuestion', () => {
     it('質問テキストが非表示になる', () => {
       render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={true}
+          userAnswer="bust"
         />
       );
 
@@ -199,10 +199,10 @@ describe('BustQuestion', () => {
     it('不正解アイコン「✗」が表示される', () => {
       render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={false}
+          userAnswer="safe"
         />
       );
 
@@ -212,10 +212,10 @@ describe('BustQuestion', () => {
     it('「不正解」テキストが表示される', () => {
       render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={false}
+          userAnswer="safe"
         />
       );
 
@@ -225,15 +225,15 @@ describe('BustQuestion', () => {
     it('「あなたの回答」に誤った回答が表示される', () => {
       render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={false}
+          userAnswer="safe"
         />
       );
 
       expect(screen.getByText('あなたの回答')).toBeInTheDocument();
-      // userAnswer=false → セーフ
+      // userAnswer="safe" → セーフ
       const safeTexts = screen.getAllByText('セーフ');
       expect(safeTexts.length).toBeGreaterThanOrEqual(1);
     });
@@ -241,16 +241,16 @@ describe('BustQuestion', () => {
     it('「正解」に正しい答えが表示される', () => {
       render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={false}
+          userAnswer="safe"
         />
       );
 
       const correctLabels = screen.getAllByText('正解');
       expect(correctLabels.length).toBeGreaterThanOrEqual(1);
-      // correctAnswer=true → バスト
+      // correctAnswer="bust" → バスト
       const bustTexts = screen.getAllByText('バスト');
       expect(bustTexts.length).toBeGreaterThanOrEqual(1);
     });
@@ -260,10 +260,10 @@ describe('BustQuestion', () => {
     it('showFeedback=trueの場合、「バスト」ボタンが無効化される', () => {
       render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={true}
+          userAnswer="bust"
         />
       );
 
@@ -274,10 +274,10 @@ describe('BustQuestion', () => {
     it('showFeedback=trueの場合、「セーフ」ボタンが無効化される', () => {
       render(
         <BustQuestion
-          correctAnswer={false}
+          correctAnswer="safe"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={false}
+          userAnswer="safe"
         />
       );
 
@@ -289,10 +289,10 @@ describe('BustQuestion', () => {
       const onAnswer = vi.fn();
       render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={onAnswer}
           showFeedback={true}
-          userAnswer={true}
+          userAnswer="bust"
         />
       );
 
@@ -305,21 +305,21 @@ describe('BustQuestion', () => {
 
   describe('アクセシビリティ', () => {
     it('section要素にaria-label="バスト判定"が設定されている', () => {
-      render(<BustQuestion correctAnswer={true} onAnswer={vi.fn()} />);
+      render(<BustQuestion correctAnswer="bust" onAnswer={vi.fn()} />);
 
       const section = screen.getByLabelText('バスト判定');
       expect(section.tagName).toBe('SECTION');
     });
 
     it('「バスト」ボタンにaria-label="バスト (Bキー)"が設定されている', () => {
-      render(<BustQuestion correctAnswer={true} onAnswer={vi.fn()} />);
+      render(<BustQuestion correctAnswer="bust" onAnswer={vi.fn()} />);
 
       const bustButton = screen.getByRole('button', { name: /バスト \(Bキー\)/i });
       expect(bustButton).toHaveAttribute('aria-label', 'バスト (Bキー)');
     });
 
     it('「セーフ」ボタンにaria-label="セーフ (Sキー)"が設定されている', () => {
-      render(<BustQuestion correctAnswer={false} onAnswer={vi.fn()} />);
+      render(<BustQuestion correctAnswer="safe" onAnswer={vi.fn()} />);
 
       const safeButton = screen.getByRole('button', { name: /セーフ \(Sキー\)/i });
       expect(safeButton).toHaveAttribute('aria-label', 'セーフ (Sキー)');
@@ -328,10 +328,10 @@ describe('BustQuestion', () => {
     it('フィードバック表示時、選択されたボタンにaria-pressed="true"が設定される', () => {
       render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={true}
+          userAnswer="bust"
         />
       );
 
@@ -342,10 +342,10 @@ describe('BustQuestion', () => {
     it('フィードバック表示時、選択されていないボタンにaria-pressed="false"が設定される', () => {
       render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={true}
+          userAnswer="bust"
         />
       );
 
@@ -356,10 +356,10 @@ describe('BustQuestion', () => {
     it('正誤アイコンにaria-hidden="true"が設定されている', () => {
       const { container } = render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={true}
+          userAnswer="bust"
         />
       );
 
@@ -368,7 +368,7 @@ describe('BustQuestion', () => {
     });
 
     it('ショートカット表記にaria-hidden="true"が設定されている', () => {
-      const { container } = render(<BustQuestion correctAnswer={true} onAnswer={vi.fn()} />);
+      const { container } = render(<BustQuestion correctAnswer="bust" onAnswer={vi.fn()} />);
 
       const shortcuts = container.querySelectorAll('.bust-question__shortcut');
       expect(shortcuts.length).toBe(2); // (B) と (S)
@@ -380,10 +380,10 @@ describe('BustQuestion', () => {
     it('回答表示がdl/dt/dd要素で構造化されている', () => {
       const { container } = render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={true}
+          userAnswer="bust"
         />
       );
 
@@ -410,10 +410,10 @@ describe('BustQuestion', () => {
     it('正解時にbust-question__result--correctクラスが適用される', () => {
       const { container } = render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={true}
+          userAnswer="bust"
         />
       );
 
@@ -424,10 +424,10 @@ describe('BustQuestion', () => {
     it('不正解時にbust-question__result--incorrectクラスが適用される', () => {
       const { container } = render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={false}
+          userAnswer="safe"
         />
       );
 
@@ -438,10 +438,10 @@ describe('BustQuestion', () => {
     it('「バスト」ボタンが選択され正解した場合、bust-question__button--selected-correctクラスが適用される', () => {
       const { container } = render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={true}
+          userAnswer="bust"
         />
       );
 
@@ -452,10 +452,10 @@ describe('BustQuestion', () => {
     it('「バスト」ボタンが選択され不正解した場合、bust-question__button--selected-incorrectクラスが適用される', () => {
       const { container } = render(
         <BustQuestion
-          correctAnswer={false}
+          correctAnswer="safe"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={true}
+          userAnswer="bust"
         />
       );
 
@@ -468,10 +468,10 @@ describe('BustQuestion', () => {
     it('「セーフ」ボタンが選択され正解した場合、bust-question__button--selected-correctクラスが適用される', () => {
       const { container } = render(
         <BustQuestion
-          correctAnswer={false}
+          correctAnswer="safe"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={false}
+          userAnswer="safe"
         />
       );
 
@@ -482,10 +482,10 @@ describe('BustQuestion', () => {
     it('「セーフ」ボタンが選択され不正解した場合、bust-question__button--selected-incorrectクラスが適用される', () => {
       const { container } = render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={false}
+          userAnswer="safe"
         />
       );
 
@@ -500,30 +500,30 @@ describe('BustQuestion', () => {
     it('userEvent でボタンをクリックすると onAnswer が呼ばれる', async () => {
       const user = userEvent.setup();
       const onAnswer = vi.fn();
-      render(<BustQuestion correctAnswer={true} onAnswer={onAnswer} />);
+      render(<BustQuestion correctAnswer="bust" onAnswer={onAnswer} />);
 
       const bustButton = screen.getByRole('button', { name: /バスト/i });
       await user.click(bustButton);
 
       expect(onAnswer).toHaveBeenCalledTimes(1);
-      expect(onAnswer).toHaveBeenCalledWith(true);
+      expect(onAnswer).toHaveBeenCalledWith('bust');
     });
 
     it('userEvent でキーボード入力すると onAnswer が呼ばれる', async () => {
       const user = userEvent.setup();
       const onAnswer = vi.fn();
-      render(<BustQuestion correctAnswer={false} onAnswer={onAnswer} />);
+      render(<BustQuestion correctAnswer="safe" onAnswer={onAnswer} />);
 
       await user.keyboard('s');
 
       expect(onAnswer).toHaveBeenCalledTimes(1);
-      expect(onAnswer).toHaveBeenCalledWith(false);
+      expect(onAnswer).toHaveBeenCalledWith('safe');
     });
   });
 
   describe('スナップショットテスト', () => {
     it('初期状態（回答前）の見た目が一致する', () => {
-      const { container } = render(<BustQuestion correctAnswer={true} onAnswer={vi.fn()} />);
+      const { container } = render(<BustQuestion correctAnswer="bust" onAnswer={vi.fn()} />);
 
       expect(container).toMatchSnapshot();
     });
@@ -531,10 +531,10 @@ describe('BustQuestion', () => {
     it('フィードバック表示（正解時）の見た目が一致する', () => {
       const { container } = render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={true}
+          userAnswer="bust"
         />
       );
 
@@ -544,10 +544,10 @@ describe('BustQuestion', () => {
     it('フィードバック表示（不正解時：バスト選択）の見た目が一致する', () => {
       const { container } = render(
         <BustQuestion
-          correctAnswer={false}
+          correctAnswer="safe"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={true}
+          userAnswer="bust"
         />
       );
 
@@ -557,10 +557,10 @@ describe('BustQuestion', () => {
     it('フィードバック表示（不正解時：セーフ選択）の見た目が一致する', () => {
       const { container } = render(
         <BustQuestion
-          correctAnswer={true}
+          correctAnswer="bust"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={false}
+          userAnswer="safe"
         />
       );
 
@@ -570,10 +570,10 @@ describe('BustQuestion', () => {
     it('フィードバック表示（正解時：セーフが正解）の見た目が一致する', () => {
       const { container } = render(
         <BustQuestion
-          correctAnswer={false}
+          correctAnswer="safe"
           onAnswer={vi.fn()}
           showFeedback={true}
-          userAnswer={false}
+          userAnswer="safe"
         />
       );
 
