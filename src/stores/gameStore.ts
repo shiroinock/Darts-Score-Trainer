@@ -329,9 +329,13 @@ function initializeBag(): ExpandedTarget[] {
 function reshuffleBag(lastTarget: ExpandedTarget): ExpandedTarget[] {
   const newBag = initializeBag();
 
-  // 新しいバッグの最初が前回の最後と同じ場合は、最後と交換
-  if (newBag[0].label === lastTarget.label) {
-    [newBag[0], newBag[newBag.length - 1]] = [newBag[newBag.length - 1], newBag[0]];
+  // 新しいバッグの最初が前回の最後と同じ場合は、異なる要素と交換
+  if (newBag[0].label === lastTarget.label && newBag.length > 1) {
+    // 最初と異なる最初の要素を見つけて交換（無限ループリスク回避）
+    const swapIndex = newBag.findIndex((t, i) => i > 0 && t.label !== lastTarget.label);
+    if (swapIndex !== -1) {
+      [newBag[0], newBag[swapIndex]] = [newBag[swapIndex], newBag[0]];
+    }
   }
 
   return newBag;

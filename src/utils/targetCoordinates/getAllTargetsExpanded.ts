@@ -143,8 +143,10 @@ export function getAllTargetsExpanded(): ExpandedTarget[] {
   });
 
   // OUTER_BULL (1個)
-  // OUTER_BULLの代表座標は、INNER_BULL境界とOUTER_BULL境界の中間点
-  // (6.35 + 16) / 2 = 11.175mm を12時方向（y負方向）に配置
+  // OUTER_BULLの代表座標は、INNER_BULL外縁とOUTER_BULL外縁の中間点
+  // BOARD_PHYSICAL.rings.innerBull = 6.35mm（INNER_BULL外縁半径）
+  // BOARD_PHYSICAL.rings.outerBull = 16mm（OUTER_BULL外縁半径）
+  // 中間点: (6.35 + 16) / 2 = 11.175mm を12時方向（y負方向）に配置
   const outerBullRadius = (BOARD_PHYSICAL.rings.innerBull + BOARD_PHYSICAL.rings.outerBull) / 2;
   targets.push({
     ringType: 'OUTER_BULL',
