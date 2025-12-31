@@ -625,16 +625,19 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - `gameStore.ts`: フィニッシュ判定を`getBustCorrectAnswer()`に実装
 - `canFinishWithDouble(remainingScore)` 関数を活用してチェックアウト可能か判定
 
-**Phase G: フィードバック画面でのEnterキー対応**（未実装）
-- [ ] 正誤判定表示中の「次へ」ボタンをEnterキーでも進行できるようにする
-- [ ] BustQuestionのフィードバック表示時もEnterキーで次へ
-- [ ] Feedbackコンポーネント表示時もEnterキーで次へ
-- [ ] キーボードイベントリスナーの追加
+**Phase G: フィードバック画面でのEnterキー対応**（2026-01-01完了）
+- [x] 正誤判定表示中の「次へ」ボタンをEnterキーでも進行できるようにする
+- [x] BustQuestionのフィードバック表示時もEnterキーで次へ
+- [x] Feedbackコンポーネント表示時もEnterキーで次へ
+- [x] キーボードイベントリスナーの追加
 
-**要修正箇所**:
-- `PracticeScreen.tsx`: フィードバック表示中のキーボードイベント処理
-- `BustQuestion.tsx`: showFeedback時のEnterキー対応（または親で一括管理）
-- `Feedback.tsx`: Enterキー対応（または親で一括管理）
+**実装箇所**:
+- `PracticeScreen.tsx`: フィードバック表示中のキーボードイベント処理（90-133行目）
+  - PracticeScreenで一括管理するアプローチを採用
+  - スコアフェーズ: Enterキーで`nextQuestion()`を呼び出し
+  - バストフェーズ: Enterキーで`handleBustFeedbackComplete()`を呼び出し
+  - ゲームクリア時はEnterキー無効化
+  - イベントリスナーのクリーンアップ処理を実装
 
 **Phase H: プレイヤー練習モードでの残り点数減算**（未実装）
 - [ ] scoreモード（3投の合計点数を問う）でも残り点数を減らしていく
