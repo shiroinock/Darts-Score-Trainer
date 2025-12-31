@@ -664,16 +664,20 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - `src/components/Practice/NumPad.css`
 - `src/components/Practice/PracticeScreen.css`
 
-#### 9.1.3 基礎練習モードのランダム出題化（82ターゲット対応）
+#### 9.1.3 基礎練習モードのランダム出題化（82ターゲット対応）（2026-01-01完了）
 **問題**: 20だけを狙うと回答パターンに偏りが出る
 **方針**: 投擲シミュレーションを行わず、全82ターゲットからランダムに1つを選んで出題
 
-- [ ] `RingType`を使った82ターゲット定義を追加（`src/utils/targetCoordinates/getAllTargetsExpanded.ts`）
+- [x] `RingType`を使った82ターゲット定義を追加（`src/utils/targetCoordinates/getAllTargetsExpanded.ts`）
   - INNER_SINGLE 1-20, OUTER_SINGLE 1-20, DOUBLE 1-20, TRIPLE 1-20, INNER_BULL, OUTER_BULL
-- [ ] `PracticeConfig`型に`randomizeTarget: boolean`フラグを追加（オプショナル、デフォルトfalse）
+  - 実装ファイル: `src/utils/targetCoordinates/getAllTargetsExpanded.ts`
+  - テストファイル: `src/utils/targetCoordinates/getAllTargetsExpanded.test.ts` (48テスト)
+- [x] `PracticeConfig`型に`randomizeTarget: boolean`フラグを追加（オプショナル、デフォルトfalse）
+  - 実装ファイル: `src/types/PracticeConfig.ts:37-42`
   - 注: `randomizeTarget: true`の場合、`stdDevMM`は使用されない（シミュレーションなし）
-- [ ] `basicプリセット`に`randomizeTarget: true`を設定
-- [ ] `gameStore.ts`の`generateQuestion`アクションを修正（シャッフルバッグ方式）
+- [x] `basicプリセット`に`randomizeTarget: true`を設定
+  - 実装ファイル: `src/stores/config/presets.ts:28`
+- [x] `gameStore.ts`の`generateQuestion`アクションを修正（シャッフルバッグ方式）
   - **シャッフルバッグパターン**: 完全ランダムではなく、均等性を保証する方式
   - 実装:
     1. 82ターゲットのリストをFisher-Yatesでシャッフル → バッグ
@@ -681,11 +685,19 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
     3. バッグが空になったらリシャッフル
     4. リシャッフル時、前回最後と今回最初が同じにならないよう調整
   - 利点: 82問で全ターゲットを網羅、偏りなし、連続重複なし
-  - ストア状態: `targetBag: Target[]`, `targetBagIndex: number`
-- [ ] テスト作成：シャッフルバッグの品質保証
+  - ストア状態: `targetBag: ExpandedTarget[]`, `targetBagIndex: number`
+  - ヘルパー関数:
+    - `shuffleArray<T>(array: T[]): T[]` - Fisher-Yates shuffle
+    - `initializeBag(): ExpandedTarget[]` - バッグ初期化
+    - `reshuffleBag(lastTarget: ExpandedTarget): ExpandedTarget[]` - リシャッフル（連続回避付き）
+    - `generateThrowsFromBag(bagState, throwUnit): { throws, newBagState }` - バッグから投擲生成
+    - `buildQuestion(throws, config, remainingScore, roundStartScore, bustInfo): Question` - 問題構築
+    - `validateShuffleBagState(targetBag, targetBagIndex): asserts targetBag is ExpandedTarget[]` - 状態検証
+- [x] テスト作成：シャッフルバッグの品質保証（23テスト追加）
   - 網羅性: 82問で全82ターゲットが1回ずつ出題される
   - 境界連続回避: バッグ切替時に同じターゲットが連続しない
   - シャッフル品質: 複数回のバッグ生成で順序が異なる（決定論的でない）
+  - 既存動作との互換性: randomizeTarget: false の場合は従来通り動作
 
 #### 9.1.4 スパイダー近傍のダーツ表示改善
 **問題**: スパイダー上にダーツが被ると、どちらのセグメントか判別困難

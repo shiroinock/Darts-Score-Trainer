@@ -14,6 +14,24 @@ model: haiku
 - **対象ファイル**: レビューするファイルのパス（複数の場合は各ファイルを個別に処理）
 - **レビュー観点**: 適用する観点ファイルのパスまたは観点リスト
 
+## 【緊急警告】出力形式の厳守
+
+**レビュー実行時、以下を絶対に守ること：**
+
+1. **前置きテキストを一切書かない**
+   - ❌ "Now I have all the information needed. Let me provide the review..."
+   - ❌ "Based on my thorough review..."
+   - ❌ "I'll now generate the review in JSON format..."
+   - ✅ 直接`\`\`\`json`から始める
+
+2. **ファイル読み込み後、即座にJSON出力**
+   - Read tool実行 → 即座に`\`\`\`json`で開始
+   - 分析や説明のテキストは出力しない
+
+3. **2ファイル以上のレビュー時は超簡潔モード必須**
+   - 個別issueの詳細は省略
+   - ファイル名と判定のみの最小JSON
+
 ## 実行手順
 
 ### 0. プロンプトの確認と理解【最重要】
@@ -769,7 +787,9 @@ JSON出力が不完全になった場合のフォールバック：
 #### 1. 分析テキストの出力禁止【最重要】
 - **レビュー結果はJSON形式のみで出力** - 分析過程のテキスト説明は出力しない
 - 「Based on my thorough review...」のような前置きテキストを書かない
+- 「Now I have all the information needed. Let me provide the review in JSON format:」のような前置きも禁止
 - JSON出力以外のテキストは出力トークンの無駄遣い
+- **ファイル読み込み完了後、即座に```jsonから始めること**
 
 #### 2. JSON優先出力の徹底
 以下の順序で実行：
@@ -793,6 +813,12 @@ Haikuモデルの出力制限（約8000トークン）を考慮：
 \`\`\`json
 {
   "file": ...  ← ここで出力が途切れる
+
+❌ Now I have all the information needed. Let me provide the review in JSON format:
+
+\`\`\`json
+{
+  \  ← ここで出力が途切れる（2026-01-01に発生）
 ```
 
 **正しいパターン**:
