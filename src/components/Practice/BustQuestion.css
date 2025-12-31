@@ -125,6 +125,26 @@
   border-color: var(--color-success);
 }
 
+/* フィニッシュボタン */
+.bust-question__button--finish {
+  color: var(--color-warning);
+  border-color: var(--color-warning);
+}
+
+.bust-question__button--finish:not(:disabled):hover {
+  background-color: var(--color-warning-light);
+  border-color: var(--color-warning);
+}
+
+/* 3択レイアウト（フィニッシュ可能時） */
+.bust-question__buttons--ternary {
+  max-width: 720px;
+}
+
+.bust-question__buttons--ternary .bust-question__button {
+  padding: var(--spacing-lg) var(--spacing-sm);
+}
+
 /* 選択済みボタン（正解） */
 .bust-question__button--selected-correct {
   background-color: var(--color-success-light);
@@ -227,6 +247,10 @@
   .bust-question__buttons {
     flex-direction: column;
     gap: var(--spacing-md);
+  }
+
+  .bust-question__buttons--ternary .bust-question__button {
+    padding: var(--spacing-lg) var(--spacing-base);
   }
 
   .bust-question__button {

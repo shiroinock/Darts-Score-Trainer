@@ -11,11 +11,13 @@
  * 時間切れ時の自動終了処理も担当します。
  */
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useFeedback } from '../../hooks/useFeedback';
 import { usePracticeSession } from '../../hooks/usePracticeSession';
 import { useTimer } from '../../hooks/useTimer';
 import { useGameStore } from '../../stores/gameStore';
+import { END_REASONS } from '../../types';
+import { ONE_DART_FINISHABLE } from '../../utils/constants';
 import { DartBoard } from '../DartBoard/DartBoard';
 import { BustQuestion } from './BustQuestion';
 import { Feedback } from './Feedback';
@@ -61,6 +63,7 @@ export function PracticeScreen(): JSX.Element {
   const currentQuestion = useGameStore((state) => state.currentQuestion);
   const questionType = useGameStore((state) => state.config.questionType);
   const displayedDarts = useGameStore((state) => state.displayedDarts);
+  const roundStartScore = useGameStore((state) => state.roundStartScore);
 
   // アクション関数を取得
   const resetToSetup = useGameStore((state) => state.resetToSetup);
@@ -72,10 +75,28 @@ export function PracticeScreen(): JSX.Element {
     if (sessionConfig.mode === 'time' && sessionConfig.timeLimit !== undefined) {
       const timeLimit = sessionConfig.timeLimit * 60; // 分を秒に変換
       if (elapsedTime >= timeLimit && gameState === 'practicing') {
-        endSession('時間切れ');
+        endSession(END_REASONS.TIMEOUT);
       }
     }
   }, [elapsedTime, sessionConfig, gameState, endSession]);
+
+  // バストフェーズかどうかを判定
+  const isBustPhase = currentQuestion?.questionPhase?.type === 'bust';
+
+  // フィニッシュ選択肢を表示するかどうかを計算
+  // 現在のダーツ投擲時点での残り点数が1本でフィニッシュ可能かどうか
+  // 注意: useMemoは早期リターン前に呼び出す必要がある（React Hooks規則）
+  const showFinishOption = useMemo(() => {
+    if (!isBustPhase || displayedDarts.length === 0) {
+      return false;
+    }
+    // 現在のダーツ投擲「前」の残り点数を計算
+    const previousCumulativeScore = displayedDarts
+      .slice(0, -1)
+      .reduce((sum, dart) => sum + dart.score, 0);
+    const currentRemainingScore = roundStartScore - previousCumulativeScore;
+    return ONE_DART_FINISHABLE.has(currentRemainingScore);
+  }, [isBustPhase, displayedDarts, roundStartScore]);
 
   // 練習中でない場合は何も表示しない（防御的プログラミング）
   if (gameState !== 'practicing') {
@@ -89,9 +110,6 @@ export function PracticeScreen(): JSX.Element {
   // DartBoardに渡すダーツ座標と数
   const dartCoords = displayedDarts.map((dart) => dart.landingPoint);
   const dartCount = displayedDarts.length;
-
-  // バストフェーズかどうかを判定
-  const isBustPhase = currentQuestion?.questionPhase?.type === 'bust';
 
   // バスト判定の正解を取得（gameStoreで計算）
   const bustCorrectAnswer = getBustCorrectAnswer();
@@ -123,6 +141,7 @@ export function PracticeScreen(): JSX.Element {
                 onAnswer={handleBustAnswer}
                 showFeedback={showFeedback}
                 userAnswer={bustAnswer ?? undefined}
+                showFinishOption={showFinishOption}
               />
 
               {/* BustQuestionのフィードバック表示時は「次へ」ボタンを表示 */}
@@ -168,7 +187,7 @@ export function PracticeScreen(): JSX.Element {
         <button
           type="button"
           className="practice-screen__button practice-screen__button--end"
-          onClick={() => endSession('ユーザーによる終了')}
+          onClick={() => endSession(END_REASONS.USER_ABORT)}
           aria-label="練習を終了"
         >
           終了

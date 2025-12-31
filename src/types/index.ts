@@ -7,8 +7,11 @@
 
 // ゲームロジック
 export type { BustInfo } from './BustInfo';
+export type { BustQuestionAnswer } from './BustQuestionAnswer';
 // 座標系
 export type { Coordinates } from './Coordinates';
+export type { EndReason } from './EndReason';
+export { END_REASONS } from './EndReason';
 export type { GameState } from './GameState';
 export type { JudgmentTiming } from './JudgmentTiming';
 export type { PracticeConfig } from './PracticeConfig';

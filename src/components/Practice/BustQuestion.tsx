@@ -1,12 +1,13 @@
 /**
- * BustQuestion - バスト判定2択コンポーネント
+ * BustQuestion - バスト判定コンポーネント
  *
- * 3投モードで1本目・2本目の後にバスト判定を2択で問うコンポーネント。
- * 「バスト」/「セーフ」のボタンでユーザーの回答を取得し、
- * フィードバック表示時には正解/不正解を示します。
+ * 3投モードで1本目・2本目の後にバスト判定を問うコンポーネント。
+ * 「バスト」/「セーフ」の2択、またはフィニッシュ可能時は「フィニッシュ」を加えた3択で
+ * ユーザーの回答を取得し、フィードバック表示時には正解/不正解を示します。
  */
 
 import { useEffect, useRef } from 'react';
+import type { BustQuestionAnswer } from '../../types';
 import './BustQuestion.css';
 
 /**
@@ -15,20 +16,32 @@ import './BustQuestion.css';
 const KEYBOARD_SHORTCUTS = {
   BUST: ['b', 'B'],
   SAFE: ['s', 'S'],
+  FINISH: ['f', 'F'],
 } as const;
+
+/**
+ * 回答ラベルの定義
+ */
+const ANSWER_LABELS: Record<BustQuestionAnswer, string> = {
+  bust: 'バスト',
+  safe: 'セーフ',
+  finish: 'フィニッシュ',
+};
 
 /**
  * BustQuestionコンポーネントのプロパティ
  */
 interface BustQuestionProps {
-  /** 正解がバストかどうか */
-  correctAnswer: boolean;
+  /** 正解（bust/safe/finish） */
+  correctAnswer: BustQuestionAnswer;
   /** 回答送信コールバック */
-  onAnswer: (isBust: boolean) => void;
+  onAnswer: (answer: BustQuestionAnswer) => void;
   /** フィードバック表示中かどうか（回答後の状態） */
   showFeedback?: boolean;
   /** ユーザーの回答（フィードバック表示時） */
-  userAnswer?: boolean;
+  userAnswer?: BustQuestionAnswer;
+  /** フィニッシュ選択肢を表示するか（残り点数が1本でフィニッシュ可能な場合） */
+  showFinishOption?: boolean;
 }
 
 /**
@@ -64,7 +77,7 @@ function getButtonClassName(isSelected: boolean, isCorrect: boolean, baseClass: 
  * BustQuestionコンポーネント
  *
  * @remarks
- * - キーボード操作: Bキーでバスト、Sキーでセーフ
+ * - キーボード操作: Bキーでバスト、Sキーでセーフ、Fキーでフィニッシュ
  * - フィードバック表示時は回答ボタンを無効化
  * - ARIA属性でアクセシビリティ対応
  */
@@ -73,6 +86,7 @@ export function BustQuestion({
   onAnswer,
   showFeedback = false,
   userAnswer,
+  showFinishOption = false,
 }: BustQuestionProps): JSX.Element {
   /**
    * onAnswerコールバックの最新値を保持するref
@@ -84,7 +98,7 @@ export function BustQuestion({
   }, [onAnswer]);
 
   /**
-   * キーボードショートカット（B/Sキー）
+   * キーボードショートカット（B/S/Fキー）
    */
   useEffect(() => {
     // フィードバック表示中はキーボード入力を無効化
@@ -96,12 +110,17 @@ export function BustQuestion({
       // B/bキーでバスト
       if (KEYBOARD_SHORTCUTS.BUST.includes(event.key as 'b' | 'B')) {
         event.preventDefault();
-        onAnswerRef.current(true);
+        onAnswerRef.current('bust');
       }
       // S/sキーでセーフ
       else if (KEYBOARD_SHORTCUTS.SAFE.includes(event.key as 's' | 'S')) {
         event.preventDefault();
-        onAnswerRef.current(false);
+        onAnswerRef.current('safe');
+      }
+      // F/fキーでフィニッシュ（表示時のみ）
+      else if (showFinishOption && KEYBOARD_SHORTCUTS.FINISH.includes(event.key as 'f' | 'F')) {
+        event.preventDefault();
+        onAnswerRef.current('finish');
       }
     };
 
@@ -109,36 +128,42 @@ export function BustQuestion({
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [showFeedback]);
+  }, [showFeedback, showFinishOption]);
 
   /**
    * ボタンクリックハンドラ
    */
-  const handleButtonClick = (isBust: boolean) => {
+  const handleButtonClick = (answer: BustQuestionAnswer) => {
     if (!showFeedback) {
-      onAnswer(isBust);
+      onAnswer(answer);
     }
   };
 
   // フィードバック表示時の正解判定
   const isCorrect = showFeedback && userAnswer === correctAnswer;
-  const bustIsSelected = showFeedback && userAnswer === true;
-  const safeIsSelected = showFeedback && userAnswer === false;
+  const bustIsSelected = showFeedback && userAnswer === 'bust';
+  const safeIsSelected = showFeedback && userAnswer === 'safe';
+  const finishIsSelected = showFeedback && userAnswer === 'finish';
+
+  // 質問テキストの決定
+  const questionText = showFinishOption ? 'この投擲の結果は?' : 'この投擲はバストですか?';
 
   return (
     <section className="bust-question" aria-label="バスト判定">
       {/* 質問テキスト */}
-      {!showFeedback && <h2 className="bust-question__title">この投擲はバストですか?</h2>}
+      {!showFeedback && <h2 className="bust-question__title">{questionText}</h2>}
 
       {/* フィードバック表示 */}
       {showFeedback && <ResultDisplay isCorrect={isCorrect} />}
 
       {/* 回答ボタン */}
-      <div className="bust-question__buttons">
+      <div
+        className={`bust-question__buttons ${showFinishOption ? 'bust-question__buttons--ternary' : ''}`}
+      >
         <button
           type="button"
           className={getButtonClassName(bustIsSelected, isCorrect, 'bust-question__button--bust')}
-          onClick={() => handleButtonClick(true)}
+          onClick={() => handleButtonClick('bust')}
           disabled={showFeedback}
           aria-label="バスト (Bキー)"
           aria-pressed={bustIsSelected}
@@ -152,7 +177,7 @@ export function BustQuestion({
         <button
           type="button"
           className={getButtonClassName(safeIsSelected, isCorrect, 'bust-question__button--safe')}
-          onClick={() => handleButtonClick(false)}
+          onClick={() => handleButtonClick('safe')}
           disabled={showFeedback}
           aria-label="セーフ (Sキー)"
           aria-pressed={safeIsSelected}
@@ -162,18 +187,38 @@ export function BustQuestion({
             (S)
           </span>
         </button>
+
+        {showFinishOption && (
+          <button
+            type="button"
+            className={getButtonClassName(
+              finishIsSelected,
+              isCorrect,
+              'bust-question__button--finish'
+            )}
+            onClick={() => handleButtonClick('finish')}
+            disabled={showFeedback}
+            aria-label="フィニッシュ (Fキー)"
+            aria-pressed={finishIsSelected}
+          >
+            フィニッシュ
+            <span className="bust-question__shortcut" aria-hidden="true">
+              (F)
+            </span>
+          </button>
+        )}
       </div>
 
       {/* 正解表示（フィードバック時） */}
-      {showFeedback && (
+      {showFeedback && userAnswer && (
         <div className="bust-question__answer-section">
           <dl className="bust-question__answer-item">
             <dt className="bust-question__answer-label">あなたの回答</dt>
-            <dd className="bust-question__answer-value">{userAnswer ? 'バスト' : 'セーフ'}</dd>
+            <dd className="bust-question__answer-value">{ANSWER_LABELS[userAnswer]}</dd>
           </dl>
           <dl className="bust-question__answer-item">
             <dt className="bust-question__answer-label">正解</dt>
-            <dd className="bust-question__answer-value">{correctAnswer ? 'バスト' : 'セーフ'}</dd>
+            <dd className="bust-question__answer-value">{ANSWER_LABELS[correctAnswer]}</dd>
           </dl>
         </div>
       )}

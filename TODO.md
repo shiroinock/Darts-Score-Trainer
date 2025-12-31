@@ -593,17 +593,13 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - 実装ファイル: src/hooks/useFeedback.ts (handleBustFeedbackComplete関数)
 - テストファイル: src/hooks/useFeedback.test.ts (14テスト)
 
-**Phase E: バスト時の正解計算ロジック修正**（未実装）
-- [ ] バスト発生時、残り点数の正解はラウンド開始時の値を維持すべき
-- [ ] 現状: バスト時に0点を正解として判定してしまう
-- [ ] 修正: `correctAnswer`の計算ロジックを見直す
+**Phase E: バスト時の正解計算ロジック修正**（2025-12-31完了）
+- [x] バスト発生時、残り点数の正解はラウンド開始時の値を維持すべき
+- [x] 修正: `correctAnswer`の計算ロジックを見直し
   - バストの場合: `correctAnswer = roundStartScore`（ラウンド開始時の残り点数）
   - セーフの場合: `correctAnswer = remainingScore - cumulativeScore`
-
-**要修正箇所（Store側）**:
-- `gameStore.ts`の`generateQuestion`または`simulateNextThrow`
-- `correctAnswer`の計算時にバスト状態を考慮する
-- `Question.bustInfo.isBust`がtrueの場合、残り点数は変わらないことを反映
+- 実装ファイル: src/stores/gameStore.ts (determineQuestionMode関数, 62行目, 83行目)
+- テストファイル: src/stores/gameStore.test.ts (Phase E テスト 13ケース追加)
 
 **Phase F: チェックアウトトライ時のフィニッシュ選択肢追加**（未実装）
 - [ ] チェックアウト可能な残り点数（2-170点、ダブルアウト可能）の場合、3択UIを表示

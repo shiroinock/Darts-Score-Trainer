@@ -22,7 +22,7 @@ exports[`BustQuestion > スナップショットテスト > フィードバッ�
       </div>
     </div>
     <div
-      class="bust-question__buttons"
+      class="bust-question__buttons "
     >
       <button
         aria-label="バスト (Bキー)"
@@ -113,7 +113,7 @@ exports[`BustQuestion > スナップショットテスト > フィードバッ�
       </div>
     </div>
     <div
-      class="bust-question__buttons"
+      class="bust-question__buttons "
     >
       <button
         aria-label="バスト (Bキー)"
@@ -204,7 +204,7 @@ exports[`BustQuestion > スナップショットテスト > フィードバッ�
       </div>
     </div>
     <div
-      class="bust-question__buttons"
+      class="bust-question__buttons "
     >
       <button
         aria-label="バスト (Bキー)"
@@ -295,7 +295,7 @@ exports[`BustQuestion > スナップショットテスト > フィードバッ�
       </div>
     </div>
     <div
-      class="bust-question__buttons"
+      class="bust-question__buttons "
     >
       <button
         aria-label="バスト (Bキー)"
@@ -376,7 +376,7 @@ exports[`BustQuestion > スナップショットテスト > 初期状態（回�
       この投擲はバストですか?
     </h2>
     <div
-      class="bust-question__buttons"
+      class="bust-question__buttons "
     >
       <button
         aria-label="バスト (Bキー)"

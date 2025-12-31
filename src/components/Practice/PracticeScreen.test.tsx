@@ -15,6 +15,7 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useGameStore } from '../../stores/gameStore';
 import type { Question, ThrowResult } from '../../types';
+import { END_REASONS } from '../../types';
 import { PracticeScreen } from './PracticeScreen';
 
 /**
@@ -518,7 +519,7 @@ describe('PracticeScreen', () => {
   });
 
   describe('「終了」ボタンのアクション', () => {
-    it('「終了」ボタンをクリックするとendSession("ユーザーによる終了")が呼ばれる', async () => {
+    it('「終了」ボタンをクリックするとendSession(END_REASONS.USER_ABORT)が呼ばれる', async () => {
       const user = userEvent.setup();
       const endSessionMock = vi.fn();
 
@@ -531,7 +532,7 @@ describe('PracticeScreen', () => {
       const endButton = screen.getByRole('button', { name: '練習を終了' });
       await user.click(endButton);
 
-      expect(endSessionMock).toHaveBeenCalledWith('ユーザーによる終了');
+      expect(endSessionMock).toHaveBeenCalledWith(END_REASONS.USER_ABORT);
     });
   });
 
