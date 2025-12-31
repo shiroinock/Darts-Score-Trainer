@@ -34,8 +34,5 @@ export function getRing(distance: number): RingType {
   if (distance < BOARD_PHYSICAL.rings.doubleOuter) {
     return 'DOUBLE';
   }
-  if (distance < BOARD_PHYSICAL.rings.boardEdge) {
-    return 'OUTER_SINGLE';
-  }
   return 'OUT';
 }
