@@ -798,6 +798,61 @@ Phase 6.4のフィードバックコンポーネントに、バスト表示機�
 - [ ] ESLint + Prettier 設定
 - [ ] CI/CD パイプライン構築
 
+### 技術的改善（型安全性強化 - Branded Type導入）
+**背景**: `checkBust`関数の第2引数は`number`型だが、実際には0-60の範囲を期待している。累積スコア（最大180）を渡すと実行時エラーが発生する問題が発生（2025-12-31）。型レベルで制約を表現することで、コンパイル時にエラーを検出できるようにする。
+
+**目的**: ドメイン固有の数値制約をBranded Typeで表現し、仕組みで不正な値の使用を防ぐ
+
+#### Phase 1: Branded Type型定義の作成
+- [ ] `src/types/branded/` ディレクトリを作成
+- [ ] `SingleThrowScore` 型を定義（0-60の整数）
+  ```typescript
+  type SingleThrowScore = number & { readonly __brand: 'SingleThrowScore' };
+  ```
+- [ ] `RoundScore` 型を定義（0-180の整数）
+- [ ] `PositiveInteger` 型を定義（1以上の整数、残り点数用）
+- [ ] `PhysicalDistance` 型を定義（mm単位の距離、座標変換用）
+- [ ] `ScreenDistance` 型を定義（pixel単位の距離、描画用）
+
+#### Phase 2: 型ガード/コンストラクタ関数の作成
+- [ ] `asSingleThrowScore(value: number): SingleThrowScore` - バリデーション付きコンストラクタ
+- [ ] `asRoundScore(value: number): RoundScore` - バリデーション付きコンストラクタ
+- [ ] `asPositiveInteger(value: number): PositiveInteger` - バリデーション付きコンストラクタ
+- [ ] `isSingleThrowScore(value: number): value is SingleThrowScore` - 型ガード
+
+#### Phase 3: 既存関数シグネチャの変更
+- [ ] `checkBust(remainingScore: PositiveInteger, throwScore: SingleThrowScore, ...)` に変更
+- [ ] `calculateScore(ring, segmentNumber): SingleThrowScore` に変更
+- [ ] `coordinateToScore(x, y): SingleThrowScore` に変更
+- [ ] 座標変換関数でPhysicalDistance/ScreenDistanceを使用
+
+#### Phase 4: 呼び出し箇所の修正
+- [ ] `gameStore.ts`の投擲シミュレーション結果をBranded Typeでラップ
+- [ ] `PracticeScreen.tsx`のbust判定計算をBranded Typeでラップ
+- [ ] テストファイルでのモック値をBranded Typeでラップ
+
+**要修正箇所の特定観点**:
+1. **`number`型の引数/戻り値を持つ関数を検索**:
+   - `grep -r "throwScore: number" src/`
+   - `grep -r "remainingScore: number" src/`
+   - `grep -r "): number" src/utils/scoreCalculator/`
+2. **ドメイン固有の制約がある箇所**:
+   - 1投スコア: 0-60の特定値のみ（`getValidSingleScores()`参照）
+   - ラウンドスコア: 0-180
+   - 残り点数: 1以上（0はゲーム終了）
+   - 物理距離: mm単位（ボード寸法）
+   - 画面距離: pixel単位（描画）
+3. **型アサーション（`as`）を使っている箇所**:
+   - `grep -r " as number" src/`
+   - これらはBranded Type導入で解消できる可能性あり
+4. **実行時バリデーションがある箇所**:
+   - `if (throwScore < 0 || throwScore > 60)` のようなチェック
+   - Branded Type導入後は型レベルで保証されるため、内部関数では不要になる可能性
+
+**参考資料**:
+- TypeScript Handbook: https://www.typescriptlang.org/docs/handbook/2/template-literal-types.html
+- Branded Types pattern: https://egghead.io/blog/using-branded-types-in-typescript
+
 ---
 
 ## 進捗管理
