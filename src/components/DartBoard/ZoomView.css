@@ -6,8 +6,8 @@
   position: absolute;
   top: var(--spacing-md);
   right: var(--spacing-md);
-  width: 200px;
-  height: 200px;
+  width: 280px;
+  height: 280px;
   border: var(--border-width-md) solid var(--color-bg-white);
   border-radius: var(--border-radius-lg);
   overflow: hidden;
@@ -30,8 +30,8 @@
 /* モバイル対応: 640px以下でサイズ縮小 */
 @media (max-width: 640px) {
   .zoom-view {
-    width: 150px;
-    height: 150px;
+    width: 220px;
+    height: 220px;
     top: var(--spacing-sm);
     right: var(--spacing-sm);
   }
@@ -40,7 +40,7 @@
 /* 極小画面: 480px以下でさらに縮小 */
 @media (max-width: 480px) {
   .zoom-view {
-    width: 120px;
-    height: 120px;
+    width: 160px;
+    height: 160px;
   }
 }

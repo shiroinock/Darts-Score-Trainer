@@ -177,11 +177,7 @@ export function PracticeScreen(): JSX.Element {
         {/* 左カラム: ダーツボード */}
         <section className="practice-screen__board-section">
           <DartBoard coords={dartCoords} dartCount={dartCount} />
-          <ZoomView
-            coords={dartCoords}
-            dartCount={dartCount}
-            visibleDarts={visibleDarts}
-          />
+          <ZoomView coords={dartCoords} dartCount={dartCount} visibleDarts={visibleDarts} />
         </section>
 
         {/* 右カラム: 問題とインタラクション */}

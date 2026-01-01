@@ -1,7 +1,7 @@
 /**
  * ZoomView - ダーツ着地点の拡大表示コンポーネント
  *
- * ダーツ着地点を中心に2-3倍ズーム表示し、スパイダーラインとダーツの位置関係を明確に表示します。
+ * ダーツ着地点を中心に6倍ズーム表示し、スパイダーラインとダーツの位置関係を明確に表示します。
  * モバイルファーストのレスポンシブデザインで、タッチ/クリックでズーム中心を変更可能です。
  */
 import type p5Types from 'p5';
@@ -24,30 +24,30 @@ interface ZoomViewProps {
   dartCount: number;
   /** 表示/非表示状態の配列 */
   visibleDarts: boolean[];
-  /** ズーム倍率（デフォルト: 2.5） */
+  /** ズーム倍率（デフォルト: 6.0） */
   zoomFactor?: number;
 }
 
 /** ズームビューのキャンバスサイズ（デスクトップ） */
 const ZOOM_CANVAS_SIZE_DESKTOP = {
-  width: 200,
-  height: 200,
+  width: 280,
+  height: 280,
 } as const;
 
 /** ズームビューのキャンバスサイズ（タブレット: 640px以下） */
 const ZOOM_CANVAS_SIZE_TABLET = {
-  width: 150,
-  height: 150,
+  width: 220,
+  height: 220,
 } as const;
 
 /** ズームビューのキャンバスサイズ（モバイル: 480px以下） */
 const ZOOM_CANVAS_SIZE_MOBILE = {
-  width: 120,
-  height: 120,
+  width: 160,
+  height: 160,
 } as const;
 
 /** デフォルトのズーム倍率 */
-const DEFAULT_ZOOM_FACTOR = 2.5;
+const DEFAULT_ZOOM_FACTOR = 10.0;
 
 /**
  * 画面幅に応じて適切なキャンバスサイズを取得
