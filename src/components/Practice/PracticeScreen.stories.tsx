@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
 import { useGameStore } from '../../stores/gameStore';
-import type { Question, SessionConfig, Stats } from '../../types';
+import type { Question, SessionConfig, Stats, ThrowResult } from '../../types';
 import { PracticeScreen } from './PracticeScreen';
 
 interface MockOptions {
@@ -10,7 +10,7 @@ interface MockOptions {
   elapsedTime?: number;
   currentQuestion?: Question | null;
   stats?: Stats;
-  displayedDarts?: Array<{ landingPoint: { x: number; y: number }; score: number }>;
+  displayedDarts?: ThrowResult[];
   remainingScore?: number;
   startingScore?: number;
 }
@@ -192,9 +192,9 @@ export const ThreeDarts: Story = {
       gameState: 'practicing',
       sessionConfig: { mode: 'questions', questionCount: 10 },
       displayedDarts: [
-        { landingPoint: { x: -2, y: -103 }, score: 60 },
-        { landingPoint: { x: 0, y: -103 }, score: 60 },
-        { landingPoint: { x: 2, y: -103 }, score: 60 },
+        { target: { type: 'TRIPLE', number: 20 }, landingPoint: { x: -2, y: -103 }, score: 60 },
+        { target: { type: 'TRIPLE', number: 20 }, landingPoint: { x: 0, y: -103 }, score: 60 },
+        { target: { type: 'TRIPLE', number: 20 }, landingPoint: { x: 2, y: -103 }, score: 60 },
       ],
       stats: { correct: 3, total: 4, currentStreak: 2, bestStreak: 2 },
     }),

@@ -28,6 +28,9 @@ const withMockStore = (options: MockOptions) => (Story: React.ComponentType) => 
       useGameStore.setState({
         currentQuestion,
         config: {
+          configId: 'custom-test',
+          configName: 'テスト設定',
+          isPreset: false,
           throwUnit: 1,
           questionType,
           judgmentTiming: 'independent',
@@ -89,14 +92,18 @@ export const CorrectSingleThrow: Story = {
       userAnswer: 60,
       isCorrect: true,
       currentQuestion: {
+        mode: 'score',
         throws: [
           {
+            target: { type: 'TRIPLE', number: 20 },
             landingPoint: { x: 0, y: -100 },
             ring: 'TRIPLE',
             segmentNumber: 20,
             score: 60,
           },
         ],
+        correctAnswer: 60,
+        questionText: 'この投擲の得点は？',
       },
       stats: { correct: 6, total: 8, currentStreak: 4, bestStreak: 5 },
     }),
@@ -116,14 +123,18 @@ export const IncorrectSingleThrow: Story = {
       userAnswer: 40,
       isCorrect: false,
       currentQuestion: {
+        mode: 'score',
         throws: [
           {
+            target: { type: 'DOUBLE', number: 16 },
             landingPoint: { x: 80, y: 0 },
             ring: 'DOUBLE',
             segmentNumber: 16,
             score: 32,
           },
         ],
+        correctAnswer: 32,
+        questionText: 'この投擲の得点は？',
       },
       stats: { correct: 5, total: 8, currentStreak: 0, bestStreak: 5 },
     }),
@@ -143,26 +154,32 @@ export const CorrectThreeThrows180: Story = {
       userAnswer: 180,
       isCorrect: true,
       currentQuestion: {
+        mode: 'score',
         throws: [
           {
+            target: { type: 'TRIPLE', number: 20 },
             landingPoint: { x: 0, y: -100 },
             ring: 'TRIPLE',
             segmentNumber: 20,
             score: 60,
           },
           {
+            target: { type: 'TRIPLE', number: 20 },
             landingPoint: { x: 0, y: -100 },
             ring: 'TRIPLE',
             segmentNumber: 20,
             score: 60,
           },
           {
+            target: { type: 'TRIPLE', number: 20 },
             landingPoint: { x: 0, y: -100 },
             ring: 'TRIPLE',
             segmentNumber: 20,
             score: 60,
           },
         ],
+        correctAnswer: 180,
+        questionText: '3投の合計得点は？',
       },
       stats: { correct: 10, total: 10, currentStreak: 10, bestStreak: 10 },
     }),
@@ -182,13 +199,17 @@ export const CorrectBull: Story = {
       userAnswer: 50,
       isCorrect: true,
       currentQuestion: {
+        mode: 'score',
         throws: [
           {
+            target: { type: 'BULL', number: null },
             landingPoint: { x: 0, y: 0 },
             ring: 'INNER_BULL',
             score: 50,
           },
         ],
+        correctAnswer: 50,
+        questionText: 'この投擲の得点は？',
       },
       stats: { correct: 8, total: 9, currentStreak: 5, bestStreak: 7 },
     }),
@@ -208,12 +229,16 @@ export const CorrectMiss: Story = {
       userAnswer: 0,
       isCorrect: true,
       currentQuestion: {
+        mode: 'score',
         throws: [
           {
+            target: { type: 'SINGLE', number: 20 },
             landingPoint: { x: 300, y: 0 },
             score: 0,
           },
         ],
+        correctAnswer: 0,
+        questionText: 'この投擲の得点は？',
       },
       stats: { correct: 5, total: 8, currentStreak: 2, bestStreak: 5 },
     }),
@@ -233,14 +258,18 @@ export const CorrectWithBustOver: Story = {
       userAnswer: 60,
       isCorrect: true,
       currentQuestion: {
+        mode: 'score',
         throws: [
           {
+            target: { type: 'TRIPLE', number: 20 },
             landingPoint: { x: 0, y: -100 },
             ring: 'TRIPLE',
             segmentNumber: 20,
             score: 60,
           },
         ],
+        correctAnswer: 60,
+        questionText: 'この投擲の得点は？',
         bustInfo: {
           isBust: true,
           reason: 'over',
@@ -267,14 +296,18 @@ export const CorrectWithBustFinishImpossible: Story = {
       userAnswer: 20,
       isCorrect: true,
       currentQuestion: {
+        mode: 'score',
         throws: [
           {
+            target: { type: 'SINGLE', number: 20 },
             landingPoint: { x: 0, y: -100 },
             ring: 'INNER_SINGLE',
             segmentNumber: 20,
             score: 20,
           },
         ],
+        correctAnswer: 20,
+        questionText: 'この投擲の得点は？',
         bustInfo: {
           isBust: true,
           reason: 'finish_impossible',
@@ -301,14 +334,18 @@ export const CorrectWithBustDoubleOutRequired: Story = {
       userAnswer: 20,
       isCorrect: true,
       currentQuestion: {
+        mode: 'score',
         throws: [
           {
+            target: { type: 'SINGLE', number: 20 },
             landingPoint: { x: 0, y: -100 },
             ring: 'INNER_SINGLE',
             segmentNumber: 20,
             score: 20,
           },
         ],
+        correctAnswer: 20,
+        questionText: 'この投擲の得点は？',
         bustInfo: {
           isBust: true,
           reason: 'double_out_required',
@@ -335,14 +372,18 @@ export const GameCleared: Story = {
       userAnswer: 0,
       isCorrect: true,
       currentQuestion: {
+        mode: 'score',
         throws: [
           {
+            target: { type: 'DOUBLE', number: 16 },
             landingPoint: { x: 80, y: 0 },
             ring: 'DOUBLE',
             segmentNumber: 16,
             score: 32,
           },
         ],
+        correctAnswer: 32,
+        questionText: 'この投擲の得点は？',
       },
       questionType: 'remaining',
       startingScore: 501,
@@ -365,14 +406,18 @@ export const HighStreak: Story = {
       userAnswer: 60,
       isCorrect: true,
       currentQuestion: {
+        mode: 'score',
         throws: [
           {
+            target: { type: 'TRIPLE', number: 20 },
             landingPoint: { x: 0, y: -100 },
             ring: 'TRIPLE',
             segmentNumber: 20,
             score: 60,
           },
         ],
+        correctAnswer: 60,
+        questionText: 'この投擲の得点は？',
       },
       stats: { correct: 18, total: 21, currentStreak: 15, bestStreak: 15 },
     }),
