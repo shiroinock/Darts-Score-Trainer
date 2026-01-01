@@ -5,7 +5,15 @@
 
 import { describe, expect, test } from 'vitest';
 import { BOARD_PHYSICAL } from '../constants/boardPhysical.js';
+import { DART_DISPLAY_ADJUSTMENT } from '../constants/dartMarkerRadii.js';
 import { getDisplayCoordinates } from './getDisplayCoordinates.js';
+
+/**
+ * アウターブル表示用の半径（mm）
+ * インナーブルとアウターブルの中間点
+ */
+const OUTER_BULL_DISPLAY_RADIUS =
+  (BOARD_PHYSICAL.rings.innerBull + BOARD_PHYSICAL.rings.outerBull) / 2;
 
 describe('getDisplayCoordinates', () => {
   describe('正常系 - アウト（OUT）', () => {
@@ -18,7 +26,7 @@ describe('getDisplayCoordinates', () => {
 
       // Assert
       expect(result.x).toBeCloseTo(0, 2);
-      expect(result.y).toBeCloseTo(-180, 2);
+      expect(result.y).toBeCloseTo(-DART_DISPLAY_ADJUSTMENT.outRadius, 2);
     });
 
     test('右方向（x=250, y=0）は半径180mmに配置される', () => {
@@ -29,7 +37,7 @@ describe('getDisplayCoordinates', () => {
       const result = getDisplayCoordinates(coords);
 
       // Assert
-      expect(result.x).toBeCloseTo(180, 2);
+      expect(result.x).toBeCloseTo(DART_DISPLAY_ADJUSTMENT.outRadius, 2);
       expect(result.y).toBeCloseTo(0, 2);
     });
 
@@ -41,9 +49,8 @@ describe('getDisplayCoordinates', () => {
       const result = getDisplayCoordinates(coords);
 
       // Assert
-      const expectedRadius = 180;
-      const expectedX = expectedRadius * Math.sin(Math.PI / 4);
-      const expectedY = -expectedRadius * Math.cos(Math.PI / 4);
+      const expectedX = DART_DISPLAY_ADJUSTMENT.outRadius * Math.sin(Math.PI / 4);
+      const expectedY = -DART_DISPLAY_ADJUSTMENT.outRadius * Math.cos(Math.PI / 4);
 
       expect(result.x).toBeCloseTo(expectedX, 2);
       expect(result.y).toBeCloseTo(expectedY, 2);
@@ -59,10 +66,8 @@ describe('getDisplayCoordinates', () => {
       const result = getDisplayCoordinates(coords);
 
       // Assert
-      const expectedRadius = (BOARD_PHYSICAL.rings.innerBull + BOARD_PHYSICAL.rings.outerBull) / 2;
-
       expect(result.x).toBeCloseTo(0, 2);
-      expect(result.y).toBeCloseTo(-expectedRadius, 2);
+      expect(result.y).toBeCloseTo(-OUTER_BULL_DISPLAY_RADIUS, 2);
     });
 
     test('右方向（x=12, y=0）は半径11.175mmに配置される', () => {
@@ -73,9 +78,7 @@ describe('getDisplayCoordinates', () => {
       const result = getDisplayCoordinates(coords);
 
       // Assert
-      const expectedRadius = (BOARD_PHYSICAL.rings.innerBull + BOARD_PHYSICAL.rings.outerBull) / 2;
-
-      expect(result.x).toBeCloseTo(expectedRadius, 2);
+      expect(result.x).toBeCloseTo(OUTER_BULL_DISPLAY_RADIUS, 2);
       expect(result.y).toBeCloseTo(0, 2);
     });
   });
@@ -202,7 +205,9 @@ describe('getDisplayCoordinates', () => {
       const ringCenterRadius =
         (BOARD_PHYSICAL.rings.outerBull + BOARD_PHYSICAL.rings.tripleInner) / 2;
       const currentRadius = 90;
-      const expectedRadius = currentRadius + (ringCenterRadius - currentRadius) * 0.2;
+      const expectedRadius =
+        currentRadius +
+        (ringCenterRadius - currentRadius) * DART_DISPLAY_ADJUSTMENT.segmentCenterPullFactor;
 
       const actualRadius = Math.sqrt(result.x ** 2 + result.y ** 2);
 
@@ -223,7 +228,9 @@ describe('getDisplayCoordinates', () => {
       const ringCenterRadius =
         (BOARD_PHYSICAL.rings.tripleOuter + BOARD_PHYSICAL.rings.doubleInner) / 2;
       const currentRadius = 130;
-      const expectedRadius = currentRadius + (ringCenterRadius - currentRadius) * 0.2;
+      const expectedRadius =
+        currentRadius +
+        (ringCenterRadius - currentRadius) * DART_DISPLAY_ADJUSTMENT.segmentCenterPullFactor;
 
       const actualRadius = Math.sqrt(result.x ** 2 + result.y ** 2);
 
@@ -244,10 +251,8 @@ describe('getDisplayCoordinates', () => {
 
       // Assert
       // アウターブルとして扱われるので、半径11.175mmの円周上に配置される
-      const expectedRadius = (BOARD_PHYSICAL.rings.innerBull + BOARD_PHYSICAL.rings.outerBull) / 2;
-
       expect(result.x).toBeCloseTo(0, 2);
-      expect(result.y).toBeCloseTo(-expectedRadius, 2);
+      expect(result.y).toBeCloseTo(-OUTER_BULL_DISPLAY_RADIUS, 2);
     });
 
     test('ダブルリングの外側境界付近（r=169mm）', () => {
@@ -276,7 +281,7 @@ describe('getDisplayCoordinates', () => {
       const result = getDisplayCoordinates(coords);
 
       // Assert
-      expect(result.x).toBeCloseTo(180, 2);
+      expect(result.x).toBeCloseTo(DART_DISPLAY_ADJUSTMENT.outRadius, 2);
       expect(result.y).toBeCloseTo(0, 2);
     });
 

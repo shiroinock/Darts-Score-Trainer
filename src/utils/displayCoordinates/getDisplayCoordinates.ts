@@ -15,13 +15,9 @@
 
 import type { Coordinates } from '../../types';
 import { BOARD_PHYSICAL } from '../constants/boardPhysical.js';
+import { DART_DISPLAY_ADJUSTMENT } from '../constants/dartMarkerRadii.js';
 import { SEGMENTS } from '../constants/segments.js';
 import { coordinateToScoreDetail } from '../scoreCalculator/coordinateToScoreDetail.js';
-
-/**
- * アウト表示用の半径（mm）
- */
-const OUT_DISPLAY_RADIUS = 180;
 
 /**
  * アウターブル表示用の半径（mm）
@@ -29,11 +25,6 @@ const OUT_DISPLAY_RADIUS = 180;
  */
 const OUTER_BULL_DISPLAY_RADIUS =
   (BOARD_PHYSICAL.rings.innerBull + BOARD_PHYSICAL.rings.outerBull) / 2;
-
-/**
- * セグメント中心への引っ張り率（20%）
- */
-const PULL_FACTOR = 0.2;
 
 /**
  * セグメント角度（18度 = π/10ラジアン）
@@ -99,11 +90,16 @@ function polarToCartesian(radius: number, angle: number): Coordinates {
  * @returns 正規化された角度差分（-π ≤ result ≤ π）
  */
 function normalizeAngleDifference(angleDiff: number): number {
-  let normalized = angleDiff;
-  while (normalized > Math.PI) {
-    normalized -= 2 * Math.PI;
+  // NaN/Infinityのガード（防御的プログラミング）
+  if (!Number.isFinite(angleDiff)) {
+    return 0;
   }
-  while (normalized < -Math.PI) {
+
+  // 剰余演算による正規化（whileループより効率的）
+  let normalized = angleDiff % (2 * Math.PI);
+  if (normalized > Math.PI) {
+    normalized -= 2 * Math.PI;
+  } else if (normalized < -Math.PI) {
     normalized += 2 * Math.PI;
   }
   return normalized;
@@ -190,7 +186,7 @@ export function getDisplayCoordinates(actualCoords: Coordinates): Coordinates {
   switch (ring) {
     case 'OUT':
       // アウトは半径200mmの円周上に配置
-      return placeOnCircle(actualCoords, OUT_DISPLAY_RADIUS);
+      return placeOnCircle(actualCoords, DART_DISPLAY_ADJUSTMENT.outRadius);
 
     case 'OUTER_BULL':
       // アウターブルは半径11.175mmの円周上に配置
@@ -200,7 +196,13 @@ export function getDisplayCoordinates(actualCoords: Coordinates): Coordinates {
       // インナーブルは中心（半径0）に向かって20%引っ張る
       // 角度はそのまま維持（中心なので角度は補正不要）
       const { angle } = cartesianToPolar(actualCoords);
-      return adjustInPolar(actualCoords, 0, angle, PULL_FACTOR, 0);
+      return adjustInPolar(
+        actualCoords,
+        0,
+        angle,
+        DART_DISPLAY_ADJUSTMENT.segmentCenterPullFactor,
+        0
+      );
     }
 
     case 'INNER_SINGLE': {
@@ -210,8 +212,8 @@ export function getDisplayCoordinates(actualCoords: Coordinates): Coordinates {
         actualCoords,
         RING_CENTER_RADIUS.INNER_SINGLE,
         targetAngle,
-        PULL_FACTOR,
-        PULL_FACTOR
+        DART_DISPLAY_ADJUSTMENT.segmentCenterPullFactor,
+        DART_DISPLAY_ADJUSTMENT.segmentCenterPullFactor
       );
     }
 
@@ -219,7 +221,13 @@ export function getDisplayCoordinates(actualCoords: Coordinates): Coordinates {
       // トリプルは幅が狭いので、半径はリング中心に完全に載せる（100%）
       // 角度はセグメント中心に向かって20%引っ張る
       const targetAngle = getSegmentCenterAngle(segmentNumber);
-      return adjustInPolar(actualCoords, RING_CENTER_RADIUS.TRIPLE, targetAngle, 1.0, PULL_FACTOR);
+      return adjustInPolar(
+        actualCoords,
+        RING_CENTER_RADIUS.TRIPLE,
+        targetAngle,
+        1.0,
+        DART_DISPLAY_ADJUSTMENT.segmentCenterPullFactor
+      );
     }
 
     case 'OUTER_SINGLE': {
@@ -229,8 +237,8 @@ export function getDisplayCoordinates(actualCoords: Coordinates): Coordinates {
         actualCoords,
         RING_CENTER_RADIUS.OUTER_SINGLE,
         targetAngle,
-        PULL_FACTOR,
-        PULL_FACTOR
+        DART_DISPLAY_ADJUSTMENT.segmentCenterPullFactor,
+        DART_DISPLAY_ADJUSTMENT.segmentCenterPullFactor
       );
     }
 
@@ -238,7 +246,13 @@ export function getDisplayCoordinates(actualCoords: Coordinates): Coordinates {
       // ダブルは幅が狭いので、半径はリング中心に完全に載せる（100%）
       // 角度はセグメント中心に向かって20%引っ張る
       const targetAngle = getSegmentCenterAngle(segmentNumber);
-      return adjustInPolar(actualCoords, RING_CENTER_RADIUS.DOUBLE, targetAngle, 1.0, PULL_FACTOR);
+      return adjustInPolar(
+        actualCoords,
+        RING_CENTER_RADIUS.DOUBLE,
+        targetAngle,
+        1.0,
+        DART_DISPLAY_ADJUSTMENT.segmentCenterPullFactor
+      );
     }
   }
 }
