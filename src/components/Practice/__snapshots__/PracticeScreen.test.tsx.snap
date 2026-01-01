@@ -98,6 +98,14 @@ exports[`PracticeScreen > スナップショットテスト > Feedback表示中�
             </div>
           </div>
         </div>
+        <div
+          data-dart-count="1"
+          data-testid="mock-zoom-view"
+        >
+          Mock ZoomView (
+          1
+           darts)
+        </div>
       </section>
       <section
         class="practice-screen__interaction-section"
@@ -320,6 +328,14 @@ exports[`PracticeScreen > スナップショットテスト > displayedDartsが0
                darts)
             </div>
           </div>
+        </div>
+        <div
+          data-dart-count="0"
+          data-testid="mock-zoom-view"
+        >
+          Mock ZoomView (
+          0
+           darts)
         </div>
       </section>
       <section
@@ -575,6 +591,14 @@ exports[`PracticeScreen > スナップショットテスト > displayedDartsが3
             </div>
           </div>
         </div>
+        <div
+          data-dart-count="3"
+          data-testid="mock-zoom-view"
+        >
+          Mock ZoomView (
+          3
+           darts)
+        </div>
       </section>
       <section
         class="practice-screen__interaction-section"
@@ -828,6 +852,14 @@ exports[`PracticeScreen > スナップショットテスト > gameState="practic
                darts)
             </div>
           </div>
+        </div>
+        <div
+          data-dart-count="1"
+          data-testid="mock-zoom-view"
+        >
+          Mock ZoomView (
+          1
+           darts)
         </div>
       </section>
       <section
@@ -1107,6 +1139,14 @@ exports[`PracticeScreen > スナップショットテスト > 問題数モード
             </div>
           </div>
         </div>
+        <div
+          data-dart-count="1"
+          data-testid="mock-zoom-view"
+        >
+          Mock ZoomView (
+          1
+           darts)
+        </div>
       </section>
       <section
         class="practice-screen__interaction-section"
@@ -1360,6 +1400,14 @@ exports[`PracticeScreen > スナップショットテスト > 時間制限モー
                darts)
             </div>
           </div>
+        </div>
+        <div
+          data-dart-count="1"
+          data-testid="mock-zoom-view"
+        >
+          Mock ZoomView (
+          1
+           darts)
         </div>
       </section>
       <section
@@ -1627,6 +1675,14 @@ exports[`PracticeScreen > スナップショットテスト > 時間制限モー
             </div>
           </div>
         </div>
+        <div
+          data-dart-count="1"
+          data-testid="mock-zoom-view"
+        >
+          Mock ZoomView (
+          1
+           darts)
+        </div>
       </section>
       <section
         class="practice-screen__interaction-section"
@@ -1892,6 +1948,14 @@ exports[`PracticeScreen > スナップショットテスト > 時間制限モー
                darts)
             </div>
           </div>
+        </div>
+        <div
+          data-dart-count="1"
+          data-testid="mock-zoom-view"
+        >
+          Mock ZoomView (
+          1
+           darts)
         </div>
       </section>
       <section

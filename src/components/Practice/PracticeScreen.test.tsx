@@ -91,6 +91,15 @@ vi.mock('../DartBoard/P5Canvas', () => ({
   ),
 }));
 
+// ZoomViewコンポーネントをモック化
+vi.mock('../DartBoard/ZoomView', () => ({
+  ZoomView: ({ dartCount }: { coords: unknown; dartCount: number; visibleDarts: unknown }) => (
+    <div data-testid="mock-zoom-view" data-dart-count={dartCount}>
+      Mock ZoomView ({dartCount} darts)
+    </div>
+  ),
+}));
+
 // useTimerフックとusePracticeSessionフックをモック化（実際のタイマー動作はhook自体のテストで検証）
 vi.mock('../../hooks/useTimer', () => ({
   useTimer: vi.fn(),

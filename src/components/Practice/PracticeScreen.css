@@ -35,6 +35,7 @@
 
 /* ボードセクション - アスペクト比を維持 */
 .practice-screen__board-section {
+  position: relative; /* ZoomViewの絶対配置の基準 */
   flex: 1;
   display: flex;
   justify-content: center;

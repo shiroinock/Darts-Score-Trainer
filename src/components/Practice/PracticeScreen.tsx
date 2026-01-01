@@ -20,6 +20,7 @@ import { END_REASONS } from '../../types';
 import { ONE_DART_FINISHABLE } from '../../utils/constants';
 import { isGameFinished } from '../../utils/gameLogic';
 import { DartBoard } from '../DartBoard/DartBoard';
+import { ZoomView } from '../DartBoard/ZoomView';
 import { BustQuestion } from './BustQuestion';
 import { Feedback } from './Feedback';
 import { NumPad } from './NumPad';
@@ -67,6 +68,7 @@ export function PracticeScreen(): JSX.Element {
   const roundStartScore = useGameStore((state) => state.roundStartScore);
   const remainingScore = useGameStore((state) => state.remainingScore);
   const startingScore = useGameStore((state) => state.config.startingScore);
+  const visibleDarts = useGameStore((state) => state.visibleDarts);
 
   // アクション関数を取得
   const resetToSetup = useGameStore((state) => state.resetToSetup);
@@ -175,6 +177,11 @@ export function PracticeScreen(): JSX.Element {
         {/* 左カラム: ダーツボード */}
         <section className="practice-screen__board-section">
           <DartBoard coords={dartCoords} dartCount={dartCount} />
+          <ZoomView
+            coords={dartCoords}
+            dartCount={dartCount}
+            visibleDarts={visibleDarts}
+          />
         </section>
 
         {/* 右カラム: 問題とインタラクション */}
