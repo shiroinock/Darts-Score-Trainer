@@ -329,9 +329,11 @@ export function drawNumbers(p5: p5Types, transform: CoordinateTransform): void {
 
 /**
  * ダーツマーカー（投擲位置の印）を描画する
+ * ピン型マーカー：上部に円（色付き+番号）、下部に三角形（先端が着地点）
+ *
  * @param p5 p5インスタンス
  * @param transform 座標変換インスタンス
- * @param coords 物理座標（mm単位）
+ * @param coords 物理座標（mm単位）- 三角形の先端（着地点）
  * @param color ダーツの色（例: '#FF6B6B'）
  * @param index ダーツの番号（0, 1, 2 → 表示は 1, 2, 3）
  */
@@ -342,43 +344,96 @@ export function drawDartMarker(
   color: string,
   index: number
 ): void {
-  // 物理座標を画面座標に変換
-  const screenPos = transform.physicalToScreen(coords.x, coords.y);
-
   // マーカーのサイズ（物理座標で定義）
   const outerRadiusPhysical = DART_MARKER_RADII.outer;
   const innerRadiusPhysical = DART_MARKER_RADII.inner;
+  const pinLengthPhysical = DART_MARKER_RADII.pinLength;
 
   // 物理座標から画面座標への変換
   const outerRadius = transform.physicalDistanceToScreen(outerRadiusPhysical);
   const innerRadius = transform.physicalDistanceToScreen(innerRadiusPhysical);
 
-  // 外側の円（色付き）を描画
+  // 着地点（三角形の先端）の画面座標
+  const tipScreen = transform.physicalToScreen(coords.x, coords.y);
+
+  // 円の中心（物理座標）: 着地点からpinLength分上（Y軸負方向）
+  const circlePhysical = {
+    x: coords.x,
+    y: coords.y - pinLengthPhysical,
+  };
+  const circleScreen = transform.physicalToScreen(circlePhysical.x, circlePhysical.y);
+
+  // 三角形の頂点座標（物理座標）
+  const trianglePhysical = {
+    tip: coords, // 先端（着地点）
+    leftBase: { x: coords.x - outerRadiusPhysical, y: coords.y - pinLengthPhysical }, // 左下
+    rightBase: { x: coords.x + outerRadiusPhysical, y: coords.y - pinLengthPhysical }, // 右下
+  };
+
+  // 三角形の頂点を画面座標に変換
+  const triangleScreen = {
+    tip: tipScreen,
+    leftBase: transform.physicalToScreen(trianglePhysical.leftBase.x, trianglePhysical.leftBase.y),
+    rightBase: transform.physicalToScreen(
+      trianglePhysical.rightBase.x,
+      trianglePhysical.rightBase.y
+    ),
+  };
+
+  // 1. 下部の三角形を描画（色付き）
   p5.noStroke();
   p5.fill(color);
-  p5.circle(screenPos.x, screenPos.y, outerRadius * 2);
+  p5.triangle(
+    triangleScreen.tip.x,
+    triangleScreen.tip.y,
+    triangleScreen.leftBase.x,
+    triangleScreen.leftBase.y,
+    triangleScreen.rightBase.x,
+    triangleScreen.rightBase.y
+  );
 
-  // 内側の円（白）を描画
+  // 2. 上部の外側の円（色付き）を描画
+  p5.fill(color);
+  p5.circle(circleScreen.x, circleScreen.y, outerRadius * 2);
+
+  // 3. 上部の内側の円（白）を描画
   p5.fill('#FFFFFF');
-  p5.circle(screenPos.x, screenPos.y, innerRadius * 2);
+  p5.circle(circleScreen.x, circleScreen.y, innerRadius * 2);
 
-  // 番号を描画（index + 1 を表示: 0→1, 1→2, 2→3）
+  // 4. 番号を描画（index + 1 を表示: 0→1, 1→2, 2→3）
   p5.textAlign(p5.CENTER, p5.CENTER);
   p5.fill('#000000'); // 黒色
   p5.noStroke();
   p5.textSize(DART_MARKER_TEXT_SIZE);
-  p5.text((index + 1).toString(), screenPos.x, screenPos.y);
+  p5.text((index + 1).toString(), circleScreen.x, circleScreen.y);
+}
+
+/**
+ * 凡例のクリック可能領域
+ */
+export interface LegendClickableArea {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  index: number;
 }
 
 /**
  * ダーツマーカーの凡例を描画する（3投モード用）
  * @param p5 p5インスタンス
  * @param dartCount 表示するダーツの本数（0, 1, 2, 3）
+ * @param visibleDarts ダーツの表示/非表示状態の配列
+ * @returns クリック可能領域の配列
  */
-export function drawLegend(p5: p5Types, dartCount: number): void {
+export function drawLegend(
+  p5: p5Types,
+  dartCount: number,
+  visibleDarts: boolean[]
+): LegendClickableArea[] {
   // 表示条件: dartCountが0の場合は何も描画しない
   if (dartCount === 0) {
-    return;
+    return [];
   }
 
   // ダーツの色配列
@@ -388,24 +443,47 @@ export function drawLegend(p5: p5Types, dartCount: number): void {
   // 共通の描画設定
   p5.noStroke();
 
+  // クリック可能領域を記録
+  const clickableAreas: LegendClickableArea[] = [];
+
   // dartCountの数だけ凡例を描画（最大3本まで）
   const count = Math.min(dartCount, dartColors.length);
   for (let i = 0; i < count; i++) {
     // Y座標を計算
     const y = LEGEND_LAYOUT.topMargin + i * LEGEND_LAYOUT.lineHeight;
 
+    // 非表示の場合は透明度を下げる
+    const isVisible = visibleDarts[i] !== false; // デフォルトはtrue
+    const alpha = isVisible ? 255 : 77; // 非表示時は30%の不透明度
+
     // 色付き円を描画
-    p5.fill(dartColors[i]);
+    const color = dartColors[i];
+    const colorWithAlpha = `${color}${Math.round(alpha).toString(16).padStart(2, '0')}`;
+    p5.fill(colorWithAlpha);
     p5.circle(LEGEND_LAYOUT.leftMargin, y, LEGEND_LAYOUT.circleDiameter);
 
     // テキストを描画
     p5.textAlign(p5.LEFT, p5.CENTER);
-    p5.fill('#FFFFFF'); // 白色
+    const textAlpha = isVisible ? 255 : 77;
+    p5.fill(`#FFFFFF${Math.round(textAlpha).toString(16).padStart(2, '0')}`);
     p5.textSize(LEGEND_TEXT_SIZE);
     p5.text(
       dartLabels[i],
       LEGEND_LAYOUT.leftMargin + LEGEND_LAYOUT.circleDiameter / 2 + LEGEND_LAYOUT.textOffset,
       y
     );
+
+    // クリック可能領域を記録（テキストの幅を推定: 文字数 * フォントサイズ * 0.6）
+    const textWidth = dartLabels[i].length * LEGEND_TEXT_SIZE * 0.6;
+    const totalWidth = LEGEND_LAYOUT.circleDiameter + LEGEND_LAYOUT.textOffset + textWidth;
+    clickableAreas.push({
+      x: LEGEND_LAYOUT.leftMargin - LEGEND_LAYOUT.circleDiameter / 2,
+      y: y - LEGEND_LAYOUT.lineHeight / 2,
+      width: totalWidth,
+      height: LEGEND_LAYOUT.lineHeight,
+      index: i,
+    });
   }
+
+  return clickableAreas;
 }

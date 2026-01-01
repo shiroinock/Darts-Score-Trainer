@@ -444,7 +444,7 @@ function validateShuffleBagState(
  */
 interface GameStore {
   // ============================================================
-  // 基本状態（13個）
+  // 基本状態（14個）
   // ============================================================
   gameState: GameState;
   config: PracticeConfig;
@@ -452,6 +452,7 @@ interface GameStore {
   currentQuestion: Question | null;
   currentThrowIndex: number;
   displayedDarts: ThrowResult[];
+  visibleDarts: boolean[]; // ダーツマーカーの表示/非表示状態（凡例クリックで制御）
   remainingScore: number;
   roundStartScore: number;
   stats: Stats;
@@ -471,7 +472,7 @@ interface GameStore {
   setStdDev: (stdDevMM: number) => void;
 
   // ============================================================
-  // ゲームアクション（9個）
+  // ゲームアクション（10個）
   // ============================================================
   startPractice: () => void;
   generateQuestion: () => void;
@@ -484,6 +485,7 @@ interface GameStore {
   exitDebugScreen: () => void;
   handleBust: () => void;
   tick: () => void;
+  toggleDartVisibility: (index: number) => void; // ダーツマーカーの表示/非表示をトグル
 
   // ============================================================
   // 計算プロパティ（3個）
@@ -509,6 +511,7 @@ export const useGameStore = create<GameStore>()(
       currentQuestion: null,
       currentThrowIndex: 0,
       displayedDarts: [],
+      visibleDarts: [true, true, true], // 全てのダーツを表示（デフォルト）
       remainingScore: 0,
       roundStartScore: 0,
       stats: { ...initialStats },
@@ -862,6 +865,31 @@ export const useGameStore = create<GameStore>()(
             if (state.elapsedTime >= timeLimit) {
               state.gameState = 'results';
               state.isTimerRunning = false;
+            }
+          }
+        }),
+
+      /**
+       * ダーツマーカーの表示/非表示をトグル（排他的表示）
+       * クリックされたダーツのみを表示し、他を非表示にする
+       * すでにそのダーツだけが表示されている場合は、全て表示に戻す
+       */
+      toggleDartVisibility: (index) =>
+        set((state) => {
+          if (index >= 0 && index < state.visibleDarts.length) {
+            // クリックされたダーツのみが表示されているかチェック
+            const onlyThisVisible = state.visibleDarts.every((visible, i) =>
+              i === index ? visible : !visible
+            );
+
+            if (onlyThisVisible) {
+              // すでにこのダーツだけ表示 → 全て表示に戻す
+              state.visibleDarts.fill(true);
+            } else {
+              // クリックされたダーツのみ表示、他を非表示
+              state.visibleDarts.forEach((_, i) => {
+                state.visibleDarts[i] = i === index;
+              });
             }
           }
         }),
