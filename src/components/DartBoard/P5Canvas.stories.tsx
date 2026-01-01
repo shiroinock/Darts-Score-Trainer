@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { DART_POSITIONS } from '../../stories/fixtures/sampleData';
 import { P5Canvas } from './P5Canvas';
 
 const meta = {
@@ -30,16 +31,12 @@ export const EmptyBoard: Story = {
 };
 
 export const SingleDartOnTriple20: Story = {
-  args: { coords: [{ x: 0, y: -103 }], dartCount: 1, width: 600, height: 600 },
+  args: { coords: [DART_POSITIONS.T20_CENTER], dartCount: 1, width: 600, height: 600 },
 };
 
 export const ThreeDartsWithLegend: Story = {
   args: {
-    coords: [
-      { x: 0, y: -103 },
-      { x: 50, y: -90 },
-      { x: -30, y: -95 },
-    ],
+    coords: [DART_POSITIONS.T20_CENTER, { x: 50, y: -90 }, { x: -30, y: -95 }],
     dartCount: 3,
     width: 600,
     height: 600,
@@ -47,5 +44,5 @@ export const ThreeDartsWithLegend: Story = {
 };
 
 export const BullsEyeHit: Story = {
-  args: { coords: [{ x: 0, y: 0 }], dartCount: 1, width: 600, height: 600 },
+  args: { coords: [DART_POSITIONS.BULL_CENTER], dartCount: 1, width: 600, height: 600 },
 };

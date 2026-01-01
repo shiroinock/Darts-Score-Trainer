@@ -3,10 +3,10 @@ import { NumPad } from './NumPad';
 
 /**
  * デフォルトのonConfirmハンドラー
- * コンソールに値を出力します
+ * ストーリーでの動作確認用（何もしない）
  */
-const defaultOnConfirm = (value: number) => {
-  console.log('Confirmed value:', value);
+const defaultOnConfirm = (_value: number) => {
+  // Storybook上での動作確認用のハンドラー
 };
 
 const meta = {
