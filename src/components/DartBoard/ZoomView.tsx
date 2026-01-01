@@ -29,25 +29,25 @@ interface ZoomViewProps {
 }
 
 /** ズームビューのキャンバスサイズ（デスクトップ） */
-const ZOOM_CANVAS_SIZE_DESKTOP = {
+export const ZOOM_CANVAS_SIZE_DESKTOP = {
   width: 280,
   height: 280,
 } as const;
 
 /** ズームビューのキャンバスサイズ（タブレット: 640px以下） */
-const ZOOM_CANVAS_SIZE_TABLET = {
+export const ZOOM_CANVAS_SIZE_TABLET = {
   width: 220,
   height: 220,
 } as const;
 
 /** ズームビューのキャンバスサイズ（モバイル: 480px以下） */
-const ZOOM_CANVAS_SIZE_MOBILE = {
+export const ZOOM_CANVAS_SIZE_MOBILE = {
   width: 160,
   height: 160,
 } as const;
 
 /** デフォルトのズーム倍率 */
-const DEFAULT_ZOOM_FACTOR = 8.0;
+export const DEFAULT_ZOOM_FACTOR = 8.0;
 
 /**
  * 画面幅に応じて適切なキャンバスサイズを取得
@@ -114,6 +114,7 @@ export function ZoomView({
   const draw = (p5: any): void => {
     // transformが初期化されていない場合は何もしない
     if (!transformRef.current) {
+      console.warn('ZoomView: CoordinateTransform is not initialized');
       return;
     }
 
@@ -155,6 +156,7 @@ export function ZoomView({
   // biome-ignore lint/suspicious/noExplicitAny: react-p5の型定義の制限
   const mousePressed = (p5: any): void => {
     if (!transformRef.current) {
+      console.warn('ZoomView: CoordinateTransform is not initialized in mousePressed');
       return;
     }
 
@@ -230,7 +232,13 @@ export function ZoomView({
   }
 
   return (
-    <div className="zoom-view" title="クリックでズーム位置を変更">
+    <div
+      className="zoom-view"
+      title="クリックでズーム位置を変更"
+      role="application"
+      aria-label="ダーツ着地点のズームビュー、クリックでズーム位置を変更できます"
+      aria-live="polite"
+    >
       <Sketch setup={setup} draw={draw} mousePressed={mousePressed} />
     </div>
   );

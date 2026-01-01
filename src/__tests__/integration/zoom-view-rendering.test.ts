@@ -13,15 +13,15 @@
 import type p5Types from 'p5';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { drawBoard, drawDartMarker } from '../../components/DartBoard/dartBoardRenderer';
+import {
+  DEFAULT_ZOOM_FACTOR,
+  ZOOM_CANVAS_SIZE_DESKTOP,
+  ZOOM_CANVAS_SIZE_MOBILE,
+  ZOOM_CANVAS_SIZE_TABLET,
+} from '../../components/DartBoard/ZoomView';
 import type { Coordinates } from '../../types';
 import { BOARD_PHYSICAL, DART_COLORS } from '../../utils/constants/index.js';
 import { CoordinateTransform } from '../../utils/coordinateTransform';
-
-// ZoomViewの定数値をインポート（テストで検証するため）
-const DEFAULT_ZOOM_FACTOR = 6.0;
-const ZOOM_CANVAS_SIZE_DESKTOP = { width: 280, height: 280 };
-const ZOOM_CANVAS_SIZE_TABLET = { width: 220, height: 220 };
-const ZOOM_CANVAS_SIZE_MOBILE = { width: 160, height: 160 };
 
 describe('zoom-view-rendering integration', () => {
   let mockP5: p5Types;
@@ -57,7 +57,7 @@ describe('zoom-view-rendering integration', () => {
   });
 
   describe('ズーム倍率とCoordinateTransformの統合', () => {
-    describe('正常系 - デフォルトズーム倍率（6.0倍）', () => {
+    describe('正常系 - デフォルトズーム倍率（8.0倍）', () => {
       test('物理半径がズーム倍率で除算されてCoordinateTransformに渡される', () => {
         // Arrange
         const zoomFactor = DEFAULT_ZOOM_FACTOR;
@@ -70,8 +70,8 @@ describe('zoom-view-rendering integration', () => {
         const transform = new CoordinateTransform(canvasWidth, canvasHeight, zoomedPhysicalRadius);
 
         // Assert
-        // ズーム倍率6.0倍の場合、物理半径は225mm / 6.0 = 37.5mm
-        expect(zoomedPhysicalRadius).toBe(37.5);
+        // ズーム倍率8.0倍の場合、物理半径は225mm / 8.0 = 28.125mm
+        expect(zoomedPhysicalRadius).toBe(28.125);
 
         // CoordinateTransformが正常に初期化されることを確認
         expect(transform).toBeDefined();
@@ -855,7 +855,7 @@ describe('zoom-view-rendering integration', () => {
         const scale = transform.getScale();
         expect(screenDistance).toBeCloseTo(physicalDistance * scale, 1);
 
-        // ズーム倍率6.0倍の場合、通常（ズーム1倍）より拡大される
+        // ズーム倍率8.0倍の場合、通常（ズーム1倍）より拡大される
         // 通常のtransformと比較
         const normalTransform = new CoordinateTransform(
           canvasWidth,
@@ -864,7 +864,7 @@ describe('zoom-view-rendering integration', () => {
         );
         const normalScreenDistance = normalTransform.physicalDistanceToScreen(physicalDistance);
 
-        // ズーム時の方が大きく表示される（約6.0倍）
+        // ズーム時の方が大きく表示される（約8.0倍）
         expect(screenDistance).toBeGreaterThan(normalScreenDistance * 2);
       });
     });
@@ -925,7 +925,7 @@ describe('zoom-view-rendering integration', () => {
     });
 
     describe('正常系 - ズームにより相対位置が明確になる', () => {
-      test('ズーム倍率6.0倍により、スパイダーラインとダーツの距離が拡大される', () => {
+      test('ズーム倍率8.0倍により、スパイダーラインとダーツの距離が拡大される', () => {
         // Arrange
         const zoomFactor = DEFAULT_ZOOM_FACTOR;
         const canvasWidth = ZOOM_CANVAS_SIZE_DESKTOP.width;
@@ -938,10 +938,10 @@ describe('zoom-view-rendering integration', () => {
         const screenDistance = transform.physicalDistanceToScreen(2);
 
         // Assert
-        // ズーム倍率6.0倍により、2mmの距離が拡大されて視認しやすくなる
+        // ズーム倍率8.0倍により、2mmの距離が拡大されて視認しやすくなる
         expect(screenDistance).toBeGreaterThan(0);
 
-        // 通常のボード表示（ズーム倍率1倍）と比較して、6.0倍大きく表示される
+        // 通常のボード表示（ズーム倍率1倍）と比較して、8.0倍大きく表示される
         const normalTransform = new CoordinateTransform(
           canvasWidth,
           canvasHeight,
@@ -949,7 +949,7 @@ describe('zoom-view-rendering integration', () => {
         );
         const normalScreenDistance = normalTransform.physicalDistanceToScreen(2);
 
-        // ズーム時の距離は通常時の約6.0倍
+        // ズーム時の距離は通常時の約8.0倍
         expect(screenDistance).toBeGreaterThan(normalScreenDistance * 3);
       });
     });
