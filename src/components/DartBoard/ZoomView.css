@@ -1,0 +1,46 @@
+/* ======================== */
+/* ZoomView Styles          */
+/* ======================== */
+
+.zoom-view {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  width: 280px;
+  height: 280px;
+  border: var(--border-width-md) solid var(--color-bg-white);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  background-color: #000000;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  z-index: 100;
+}
+
+.zoom-view:hover {
+  box-shadow: var(--shadow-xl);
+  border-color: var(--color-primary);
+}
+
+.zoom-view:active {
+  transform: scale(0.98);
+}
+
+/* モバイル対応: 640px以下でサイズ縮小 */
+@media (max-width: 640px) {
+  .zoom-view {
+    width: 220px;
+    height: 220px;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+  }
+}
+
+/* 極小画面: 480px以下でさらに縮小 */
+@media (max-width: 480px) {
+  .zoom-view {
+    width: 160px;
+    height: 160px;
+  }
+}

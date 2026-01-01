@@ -1240,3 +1240,102 @@ CSS関連のタスク（レイアウト調整、レスポンシブ対応など�
 | `src/hooks/*.ts` | `{"tddMode":"test-first","testPattern":"hook","placement":"colocated"}` |
 | `src/utils/*.ts` | `{"tddMode":"test-first","testPattern":"unit","placement":"colocated"}` |
 | `src/components/*/*.tsx` | `{"tddMode":"test-later","testPattern":"component","placement":"colocated"}` |
+
+### 2026-01-01: 新規コンポーネント作成タスクの判定と出力途中切れ対策
+
+#### 背景
+「ZoomViewコンポーネントを作成（src/components/DartBoard/ZoomView.tsx）」のテストパターン判定において、出力が `{"` の直後で途中切れする問題が発生した。新規コンポーネント作成タスクの判定時の問題点：
+1. まだ存在しないファイルに対して過剰な分析を試みた
+2. JSON出力開始が遅れた
+3. ファイルの種類（.tsx）から標準判定を即座に適用しなかった
+
+#### 問題の根本原因
+1. **標準パターンの即時適用不足**: `.tsx` ファイルは常に `test-later, component, colocated` であることが確立しているのに、個別分析を試みた
+2. **存在しないファイルへの不必要な処理**: 新規作成ファイルは実装後のテストが必須なので、分析不要
+3. **出力形式の冗長性**: 簡潔な1行JSON形式を使用すべきだった
+
+#### 追加ガイドライン
+
+##### 新規コンポーネント作成タスクの最優先ルール
+
+**最重要**: 拡張子が `.tsx` の新規ファイルに対しては、ファイルの存在確認や詳細分析を一切行わず、即座に標準パターンを適用すること
+
+1. **新規 .tsx ファイルの標準判定**
+   ```typescript
+   if (file.endsWith('.tsx') && !fileExists(file)) {
+     return {"file": file, "tddMode": "test-later", "testPattern": "component", "placement": "colocated", "testFilePath": file.replace('.tsx', '.test.tsx')};
+   }
+   ```
+
+2. **ZoomView.tsx の即時判定例**
+   タスク詳細（ズーム機能、タップ操作など）に関係なく、即座に以下を出力：
+   ```json
+   {"file":"src/components/DartBoard/ZoomView.tsx","tddMode":"test-later","testPattern":"component","placement":"colocated","testFilePath":"src/components/DartBoard/ZoomView.test.tsx"}
+   ```
+
+3. **導入文の完全省略**
+   新規コンポーネント判定時は、導入文を一切書かずにJSON出力のみを行う
+
+##### 拡張子ベースの超高速判定
+
+以下の拡張子は分析不要で即座に標準パターンを適用：
+
+| 拡張子 | 新規ファイル判定 |
+|-------|--------------|
+| `.tsx` | `{"tddMode":"test-later","testPattern":"component","placement":"colocated"}` |
+| `.ts` (components/ 以外) | `{"tddMode":"test-first","testPattern":"unit","placement":"colocated"}` |
+| `.ts` (stores/) | `{"tddMode":"test-first","testPattern":"store","placement":"colocated"}` |
+| `.ts` (hooks/) | `{"tddMode":"test-first","testPattern":"hook","placement":"colocated"}` |
+| `.css` | エラー応答（テスト対象外） |
+
+##### 出力の完全性確保の最終手段
+
+JSON出力が途中で切れるリスクを最小化するため：
+
+1. **最小限のフィールドのみ出力**
+   ```json
+   {"file":"[パス]","tddMode":"test-later","testPattern":"component","testFilePath":"[テストパス]"}
+   ```
+   `placement` は省略可能（常に colocated）
+
+2. **改行なしの1行JSON**
+   複数行のフォーマットではなく、1行で完結させる
+
+3. **閉じ括弧の優先確保**
+   出力制限に達しそうな場合は、フィールドを省略してでも `}` を出力する
+
+##### 新規コンポーネント判定の処理フロー
+
+```typescript
+function determineTestPattern(file: string, taskDescription: string): Output {
+  // ステップ1: 拡張子チェック
+  if (file.endsWith('.css')) {
+    return errorResponse("CSS file cannot be tested");
+  }
+
+  // ステップ2: 存在確認（新規作成の場合）
+  if (!fileExists(file)) {
+    // ステップ3: 拡張子ベース判定（分析なし）
+    if (file.endsWith('.tsx')) {
+      return {
+        file,
+        tddMode: "test-later",
+        testPattern: "component",
+        placement: "colocated",
+        testFilePath: file.replace('.tsx', '.test.tsx')
+      };
+    }
+    // 他の拡張子も同様に標準パターン適用
+  }
+
+  // 既存ファイルの場合は従来のロジック
+  // ...
+}
+```
+
+##### 実行時の注意事項
+
+- タスク詳細（「2-3倍ズーム」「タップでズーム位置変更」など）は判定に一切影響しない
+- TODO.mdの内容も参照不要
+- 「モバイルデバイスでの視認性」などの要件も判定に無関係
+- ファイルパスと拡張子のみで判定完了
