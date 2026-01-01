@@ -15,14 +15,17 @@ const withMockStore =
   (Story: React.ComponentType) => {
     function StoryWrapper() {
       useEffect(() => {
-        const { configId = 'preset-basic', sessionConfig = { mode: 'count', count: 10 } } = options;
+        const {
+          configId = 'preset-basic',
+          sessionConfig = { mode: 'questions', questionCount: 10 },
+        } = options;
         const config = PRESETS[configId];
         useGameStore.setState({ config, sessionConfig });
 
         return () => {
           useGameStore.setState({
             config: PRESETS['preset-basic'],
-            sessionConfig: { mode: 'count', count: 10 },
+            sessionConfig: { mode: 'questions', questionCount: 10 },
           });
         };
       }, [options]);
@@ -65,7 +68,7 @@ export const Default: Story = {
   decorators: [
     withMockStore({
       configId: 'preset-basic',
-      sessionConfig: { mode: 'count', count: 10 },
+      sessionConfig: { mode: 'questions', questionCount: 10 },
     }),
   ],
 };
@@ -77,7 +80,7 @@ export const PlayerPractice20Questions: Story = {
   decorators: [
     withMockStore({
       configId: 'preset-player',
-      sessionConfig: { mode: 'count', count: 20 },
+      sessionConfig: { mode: 'questions', questionCount: 20 },
     }),
   ],
 };
@@ -89,7 +92,7 @@ export const CallerBasic3Minutes: Story = {
   decorators: [
     withMockStore({
       configId: 'preset-caller-basic',
-      sessionConfig: { mode: 'timer', seconds: 180 },
+      sessionConfig: { mode: 'time', timeLimit: 3 },
     }),
   ],
 };
@@ -101,31 +104,31 @@ export const CallerCumulative5Minutes: Story = {
   decorators: [
     withMockStore({
       configId: 'preset-caller-cumulative',
-      sessionConfig: { mode: 'timer', seconds: 300 },
+      sessionConfig: { mode: 'time', timeLimit: 5 },
     }),
   ],
 };
 
 /**
- * 総合練習、エンドレスモード
+ * 総合練習、50問
  */
-export const ComprehensiveEndless: Story = {
+export const Comprehensive50Questions: Story = {
   decorators: [
     withMockStore({
       configId: 'preset-comprehensive',
-      sessionConfig: { mode: 'endless' },
+      sessionConfig: { mode: 'questions', questionCount: 50 },
     }),
   ],
 };
 
 /**
- * 基礎練習、1分タイマー（短時間練習）
+ * 基礎練習、10分タイマー
  */
-export const BasicPractice1Minute: Story = {
+export const BasicPractice10Minutes: Story = {
   decorators: [
     withMockStore({
       configId: 'preset-basic',
-      sessionConfig: { mode: 'timer', seconds: 60 },
+      sessionConfig: { mode: 'time', timeLimit: 10 },
     }),
   ],
 };

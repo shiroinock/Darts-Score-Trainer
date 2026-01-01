@@ -22,7 +22,7 @@ const withMockStore = (options: MockOptions) => (Story: React.ComponentType) => 
         questionType = 'score',
         startingScore = 0,
         remainingScore = 501,
-        stats = { correct: 5, incorrect: 2, total: 7, currentStreak: 3, bestStreak: 5 },
+        stats = { correct: 5, total: 7, currentStreak: 3, bestStreak: 5 },
       } = options;
 
       useGameStore.setState({
@@ -92,14 +92,13 @@ export const CorrectSingleThrow: Story = {
         throws: [
           {
             landingPoint: { x: 0, y: -100 },
-            ring: 'triple',
+            ring: 'TRIPLE',
             segmentNumber: 20,
             score: 60,
           },
         ],
-        bustInfo: null,
       },
-      stats: { correct: 6, incorrect: 2, total: 8, currentStreak: 4, bestStreak: 5 },
+      stats: { correct: 6, total: 8, currentStreak: 4, bestStreak: 5 },
     }),
   ],
 };
@@ -120,14 +119,13 @@ export const IncorrectSingleThrow: Story = {
         throws: [
           {
             landingPoint: { x: 80, y: 0 },
-            ring: 'double',
+            ring: 'DOUBLE',
             segmentNumber: 16,
             score: 32,
           },
         ],
-        bustInfo: null,
       },
-      stats: { correct: 5, incorrect: 3, total: 8, currentStreak: 0, bestStreak: 5 },
+      stats: { correct: 5, total: 8, currentStreak: 0, bestStreak: 5 },
     }),
   ],
 };
@@ -148,26 +146,25 @@ export const CorrectThreeThrows180: Story = {
         throws: [
           {
             landingPoint: { x: 0, y: -100 },
-            ring: 'triple',
+            ring: 'TRIPLE',
             segmentNumber: 20,
             score: 60,
           },
           {
             landingPoint: { x: 0, y: -100 },
-            ring: 'triple',
+            ring: 'TRIPLE',
             segmentNumber: 20,
             score: 60,
           },
           {
             landingPoint: { x: 0, y: -100 },
-            ring: 'triple',
+            ring: 'TRIPLE',
             segmentNumber: 20,
             score: 60,
           },
         ],
-        bustInfo: null,
       },
-      stats: { correct: 10, incorrect: 0, total: 10, currentStreak: 10, bestStreak: 10 },
+      stats: { correct: 10, total: 10, currentStreak: 10, bestStreak: 10 },
     }),
   ],
 };
@@ -188,14 +185,12 @@ export const CorrectBull: Story = {
         throws: [
           {
             landingPoint: { x: 0, y: 0 },
-            ring: 'bull',
-            segmentNumber: null,
+            ring: 'INNER_BULL',
             score: 50,
           },
         ],
-        bustInfo: null,
       },
-      stats: { correct: 8, incorrect: 1, total: 9, currentStreak: 5, bestStreak: 7 },
+      stats: { correct: 8, total: 9, currentStreak: 5, bestStreak: 7 },
     }),
   ],
 };
@@ -216,14 +211,11 @@ export const CorrectMiss: Story = {
         throws: [
           {
             landingPoint: { x: 300, y: 0 },
-            ring: null,
-            segmentNumber: null,
             score: 0,
           },
         ],
-        bustInfo: null,
       },
-      stats: { correct: 5, incorrect: 3, total: 8, currentStreak: 2, bestStreak: 5 },
+      stats: { correct: 5, total: 8, currentStreak: 2, bestStreak: 5 },
     }),
   ],
 };
@@ -244,7 +236,7 @@ export const CorrectWithBustOver: Story = {
         throws: [
           {
             landingPoint: { x: 0, y: -100 },
-            ring: 'triple',
+            ring: 'TRIPLE',
             segmentNumber: 20,
             score: 60,
           },
@@ -257,7 +249,7 @@ export const CorrectWithBustOver: Story = {
       questionType: 'remaining',
       startingScore: 501,
       remainingScore: 41,
-      stats: { correct: 7, incorrect: 2, total: 9, currentStreak: 3, bestStreak: 5 },
+      stats: { correct: 7, total: 9, currentStreak: 3, bestStreak: 5 },
     }),
   ],
 };
@@ -278,7 +270,7 @@ export const CorrectWithBustFinishImpossible: Story = {
         throws: [
           {
             landingPoint: { x: 0, y: -100 },
-            ring: 'single',
+            ring: 'INNER_SINGLE',
             segmentNumber: 20,
             score: 20,
           },
@@ -291,7 +283,7 @@ export const CorrectWithBustFinishImpossible: Story = {
       questionType: 'remaining',
       startingScore: 501,
       remainingScore: 1,
-      stats: { correct: 12, incorrect: 3, total: 15, currentStreak: 4, bestStreak: 8 },
+      stats: { correct: 12, total: 15, currentStreak: 4, bestStreak: 8 },
     }),
   ],
 };
@@ -312,7 +304,7 @@ export const CorrectWithBustDoubleOutRequired: Story = {
         throws: [
           {
             landingPoint: { x: 0, y: -100 },
-            ring: 'single',
+            ring: 'INNER_SINGLE',
             segmentNumber: 20,
             score: 20,
           },
@@ -325,7 +317,7 @@ export const CorrectWithBustDoubleOutRequired: Story = {
       questionType: 'remaining',
       startingScore: 501,
       remainingScore: 0,
-      stats: { correct: 15, incorrect: 2, total: 17, currentStreak: 6, bestStreak: 8 },
+      stats: { correct: 15, total: 17, currentStreak: 6, bestStreak: 8 },
     }),
   ],
 };
@@ -346,17 +338,16 @@ export const GameCleared: Story = {
         throws: [
           {
             landingPoint: { x: 80, y: 0 },
-            ring: 'double',
+            ring: 'DOUBLE',
             segmentNumber: 16,
             score: 32,
           },
         ],
-        bustInfo: null,
       },
       questionType: 'remaining',
       startingScore: 501,
       remainingScore: 0,
-      stats: { correct: 20, incorrect: 3, total: 23, currentStreak: 10, bestStreak: 12 },
+      stats: { correct: 20, total: 23, currentStreak: 10, bestStreak: 12 },
     }),
   ],
 };
@@ -377,14 +368,13 @@ export const HighStreak: Story = {
         throws: [
           {
             landingPoint: { x: 0, y: -100 },
-            ring: 'triple',
+            ring: 'TRIPLE',
             segmentNumber: 20,
             score: 60,
           },
         ],
-        bustInfo: null,
       },
-      stats: { correct: 18, incorrect: 3, total: 21, currentStreak: 15, bestStreak: 15 },
+      stats: { correct: 18, total: 21, currentStreak: 15, bestStreak: 15 },
     }),
   ],
 };

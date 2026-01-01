@@ -35,7 +35,7 @@ const withMockStore =
             ],
             bustInfo: null,
           },
-          stats = { correct: 5, incorrect: 2, total: 7, currentStreak: 3, bestStreak: 5 },
+          stats = { correct: 5, total: 7, currentStreak: 3, bestStreak: 5 },
           displayedDarts = [
             {
               landingPoint: { x: 0, y: -103 },
@@ -49,13 +49,15 @@ const withMockStore =
         useGameStore.setState({
           gameState,
           config: {
+            configId: 'basic-practice',
+            configName: '基礎練習',
+            isPreset: true,
             throwUnit: 1,
             questionType: 'score',
             judgmentTiming: 'independent',
             stdDevMM: 30,
             startingScore,
             icon: '📚',
-            configName: '基礎練習',
           },
           sessionConfig,
           elapsedTime,
@@ -117,7 +119,7 @@ export const QuestionMode: Story = {
     withMockStore({
       gameState: 'practicing',
       sessionConfig: { mode: 'questions', questionCount: 10 },
-      stats: { correct: 5, incorrect: 2, total: 7, currentStreak: 3, bestStreak: 5 },
+      stats: { correct: 5, total: 7, currentStreak: 3, bestStreak: 5 },
     }),
   ],
 };
@@ -131,7 +133,7 @@ export const TimerMode: Story = {
       gameState: 'practicing',
       sessionConfig: { mode: 'time', timeLimit: 5 },
       elapsedTime: 180,
-      stats: { correct: 8, incorrect: 3, total: 11, currentStreak: 4, bestStreak: 6 },
+      stats: { correct: 8, total: 11, currentStreak: 4, bestStreak: 6 },
     }),
   ],
 };
@@ -146,7 +148,7 @@ export const Game501: Story = {
       sessionConfig: { mode: 'questions', questionCount: 20 },
       remainingScore: 301,
       startingScore: 501,
-      stats: { correct: 10, incorrect: 2, total: 12, currentStreak: 5, bestStreak: 7 },
+      stats: { correct: 10, total: 12, currentStreak: 5, bestStreak: 7 },
     }),
   ],
 };
@@ -159,7 +161,7 @@ export const HighAccuracy: Story = {
     withMockStore({
       gameState: 'practicing',
       sessionConfig: { mode: 'questions', questionCount: 20 },
-      stats: { correct: 18, incorrect: 2, total: 20, currentStreak: 10, bestStreak: 10 },
+      stats: { correct: 18, total: 20, currentStreak: 10, bestStreak: 10 },
     }),
   ],
 };
@@ -171,8 +173,8 @@ export const HighStreak: Story = {
   decorators: [
     withMockStore({
       gameState: 'practicing',
-      sessionConfig: { mode: 'questions', questionCount: 30 },
-      stats: { correct: 20, incorrect: 5, total: 25, currentStreak: 15, bestStreak: 15 },
+      sessionConfig: { mode: 'questions', questionCount: 50 },
+      stats: { correct: 20, total: 25, currentStreak: 15, bestStreak: 15 },
     }),
   ],
 };
@@ -190,7 +192,7 @@ export const ThreeDarts: Story = {
         { landingPoint: { x: 0, y: -103 }, score: 60 },
         { landingPoint: { x: 2, y: -103 }, score: 60 },
       ],
-      stats: { correct: 3, incorrect: 1, total: 4, currentStreak: 2, bestStreak: 2 },
+      stats: { correct: 3, total: 4, currentStreak: 2, bestStreak: 2 },
     }),
   ],
 };
@@ -203,7 +205,7 @@ export const InitialState: Story = {
     withMockStore({
       gameState: 'practicing',
       sessionConfig: { mode: 'questions', questionCount: 10 },
-      stats: { correct: 0, incorrect: 0, total: 0, currentStreak: 0, bestStreak: 0 },
+      stats: { correct: 0, total: 0, currentStreak: 0, bestStreak: 0 },
     }),
   ],
 };

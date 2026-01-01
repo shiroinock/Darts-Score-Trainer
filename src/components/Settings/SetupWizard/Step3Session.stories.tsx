@@ -5,7 +5,7 @@ import type { SessionConfig } from '../../../types';
 import { Step3Session } from './Step3Session';
 
 const withMockStore =
-  (sessionConfig: SessionConfig = { mode: 'count', count: 10 }) =>
+  (sessionConfig: SessionConfig = { mode: 'questions', questionCount: 10 }) =>
   (Story: React.ComponentType) => {
     function StoryWrapper() {
       useEffect(() => {
@@ -13,7 +13,7 @@ const withMockStore =
 
         return () => {
           useGameStore.setState({
-            sessionConfig: { mode: 'count', count: 10 },
+            sessionConfig: { mode: 'questions', questionCount: 10 },
           });
         };
       }, [sessionConfig]);
@@ -53,54 +53,47 @@ type Story = StoryObj<typeof meta>;
  * デフォルト状態（問題数モード、10問）
  */
 export const Default: Story = {
-  decorators: [withMockStore({ mode: 'count', count: 10 })],
-};
-
-/**
- * 問題数モード - 5問
- */
-export const Count5Questions: Story = {
-  decorators: [withMockStore({ mode: 'count', count: 5 })],
+  decorators: [withMockStore({ mode: 'questions', questionCount: 10 })],
 };
 
 /**
  * 問題数モード - 10問
  */
 export const Count10Questions: Story = {
-  decorators: [withMockStore({ mode: 'count', count: 10 })],
+  decorators: [withMockStore({ mode: 'questions', questionCount: 10 })],
 };
 
 /**
  * 問題数モード - 20問
  */
 export const Count20Questions: Story = {
-  decorators: [withMockStore({ mode: 'count', count: 20 })],
+  decorators: [withMockStore({ mode: 'questions', questionCount: 20 })],
 };
 
 /**
- * 時間制限モード - 1分
+ * 問題数モード - 50問
  */
-export const Timer1Minute: Story = {
-  decorators: [withMockStore({ mode: 'timer', seconds: 60 })],
+export const Count50Questions: Story = {
+  decorators: [withMockStore({ mode: 'questions', questionCount: 50 })],
 };
 
 /**
  * 時間制限モード - 3分
  */
 export const Timer3Minutes: Story = {
-  decorators: [withMockStore({ mode: 'timer', seconds: 180 })],
+  decorators: [withMockStore({ mode: 'time', timeLimit: 3 })],
 };
 
 /**
  * 時間制限モード - 5分
  */
 export const Timer5Minutes: Story = {
-  decorators: [withMockStore({ mode: 'timer', seconds: 300 })],
+  decorators: [withMockStore({ mode: 'time', timeLimit: 5 })],
 };
 
 /**
- * エンドレスモード
+ * 時間制限モード - 10分
  */
-export const EndlessMode: Story = {
-  decorators: [withMockStore({ mode: 'endless' })],
+export const Timer10Minutes: Story = {
+  decorators: [withMockStore({ mode: 'time', timeLimit: 10 })],
 };

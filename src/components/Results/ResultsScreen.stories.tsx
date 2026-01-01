@@ -23,8 +23,10 @@ const withMockStore = (options: MockOptions) => (Story: React.ComponentType) => 
         sessionConfig,
         elapsedTime,
         config: {
-          icon: '📚',
+          configId: 'basic-practice',
           configName: '基礎練習',
+          isPreset: true,
+          icon: '📚',
           throwUnit: 1,
           questionType: 'score',
           judgmentTiming: 'independent',
@@ -72,7 +74,6 @@ export const GoodPerformance: Story = {
     withMockStore({
       stats: {
         correct: 16,
-        incorrect: 4,
         total: 20,
         currentStreak: 5,
         bestStreak: 8,
@@ -94,14 +95,13 @@ export const PerfectScore: Story = {
     withMockStore({
       stats: {
         correct: 15,
-        incorrect: 0,
         total: 15,
         currentStreak: 15,
         bestStreak: 15,
       },
       sessionConfig: {
         mode: 'questions',
-        questionCount: 15,
+        questionCount: 20,
       },
       elapsedTime: 120,
       stdDevMM: 15,
@@ -117,7 +117,6 @@ export const LowAccuracy: Story = {
     withMockStore({
       stats: {
         correct: 4,
-        incorrect: 6,
         total: 10,
         currentStreak: 0,
         bestStreak: 2,
@@ -140,7 +139,6 @@ export const TimerMode: Story = {
     withMockStore({
       stats: {
         correct: 10,
-        incorrect: 5,
         total: 15,
         currentStreak: 2,
         bestStreak: 6,
@@ -162,14 +160,13 @@ export const Game501: Story = {
     withMockStore({
       stats: {
         correct: 25,
-        incorrect: 3,
         total: 28,
         currentStreak: 10,
         bestStreak: 12,
       },
       sessionConfig: {
         mode: 'questions',
-        questionCount: 30,
+        questionCount: 50,
       },
       elapsedTime: 420,
       startingScore: 501,
@@ -185,14 +182,13 @@ export const ShortSession: Story = {
     withMockStore({
       stats: {
         correct: 3,
-        incorrect: 2,
         total: 5,
         currentStreak: 2,
         bestStreak: 2,
       },
       sessionConfig: {
         mode: 'time',
-        timeLimit: 1,
+        timeLimit: 3,
       },
       elapsedTime: 60,
     }),
@@ -207,7 +203,6 @@ export const LongSession: Story = {
     withMockStore({
       stats: {
         correct: 40,
-        incorrect: 10,
         total: 50,
         currentStreak: 8,
         bestStreak: 15,

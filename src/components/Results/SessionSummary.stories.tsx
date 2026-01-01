@@ -42,8 +42,10 @@ export const GoodPerformance: Story = {
       },
       elapsedTime: 180, // 3分
       config: {
-        icon: '📚',
+        configId: 'basic-practice',
         configName: '基礎練習',
+        isPreset: true,
+        icon: '📚',
         throwUnit: 1,
         questionType: 'score',
         judgmentTiming: 'independent',
@@ -75,8 +77,10 @@ export const PerfectScore: Story = {
       },
       elapsedTime: 120, // 2分
       config: {
-        icon: '🎯',
+        configId: 'player-practice',
         configName: 'プレイヤー練習',
+        isPreset: true,
+        icon: '🎯',
         throwUnit: 3,
         questionType: 'score',
         judgmentTiming: 'independent',
@@ -85,7 +89,7 @@ export const PerfectScore: Story = {
       },
       sessionConfig: {
         mode: 'questions',
-        questionCount: 15,
+        questionCount: 20,
       },
       completedAt: new Date().toISOString(),
       finishReason: 'completed',
@@ -108,8 +112,10 @@ export const LowAccuracy: Story = {
       },
       elapsedTime: 240, // 4分
       config: {
-        icon: '🎓',
+        configId: 'caller-basic',
         configName: 'コーラー基礎',
+        isPreset: true,
+        icon: '🎓',
         throwUnit: 3,
         questionType: 'both',
         judgmentTiming: 'independent',
@@ -141,8 +147,10 @@ export const TimeoutFinish: Story = {
       },
       elapsedTime: 300, // 5分（制限時間）
       config: {
-        icon: '📊',
+        configId: 'caller-cumulative',
         configName: 'コーラー累積',
+        isPreset: true,
+        icon: '📊',
         throwUnit: 3,
         questionType: 'both',
         judgmentTiming: 'cumulative',
@@ -174,8 +182,10 @@ export const ManualFinish: Story = {
       },
       elapsedTime: 90, // 1分30秒
       config: {
-        icon: '🔥',
+        configId: 'comprehensive',
         configName: '総合練習',
+        isPreset: true,
+        icon: '🔥',
         throwUnit: 1,
         questionType: 'both',
         judgmentTiming: 'independent',
@@ -207,8 +217,10 @@ export const GameFinished: Story = {
       },
       elapsedTime: 420, // 7分
       config: {
-        icon: '🎯',
+        configId: 'player-practice',
         configName: 'プレイヤー練習',
+        isPreset: true,
+        icon: '🎯',
         throwUnit: 3,
         questionType: 'remaining',
         judgmentTiming: 'independent',
@@ -217,7 +229,7 @@ export const GameFinished: Story = {
       },
       sessionConfig: {
         mode: 'questions',
-        questionCount: 30,
+        questionCount: 50,
       },
       completedAt: new Date().toISOString(),
       finishReason: 'game_finished',
@@ -240,8 +252,10 @@ export const Game701: Story = {
       },
       elapsedTime: 900, // 15分
       config: {
-        icon: '🔥',
+        configId: 'comprehensive',
         configName: '総合練習',
+        isPreset: true,
+        icon: '🔥',
         throwUnit: 3,
         questionType: 'both',
         judgmentTiming: 'cumulative',
@@ -273,8 +287,10 @@ export const ExpertLevel: Story = {
       },
       elapsedTime: 300, // 5分
       config: {
-        icon: '🎯',
+        configId: 'player-practice',
         configName: 'プレイヤー練習',
+        isPreset: true,
+        icon: '🎯',
         throwUnit: 1,
         questionType: 'score',
         judgmentTiming: 'independent',
@@ -306,8 +322,10 @@ export const BeginnerLevel: Story = {
       },
       elapsedTime: 150, // 2分30秒
       config: {
-        icon: '📚',
+        configId: 'basic-practice',
         configName: '基礎練習',
+        isPreset: true,
+        icon: '📚',
         throwUnit: 1,
         questionType: 'score',
         judgmentTiming: 'independent',

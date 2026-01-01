@@ -18,7 +18,7 @@ const withMockStore =
     function StoryWrapper() {
       useEffect(() => {
         const {
-          stats = { correct: 0, incorrect: 0, total: 0, currentStreak: 0, bestStreak: 0 },
+          stats = { correct: 0, total: 0, currentStreak: 0, bestStreak: 0 },
           sessionConfig = { mode: 'questions', questionCount: 10 },
           elapsedTime = 0,
           remainingScore = 501,
@@ -31,6 +31,9 @@ const withMockStore =
           elapsedTime,
           remainingScore,
           config: {
+            configId: 'basic-practice',
+            configName: '基礎練習',
+            isPreset: true,
             throwUnit: 1,
             questionType: 'score',
             judgmentTiming: 'independent',
@@ -41,7 +44,7 @@ const withMockStore =
 
         return () => {
           useGameStore.setState({
-            stats: { correct: 0, incorrect: 0, total: 0, currentStreak: 0, bestStreak: 0 },
+            stats: { correct: 0, total: 0, currentStreak: 0, bestStreak: 0 },
           });
         };
       }, [options]);
@@ -84,7 +87,7 @@ type Story = StoryObj<typeof meta>;
 export const Initial: Story = {
   decorators: [
     withMockStore({
-      stats: { correct: 0, incorrect: 0, total: 0, currentStreak: 0, bestStreak: 0 },
+      stats: { correct: 0, total: 0, currentStreak: 0, bestStreak: 0 },
       sessionConfig: { mode: 'questions', questionCount: 10 },
     }),
   ],
@@ -97,7 +100,7 @@ export const Initial: Story = {
 export const InProgress: Story = {
   decorators: [
     withMockStore({
-      stats: { correct: 7, incorrect: 3, total: 10, currentStreak: 3, bestStreak: 5 },
+      stats: { correct: 7, total: 10, currentStreak: 3, bestStreak: 5 },
       sessionConfig: { mode: 'questions', questionCount: 20 },
     }),
   ],
@@ -110,8 +113,8 @@ export const InProgress: Story = {
 export const HighAccuracy: Story = {
   decorators: [
     withMockStore({
-      stats: { correct: 18, incorrect: 2, total: 20, currentStreak: 10, bestStreak: 10 },
-      sessionConfig: { mode: 'questions', questionCount: 30 },
+      stats: { correct: 18, total: 20, currentStreak: 10, bestStreak: 10 },
+      sessionConfig: { mode: 'questions', questionCount: 50 },
     }),
   ],
 };
@@ -123,7 +126,7 @@ export const HighAccuracy: Story = {
 export const PerfectScore: Story = {
   decorators: [
     withMockStore({
-      stats: { correct: 10, incorrect: 0, total: 10, currentStreak: 10, bestStreak: 10 },
+      stats: { correct: 10, total: 10, currentStreak: 10, bestStreak: 10 },
       sessionConfig: { mode: 'questions', questionCount: 10 },
     }),
   ],
@@ -136,7 +139,7 @@ export const PerfectScore: Story = {
 export const TimerMode3Minutes: Story = {
   decorators: [
     withMockStore({
-      stats: { correct: 5, incorrect: 2, total: 7, currentStreak: 2, bestStreak: 3 },
+      stats: { correct: 5, total: 7, currentStreak: 2, bestStreak: 3 },
       sessionConfig: { mode: 'time', timeLimit: 3 },
       elapsedTime: 90,
     }),
@@ -150,7 +153,7 @@ export const TimerMode3Minutes: Story = {
 export const TimerModeAlmostOver: Story = {
   decorators: [
     withMockStore({
-      stats: { correct: 12, incorrect: 3, total: 15, currentStreak: 5, bestStreak: 7 },
+      stats: { correct: 12, total: 15, currentStreak: 5, bestStreak: 7 },
       sessionConfig: { mode: 'time', timeLimit: 5 },
       elapsedTime: 290,
     }),
@@ -164,7 +167,7 @@ export const TimerModeAlmostOver: Story = {
 export const ZeroOneMode501: Story = {
   decorators: [
     withMockStore({
-      stats: { correct: 8, incorrect: 2, total: 10, currentStreak: 4, bestStreak: 6 },
+      stats: { correct: 8, total: 10, currentStreak: 4, bestStreak: 6 },
       sessionConfig: { mode: 'questions', questionCount: 20 },
       remainingScore: 301,
       startingScore: 501,
@@ -179,8 +182,8 @@ export const ZeroOneMode501: Story = {
 export const ZeroOneMode701CloseGame: Story = {
   decorators: [
     withMockStore({
-      stats: { correct: 15, incorrect: 5, total: 20, currentStreak: 3, bestStreak: 8 },
-      sessionConfig: { mode: 'questions', questionCount: 30 },
+      stats: { correct: 15, total: 20, currentStreak: 3, bestStreak: 8 },
+      sessionConfig: { mode: 'questions', questionCount: 50 },
       remainingScore: 40,
       startingScore: 701,
     }),
@@ -194,8 +197,8 @@ export const ZeroOneMode701CloseGame: Story = {
 export const ZeroOneModeAboutToFinish: Story = {
   decorators: [
     withMockStore({
-      stats: { correct: 20, incorrect: 3, total: 23, currentStreak: 8, bestStreak: 10 },
-      sessionConfig: { mode: 'questions', questionCount: 30 },
+      stats: { correct: 20, total: 23, currentStreak: 8, bestStreak: 10 },
+      sessionConfig: { mode: 'questions', questionCount: 50 },
       remainingScore: 2,
       startingScore: 501,
     }),

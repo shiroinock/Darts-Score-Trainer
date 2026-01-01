@@ -29,9 +29,13 @@ const withMockStore =
         return () => {
           useGameStore.setState({
             config: {
+              configId: 'basic-practice',
+              configName: '基礎練習',
+              isPreset: true,
               throwUnit: 1,
               questionType: 'score',
               judgmentTiming: 'independent',
+              stdDevMM: 30,
               startingScore: 501,
             },
           });

@@ -25,6 +25,9 @@ const withMockStore =
 
         useGameStore.setState({
           config: {
+            configId: 'custom-test',
+            configName: 'テスト設定',
+            isPreset: false,
             throwUnit,
             questionType,
             judgmentTiming,
@@ -34,7 +37,6 @@ const withMockStore =
           currentThrowIndex,
           currentQuestion: {
             throws: [],
-            bustInfo: null,
           },
         });
 
