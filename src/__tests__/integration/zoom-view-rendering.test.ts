@@ -646,7 +646,7 @@ describe('zoom-view-rendering integration', () => {
         const zoomedPhysicalRadius = BOARD_PHYSICAL.rings.boardEdge / zoomFactor;
 
         // 初期サイズ（デスクトップ）
-        let canvasSize = ZOOM_CANVAS_SIZE_DESKTOP;
+        let canvasSize: { width: number; height: number } = ZOOM_CANVAS_SIZE_DESKTOP;
         let transform = new CoordinateTransform(
           canvasSize.width,
           canvasSize.height,
