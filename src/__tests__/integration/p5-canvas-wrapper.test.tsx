@@ -9,6 +9,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { P5Canvas } from '../../components/DartBoard/P5Canvas';
 import type { Coordinates } from '../../types';
 import { BOARD_PHYSICAL, DART_COLORS } from '../../utils/constants/index.js';
+import { getDisplayCoordinates } from '../../utils/displayCoordinates/index.js';
 
 /**
  * react-p5のSketchコンポーネントのProps型定義
@@ -301,8 +302,12 @@ describe('p5-canvas-wrapper integration', () => {
       const firstCall = vi.mocked(drawDartMarker).mock.calls[0];
       const secondCall = vi.mocked(drawDartMarker).mock.calls[1];
 
-      expect(firstCall[2]).toEqual({ x: 10, y: 20 });
-      expect(secondCall[2]).toEqual({ x: 30, y: 40 });
+      // 表示座標変換を考慮した期待値
+      const expectedFirst = getDisplayCoordinates(coords[0]);
+      const expectedSecond = getDisplayCoordinates(coords[1]);
+
+      expect(firstCall[2]).toEqual(expectedFirst);
+      expect(secondCall[2]).toEqual(expectedSecond);
     });
 
     test('drawDartMarkerに正しいダーツ色が渡される', () => {
@@ -431,7 +436,7 @@ describe('p5-canvas-wrapper integration', () => {
 
       // Assert
       const mockP5 = testGlobal.__mockP5Instance;
-      expect(drawLegend).toHaveBeenCalledWith(mockP5, 3);
+      expect(drawLegend).toHaveBeenCalledWith(mockP5, 3, expect.any(Array));
     });
   });
 
@@ -481,10 +486,13 @@ describe('p5-canvas-wrapper integration', () => {
       const call = vi.mocked(drawDartMarker).mock.calls[0];
       expect(call.length).toBe(5);
 
+      // 表示座標変換を考慮した期待値
+      const expectedCoords = getDisplayCoordinates(coords[0]);
+
       // 引数の型を確認
       expect(call[0]).toBeDefined(); // p5インスタンス
       expect(call[1]).toHaveProperty('getCenter'); // CoordinateTransform
-      expect(call[2]).toEqual({ x: 10, y: 20 }); // 座標
+      expect(call[2]).toEqual(expectedCoords); // 座標（表示座標変換後）
       expect(typeof call[3]).toBe('string'); // 色
       expect(typeof call[4]).toBe('number'); // インデックス
     });
@@ -502,9 +510,10 @@ describe('p5-canvas-wrapper integration', () => {
 
       // Assert
       const call = vi.mocked(drawLegend).mock.calls[0];
-      expect(call.length).toBe(2);
+      expect(call.length).toBe(3);
       expect(call[0]).toBeDefined(); // p5インスタンス
       expect(call[1]).toBe(3); // dartCount
+      expect(Array.isArray(call[2])).toBe(true); // visibleDarts配列
     });
   });
 
@@ -537,7 +546,10 @@ describe('p5-canvas-wrapper integration', () => {
       // モック関数の呼び出し順序を記録
       vi.mocked(drawBoard).mockImplementation(() => callOrder.push('drawBoard'));
       vi.mocked(drawDartMarker).mockImplementation(() => callOrder.push('drawDartMarker'));
-      vi.mocked(drawLegend).mockImplementation(() => callOrder.push('drawLegend'));
+      vi.mocked(drawLegend).mockImplementation(() => {
+        callOrder.push('drawLegend');
+        return []; // LegendClickableArea[]を返す
+      });
 
       // Act
       render(<P5Canvas coords={coords} dartCount={3} width={800} height={600} />);

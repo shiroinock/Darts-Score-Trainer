@@ -24,6 +24,7 @@ describe('dartboard-marker-rendering integration', () => {
       fill: vi.fn(),
       noStroke: vi.fn(),
       circle: vi.fn(),
+      triangle: vi.fn(),
       text: vi.fn(),
       textAlign: vi.fn(),
       textSize: vi.fn(),
@@ -82,12 +83,13 @@ describe('dartboard-marker-rendering integration', () => {
       test('座標が正しく変換されている（物理座標 → 画面座標）', () => {
         // Arrange
         const circleSpy = vi.spyOn(mockP5, 'circle');
-        const coords = { x: 50, y: -30 }; // 物理座標（mm単位）
+        const coords = { x: 50, y: -30 }; // 物理座標（mm単位） - 三角形の先端（着弾点）
         const color = '#FF0000';
         const index = 0;
 
-        // 期待される画面座標を計算
-        const expectedScreenPos = mockTransform.physicalToScreen(coords.x, coords.y);
+        // 期待される画面座標を計算（円は着弾点の30mm上）
+        const circlePhysicalY = coords.y - DART_MARKER_RADII.pinLength;
+        const expectedScreenPos = mockTransform.physicalToScreen(coords.x, circlePhysicalY);
 
         // Act
         drawDartMarker(mockP5, mockTransform, coords, color, index);
@@ -113,7 +115,7 @@ describe('dartboard-marker-rendering integration', () => {
         drawDartMarker(mockP5, mockTransform, coords, color, index);
 
         // Assert
-        expect(fillSpy).toHaveBeenCalledTimes(3); // 外側、内側、テキストの色設定
+        expect(fillSpy).toHaveBeenCalledTimes(4); // 三角形、外側、内側、テキストの色設定
         expect(circleSpy).toHaveBeenCalledTimes(2); // 外側と内側の円
         expect(textSpy).toHaveBeenCalledTimes(1); // 番号テキスト
         expect(noStrokeSpy).toHaveBeenCalledTimes(2); // 円描画時とテキスト描画時
@@ -281,38 +283,37 @@ describe('dartboard-marker-rendering integration', () => {
         // Arrange
         const circleSpy = vi.spyOn(mockP5, 'circle');
         const textSpy = vi.spyOn(mockP5, 'text');
-        const coords = { x: 0, y: 0 }; // ボード中心
+        const coords = { x: 0, y: 0 }; // ボード中心（三角形の先端）
         const color = DART_COLORS.first;
         const index = 0;
 
-        // 期待される画面座標（ボード中心 = キャンバス中心）
-        const expectedScreenPos = mockTransform.physicalToScreen(0, 0);
-        const center = mockTransform.getCenter();
-        expect(expectedScreenPos.x).toBeCloseTo(center.x, 1);
-        expect(expectedScreenPos.y).toBeCloseTo(center.y, 1);
+        // 期待される画面座標（円はボード中心の30mm上）
+        const circlePhysicalY = coords.y - DART_MARKER_RADII.pinLength;
+        const expectedCirclePos = mockTransform.physicalToScreen(coords.x, circlePhysicalY);
 
         // Act
         drawDartMarker(mockP5, mockTransform, coords, color, index);
 
         // Assert
         const firstCircleCall = circleSpy.mock.calls[0];
-        expect(firstCircleCall[0]).toBeCloseTo(center.x, 1); // x座標
-        expect(firstCircleCall[1]).toBeCloseTo(center.y, 1); // y座標
+        expect(firstCircleCall[0]).toBeCloseTo(expectedCirclePos.x, 1); // x座標
+        expect(firstCircleCall[1]).toBeCloseTo(expectedCirclePos.y, 1); // y座標
 
         const textCall = textSpy.mock.calls[0];
-        expect(textCall[1]).toBeCloseTo(center.x, 1); // x座標
-        expect(textCall[2]).toBeCloseTo(center.y, 1); // y座標
+        expect(textCall[1]).toBeCloseTo(expectedCirclePos.x, 1); // x座標
+        expect(textCall[2]).toBeCloseTo(expectedCirclePos.y, 1); // y座標
       });
 
       test('トリプル20の座標（x=0, y=-103mm）での描画', () => {
         // Arrange
         const circleSpy = vi.spyOn(mockP5, 'circle');
-        const coords = { x: 0, y: -103 }; // トリプル20（真上、半径103mm）
+        const coords = { x: 0, y: -103 }; // トリプル20（真上、半径103mm） - 三角形の先端
         const color = DART_COLORS.first;
         const index = 0;
 
-        // 期待される画面座標
-        const expectedScreenPos = mockTransform.physicalToScreen(coords.x, coords.y);
+        // 期待される画面座標（円は着弾点の30mm上）
+        const circlePhysicalY = coords.y - DART_MARKER_RADII.pinLength;
+        const expectedScreenPos = mockTransform.physicalToScreen(coords.x, circlePhysicalY);
 
         // Act
         drawDartMarker(mockP5, mockTransform, coords, color, index);
@@ -326,12 +327,13 @@ describe('dartboard-marker-rendering integration', () => {
       test('ダブル20の座標（x=0, y=-166mm）での描画', () => {
         // Arrange
         const circleSpy = vi.spyOn(mockP5, 'circle');
-        const coords = { x: 0, y: -166 }; // ダブル20（真上、半径166mm）
+        const coords = { x: 0, y: -166 }; // ダブル20（真上、半径166mm） - 三角形の先端
         const color = DART_COLORS.second;
         const index = 1;
 
-        // 期待される画面座標
-        const expectedScreenPos = mockTransform.physicalToScreen(coords.x, coords.y);
+        // 期待される画面座標（円は着弾点の30mm上）
+        const circlePhysicalY = coords.y - DART_MARKER_RADII.pinLength;
+        const expectedScreenPos = mockTransform.physicalToScreen(coords.x, circlePhysicalY);
 
         // Act
         drawDartMarker(mockP5, mockTransform, coords, color, index);
@@ -345,12 +347,13 @@ describe('dartboard-marker-rendering integration', () => {
       test('ブル近くの座標（x=5, y=-5mm）での描画', () => {
         // Arrange
         const circleSpy = vi.spyOn(mockP5, 'circle');
-        const coords = { x: 5, y: -5 }; // ブル近く
+        const coords = { x: 5, y: -5 }; // ブル近く - 三角形の先端
         const color = DART_COLORS.third;
         const index = 2;
 
-        // 期待される画面座標
-        const expectedScreenPos = mockTransform.physicalToScreen(coords.x, coords.y);
+        // 期待される画面座標（円は着弾点の30mm上）
+        const circlePhysicalY = coords.y - DART_MARKER_RADII.pinLength;
+        const expectedScreenPos = mockTransform.physicalToScreen(coords.x, circlePhysicalY);
 
         // Act
         drawDartMarker(mockP5, mockTransform, coords, color, index);
@@ -370,12 +373,14 @@ describe('dartboard-marker-rendering integration', () => {
         const coords = {
           x: Math.round(103 * Math.cos(angle)),
           y: Math.round(103 * Math.sin(angle)),
-        };
+        }; // 三角形の先端
+
         const color = DART_COLORS.first;
         const index = 0;
 
-        // 期待される画面座標
-        const expectedScreenPos = mockTransform.physicalToScreen(coords.x, coords.y);
+        // 期待される画面座標（円は着弾点の30mm上）
+        const circlePhysicalY = coords.y - DART_MARKER_RADII.pinLength;
+        const expectedScreenPos = mockTransform.physicalToScreen(coords.x, circlePhysicalY);
 
         // Act
         drawDartMarker(mockP5, mockTransform, coords, color, index);
@@ -409,12 +414,13 @@ describe('dartboard-marker-rendering integration', () => {
       test('負の座標（x=-100, y=-100mm）で正しく描画される', () => {
         // Arrange
         const circleSpy = vi.spyOn(mockP5, 'circle');
-        const coords = { x: -100, y: -100 }; // 左上方向
+        const coords = { x: -100, y: -100 }; // 左上方向 - 三角形の先端
         const color = DART_COLORS.second;
         const index = 1;
 
-        // 期待される画面座標
-        const expectedScreenPos = mockTransform.physicalToScreen(coords.x, coords.y);
+        // 期待される画面座標（円は着弾点の30mm上）
+        const circlePhysicalY = coords.y - DART_MARKER_RADII.pinLength;
+        const expectedScreenPos = mockTransform.physicalToScreen(coords.x, circlePhysicalY);
 
         // Act
         drawDartMarker(mockP5, mockTransform, coords, color, index);
@@ -442,12 +448,13 @@ describe('dartboard-marker-rendering integration', () => {
       test('ボード端ちょうど（r=225mm、真上）での描画', () => {
         // Arrange
         const circleSpy = vi.spyOn(mockP5, 'circle');
-        const coords = { x: 0, y: -BOARD_PHYSICAL.rings.boardEdge }; // 真上、ボード端ちょうど
+        const coords = { x: 0, y: -BOARD_PHYSICAL.rings.boardEdge }; // 真上、ボード端ちょうど - 三角形の先端
         const color = DART_COLORS.third;
         const index = 2;
 
-        // 期待される画面座標
-        const expectedScreenPos = mockTransform.physicalToScreen(coords.x, coords.y);
+        // 期待される画面座標（円は着弾点の30mm上）
+        const circlePhysicalY = coords.y - DART_MARKER_RADII.pinLength;
+        const expectedScreenPos = mockTransform.physicalToScreen(coords.x, circlePhysicalY);
 
         // Act
         drawDartMarker(mockP5, mockTransform, coords, color, index);
@@ -461,12 +468,13 @@ describe('dartboard-marker-rendering integration', () => {
       test('極小座標（x=0.1, y=0.1mm）で正しく描画される', () => {
         // Arrange
         const circleSpy = vi.spyOn(mockP5, 'circle');
-        const coords = { x: 0.1, y: 0.1 }; // 非常に小さな値
+        const coords = { x: 0.1, y: 0.1 }; // 非常に小さな値 - 三角形の先端
         const color = DART_COLORS.first;
         const index = 0;
 
-        // 期待される画面座標
-        const expectedScreenPos = mockTransform.physicalToScreen(coords.x, coords.y);
+        // 期待される画面座標（円は着弾点の30mm上）
+        const circlePhysicalY = coords.y - DART_MARKER_RADII.pinLength;
+        const expectedScreenPos = mockTransform.physicalToScreen(coords.x, circlePhysicalY);
 
         // Act
         drawDartMarker(mockP5, mockTransform, coords, color, index);
@@ -513,12 +521,13 @@ describe('dartboard-marker-rendering integration', () => {
         // Arrange
         const squareTransform = new CoordinateTransform(800, 800, 225);
         const circleSpy = vi.spyOn(mockP5, 'circle');
-        const coords = { x: 50, y: -50 };
+        const coords = { x: 50, y: -50 }; // 三角形の先端
         const color = DART_COLORS.third;
         const index = 2;
 
-        // 期待される画面座標
-        const expectedScreenPos = squareTransform.physicalToScreen(coords.x, coords.y);
+        // 期待される画面座標（円は着弾点の30mm上）
+        const circlePhysicalY = coords.y - DART_MARKER_RADII.pinLength;
+        const expectedScreenPos = squareTransform.physicalToScreen(coords.x, circlePhysicalY);
 
         // Act
         drawDartMarker(mockP5, squareTransform, coords, color, index);
@@ -580,7 +589,7 @@ describe('dartboard-marker-rendering integration', () => {
     });
 
     describe('正常系 - 描画順序の検証', () => {
-      test('fill, circle, textが正しい順序で呼び出される', () => {
+      test('fill, triangle, circle, textが正しい順序で呼び出される', () => {
         // Arrange
         const callOrder: string[] = [];
 
@@ -590,6 +599,10 @@ describe('dartboard-marker-rendering integration', () => {
         });
         mockP5.noStroke = vi.fn(() => {
           callOrder.push('noStroke');
+          return mockP5;
+        });
+        mockP5.triangle = vi.fn(() => {
+          callOrder.push('triangle');
           return mockP5;
         });
         mockP5.circle = vi.fn(() => {
@@ -618,18 +631,22 @@ describe('dartboard-marker-rendering integration', () => {
         drawDartMarker(mockP5, mockTransform, coords, color, index);
 
         // Assert
-        // 期待される描画順序:
+        // 期待される描画順序（ピン型マーカー）:
         // 1. noStroke
-        // 2. fill(外側の色)
-        // 3. circle(外側)
-        // 4. fill(白)
-        // 5. circle(内側)
-        // 6. textAlign, fill(黒), noStroke, textSize, text
+        // 2. fill(三角形の色)
+        // 3. triangle(三角形)
+        // 4. fill(外側の円の色 - 三角形と同じ)
+        // 5. circle(外側)
+        // 6. fill(白)
+        // 7. circle(内側)
+        // 8. textAlign, fill(黒), noStroke, textSize, text
         expect(callOrder[0]).toBe('noStroke');
         expect(callOrder[1]).toBe('fill');
-        expect(callOrder[2]).toBe('circle');
+        expect(callOrder[2]).toBe('triangle');
         expect(callOrder[3]).toBe('fill');
         expect(callOrder[4]).toBe('circle');
+        expect(callOrder[5]).toBe('fill');
+        expect(callOrder[6]).toBe('circle');
         expect(callOrder.includes('text')).toBe(true);
       });
     });

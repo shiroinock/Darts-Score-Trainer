@@ -703,13 +703,14 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 **問題**: スパイダー上にダーツが被ると、どちらのセグメントか判別困難
 **方針**: スパイダー回避 + ズームビュー両方実装
 
-**Phase A: スパイダーから離れた位置に出題**
-- [ ] `getTargetCoordinates`を修正：セグメント中央付近のみを返す
-- [ ] リング境界からの最小距離を設定
-  - 7mm = DART_MARKER_RADII.outer(5mm) + マージン(2mm)
-  - 注: 物理座標系（mm単位）での計算。CLAUDE.md参照
-- [ ] セグメント境界からの最小角度を設定
-- [ ] `adjustForSpider`の調整量を増加（1mm → 7mm）
+**Phase A: スパイダーから離れた位置に表示（完了）**
+- [x] 別の手段で解決：`getDisplayCoordinates`による表示座標補正
+  - 実装: `src/utils/displayCoordinates/getDisplayCoordinates.ts`
+  - 極座標系で半径と角度を独立に補正
+  - トリプル/ダブル: 半径はリング中心に完全に載せる（100%）
+  - シングル/ブル: 半径・角度ともに20%セグメント中心に引っ張る
+  - アウト: 半径180mm、アウターブル: 半径11.175mmの円周上に配置
+  - 出題位置は変更せず、表示位置のみ調整することで視認性を向上
 
 **Phase B: ズームビューの実装**
 - [ ] `ZoomView`コンポーネントを作成（`src/components/DartBoard/ZoomView.tsx`）

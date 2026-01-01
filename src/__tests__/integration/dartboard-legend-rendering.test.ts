@@ -34,7 +34,7 @@ describe('dartboard-legend-rendering integration', () => {
         const textSpy = vi.spyOn(mockP5, 'text');
 
         // Act
-        drawLegend(mockP5, 0);
+        drawLegend(mockP5, 0, [true, true, true]);
 
         // Assert
         expect(fillSpy).not.toHaveBeenCalled();
@@ -49,7 +49,7 @@ describe('dartboard-legend-rendering integration', () => {
         const textSpy = vi.spyOn(mockP5, 'text');
 
         // Act
-        drawLegend(mockP5, 1);
+        drawLegend(mockP5, 1, [true, true, true]);
 
         // Assert
         // circle: 1回（1本目の色付き円）
@@ -59,8 +59,12 @@ describe('dartboard-legend-rendering integration', () => {
         expect(fillSpy).toHaveBeenCalledTimes(2);
         expect(textSpy).toHaveBeenCalledTimes(1);
 
-        // 1本目の色が使用されることを確認
-        expect(fillSpy).toHaveBeenCalledWith(DART_COLORS.first);
+        // 1本目の色が使用されることを確認（透明度付き）
+        const firstFillCall = fillSpy.mock.calls.find((call) => {
+          const color = call[0] as unknown as string;
+          return typeof color === 'string' && color.startsWith(DART_COLORS.first);
+        });
+        expect(firstFillCall).toBeDefined();
         // 1本目のラベルが描画されることを確認
         expect(textSpy).toHaveBeenCalledWith('1本目', expect.any(Number), expect.any(Number));
       });
@@ -72,7 +76,7 @@ describe('dartboard-legend-rendering integration', () => {
         const textSpy = vi.spyOn(mockP5, 'text');
 
         // Act
-        drawLegend(mockP5, 2);
+        drawLegend(mockP5, 2, [true, true, true]);
 
         // Assert
         // circle: 2回（2本分の色付き円）
@@ -82,9 +86,17 @@ describe('dartboard-legend-rendering integration', () => {
         expect(fillSpy).toHaveBeenCalledTimes(4);
         expect(textSpy).toHaveBeenCalledTimes(2);
 
-        // 色が使用されることを確認
-        expect(fillSpy).toHaveBeenCalledWith(DART_COLORS.first);
-        expect(fillSpy).toHaveBeenCalledWith(DART_COLORS.second);
+        // 色が使用されることを確認（透明度付きの色を許容）
+        const firstColorCall = fillSpy.mock.calls.find((call) => {
+          const color = call[0] as unknown as string;
+          return typeof color === 'string' && color.startsWith(DART_COLORS.first);
+        });
+        const secondColorCall = fillSpy.mock.calls.find((call) => {
+          const color = call[0] as unknown as string;
+          return typeof color === 'string' && color.startsWith(DART_COLORS.second);
+        });
+        expect(firstColorCall).toBeDefined();
+        expect(secondColorCall).toBeDefined();
         // ラベルが描画されることを確認
         expect(textSpy).toHaveBeenCalledWith('1本目', expect.any(Number), expect.any(Number));
         expect(textSpy).toHaveBeenCalledWith('2本目', expect.any(Number), expect.any(Number));
@@ -97,7 +109,7 @@ describe('dartboard-legend-rendering integration', () => {
         const textSpy = vi.spyOn(mockP5, 'text');
 
         // Act
-        drawLegend(mockP5, 3);
+        drawLegend(mockP5, 3, [true, true, true]);
 
         // Assert
         // circle: 3回（3本分の色付き円）
@@ -107,10 +119,22 @@ describe('dartboard-legend-rendering integration', () => {
         expect(fillSpy).toHaveBeenCalledTimes(6);
         expect(textSpy).toHaveBeenCalledTimes(3);
 
-        // 色が使用されることを確認
-        expect(fillSpy).toHaveBeenCalledWith(DART_COLORS.first);
-        expect(fillSpy).toHaveBeenCalledWith(DART_COLORS.second);
-        expect(fillSpy).toHaveBeenCalledWith(DART_COLORS.third);
+        // 色が使用されることを確認（透明度付きの色を許容）
+        const firstColorCall = fillSpy.mock.calls.find((call) => {
+          const color = call[0] as unknown as string;
+          return typeof color === 'string' && color.startsWith(DART_COLORS.first);
+        });
+        const secondColorCall = fillSpy.mock.calls.find((call) => {
+          const color = call[0] as unknown as string;
+          return typeof color === 'string' && color.startsWith(DART_COLORS.second);
+        });
+        const thirdColorCall = fillSpy.mock.calls.find((call) => {
+          const color = call[0] as unknown as string;
+          return typeof color === 'string' && color.startsWith(DART_COLORS.third);
+        });
+        expect(firstColorCall).toBeDefined();
+        expect(secondColorCall).toBeDefined();
+        expect(thirdColorCall).toBeDefined();
         // ラベルが描画されることを確認
         expect(textSpy).toHaveBeenCalledWith('1本目', expect.any(Number), expect.any(Number));
         expect(textSpy).toHaveBeenCalledWith('2本目', expect.any(Number), expect.any(Number));
@@ -124,12 +148,12 @@ describe('dartboard-legend-rendering integration', () => {
         const fillSpy = vi.spyOn(mockP5, 'fill');
 
         // Act
-        drawLegend(mockP5, 3);
+        drawLegend(mockP5, 3, [true, true, true]);
 
         // Assert
         const fillCalls = fillSpy.mock.calls;
-        // 最初の fill() 呼び出しが1本目の色であることを確認
-        expect(fillCalls[0][0]).toBe(DART_COLORS.first);
+        // 最初の fill() 呼び出しが1本目の色（透明度付き）であることを確認
+        expect(fillCalls[0][0]).toBe(`${DART_COLORS.first}ff`);
       });
 
       test('2本目の円がDART_COLORS.second（青緑系: #4ECDC4）で描画される', () => {
@@ -137,12 +161,12 @@ describe('dartboard-legend-rendering integration', () => {
         const fillSpy = vi.spyOn(mockP5, 'fill');
 
         // Act
-        drawLegend(mockP5, 3);
+        drawLegend(mockP5, 3, [true, true, true]);
 
         // Assert
         const fillCalls = fillSpy.mock.calls;
-        // 3番目の fill() 呼び出しが2本目の色であることを確認（1本目の円、1本目のテキスト、2本目の円）
-        expect(fillCalls[2][0]).toBe(DART_COLORS.second);
+        // 3番目の fill() 呼び出しが2本目の色（透明度付き）であることを確認（1本目の円、1本目のテキスト、2本目の円）
+        expect(fillCalls[2][0]).toBe(`${DART_COLORS.second}ff`);
       });
 
       test('3本目の円がDART_COLORS.third（黄系: #FFE66D）で描画される', () => {
@@ -150,12 +174,12 @@ describe('dartboard-legend-rendering integration', () => {
         const fillSpy = vi.spyOn(mockP5, 'fill');
 
         // Act
-        drawLegend(mockP5, 3);
+        drawLegend(mockP5, 3, [true, true, true]);
 
         // Assert
         const fillCalls = fillSpy.mock.calls;
-        // 5番目の fill() 呼び出しが3本目の色であることを確認
-        expect(fillCalls[4][0]).toBe(DART_COLORS.third);
+        // 5番目の fill() 呼び出しが3本目の色（透明度付き）であることを確認
+        expect(fillCalls[4][0]).toBe(`${DART_COLORS.third}ff`);
       });
 
       test('テキストが白色（#FFFFFF）で描画される', () => {
@@ -163,15 +187,15 @@ describe('dartboard-legend-rendering integration', () => {
         const fillSpy = vi.spyOn(mockP5, 'fill');
 
         // Act
-        drawLegend(mockP5, 3);
+        drawLegend(mockP5, 3, [true, true, true]);
 
         // Assert
         // fill() は円の色とテキストの色で交互に呼ばれる
-        // テキストの色は #FFFFFF
+        // テキストの色は #FFFFFF + 透明度
         const fillCalls = fillSpy.mock.calls;
-        expect(fillCalls[1][0]).toBe('#FFFFFF'); // 1本目のテキスト
-        expect(fillCalls[3][0]).toBe('#FFFFFF'); // 2本目のテキスト
-        expect(fillCalls[5][0]).toBe('#FFFFFF'); // 3本目のテキスト
+        expect(fillCalls[1][0]).toBe('#FFFFFFff'); // 1本目のテキスト（透明度付き）
+        expect(fillCalls[3][0]).toBe('#FFFFFFff'); // 2本目のテキスト（透明度付き）
+        expect(fillCalls[5][0]).toBe('#FFFFFFff'); // 3本目のテキスト（透明度付き）
       });
     });
 
@@ -181,7 +205,7 @@ describe('dartboard-legend-rendering integration', () => {
         const circleSpy = vi.spyOn(mockP5, 'circle');
 
         // Act
-        drawLegend(mockP5, 1);
+        drawLegend(mockP5, 1, [true, true, true]);
 
         // Assert
         const circleCall = circleSpy.mock.calls[0];
@@ -195,7 +219,7 @@ describe('dartboard-legend-rendering integration', () => {
         const circleSpy = vi.spyOn(mockP5, 'circle');
 
         // Act
-        drawLegend(mockP5, 2);
+        drawLegend(mockP5, 2, [true, true, true]);
 
         // Assert
         const firstCircle = circleSpy.mock.calls[0];
@@ -210,7 +234,7 @@ describe('dartboard-legend-rendering integration', () => {
         const circleSpy = vi.spyOn(mockP5, 'circle');
 
         // Act
-        drawLegend(mockP5, 3);
+        drawLegend(mockP5, 3, [true, true, true]);
 
         // Assert
         const secondCircle = circleSpy.mock.calls[1];
@@ -226,7 +250,7 @@ describe('dartboard-legend-rendering integration', () => {
         const textSpy = vi.spyOn(mockP5, 'text');
 
         // Act
-        drawLegend(mockP5, 1);
+        drawLegend(mockP5, 1, [true, true, true]);
 
         // Assert
         const circleCall = circleSpy.mock.calls[0];
@@ -247,7 +271,7 @@ describe('dartboard-legend-rendering integration', () => {
         const textAlignSpy = vi.spyOn(mockP5, 'textAlign');
 
         // Act
-        drawLegend(mockP5, 1);
+        drawLegend(mockP5, 1, [true, true, true]);
 
         // Assert
         expect(textAlignSpy).toHaveBeenCalledWith(mockP5.LEFT, mockP5.CENTER);
@@ -258,7 +282,7 @@ describe('dartboard-legend-rendering integration', () => {
         const textSizeSpy = vi.spyOn(mockP5, 'textSize');
 
         // Act
-        drawLegend(mockP5, 1);
+        drawLegend(mockP5, 1, [true, true, true]);
 
         // Assert
         expect(textSizeSpy).toHaveBeenCalledWith(16);
@@ -269,7 +293,7 @@ describe('dartboard-legend-rendering integration', () => {
         const noStrokeSpy = vi.spyOn(mockP5, 'noStroke');
 
         // Act
-        drawLegend(mockP5, 1);
+        drawLegend(mockP5, 1, [true, true, true]);
 
         // Assert
         expect(noStrokeSpy).toHaveBeenCalled();
@@ -282,7 +306,7 @@ describe('dartboard-legend-rendering integration', () => {
         const textSpy = vi.spyOn(mockP5, 'text');
 
         // Act
-        drawLegend(mockP5, 1);
+        drawLegend(mockP5, 1, [true, true, true]);
 
         // Assert
         expect(textSpy).toHaveBeenCalledWith('1本目', expect.any(Number), expect.any(Number));
@@ -293,7 +317,7 @@ describe('dartboard-legend-rendering integration', () => {
         const textSpy = vi.spyOn(mockP5, 'text');
 
         // Act
-        drawLegend(mockP5, 2);
+        drawLegend(mockP5, 2, [true, true, true]);
 
         // Assert
         const textCalls = textSpy.mock.calls;
@@ -306,7 +330,7 @@ describe('dartboard-legend-rendering integration', () => {
         const textSpy = vi.spyOn(mockP5, 'text');
 
         // Act
-        drawLegend(mockP5, 3);
+        drawLegend(mockP5, 3, [true, true, true]);
 
         // Assert
         const textCalls = textSpy.mock.calls;
@@ -322,7 +346,7 @@ describe('dartboard-legend-rendering integration', () => {
         const circleSpy = vi.spyOn(mockP5, 'circle');
 
         // Act
-        drawLegend(mockP5, 3);
+        drawLegend(mockP5, 3, [true, true, true]);
 
         // Assert
         const circleCalls = circleSpy.mock.calls;
@@ -364,7 +388,7 @@ describe('dartboard-legend-rendering integration', () => {
         });
 
         // Act
-        drawLegend(mockP5, 1);
+        drawLegend(mockP5, 1, [true, true, true]);
 
         // Assert
         // 期待される順序:
@@ -390,7 +414,7 @@ describe('dartboard-legend-rendering integration', () => {
         const textSpy = vi.spyOn(mockP5, 'text');
 
         // Act
-        drawLegend(mockP5, 3);
+        drawLegend(mockP5, 3, [true, true, true]);
 
         // Assert
         // 各ダーツの y座標が増加していることを確認
@@ -412,7 +436,7 @@ describe('dartboard-legend-rendering integration', () => {
         const textSpy = vi.spyOn(mockP5, 'text');
 
         // Act
-        drawLegend(mockP5, -1);
+        drawLegend(mockP5, -1, [true, true, true]);
 
         // Assert
         expect(fillSpy).not.toHaveBeenCalled();
@@ -427,7 +451,7 @@ describe('dartboard-legend-rendering integration', () => {
 
         // Act & Assert: エラーをスローしないことを確認
         expect(() => {
-          drawLegend(mockP5, 4);
+          drawLegend(mockP5, 4, [true, true, true]);
         }).not.toThrow();
 
         // 3本分のみ描画されることを確認（配列の長さは3）
@@ -440,12 +464,12 @@ describe('dartboard-legend-rendering integration', () => {
         const circleSpy = vi.spyOn(mockP5, 'circle');
 
         // Act
-        drawLegend(mockP5, 2);
+        drawLegend(mockP5, 2, [true, true, true]);
         const firstCalls = [...circleSpy.mock.calls];
 
         vi.clearAllMocks();
 
-        drawLegend(mockP5, 2);
+        drawLegend(mockP5, 2, [true, true, true]);
         const secondCalls = [...circleSpy.mock.calls];
 
         // Assert
