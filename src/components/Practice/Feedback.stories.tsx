@@ -1,0 +1,390 @@
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useEffect } from 'react';
+import { useGameStore } from '../../stores/gameStore';
+import type { Question, QuestionType, Stats } from '../../types';
+import { Feedback } from './Feedback';
+
+interface MockOptions {
+  userAnswer: number;
+  isCorrect: boolean;
+  currentQuestion: Question;
+  questionType?: QuestionType;
+  startingScore?: number;
+  remainingScore?: number;
+  stats?: Stats;
+}
+
+const withMockStore = (options: MockOptions) => (Story: React.ComponentType) => {
+  function StoryWrapper() {
+    useEffect(() => {
+      const {
+        currentQuestion,
+        questionType = 'score',
+        startingScore = 0,
+        remainingScore = 501,
+        stats = { correct: 5, incorrect: 2, total: 7, currentStreak: 3, bestStreak: 5 },
+      } = options;
+
+      useGameStore.setState({
+        currentQuestion,
+        config: {
+          throwUnit: 1,
+          questionType,
+          judgmentTiming: 'independent',
+          stdDevMM: 30,
+          startingScore,
+        },
+        remainingScore,
+        stats,
+      });
+
+      return () => {
+        useGameStore.setState({
+          currentQuestion: null,
+        });
+      };
+    }, [options]);
+
+    return <Story />;
+  }
+
+  return <StoryWrapper />;
+};
+
+const meta = {
+  title: 'Practice/Feedback',
+  component: Feedback,
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        component:
+          'フィードバック表示コンポーネント。ユーザーの回答に対する正解/不正解、スコア詳細、連続正解数、バスト情報などを表示します。',
+      },
+    },
+  },
+  tags: ['autodocs'],
+  decorators: [
+    (Story) => (
+      <div style={{ minWidth: '500px', padding: '20px' }}>
+        <Story />
+      </div>
+    ),
+  ],
+} satisfies Meta<typeof Feedback>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+/**
+ * 正解（1投、T20で60点）
+ */
+export const CorrectSingleThrow: Story = {
+  args: {
+    userAnswer: 60,
+    isCorrect: true,
+  },
+  decorators: [
+    withMockStore({
+      userAnswer: 60,
+      isCorrect: true,
+      currentQuestion: {
+        throws: [
+          {
+            landingPoint: { x: 0, y: -100 },
+            ring: 'triple',
+            segmentNumber: 20,
+            score: 60,
+          },
+        ],
+        bustInfo: null,
+      },
+      stats: { correct: 6, incorrect: 2, total: 8, currentStreak: 4, bestStreak: 5 },
+    }),
+  ],
+};
+
+/**
+ * 不正解（1投、D16で32点、40と誤答）
+ */
+export const IncorrectSingleThrow: Story = {
+  args: {
+    userAnswer: 40,
+    isCorrect: false,
+  },
+  decorators: [
+    withMockStore({
+      userAnswer: 40,
+      isCorrect: false,
+      currentQuestion: {
+        throws: [
+          {
+            landingPoint: { x: 80, y: 0 },
+            ring: 'double',
+            segmentNumber: 16,
+            score: 32,
+          },
+        ],
+        bustInfo: null,
+      },
+      stats: { correct: 5, incorrect: 3, total: 8, currentStreak: 0, bestStreak: 5 },
+    }),
+  ],
+};
+
+/**
+ * 正解（3投、T20 + T20 + T20 = 180点満点）
+ */
+export const CorrectThreeThrows180: Story = {
+  args: {
+    userAnswer: 180,
+    isCorrect: true,
+  },
+  decorators: [
+    withMockStore({
+      userAnswer: 180,
+      isCorrect: true,
+      currentQuestion: {
+        throws: [
+          {
+            landingPoint: { x: 0, y: -100 },
+            ring: 'triple',
+            segmentNumber: 20,
+            score: 60,
+          },
+          {
+            landingPoint: { x: 0, y: -100 },
+            ring: 'triple',
+            segmentNumber: 20,
+            score: 60,
+          },
+          {
+            landingPoint: { x: 0, y: -100 },
+            ring: 'triple',
+            segmentNumber: 20,
+            score: 60,
+          },
+        ],
+        bustInfo: null,
+      },
+      stats: { correct: 10, incorrect: 0, total: 10, currentStreak: 10, bestStreak: 10 },
+    }),
+  ],
+};
+
+/**
+ * 正解（ブル50点）
+ */
+export const CorrectBull: Story = {
+  args: {
+    userAnswer: 50,
+    isCorrect: true,
+  },
+  decorators: [
+    withMockStore({
+      userAnswer: 50,
+      isCorrect: true,
+      currentQuestion: {
+        throws: [
+          {
+            landingPoint: { x: 0, y: 0 },
+            ring: 'bull',
+            segmentNumber: null,
+            score: 50,
+          },
+        ],
+        bustInfo: null,
+      },
+      stats: { correct: 8, incorrect: 1, total: 9, currentStreak: 5, bestStreak: 7 },
+    }),
+  ],
+};
+
+/**
+ * 正解（0点、ボード外）
+ */
+export const CorrectMiss: Story = {
+  args: {
+    userAnswer: 0,
+    isCorrect: true,
+  },
+  decorators: [
+    withMockStore({
+      userAnswer: 0,
+      isCorrect: true,
+      currentQuestion: {
+        throws: [
+          {
+            landingPoint: { x: 300, y: 0 },
+            ring: null,
+            segmentNumber: null,
+            score: 0,
+          },
+        ],
+        bustInfo: null,
+      },
+      stats: { correct: 5, incorrect: 3, total: 8, currentStreak: 2, bestStreak: 5 },
+    }),
+  ],
+};
+
+/**
+ * 正解とバスト表示（残り超過）
+ */
+export const CorrectWithBustOver: Story = {
+  args: {
+    userAnswer: 60,
+    isCorrect: true,
+  },
+  decorators: [
+    withMockStore({
+      userAnswer: 60,
+      isCorrect: true,
+      currentQuestion: {
+        throws: [
+          {
+            landingPoint: { x: 0, y: -100 },
+            ring: 'triple',
+            segmentNumber: 20,
+            score: 60,
+          },
+        ],
+        bustInfo: {
+          isBust: true,
+          reason: 'over',
+        },
+      },
+      questionType: 'remaining',
+      startingScore: 501,
+      remainingScore: 41,
+      stats: { correct: 7, incorrect: 2, total: 9, currentStreak: 3, bestStreak: 5 },
+    }),
+  ],
+};
+
+/**
+ * 正解とバスト表示（残り1点）
+ */
+export const CorrectWithBustFinishImpossible: Story = {
+  args: {
+    userAnswer: 20,
+    isCorrect: true,
+  },
+  decorators: [
+    withMockStore({
+      userAnswer: 20,
+      isCorrect: true,
+      currentQuestion: {
+        throws: [
+          {
+            landingPoint: { x: 0, y: -100 },
+            ring: 'single',
+            segmentNumber: 20,
+            score: 20,
+          },
+        ],
+        bustInfo: {
+          isBust: true,
+          reason: 'finish_impossible',
+        },
+      },
+      questionType: 'remaining',
+      startingScore: 501,
+      remainingScore: 1,
+      stats: { correct: 12, incorrect: 3, total: 15, currentStreak: 4, bestStreak: 8 },
+    }),
+  ],
+};
+
+/**
+ * 正解とバスト表示（ダブルアウト必要）
+ */
+export const CorrectWithBustDoubleOutRequired: Story = {
+  args: {
+    userAnswer: 20,
+    isCorrect: true,
+  },
+  decorators: [
+    withMockStore({
+      userAnswer: 20,
+      isCorrect: true,
+      currentQuestion: {
+        throws: [
+          {
+            landingPoint: { x: 0, y: -100 },
+            ring: 'single',
+            segmentNumber: 20,
+            score: 20,
+          },
+        ],
+        bustInfo: {
+          isBust: true,
+          reason: 'double_out_required',
+        },
+      },
+      questionType: 'remaining',
+      startingScore: 501,
+      remainingScore: 0,
+      stats: { correct: 15, incorrect: 2, total: 17, currentStreak: 6, bestStreak: 8 },
+    }),
+  ],
+};
+
+/**
+ * ゲームクリア（残り0点到達）
+ */
+export const GameCleared: Story = {
+  args: {
+    userAnswer: 0,
+    isCorrect: true,
+  },
+  decorators: [
+    withMockStore({
+      userAnswer: 0,
+      isCorrect: true,
+      currentQuestion: {
+        throws: [
+          {
+            landingPoint: { x: 80, y: 0 },
+            ring: 'double',
+            segmentNumber: 16,
+            score: 32,
+          },
+        ],
+        bustInfo: null,
+      },
+      questionType: 'remaining',
+      startingScore: 501,
+      remainingScore: 0,
+      stats: { correct: 20, incorrect: 3, total: 23, currentStreak: 10, bestStreak: 12 },
+    }),
+  ],
+};
+
+/**
+ * 高連続正解数（15連続正解中）
+ */
+export const HighStreak: Story = {
+  args: {
+    userAnswer: 60,
+    isCorrect: true,
+  },
+  decorators: [
+    withMockStore({
+      userAnswer: 60,
+      isCorrect: true,
+      currentQuestion: {
+        throws: [
+          {
+            landingPoint: { x: 0, y: -100 },
+            ring: 'triple',
+            segmentNumber: 20,
+            score: 60,
+          },
+        ],
+        bustInfo: null,
+      },
+      stats: { correct: 18, incorrect: 3, total: 21, currentStreak: 15, bestStreak: 15 },
+    }),
+  ],
+};
