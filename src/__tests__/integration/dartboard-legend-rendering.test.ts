@@ -86,9 +86,17 @@ describe('dartboard-legend-rendering integration', () => {
         expect(fillSpy).toHaveBeenCalledTimes(4);
         expect(textSpy).toHaveBeenCalledTimes(2);
 
-        // 色が使用されることを確認
-        expect(fillSpy).toHaveBeenCalledWith(DART_COLORS.first);
-        expect(fillSpy).toHaveBeenCalledWith(DART_COLORS.second);
+        // 色が使用されることを確認（透明度付きの色を許容）
+        const firstColorCall = fillSpy.mock.calls.find((call) => {
+          const color = call[0] as unknown as string;
+          return typeof color === 'string' && color.startsWith(DART_COLORS.first);
+        });
+        const secondColorCall = fillSpy.mock.calls.find((call) => {
+          const color = call[0] as unknown as string;
+          return typeof color === 'string' && color.startsWith(DART_COLORS.second);
+        });
+        expect(firstColorCall).toBeDefined();
+        expect(secondColorCall).toBeDefined();
         // ラベルが描画されることを確認
         expect(textSpy).toHaveBeenCalledWith('1本目', expect.any(Number), expect.any(Number));
         expect(textSpy).toHaveBeenCalledWith('2本目', expect.any(Number), expect.any(Number));
@@ -111,10 +119,22 @@ describe('dartboard-legend-rendering integration', () => {
         expect(fillSpy).toHaveBeenCalledTimes(6);
         expect(textSpy).toHaveBeenCalledTimes(3);
 
-        // 色が使用されることを確認
-        expect(fillSpy).toHaveBeenCalledWith(DART_COLORS.first);
-        expect(fillSpy).toHaveBeenCalledWith(DART_COLORS.second);
-        expect(fillSpy).toHaveBeenCalledWith(DART_COLORS.third);
+        // 色が使用されることを確認（透明度付きの色を許容）
+        const firstColorCall = fillSpy.mock.calls.find((call) => {
+          const color = call[0] as unknown as string;
+          return typeof color === 'string' && color.startsWith(DART_COLORS.first);
+        });
+        const secondColorCall = fillSpy.mock.calls.find((call) => {
+          const color = call[0] as unknown as string;
+          return typeof color === 'string' && color.startsWith(DART_COLORS.second);
+        });
+        const thirdColorCall = fillSpy.mock.calls.find((call) => {
+          const color = call[0] as unknown as string;
+          return typeof color === 'string' && color.startsWith(DART_COLORS.third);
+        });
+        expect(firstColorCall).toBeDefined();
+        expect(secondColorCall).toBeDefined();
+        expect(thirdColorCall).toBeDefined();
         // ラベルが描画されることを確認
         expect(textSpy).toHaveBeenCalledWith('1本目', expect.any(Number), expect.any(Number));
         expect(textSpy).toHaveBeenCalledWith('2本目', expect.any(Number), expect.any(Number));
@@ -132,8 +152,8 @@ describe('dartboard-legend-rendering integration', () => {
 
         // Assert
         const fillCalls = fillSpy.mock.calls;
-        // 最初の fill() 呼び出しが1本目の色であることを確認
-        expect(fillCalls[0][0]).toBe(DART_COLORS.first);
+        // 最初の fill() 呼び出しが1本目の色（透明度付き）であることを確認
+        expect(fillCalls[0][0]).toBe(`${DART_COLORS.first}ff`);
       });
 
       test('2本目の円がDART_COLORS.second（青緑系: #4ECDC4）で描画される', () => {
@@ -145,8 +165,8 @@ describe('dartboard-legend-rendering integration', () => {
 
         // Assert
         const fillCalls = fillSpy.mock.calls;
-        // 3番目の fill() 呼び出しが2本目の色であることを確認（1本目の円、1本目のテキスト、2本目の円）
-        expect(fillCalls[2][0]).toBe(DART_COLORS.second);
+        // 3番目の fill() 呼び出しが2本目の色（透明度付き）であることを確認（1本目の円、1本目のテキスト、2本目の円）
+        expect(fillCalls[2][0]).toBe(`${DART_COLORS.second}ff`);
       });
 
       test('3本目の円がDART_COLORS.third（黄系: #FFE66D）で描画される', () => {
@@ -158,8 +178,8 @@ describe('dartboard-legend-rendering integration', () => {
 
         // Assert
         const fillCalls = fillSpy.mock.calls;
-        // 5番目の fill() 呼び出しが3本目の色であることを確認
-        expect(fillCalls[4][0]).toBe(DART_COLORS.third);
+        // 5番目の fill() 呼び出しが3本目の色（透明度付き）であることを確認
+        expect(fillCalls[4][0]).toBe(`${DART_COLORS.third}ff`);
       });
 
       test('テキストが白色（#FFFFFF）で描画される', () => {
@@ -171,11 +191,11 @@ describe('dartboard-legend-rendering integration', () => {
 
         // Assert
         // fill() は円の色とテキストの色で交互に呼ばれる
-        // テキストの色は #FFFFFF
+        // テキストの色は #FFFFFF + 透明度
         const fillCalls = fillSpy.mock.calls;
-        expect(fillCalls[1][0]).toBe('#FFFFFF'); // 1本目のテキスト
-        expect(fillCalls[3][0]).toBe('#FFFFFF'); // 2本目のテキスト
-        expect(fillCalls[5][0]).toBe('#FFFFFF'); // 3本目のテキスト
+        expect(fillCalls[1][0]).toBe('#FFFFFFff'); // 1本目のテキスト（透明度付き）
+        expect(fillCalls[3][0]).toBe('#FFFFFFff'); // 2本目のテキスト（透明度付き）
+        expect(fillCalls[5][0]).toBe('#FFFFFFff'); // 3本目のテキスト（透明度付き）
       });
     });
 

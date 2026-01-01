@@ -9,6 +9,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { P5Canvas } from '../../components/DartBoard/P5Canvas';
 import type { Coordinates } from '../../types';
 import { BOARD_PHYSICAL, DART_COLORS } from '../../utils/constants/index.js';
+import { getDisplayCoordinates } from '../../utils/displayCoordinates/index.js';
 
 /**
  * react-p5のSketchコンポーネントのProps型定義
@@ -301,8 +302,12 @@ describe('p5-canvas-wrapper integration', () => {
       const firstCall = vi.mocked(drawDartMarker).mock.calls[0];
       const secondCall = vi.mocked(drawDartMarker).mock.calls[1];
 
-      expect(firstCall[2]).toEqual({ x: 10, y: 20 });
-      expect(secondCall[2]).toEqual({ x: 30, y: 40 });
+      // 表示座標変換を考慮した期待値
+      const expectedFirst = getDisplayCoordinates(coords[0]);
+      const expectedSecond = getDisplayCoordinates(coords[1]);
+
+      expect(firstCall[2]).toEqual(expectedFirst);
+      expect(secondCall[2]).toEqual(expectedSecond);
     });
 
     test('drawDartMarkerに正しいダーツ色が渡される', () => {
@@ -481,10 +486,13 @@ describe('p5-canvas-wrapper integration', () => {
       const call = vi.mocked(drawDartMarker).mock.calls[0];
       expect(call.length).toBe(5);
 
+      // 表示座標変換を考慮した期待値
+      const expectedCoords = getDisplayCoordinates(coords[0]);
+
       // 引数の型を確認
       expect(call[0]).toBeDefined(); // p5インスタンス
       expect(call[1]).toHaveProperty('getCenter'); // CoordinateTransform
-      expect(call[2]).toEqual({ x: 10, y: 20 }); // 座標
+      expect(call[2]).toEqual(expectedCoords); // 座標（表示座標変換後）
       expect(typeof call[3]).toBe('string'); // 色
       expect(typeof call[4]).toBe('number'); // インデックス
     });

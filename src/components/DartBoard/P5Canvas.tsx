@@ -10,6 +10,7 @@ import { useGameStore } from '../../stores/gameStore';
 import type { Coordinates } from '../../types';
 import { BOARD_PHYSICAL, DART_COLORS } from '../../utils/constants/index.js';
 import { CoordinateTransform } from '../../utils/coordinateTransform';
+import { getDisplayCoordinates } from '../../utils/displayCoordinates/index.js';
 import { coordinateToScoreDetail, getScoreLabel } from '../../utils/scoreCalculator/index.js';
 import {
   drawBoard,
@@ -122,7 +123,9 @@ export function P5Canvas({ coords, dartCount, width, height }: P5CanvasProps): J
       // 色配列の範囲内かつ表示状態の場合のみ描画
       const isVisible = visibleDarts[index] !== false; // デフォルトはtrue
       if (index < dartColors.length && isVisible) {
-        drawDartMarker(p5Instance, transformRef.current!, coord, dartColors[index], index);
+        // 実際の着地座標から表示座標を計算
+        const displayCoord = getDisplayCoordinates(coord);
+        drawDartMarker(p5Instance, transformRef.current!, displayCoord, dartColors[index], index);
       }
     });
 
