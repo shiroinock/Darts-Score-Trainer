@@ -199,8 +199,8 @@ describe('getRing', () => {
     });
   });
 
-  describe('境界値 - ダブル/外側シングル境界', () => {
-    test('ちょうど170mmはOUTER_SINGLEを返す', () => {
+  describe('境界値 - ダブル/アウトボード境界', () => {
+    test('ちょうど170mmはOUTを返す', () => {
       // Arrange
       const distance = BOARD_PHYSICAL.rings.doubleOuter; // 170mm
 
@@ -208,12 +208,34 @@ describe('getRing', () => {
       const result = getRing(distance);
 
       // Assert
-      expect(result).toBe('OUTER_SINGLE');
+      expect(result).toBe('OUT');
     });
   });
 
-  describe('正常系 - ボード端付近', () => {
-    test('ボード端手前（220mm）はOUTER_SINGLEを返す', () => {
+  describe('正常系 - アウトボード', () => {
+    test('アウトボード（171mm）はOUTを返す', () => {
+      // Arrange
+      const distance = 171;
+
+      // Act
+      const result = getRing(distance);
+
+      // Assert
+      expect(result).toBe('OUT');
+    });
+
+    test('アウトボード（200mm）はOUTを返す', () => {
+      // Arrange
+      const distance = 200;
+
+      // Act
+      const result = getRing(distance);
+
+      // Assert
+      expect(result).toBe('OUT');
+    });
+
+    test('アウトボード（220mm）はOUTを返す', () => {
       // Arrange
       const distance = 220;
 
@@ -221,7 +243,7 @@ describe('getRing', () => {
       const result = getRing(distance);
 
       // Assert
-      expect(result).toBe('OUTER_SINGLE');
+      expect(result).toBe('OUT');
     });
   });
 

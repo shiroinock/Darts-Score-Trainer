@@ -727,20 +727,20 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 **正しい挙動**: 170mm（`doubleOuter`）以上は`OUT`（0点）であるべき
 
 **修正内容**:
-- [ ] `src/utils/scoreCalculator/getRing.ts`の37-38行目を削除
+- [x] `src/utils/scoreCalculator/getRing.ts`の37-38行目を削除
   ```typescript
-  // 削除すべきコード
+  // 削除したコード
   if (distance < BOARD_PHYSICAL.rings.boardEdge) {
     return 'OUTER_SINGLE';
   }
   ```
-- [ ] `getRing.test.ts`にアウトボード判定のテストを追加
-  - 170mm → OUT
-  - 171mm → OUT
-  - 200mm → OUT
-  - 225mm → OUT
-  - 226mm → OUT
-- [ ] 既存テストが壊れないことを確認
+- [x] `getRing.test.ts`にアウトボード判定のテストを追加
+  - [x] 170mm → OUT
+  - [x] 171mm → OUT
+  - [x] 200mm → OUT
+  - [x] 225mm → OUT（既存）
+  - [x] 226mm → OUT（既存）
+- [x] 既存テストが壊れないことを確認（26 tests passing, before: 24）
 
 **要修正箇所の特定**:
 - `grep -r "boardEdge" src/` でboardEdgeの使用箇所を確認

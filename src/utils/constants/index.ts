@@ -28,7 +28,7 @@ export { MAX_INPUT_DIGITS } from './inputValidation.js';
 export { LEGEND_LAYOUT, LEGEND_TEXT_SIZE } from './legendLayout.js';
 export { SEGMENT_ANGLE } from './segmentAngle.js';
 export { SEGMENT_NUMBER_TEXT_SIZE } from './segmentNumberTextSize.js';
-export { SEGMENTS } from './segments.js';
+export { MAX_SEGMENT_NUMBER, MIN_SEGMENT_NUMBER, SEGMENTS } from './segments.js';
 export { SESSION_QUESTION_COUNTS } from './sessionQuestionCounts.js';
 export { SESSION_TIME_LIMITS } from './sessionTimeLimits.js';
 // ストレージ

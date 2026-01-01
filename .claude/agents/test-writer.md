@@ -1391,3 +1391,159 @@ useFeedbackのような複雑なフックをテストする場合：
 ```
 
 この明示により、レビュー時に期待される状態（Red vs Green）の混乱を防ぎます。
+
+## 追加ガイドライン（2026-01-01 追記 - calculateHitProbability関数のテスト評価に基づく改善）
+
+### 確率関数のテストにおける期待値の明確化
+
+確率計算関数のテストでは、以下の点に注意してください：
+
+1. **具体的な期待確率値の検証**
+
+   確率が0-1の範囲であることの検証だけでなく、可能な限り具体的な期待値や範囲を検証してください：
+
+   ```typescript
+   // ❌ 避けるべき（範囲チェックのみ）
+   test('上級者レベルでアウターブルのヒット確率を計算する', () => {
+     const result = calculateHitProbability(0, 0, 15, 'OUTER_BULL');
+     expect(result).toBeGreaterThanOrEqual(0);
+     expect(result).toBeLessThanOrEqual(1);
+     // アウターブルはインナーブルよりも大きいエリア（具体性なし）
+   });
+
+   // ✅ 推奨（具体的な期待範囲）
+   test('上級者レベル（stdDev=15mm）でアウターブルのヒット確率を計算する', () => {
+     const result = calculateHitProbability(0, 0, 15, 'OUTER_BULL');
+
+     // アウターブル半径3.175-7.95mm、stdDev=15mmの2次元正規分布から
+     // 期待されるおおよその確率範囲（理論計算またはシミュレーションに基づく）
+     expect(result).toBeGreaterThan(0.02); // 最低2%以上
+     expect(result).toBeLessThan(0.15);    // 15%未満
+   });
+   ```
+
+2. **相対的な確率関係の明示**
+
+   複数のテストケースの相対関係をdescribeグループでまとめて検証：
+
+   ```typescript
+   describe('エリアサイズによる確率の変化', () => {
+     test('同じ実力レベルで、大きいエリアほどヒット確率が高くなる', () => {
+       const targetX = 0;
+       const targetY = 0;
+       const stdDevMM = 15;
+
+       const innerBullProb = calculateHitProbability(targetX, targetY, stdDevMM, 'INNER_BULL');
+       const outerBullProb = calculateHitProbability(targetX, targetY, stdDevMM, 'OUTER_BULL');
+
+       // アウターブル（半径3.175-7.95mm）の方が
+       // インナーブル（半径0-3.175mm）より大きいエリアなので、確率が高くなる
+       expect(outerBullProb).toBeGreaterThan(innerBullProb);
+
+       // 具体的な比率も検証できるとより良い
+       // 例: アウターブルはインナーブルの約5倍のエリア
+       expect(outerBullProb / innerBullProb).toBeGreaterThan(3);
+     });
+   });
+   ```
+
+3. **物理的な意味を持つテストコメント**
+
+   確率値の期待範囲について、物理的な根拠をコメントで説明：
+
+   ```typescript
+   test('エキスパートレベル（stdDev=8mm）でインナーブル（半径3.175mm）のヒット確率', () => {
+     const result = calculateHitProbability(0, 0, 8, 'INNER_BULL');
+
+     // stdDev=8mm、ターゲット半径3.175mmの場合、
+     // 半径/stdDev比 = 3.175/8 ≈ 0.4
+     // 2次元正規分布で半径0.4σ以内に入る確率は約14%
+     expect(result).toBeGreaterThan(0.10);
+     expect(result).toBeLessThan(0.20);
+   });
+   ```
+
+### 確率計算のバリデーションテスト
+
+確率関数特有のバリデーションを含めてください：
+
+1. **確率の単調性の検証**
+
+   ```typescript
+   test('実力が向上する（stdDevが小さくなる）ほど、確率が単調増加する', () => {
+     const targetX = 0;
+     const targetY = -103; // T20
+     const areaType = 'TRIPLE';
+     const segmentNumber = 20;
+
+     const probabilities = [100, 50, 30, 15, 8].map(stdDev =>
+       calculateHitProbability(targetX, targetY, stdDev, areaType, segmentNumber)
+     );
+
+     // 確率配列が単調増加していることを検証
+     for (let i = 1; i < probabilities.length; i++) {
+       expect(probabilities[i]).toBeGreaterThan(probabilities[i - 1]);
+     }
+   });
+   ```
+
+2. **確率の合理的な上限・下限の検証**
+
+   ```typescript
+   test('どんなに実力が低くても、シングルエリア全体で0%にはならない', () => {
+     // 初心者（stdDev=100mm）でもボード全体（半径225mm）のどこかには当たる
+     const result = calculateHitProbability(0, 0, 100, 'SINGLE', 20);
+     expect(result).toBeGreaterThan(0);
+   });
+
+   test('どんなに実力が高くても、極小エリアで100%にはならない', () => {
+     // stdDev > 0 である限り、確率は100%未満
+     const result = calculateHitProbability(0, 0, 0.01, 'INNER_BULL');
+     expect(result).toBeLessThan(1);
+   });
+   ```
+
+### ドメイン固有の期待値検証
+
+ダーツドメインの物理特性を反映したテストケース：
+
+```typescript
+describe('ターゲット位置による確率変化', () => {
+  test('ターゲットから遠い位置を狙うほど、ヒット確率が下がる', () => {
+    const stdDevMM = 15; // 上級者
+    const areaType = 'TRIPLE';
+    const segmentNumber = 20;
+
+    // トリプル20の正しい位置（Y=-103）
+    const correctProb = calculateHitProbability(0, -103, stdDevMM, areaType, segmentNumber);
+
+    // ターゲットから遠い位置（ボード端近く）から狙う
+    const farProb = calculateHitProbability(200, 0, stdDevMM, areaType, segmentNumber);
+
+    // ターゲットに近い位置から狙う方が確率が高い
+    expect(correctProb).toBeGreaterThan(farProb);
+
+    // ボード端から狙う場合、ほぼ当たらない
+    expect(farProb).toBeLessThan(0.01);
+  });
+});
+```
+
+### テストの自己文書化
+
+確率関数のテストは、以下の情報を含めることで自己文書化してください：
+
+1. **テスト名に期待される挙動を含める**
+   - 良い例: `'中級者レベルでは、インナーブルのヒット確率は低い'`
+   - 悪い例: `'中級者レベルでインナーブルのヒット確率を計算する'`
+
+2. **コメントで物理的な意味を説明**
+   - ターゲットサイズ（半径）
+   - 実力レベル（stdDev）
+   - 期待される確率の物理的根拠
+
+3. **アサーションに意味のある閾値を使用**
+   - `expect(result).toBeGreaterThan(0.5)` の場合、コメントで「50%以上」の根拠を説明
+   - 任意の閾値ではなく、ドメイン知識に基づいた値を使用
+
+この改善により、確率計算関数のテストがより明確で、実装者にとって有用な仕様書となります。
