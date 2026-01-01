@@ -7,10 +7,10 @@ const withMockStore = (Story: React.ComponentType) => {
   function StoryWrapper() {
     useEffect(() => {
       // DebugScreenは特別なストア状態を必要としません
-      // exitDebugScreen関数がコンソールに出力するだけにします
+      // exitDebugScreen関数は何もしない
       useGameStore.setState({
         exitDebugScreen: () => {
-          console.log('Exit debug screen');
+          // Storybook上での動作確認用のハンドラー
         },
       });
 

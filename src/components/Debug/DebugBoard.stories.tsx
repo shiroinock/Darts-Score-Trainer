@@ -33,9 +33,9 @@ type Story = StoryObj<typeof meta>;
  */
 export const Default: Story = {
   args: {
-    onBoardClick: (info: ClickInfo, canvas: { width: number; height: number; scale: number }) => {
-      console.log('Board clicked:', info);
-      console.log('Canvas info:', canvas);
+    onBoardClick: (_info: ClickInfo) => {
+      // Storybook上での動作確認用のハンドラー
+      // クリック情報を受け取りますが、何もしません
     },
   },
 };

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { DART_POSITIONS } from '../../stories/fixtures/sampleData';
 import { ZoomView } from './ZoomView';
 
 const meta = {
@@ -58,7 +59,7 @@ export const NoDarts: Story = {
  */
 export const SingleDartT20: Story = {
   args: {
-    coords: [{ x: 0, y: -103 }],
+    coords: [DART_POSITIONS.T20_CENTER],
     dartCount: 1,
     visibleDarts: [true],
   },
@@ -69,7 +70,7 @@ export const SingleDartT20: Story = {
  */
 export const SingleDartBull: Story = {
   args: {
-    coords: [{ x: 0, y: 0 }],
+    coords: [DART_POSITIONS.BULL_CENTER],
     dartCount: 1,
     visibleDarts: [true],
   },
@@ -80,7 +81,7 @@ export const SingleDartBull: Story = {
  */
 export const SingleDartD16: Story = {
   args: {
-    coords: [{ x: 166, y: 0 }],
+    coords: [DART_POSITIONS.D16_CENTER],
     dartCount: 1,
     visibleDarts: [true],
   },

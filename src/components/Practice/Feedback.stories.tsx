@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
 import { useGameStore } from '../../stores/gameStore';
+import { DART_POSITIONS } from '../../stories/fixtures/sampleData';
 import type { Question, QuestionType, Stats } from '../../types';
 import { Feedback } from './Feedback';
 
@@ -203,7 +204,7 @@ export const CorrectBull: Story = {
         throws: [
           {
             target: { type: 'BULL', number: null },
-            landingPoint: { x: 0, y: 0 },
+            landingPoint: DART_POSITIONS.BULL_CENTER,
             ring: 'INNER_BULL',
             score: 50,
           },
@@ -233,7 +234,7 @@ export const CorrectMiss: Story = {
         throws: [
           {
             target: { type: 'SINGLE', number: 20 },
-            landingPoint: { x: 300, y: 0 },
+            landingPoint: DART_POSITIONS.OUT_OF_BOARD,
             score: 0,
           },
         ],

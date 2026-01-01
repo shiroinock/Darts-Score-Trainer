@@ -50,12 +50,19 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const defaultOnAnswer = (answer: BustQuestionAnswer) => {
-  console.log('Answer:', answer);
+/**
+ * デフォルトのonAnswerハンドラー
+ * ストーリーでの動作確認用（何もしない）
+ */
+const defaultOnAnswer = (_answer: BustQuestionAnswer) => {
+  // Storybook上での動作確認用のハンドラー
+  // 実際のアプリケーションでは適切なハンドラーが渡されます
 };
 
 /**
  * デフォルト状態（バスト/セーフの2択）
+ *
+ * キーボードショートカット: B (バスト), S (セーフ)
  */
 export const Default: Story = {
   args: {
@@ -64,11 +71,20 @@ export const Default: Story = {
     showFeedback: false,
     showFinishOption: false,
   },
+  parameters: {
+    docs: {
+      description: {
+        story: 'キーボードショートカット: B (バスト), S (セーフ)',
+      },
+    },
+  },
 };
 
 /**
  * フィニッシュ選択肢あり（3択）
  * 残り点数が1本でフィニッシュ可能な場合
+ *
+ * キーボードショートカット: B (バスト), S (セーフ), F (フィニッシュ)
  */
 export const WithFinishOption: Story = {
   args: {
@@ -76,6 +92,13 @@ export const WithFinishOption: Story = {
     onAnswer: defaultOnAnswer,
     showFeedback: false,
     showFinishOption: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'キーボードショートカット: B (バスト), S (セーフ), F (フィニッシュ)',
+      },
+    },
   },
 };
 

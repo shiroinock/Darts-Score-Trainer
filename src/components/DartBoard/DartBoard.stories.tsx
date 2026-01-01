@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { DART_POSITIONS } from '../../stories/fixtures/sampleData';
 import { DartBoard } from './DartBoard';
 
 const meta = {
@@ -30,22 +31,18 @@ export const Empty: Story = {
 };
 
 export const SingleDart: Story = {
-  args: { coords: [{ x: 0, y: -103 }], dartCount: 1 },
+  args: { coords: [DART_POSITIONS.T20_CENTER], dartCount: 1 },
 };
 
 export const ThreeDarts: Story = {
   args: {
-    coords: [
-      { x: 0, y: -103 },
-      { x: 50, y: -90 },
-      { x: -30, y: -95 },
-    ],
+    coords: [DART_POSITIONS.T20_CENTER, { x: 50, y: -90 }, { x: -30, y: -95 }],
     dartCount: 3,
   },
 };
 
 export const BullsEye: Story = {
-  args: { coords: [{ x: 0, y: 0 }], dartCount: 1 },
+  args: { coords: [DART_POSITIONS.BULL_CENTER], dartCount: 1 },
 };
 
 export const OuterBull: Story = {
@@ -58,11 +55,7 @@ export const OffBoard: Story = {
 
 export const MobileViewport: Story = {
   args: {
-    coords: [
-      { x: 0, y: -103 },
-      { x: 50, y: -90 },
-      { x: -30, y: -95 },
-    ],
+    coords: [DART_POSITIONS.T20_CENTER, { x: 50, y: -90 }, { x: -30, y: -95 }],
     dartCount: 3,
   },
   parameters: { viewport: { defaultViewport: 'mobile' } },

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
 import { useGameStore } from '../../stores/gameStore';
+import { DART_POSITIONS } from '../../stories/fixtures/sampleData';
 import type { Question, SessionConfig, Stats, ThrowResult } from '../../types';
 import { PracticeScreen } from './PracticeScreen';
 
@@ -29,7 +30,7 @@ const withMockStore =
             throws: [
               {
                 target: { type: 'TRIPLE', number: 20 },
-                landingPoint: { x: 0, y: -103 },
+                landingPoint: DART_POSITIONS.T20_CENTER,
                 ring: 'TRIPLE',
                 segmentNumber: 20,
                 score: 60,
@@ -42,7 +43,7 @@ const withMockStore =
           displayedDarts = [
             {
               target: { type: 'TRIPLE', number: 20 },
-              landingPoint: { x: 0, y: -103 },
+              landingPoint: DART_POSITIONS.T20_CENTER,
               score: 60,
             },
           ],
@@ -193,7 +194,11 @@ export const ThreeDarts: Story = {
       sessionConfig: { mode: 'questions', questionCount: 10 },
       displayedDarts: [
         { target: { type: 'TRIPLE', number: 20 }, landingPoint: { x: -2, y: -103 }, score: 60 },
-        { target: { type: 'TRIPLE', number: 20 }, landingPoint: { x: 0, y: -103 }, score: 60 },
+        {
+          target: { type: 'TRIPLE', number: 20 },
+          landingPoint: DART_POSITIONS.T20_CENTER,
+          score: 60,
+        },
         { target: { type: 'TRIPLE', number: 20 }, landingPoint: { x: 2, y: -103 }, score: 60 },
       ],
       stats: { correct: 3, total: 4, currentStreak: 2, bestStreak: 2 },

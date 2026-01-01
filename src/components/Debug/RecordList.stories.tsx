@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { SAMPLE_DEBUG_RECORDS_15 } from '../../stories/fixtures/sampleData';
 import type { DebugRecord } from './DebugScreen';
 import { RecordList } from './RecordList';
 
@@ -27,8 +28,12 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+/**
+ * デフォルトのonClearハンドラー
+ * ストーリーでの動作確認用（何もしない）
+ */
 const defaultOnClear = () => {
-  console.log('Records cleared');
+  // Storybook上での動作確認用のハンドラー
 };
 
 /**
@@ -187,34 +192,7 @@ export const Mixed: Story = {
  */
 export const ManyRecords: Story = {
   args: {
-    records: Array.from({ length: 15 }, (_, i) => ({
-      id: i + 1,
-      timestamp: new Date(Date.now() - (15 - i) * 60000).toISOString(),
-      click: {
-        screenX: 300 + Math.random() * 200,
-        screenY: 200 + Math.random() * 200,
-        physicalX: -100 + Math.random() * 200,
-        physicalY: -100 + Math.random() * 200,
-      },
-      detected: {
-        segment: Math.floor(Math.random() * 20) + 1,
-        ring: ['TRIPLE', 'DOUBLE', 'INNER_SINGLE', 'OUTER_SINGLE'][Math.floor(Math.random() * 4)] as
-          | 'TRIPLE'
-          | 'DOUBLE'
-          | 'INNER_SINGLE'
-          | 'OUTER_SINGLE',
-        score: Math.floor(Math.random() * 60) + 1,
-      },
-      actual: {
-        segment: Math.floor(Math.random() * 20) + 1,
-        ring: ['TRIPLE', 'DOUBLE', 'INNER_SINGLE', 'OUTER_SINGLE'][Math.floor(Math.random() * 4)] as
-          | 'TRIPLE'
-          | 'DOUBLE'
-          | 'INNER_SINGLE'
-          | 'OUTER_SINGLE',
-      },
-      isCorrect: Math.random() > 0.3,
-    })) as DebugRecord[],
+    records: SAMPLE_DEBUG_RECORDS_15,
     canvasInfo: { width: 600, height: 600, scale: 2.5 },
     onClear: defaultOnClear,
   },

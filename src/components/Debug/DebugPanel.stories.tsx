@@ -27,11 +27,16 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const defaultOnAddRecord = (actual: {
+/**
+ * デフォルトのonAddRecordハンドラー
+ * ストーリーでの動作確認用（何もしない）
+ */
+const defaultOnAddRecord = (_actual: {
   segment: number;
   ring: 'INNER_BULL' | 'OUTER_BULL' | 'TRIPLE' | 'DOUBLE' | 'INNER_SINGLE' | 'OUTER_SINGLE' | 'OUT';
 }) => {
-  console.log('Record added:', actual);
+  // Storybook上での動作確認用のハンドラー
+  // 記録情報を受け取りますが、何もしません
 };
 
 /**
