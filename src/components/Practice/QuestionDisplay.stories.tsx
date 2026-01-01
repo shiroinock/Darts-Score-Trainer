@@ -36,7 +36,10 @@ const withMockStore =
           },
           currentThrowIndex,
           currentQuestion: {
+            mode: questionType,
             throws: [],
+            correctAnswer: 0,
+            questionText: '問題読み込み中...',
           },
         });
 

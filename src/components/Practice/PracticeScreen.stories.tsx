@@ -25,19 +25,23 @@ const withMockStore =
           sessionConfig = { mode: 'questions', questionCount: 10 },
           elapsedTime = 0,
           currentQuestion = {
+            mode: 'score',
             throws: [
               {
+                target: { type: 'TRIPLE', number: 20 },
                 landingPoint: { x: 0, y: -103 },
                 ring: 'TRIPLE',
                 segmentNumber: 20,
                 score: 60,
               },
             ],
-            bustInfo: null,
+            correctAnswer: 60,
+            questionText: 'この投擲の得点は？',
           },
           stats = { correct: 5, total: 7, currentStreak: 3, bestStreak: 5 },
           displayedDarts = [
             {
+              target: { type: 'TRIPLE', number: 20 },
               landingPoint: { x: 0, y: -103 },
               score: 60,
             },
