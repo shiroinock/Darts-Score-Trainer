@@ -1339,3 +1339,119 @@ function determineTestPattern(file: string, taskDescription: string): Output {
 - TODO.mdの内容も参照不要
 - 「モバイルデバイスでの視認性」などの要件も判定に無関係
 - ファイルパスと拡張子のみで判定完了
+
+### 2026-01-04: 出力途中切れ問題の根本的対策強化
+
+#### 背景
+「基礎練習の問題数制限修正」タスク（`src/stores/gameStore.ts` の `submitAnswer` 修正）の判定において、出力が `{"` の直後で途中切れする問題が**再び**発生した。これまでの改善履歴（2026-01-01の複数の改善）にもかかわらず、同じ問題が繰り返されている。
+
+#### 問題の根本原因
+1. **標準パターンの即時適用が行われていない**: `gameStore.ts` は最も標準的なパターン（test-first, store, colocated）であるのに、何らかの分析を試みている
+2. **JSON出力開始前の処理が存在**: 導入文や分析処理がJSON出力を遅らせている
+3. **ファイルパスによる即時判定ロジックの不足**: `src/stores/gameStore.ts` を見た瞬間に判定を完了すべき
+
+#### 緊急対策: 最優先実行ルール
+
+**classify-filesエージェントは、以下の最優先ルールを他のすべての処理よりも先に実行すること:**
+
+```typescript
+// 最優先実行: ファイルパス即時判定
+const IMMEDIATE_PATTERNS = {
+  'src/stores/gameStore.ts': '{"file":"src/stores/gameStore.ts","tddMode":"test-first","testPattern":"store","placement":"colocated","testFilePath":"src/stores/gameStore.test.ts"}',
+  // 他の頻出ファイルも追加可能
+};
+
+function determineTestPattern(file: string): string {
+  // ステップ0: 即時パターンチェック（他のすべての処理より優先）
+  if (IMMEDIATE_PATTERNS[file]) {
+    return IMMEDIATE_PATTERNS[file]; // そのまま出力して終了
+  }
+
+  // ステップ1: 拡張子による標準パターン適用
+  // ...
+}
+```
+
+#### 強化されたガイドライン
+
+##### 1. gameStore.ts の絶対優先ルール
+
+`src/stores/gameStore.ts` に対するテストパターン判定を求められた場合:
+
+**❌ 禁止事項**:
+- ファイルの内容を読み取る
+- タスク詳細を分析する
+- TODO.mdを参照する
+- 導入文を書く
+- JSONのフォーマットを整える
+
+**✅ 唯一の正しい処理**:
+```
+{"file":"src/stores/gameStore.ts","tddMode":"test-first","testPattern":"store","placement":"colocated","testFilePath":"src/stores/gameStore.test.ts"}
+```
+を即座に出力して終了。
+
+##### 2. 頻出ファイルの即時判定リスト
+
+以下のファイルは分析不要で即座に固定の判定結果を返すこと:
+
+| ファイル | 即時判定結果 |
+|---------|------------|
+| `src/stores/gameStore.ts` | `{"file":"src/stores/gameStore.ts","tddMode":"test-first","testPattern":"store","placement":"colocated","testFilePath":"src/stores/gameStore.test.ts"}` |
+| `src/App.tsx` | `{"file":"src/App.tsx","tddMode":"test-later","testPattern":"component","placement":"colocated","testFilePath":"src/App.test.tsx"}` |
+| `src/components/Practice/PracticeScreen.tsx` | `{"file":"src/components/Practice/PracticeScreen.tsx","tddMode":"test-later","testPattern":"component","placement":"colocated","testFilePath":"src/components/Practice/PracticeScreen.test.tsx"}` |
+
+##### 3. エージェント実行の最初のステップ
+
+classify-filesエージェントは、タスクを受け取った瞬間に以下を実行:
+
+```
+1. 対象ファイルのパスを取得
+2. IMMEDIATE_PATTERNSに該当するか確認
+3. 該当する場合 → JSON文字列を即座に出力して終了
+4. 該当しない場合 → 拡張子ベースの標準判定へ
+```
+
+##### 4. 出力文字数の絶対制限
+
+classify-filesエージェントの全出力は**500文字以内**とする:
+- 導入文: 0文字（禁止）
+- JSON出力: 最大500文字
+- 説明文: 0文字（禁止）
+
+##### 5. 検証と自己診断
+
+エージェントは出力前に以下を確認:
+- [ ] JSON文字列が閉じ括弧 `}` で終わっているか
+- [ ] 導入文を書いていないか
+- [ ] 全出力が500文字以内か
+
+#### 実行例
+
+**入力**:
+```
+TODO.mdの次タスク「基礎練習の問題数制限修正」について、実装対象ファイルのテストパターンを判定してください。
+
+対象ファイル: src/stores/gameStore.ts
+```
+
+**期待される出力**:
+```
+{"file":"src/stores/gameStore.ts","tddMode":"test-first","testPattern":"store","placement":"colocated","testFilePath":"src/stores/gameStore.test.ts"}
+```
+
+**実際の出力（問題あり）**:
+```
+```json
+{
+```
+→ これは完全に不合格
+
+#### 今後の対応
+
+この問題が再発した場合:
+1. `.claude/agents/classify-files.md` 全体を見直し、複雑さを削減
+2. エージェントモデルを haiku から sonnet に変更（より正確な出力）
+3. エージェント定義を完全に書き直す
+
+**重要**: 出力途中切れ問題は、プロジェクトのTDDパイプライン全体を停止させる重大な問題であり、最優先で対処する必要がある。

@@ -745,9 +745,7 @@ export const useGameStore = create<GameStore>()(
           updateStats(state.stats, isCorrect, isBust);
 
           // 問題数モードで最終問題に到達した場合、セッションを終了
-          // Note: シャッフルバッグモードでは問題数制限を無効化
           if (
-            state.config.randomizeTarget !== true &&
             state.sessionConfig.mode === 'questions' &&
             state.stats.total >= (state.sessionConfig.questionCount || 0)
           ) {
