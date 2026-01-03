@@ -805,14 +805,14 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 **リスク:** 低
 
 #### 9.2.5 基礎練習の残り点数管理無効化
-- [ ] `src/stores/gameStore.ts` の `submitAnswer` を修正
+- [x] `src/stores/gameStore.ts` の `submitAnswer` を修正
   - `randomizeTarget === true` の場合、`checkAndUpdateBust` をスキップ
   - バスト判定を完全に無効化
-- [ ] 修正コード:
+- [x] 修正コード:
   ```typescript
   let isBust = false;
   let newRemainingScore = state.remainingScore;
-  
+
   if (state.config.randomizeTarget !== true) {
     const bustResult = checkAndUpdateBust(
       state.currentQuestion,
@@ -822,10 +822,12 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
     isBust = bustResult.isBust;
     newRemainingScore = bustResult.newRemainingScore;
   }
-  
+
   state.remainingScore = newRemainingScore;
   ```
-- [ ] 基礎練習でバスト判定が発生しないことを確認
+- [x] 基礎練習でバスト判定が発生しないことを確認
+  - 実装ファイル: `src/stores/gameStore.ts`
+  - テストファイル: `src/stores/gameStore.bustSkip.test.ts` (17テスト全て成功)
 
 **リスク:** 中（バスト判定ロジックとの依存関係）
 

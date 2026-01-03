@@ -42,6 +42,7 @@ export function StatsBar(): JSX.Element {
   const elapsedTime = useGameStore((state) => state.elapsedTime);
   const remainingScore = useGameStore((state) => state.remainingScore);
   const startingScore = useGameStore((state) => state.config.startingScore);
+  const randomizeTarget = useGameStore((state) => state.config.randomizeTarget);
   const getAccuracy = useGameStore((state) => state.getAccuracy);
 
   // 正答率を計算
@@ -93,8 +94,8 @@ export function StatsBar(): JSX.Element {
           <dd className="stats-bar__value">{remainingDisplay}</dd>
         </dl>
 
-        {/* 残り点数（01モードの場合のみ表示） */}
-        {startingScore > 0 && (
+        {/* 残り点数（01モードかつ基礎練習モード以外の場合のみ表示） */}
+        {startingScore > 0 && randomizeTarget !== true && (
           <dl className="stats-bar__item stats-bar__item--highlight">
             <dt className="stats-bar__label">残り点数</dt>
             <dd className="stats-bar__value">{remainingScore}</dd>
