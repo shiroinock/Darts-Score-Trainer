@@ -1883,6 +1883,57 @@ exports[`DetailedSettings > スナップショットテスト > 全フィール�
 </div>
 `;
 
+exports[`DetailedSettings > スナップショットテスト > 基礎練習モード時のスナップショット（展開状態） 1`] = `
+<div>
+  <div
+    class="detailed-settings"
+  >
+    <button
+      aria-expanded="true"
+      class="detailed-settings__toggle"
+      type="button"
+    >
+      <span
+        class="detailed-settings__header"
+      >
+        詳細設定 
+        ▲
+      </span>
+    </button>
+    <div
+      class="detailed-settings__content"
+    >
+      <div
+        class="detailed-settings__notice"
+      >
+        基礎練習モードでは設定が固定されています（1投単位、得点のみを問う）
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DetailedSettings > スナップショットテスト > 基礎練習モード時のスナップショット（折りたたみ状態） 1`] = `
+<div>
+  <div
+    class="detailed-settings"
+  >
+    <button
+      aria-expanded="false"
+      class="detailed-settings__toggle"
+      type="button"
+    >
+      <span
+        class="detailed-settings__header"
+      >
+        詳細設定 
+        ▼
+      </span>
+    </button>
+  </div>
+</div>
+`;
+
 exports[`DetailedSettings > スナップショットテスト > 展開状態のスナップショット（1投、scoreモード） 1`] = `
 <div>
   <div

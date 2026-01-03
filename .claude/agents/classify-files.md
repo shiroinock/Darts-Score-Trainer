@@ -1515,3 +1515,101 @@ TODO.mdの次タスク「基礎練習の問題数制限修正」について、�
 3. エージェント定義を完全に書き直す
 
 **重要**: 出力途中切れ問題は、プロジェクトのTDDパイプライン全体を停止させる重大な問題であり、最優先で対処する必要がある。
+
+### 2026-01-04: DetailedSettings.tsx 判定時の出力途中切れ対策
+
+#### 背景
+「基礎練習の詳細設定で選択肢非表示」タスク（`src/components/Settings/DetailedSettings.tsx`）の判定において、出力が `{"` の直後で途切れる問題が発生した。これは以下の問題を示している：
+1. 拡張子ベースの即時判定（ステップ1）が機能していない
+2. JSON出力開始前に何らかの処理が実行されている
+3. 最優先実行ルールが無視されている
+
+#### 問題の根本原因
+- **拡張子ベースの即時判定ロジックが実行されていない**: `.tsx` ファイルに対する即時判定が行われず、詳細な分析に進んでしまった
+- **JSON出力前の処理が長すぎる**: 出力制限（500文字以内）に達する前にJSON開始に至っていない
+- **エージェント定義の複雑さ**: 1500行を超える定義ファイルが、エージェントの動作を混乱させている可能性
+
+#### 緊急対策: 拡張子ベースの即時判定の強制実行
+
+**classify-filesエージェントは、以下のルールを他のすべての処理よりも最優先で実行すること:**
+
+```typescript
+// ステップ0: 即時判定（最優先）
+const IMMEDIATE_PATTERNS: Record<string, string> = {
+  'src/stores/gameStore.ts': '{"file":"src/stores/gameStore.ts","tddMode":"test-first","testPattern":"store","placement":"colocated","testFilePath":"src/stores/gameStore.test.ts"}',
+  'src/App.tsx': '{"file":"src/App.tsx","tddMode":"test-later","testPattern":"component","placement":"colocated","testFilePath":"src/App.test.tsx"}'
+};
+
+// 対象ファイルがIMMEDIATE_PATTERNSに含まれる場合、即座にJSON文字列を出力して終了
+if (IMMEDIATE_PATTERNS[file]) {
+  console.log(IMMEDIATE_PATTERNS[file]);
+  process.exit(0);
+}
+
+// ステップ1: 拡張子ベースの即時判定（IMMEDIATE_PATTERNSに該当しない場合）
+if (file.endsWith('.tsx')) {
+  const testPath = file.replace('.tsx', '.test.tsx');
+  console.log(`{"file":"${file}","tddMode":"test-later","testPattern":"component","placement":"colocated","testFilePath":"${testPath}"}`);
+  process.exit(0);
+}
+
+if (file.endsWith('.css')) {
+  console.log('{"error":"CSS files cannot be tested"}');
+  process.exit(0);
+}
+
+if (file.includes('/stores/') && file.endsWith('.ts')) {
+  const testPath = file.replace('.ts', '.test.ts');
+  console.log(`{"file":"${file}","tddMode":"test-first","testPattern":"store","placement":"colocated","testFilePath":"${testPath}"}`);
+  process.exit(0);
+}
+
+if (file.includes('/utils/') && file.endsWith('.ts')) {
+  const testPath = file.replace('.ts', '.test.ts');
+  console.log(`{"file":"${file}","tddMode":"test-first","testPattern":"unit","placement":"colocated","testFilePath":"${testPath}"}`);
+  process.exit(0);
+}
+
+if (file.includes('/hooks/') && file.endsWith('.ts')) {
+  const testPath = file.replace('.ts', '.test.ts');
+  console.log(`{"file":"${file}","tddMode":"test-first","testPattern":"hook","placement":"colocated","testFilePath":"${testPath}"}`);
+  process.exit(0);
+}
+
+if (file.includes('/components/') && file.endsWith('.tsx')) {
+  const testPath = file.replace('.tsx', '.test.tsx');
+  console.log(`{"file":"${file}","tddMode":"test-later","testPattern":"component","placement":"colocated","testFilePath":"${testPath}"}`);
+  process.exit(0);
+}
+```
+
+#### DetailedSettings.tsx の即時判定
+
+`src/components/Settings/DetailedSettings.tsx` に対する正しい出力:
+
+```
+{"file":"src/components/Settings/DetailedSettings.tsx","tddMode":"test-later","testPattern":"component","placement":"colocated","testFilePath":"src/components/Settings/DetailedSettings.test.tsx"}
+```
+
+**禁止事項**:
+- ファイルの内容を読み取る
+- タスク詳細を分析する
+- 導入文を書く
+- JSON を複数行でフォーマットする
+- rationale フィールドを追加する（最小限の出力のみ）
+
+#### 出力制限の再確認
+
+- **全出力: 500文字以内**
+- **導入文: 0文字（禁止）**
+- **JSON: 1行形式、改行なし**
+- **閉じ括弧の確保: 最優先**
+
+#### 今後の対応
+
+この問題が再発した場合:
+1. エージェント定義の大幅な簡素化（現在の1500行から500行以下に削減）
+2. エージェントモデルを haiku から sonnet に変更
+3. 即時判定ロジックのみに特化した新しいエージェント定義の作成
+
+**重要**: 拡張子ベースの即時判定は、エージェントが最初に実行すべき処理であり、他のすべてのルールよりも優先される。

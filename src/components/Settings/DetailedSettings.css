@@ -111,6 +111,16 @@
   background-color: #d9edff;
 }
 
+/* 通知メッセージ */
+.detailed-settings__notice {
+  padding: 1rem;
+  background-color: var(--color-bg-gray-light);
+  border-radius: var(--border-radius-base);
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
 /* タッチデバイス向けの調整 */
 @media (hover: none) {
   .detailed-setting-button:hover {

@@ -6,6 +6,7 @@
  */
 
 import { useState } from 'react';
+import { DEFAULT_PRESET_ID } from '../../stores/config/presets';
 import { useGameStore } from '../../stores/gameStore';
 import type { JudgmentTiming, QuestionType } from '../../types';
 import './DetailedSettings.css';
@@ -62,6 +63,9 @@ export function DetailedSettings(): JSX.Element {
     setConfig({ startingScore });
   };
 
+  // 基礎練習モード判定
+  const isBasicMode = config.configId === DEFAULT_PRESET_ID;
+
   // 判定タイミングの表示条件: 3投モードの場合のみ表示
   const showJudgmentTiming = config.throwUnit === 3;
 
@@ -81,88 +85,98 @@ export function DetailedSettings(): JSX.Element {
 
       {isExpanded && (
         <div className="detailed-settings__content">
-          {/* 投擲単位選択 */}
-          <div className="detailed-settings__section">
-            <h3 className="detailed-settings__subtitle">投擲単位</h3>
-            <div className="detailed-settings__buttons">
-              {THROW_UNITS.map((unit) => (
-                <button
-                  key={unit}
-                  className={`detailed-setting-button ${
-                    config.throwUnit === unit ? 'detailed-setting-button--active' : ''
-                  }`}
-                  onClick={() => handleThrowUnitChange(unit)}
-                  type="button"
-                  aria-pressed={config.throwUnit === unit}
-                >
-                  {unit}投
-                </button>
-              ))}
+          {isBasicMode ? (
+            <div className="detailed-settings__notice">
+              基礎練習モードでは設定が固定されています（1投単位、得点のみを問う）
             </div>
-          </div>
-
-          {/* 問う内容選択 */}
-          <div className="detailed-settings__section">
-            <h3 className="detailed-settings__subtitle">問う内容</h3>
-            <div className="detailed-settings__buttons">
-              {QUESTION_TYPES.map((qt) => (
-                <button
-                  key={qt.value}
-                  className={`detailed-setting-button ${
-                    config.questionType === qt.value ? 'detailed-setting-button--active' : ''
-                  }`}
-                  onClick={() => handleQuestionTypeChange(qt.value)}
-                  type="button"
-                  aria-pressed={config.questionType === qt.value}
-                >
-                  {qt.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* 判定タイミング選択（3投モード時のみ表示） */}
-          {showJudgmentTiming && (
-            <div className="detailed-settings__section">
-              <h3 className="detailed-settings__subtitle">判定タイミング</h3>
-              <div className="detailed-settings__buttons">
-                {JUDGMENT_TIMINGS.map((jt) => (
-                  <button
-                    key={jt.value}
-                    className={`detailed-setting-button ${
-                      config.judgmentTiming === jt.value ? 'detailed-setting-button--active' : ''
-                    }`}
-                    onClick={() => handleJudgmentTimingChange(jt.value)}
-                    type="button"
-                    aria-pressed={config.judgmentTiming === jt.value}
-                  >
-                    {jt.label}
-                  </button>
-                ))}
+          ) : (
+            <>
+              {/* 投擲単位選択 */}
+              <div className="detailed-settings__section">
+                <h3 className="detailed-settings__subtitle">投擲単位</h3>
+                <div className="detailed-settings__buttons">
+                  {THROW_UNITS.map((unit) => (
+                    <button
+                      key={unit}
+                      className={`detailed-setting-button ${
+                        config.throwUnit === unit ? 'detailed-setting-button--active' : ''
+                      }`}
+                      onClick={() => handleThrowUnitChange(unit)}
+                      type="button"
+                      aria-pressed={config.throwUnit === unit}
+                    >
+                      {unit}投
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
 
-          {/* 開始点数選択（残り点数モードまたは両方モード時のみ表示） */}
-          {showStartingScore && (
-            <div className="detailed-settings__section">
-              <h3 className="detailed-settings__subtitle">開始点数</h3>
-              <div className="detailed-settings__buttons">
-                {STARTING_SCORES.map((score) => (
-                  <button
-                    key={score}
-                    className={`detailed-setting-button ${
-                      config.startingScore === score ? 'detailed-setting-button--active' : ''
-                    }`}
-                    onClick={() => handleStartingScoreChange(score)}
-                    type="button"
-                    aria-pressed={config.startingScore === score}
-                  >
-                    {score}
-                  </button>
-                ))}
+              {/* 問う内容選択 */}
+              <div className="detailed-settings__section">
+                <h3 className="detailed-settings__subtitle">問う内容</h3>
+                <div className="detailed-settings__buttons">
+                  {QUESTION_TYPES.map((qt) => (
+                    <button
+                      key={qt.value}
+                      className={`detailed-setting-button ${
+                        config.questionType === qt.value ? 'detailed-setting-button--active' : ''
+                      }`}
+                      onClick={() => handleQuestionTypeChange(qt.value)}
+                      type="button"
+                      aria-pressed={config.questionType === qt.value}
+                    >
+                      {qt.label}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+
+              {/* 判定タイミング選択（3投モード時のみ表示） */}
+              {showJudgmentTiming && (
+                <div className="detailed-settings__section">
+                  <h3 className="detailed-settings__subtitle">判定タイミング</h3>
+                  <div className="detailed-settings__buttons">
+                    {JUDGMENT_TIMINGS.map((jt) => (
+                      <button
+                        key={jt.value}
+                        className={`detailed-setting-button ${
+                          config.judgmentTiming === jt.value
+                            ? 'detailed-setting-button--active'
+                            : ''
+                        }`}
+                        onClick={() => handleJudgmentTimingChange(jt.value)}
+                        type="button"
+                        aria-pressed={config.judgmentTiming === jt.value}
+                      >
+                        {jt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 開始点数選択（残り点数モードまたは両方モード時のみ表示） */}
+              {showStartingScore && (
+                <div className="detailed-settings__section">
+                  <h3 className="detailed-settings__subtitle">開始点数</h3>
+                  <div className="detailed-settings__buttons">
+                    {STARTING_SCORES.map((score) => (
+                      <button
+                        key={score}
+                        className={`detailed-setting-button ${
+                          config.startingScore === score ? 'detailed-setting-button--active' : ''
+                        }`}
+                        onClick={() => handleStartingScoreChange(score)}
+                        type="button"
+                        aria-pressed={config.startingScore === score}
+                      >
+                        {score}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
