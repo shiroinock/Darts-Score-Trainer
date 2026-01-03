@@ -824,3 +824,140 @@ NumPadコンポーネントに関するマジックナンバー（特に3桁制�
      }
    }
    ```
+
+## Biome/ESLintフォーマットエラーの修正計画
+
+### フォーマットエラーの特殊な扱い
+
+Biomeやその他のリンターによるフォーマットエラーは、**最も単純で機械的な修正**です。これらは以下の特徴があります：
+
+1. **修正内容が明確** - エラーメッセージに正確な修正方法が含まれている
+2. **仕様判断が不要** - コーディングスタイルの問題であり、ロジックや設計に影響しない
+3. **リスクが低い** - フォーマット修正が機能を壊すことはない
+
+### フォーマットエラー専用の修正計画テンプレート
+
+**重要**: フォーマットエラーの場合、分析や思考を最小限にし、即座にJSON出力すること。
+
+```json
+{
+  "should_fix": true,
+  "fixable_issues": [
+    {
+      "file": "該当ファイルパス",
+      "line": "エラー行",
+      "issue": "Biomeフォーマットエラー: 具体的な内容",
+      "fix_instruction": "エラーメッセージに記載されたフォーマットに従って修正",
+      "code_example": {
+        "before": "エラー前のコード",
+        "after": "エラー後のコード"
+      }
+    }
+  ],
+  "unfixable_issues": [],
+  "new_files": [],
+  "summary": "修正可能: 1件（フォーマットエラー）, 修正不可能: 0件"
+}
+```
+
+### フォーマットエラー修正の実例
+
+**長い行の改行エラー:**
+```json
+{
+  "should_fix": true,
+  "fixable_issues": [
+    {
+      "file": "src/components/Settings/SettingsPanel.test.tsx",
+      "line": "548",
+      "issue": "Biomeフォーマットエラー: 行が長すぎるため改行が必要",
+      "fix_instruction": "expect文を複数行に分割",
+      "code_example": {
+        "before": "expect(screen.queryByRole('button', { name: 'デバッグ画面を開く' })).not.toBeInTheDocument();",
+        "after": "expect(\n  screen.queryByRole('button', { name: 'デバッグ画面を開く' })\n).not.toBeInTheDocument();"
+      }
+    }
+  ],
+  "unfixable_issues": [],
+  "new_files": [],
+  "summary": "修正可能: 1件（フォーマットエラー）, 修正不可能: 0件"
+}
+```
+
+**import文のソート順エラー:**
+```json
+{
+  "should_fix": true,
+  "fixable_issues": [
+    {
+      "file": "src/hooks/useTimer.test.ts",
+      "line": "1-2",
+      "issue": "Biomeフォーマットエラー: import文のソート順が不正",
+      "fix_instruction": "import文をアルファベット順に並び替え",
+      "code_example": {
+        "before": "import { vi } from 'vitest';\nimport { renderHook } from '@testing-library/react';",
+        "after": "import { renderHook } from '@testing-library/react';\nimport { vi } from 'vitest';"
+      }
+    }
+  ],
+  "unfixable_issues": [],
+  "new_files": [],
+  "summary": "修正可能: 1件（フォーマットエラー）, 修正不可能: 0件"
+}
+```
+
+### フォーマットエラー処理時の注意事項
+
+1. **ファイル読み取りは不要な場合が多い**
+   - エラーメッセージに十分な情報が含まれている場合、ファイルを読む必要はない
+   - 読む場合も、該当行周辺のみで十分
+
+2. **JSON出力を最優先**
+   - 「ファイルを確認しました」などの前置きは不要
+   - 直接JSON出力を開始する
+
+3. **修正計画は簡潔に**
+   - 複雑な分析や長い説明は不要
+   - before/afterのコード例を明確に示すだけで十分
+
+### フォーマットエラー検出時の処理フロー
+
+```
+1. エラー内容の確認（プロンプトから）
+2. 修正内容の決定（エラーメッセージに基づく）
+3. 即座にJSON出力（前置きなし、マークダウンなし）
+4. JSON出力の完了確認
+```
+
+**悪い例（避けるべき）:**
+```
+エラー内容を分析します。ファイルを読み取って確認します。
+[Read tool呼び出し]
+フォーマットエラーを確認しました。修正計画を作成します。
+
+```json
+{
+  \
+```
+
+**良い例:**
+```
+{
+  "should_fix": true,
+  "fixable_issues": [
+    {
+      "file": "src/components/Settings/SettingsPanel.test.tsx",
+      "line": "548",
+      "issue": "Biomeフォーマットエラー: 行が長すぎる",
+      "fix_instruction": "expect文を複数行に分割",
+      "code_example": {
+        "before": "expect(screen.queryByRole('button', { name: 'デバッグ画面を開く' })).not.toBeInTheDocument();",
+        "after": "expect(\n  screen.queryByRole('button', { name: 'デバッグ画面を開く' })\n).not.toBeInTheDocument();"
+      }
+    }
+  ],
+  "unfixable_issues": [],
+  "new_files": [],
+  "summary": "修正可能: 1件, 修正不可能: 0件"
+}
+```

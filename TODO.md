@@ -767,11 +767,12 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 **リスク:** 低
 
 #### 9.2.2 デバッグボタンの環境変数制御
-- [ ] `.env.development` を作成し `VITE_ENABLE_DEBUG_MODE=true` を設定
-- [ ] `.env.production` を作成し `VITE_ENABLE_DEBUG_MODE=false` を設定
-- [ ] `src/components/Settings/SettingsPanel.tsx` の23行目を修正
+- [x] `.env.development` を作成し `VITE_ENABLE_DEBUG_MODE=true` を設定
+- [x] `.env.production` を作成し `VITE_ENABLE_DEBUG_MODE=false` を設定
+- [x] `src/components/Settings/SettingsPanel.tsx` の23行目を修正
   - `const ENABLE_DEBUG_MODE = import.meta.env.VITE_ENABLE_DEBUG_MODE === 'true';`
-- [ ] 開発環境でのみデバッグボタンが表示されることを確認
+- [x] 開発環境でのみデバッグボタンが表示されることを確認
+  - テストで環境変数による制御を検証済み（src/components/Settings/SettingsPanel.test.tsx）
 
 **リスク:** 低
 

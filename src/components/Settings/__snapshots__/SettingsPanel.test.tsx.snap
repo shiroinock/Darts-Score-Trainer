@@ -58,13 +58,6 @@ exports[`SettingsPanel > スナップショットテスト > ステップ1の基
       class="setup-wizard__navigation"
     >
       <button
-        aria-label="デバッグ画面を開く"
-        class="setup-wizard__button setup-wizard__button--debug"
-        type="button"
-      >
-        Debug
-      </button>
-      <button
         aria-label="次のステップへ進む"
         class="setup-wizard__button setup-wizard__button--next"
         type="button"
@@ -133,13 +126,6 @@ exports[`SettingsPanel > スナップショットテスト > ステップ2の見
     <div
       class="setup-wizard__navigation"
     >
-      <button
-        aria-label="デバッグ画面を開く"
-        class="setup-wizard__button setup-wizard__button--debug"
-        type="button"
-      >
-        Debug
-      </button>
       <button
         aria-label="前のステップに戻る"
         class="setup-wizard__button setup-wizard__button--back"
@@ -217,13 +203,6 @@ exports[`SettingsPanel > スナップショットテスト > ステップ3の見
       class="setup-wizard__navigation"
     >
       <button
-        aria-label="デバッグ画面を開く"
-        class="setup-wizard__button setup-wizard__button--debug"
-        type="button"
-      >
-        Debug
-      </button>
-      <button
         aria-label="前のステップに戻る"
         class="setup-wizard__button setup-wizard__button--back"
         type="button"
@@ -300,13 +279,6 @@ exports[`SettingsPanel > スナップショットテスト > ステップ4の見
       class="setup-wizard__navigation"
     >
       <button
-        aria-label="デバッグ画面を開く"
-        class="setup-wizard__button setup-wizard__button--debug"
-        type="button"
-      >
-        Debug
-      </button>
-      <button
         aria-label="前のステップに戻る"
         class="setup-wizard__button setup-wizard__button--back"
         type="button"
@@ -319,6 +291,75 @@ exports[`SettingsPanel > スナップショットテスト > ステップ4の見
         type="button"
       >
         練習を開始
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SettingsPanel > スナップショットテスト > 現在の環境変数設定での見た目が一致する 1`] = `
+<div>
+  <div
+    class="settings-panel"
+  >
+    <div
+      class="setup-wizard__progress"
+    >
+      <div
+        class="setup-wizard__progress-bar"
+      >
+        <div
+          class="setup-wizard__progress-fill"
+          data-step="1"
+        />
+      </div>
+      <div
+        class="setup-wizard__progress-steps"
+      >
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--active"
+          data-testid="progress-step-1"
+        >
+          1
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--pending"
+          data-testid="progress-step-2"
+        >
+          2
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--pending"
+          data-testid="progress-step-3"
+        >
+          3
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--pending"
+          data-testid="progress-step-4"
+        >
+          4
+        </div>
+      </div>
+    </div>
+    <div
+      class="setup-wizard__content"
+    >
+      <div
+        data-testid="step1-preset"
+      >
+        Step 1: Preset Selection
+      </div>
+    </div>
+    <div
+      class="setup-wizard__navigation"
+    >
+      <button
+        aria-label="次のステップへ進む"
+        class="setup-wizard__button setup-wizard__button--next"
+        type="button"
+      >
+        次へ →
       </button>
     </div>
   </div>

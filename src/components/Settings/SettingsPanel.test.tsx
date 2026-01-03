@@ -33,16 +33,19 @@ vi.mock('./SetupWizard/Step4Confirm', () => ({
 describe('SettingsPanel', () => {
   // モック関数
   const mockStartPractice = vi.fn();
+  const mockGoToDebugScreen = vi.fn();
 
   beforeEach(async () => {
     // モック関数をリセット
     mockStartPractice.mockReset();
+    mockGoToDebugScreen.mockReset();
 
     // useGameStore のモック実装
     const { useGameStore } = await import('../../stores/gameStore');
     vi.mocked(useGameStore).mockImplementation((selector) =>
       selector({
         startPractice: mockStartPractice,
+        goToDebugScreen: mockGoToDebugScreen,
       } as never)
     );
   });
@@ -503,6 +506,90 @@ describe('SettingsPanel', () => {
 
       // Assert
       expect(container).toMatchSnapshot();
+    });
+
+    test('現在の環境変数設定での見た目が一致する', () => {
+      /**
+       * このスナップショットは現在の環境変数 VITE_ENABLE_DEBUG_MODE の設定を反映します。
+       * - デバッグモード有効時: デバッグボタンを含むスナップショット
+       * - デバッグモード無効時: デバッグボタンを含まないスナップショット
+       */
+      // Arrange & Act
+      const { container } = render(<SettingsPanel />);
+
+      // Assert
+      expect(container).toMatchSnapshot();
+    });
+  });
+
+  describe('デバッグボタンの表示制御', () => {
+    /**
+     * 注意: import.meta.envは静的にビルド時に埋め込まれるため、
+     * テスト実行時に動的にモックすることは困難です。
+     *
+     * このテストは現在の環境変数の設定に基づいて動作します：
+     * - VITE_ENABLE_DEBUG_MODE='true' の場合: デバッグボタンが表示される
+     * - VITE_ENABLE_DEBUG_MODE='false' または未定義の場合: デバッグボタンが非表示
+     */
+
+    const isDebugModeEnabled = import.meta.env.VITE_ENABLE_DEBUG_MODE === 'true';
+
+    test('環境変数VITE_ENABLE_DEBUG_MODEの設定に応じてデバッグボタンの表示が制御される', () => {
+      // Act
+      render(<SettingsPanel />);
+
+      // Assert
+      if (isDebugModeEnabled) {
+        // デバッグモードが有効な場合、デバッグボタンが表示される
+        expect(screen.getByRole('button', { name: 'デバッグ画面を開く' })).toBeInTheDocument();
+        expect(screen.getByText('Debug')).toBeInTheDocument();
+      } else {
+        // デバッグモードが無効または未定義の場合、デバッグボタンが非表示
+        expect(
+          screen.queryByRole('button', { name: 'デバッグ画面を開く' })
+        ).not.toBeInTheDocument();
+        expect(screen.queryByText('Debug')).not.toBeInTheDocument();
+      }
+    });
+
+    // デバッグモードが有効な場合のみ実行されるテスト
+    test.skipIf(!isDebugModeEnabled)(
+      'デバッグボタンをクリックするとgoToDebugScreen()が呼ばれる',
+      async () => {
+        // Arrange
+        const user = userEvent.setup();
+        render(<SettingsPanel />);
+
+        // Act
+        await user.click(screen.getByRole('button', { name: 'デバッグ画面を開く' }));
+
+        // Assert
+        expect(mockGoToDebugScreen).toHaveBeenCalledTimes(1);
+      }
+    );
+
+    test('デバッグボタンにはsetup-wizard__button--debugクラスが適用される', () => {
+      // Act
+      render(<SettingsPanel />);
+
+      // Assert
+      if (isDebugModeEnabled) {
+        const debugButton = screen.getByRole('button', { name: 'デバッグ画面を開く' });
+        expect(debugButton).toHaveClass('setup-wizard__button');
+        expect(debugButton).toHaveClass('setup-wizard__button--debug');
+      }
+    });
+
+    test('デバッグボタンに適切なaria-labelが設定されている', () => {
+      // Act
+      render(<SettingsPanel />);
+
+      // Assert
+      if (isDebugModeEnabled) {
+        const debugButton = screen.getByRole('button', { name: 'デバッグ画面を開く' });
+        expect(debugButton).toHaveAttribute('aria-label', 'デバッグ画面を開く');
+        expect(debugButton).toHaveAttribute('type', 'button');
+      }
     });
   });
 

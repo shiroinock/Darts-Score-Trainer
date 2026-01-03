@@ -1523,3 +1523,81 @@ Local CI Checks Complete
 ```
 
 これにより、サブエージェントが自動修正を実行するリスクを軽減します。
+
+## 横線文字数の統一（2026-01-04追加）
+
+### 評価結果: 横線の文字数が不統一（evaluation_20260104_031412.md）
+
+サブエージェントの出力で、横線の文字数が不統一であることが検出されました。
+
+**検出された問題**:
+- サマリー部分の横線が100文字を超えている可能性がある
+- 出力が途中で途切れている（"1. **Fix test timeout issue (required)" の後、"Test: \" で終わっている）
+
+### 強制要件（必須）
+
+1. **横線は必ず100文字に統一**
+   - 全ての横線（区切り線）は**正確に100文字**に統一してください
+   - 例: `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`（100文字）
+   - 文字数が多すぎたり少なすぎたりしないように注意してください
+
+2. **出力長の厳密な管理**
+   - サマリー表 + Next Steps の合計が3000文字を超える場合、詳細セクションを**完全に省略**すること
+   - 横線の文字数を100文字に統一することで、出力長を予測しやすくなります
+
+3. **テンプレートの使用**
+   - 以下のテンプレートを使用して、横線の文字数を統一してください:
+
+   ```javascript
+   const SEPARATOR = "━".repeat(100);  // 100文字の横線
+
+   console.log(SEPARATOR);
+   console.log("Local CI Checks Complete");
+   console.log(SEPARATOR);
+   ```
+
+### 実装例
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Local CI Checks Complete
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+| Check       | Result    | Details                                      |
+|-------------|-----------|----------------------------------------------|
+| Biome check | PASSED    | No issues found                              |
+| Tests       | FAILED    | 1 test timed out (NumPad component test)     |
+| Build       | PASSED    | Built successfully (chunk size warning only) |
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## Next Steps
+
+1. **Fix test timeout issue (required)**
+
+   The NumPad component test is timing out:
+   - File: `src/components/Practice/NumPad.test.tsx`
+   - Test: "handles keyboard event handling"
+   - Timeout: 5000ms
+
+   ```bash
+   npm test -- src/components/Practice/NumPad.test.tsx
+   ```
+
+2. **Verify all checks pass**
+
+   ```bash
+   npm run check && npm run test:run && npm run build
+   ```
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+### チェックリスト
+
+出力を生成する前に、以下を確認してください:
+
+- [ ] 全ての横線が**正確に100文字**であることを確認
+- [ ] サマリー表が最初に配置されているか
+- [ ] Next Steps セクションが完結しているか
+- [ ] 出力の総文字数が4000文字以下か（推奨: 3000文字以下）

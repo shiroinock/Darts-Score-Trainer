@@ -18,9 +18,11 @@ import { Step4Confirm } from './SetupWizard/Step4Confirm';
 
 /**
  * デバッグモードを有効にするかどうか
- * 開発時のみtrue、本番ではfalseに
+ * 環境変数VITE_ENABLE_DEBUG_MODEで制御
+ * 未定義の場合はfalseとして扱う
+ * @see https://vitejs.dev/guide/env-and-mode.html
  */
-const ENABLE_DEBUG_MODE = true;
+const ENABLE_DEBUG_MODE = import.meta.env.VITE_ENABLE_DEBUG_MODE === 'true';
 
 /**
  * ウィザードのステップ定義
