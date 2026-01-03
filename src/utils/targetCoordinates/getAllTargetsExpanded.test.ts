@@ -1,18 +1,17 @@
 import { describe, expect, test } from 'vitest';
-import type { RingType } from '../../types/RingType.js';
 import { SEGMENTS } from '../constants/index.js';
 import type { ExpandedTarget } from './getAllTargetsExpanded.js';
 import { getAllTargetsExpanded } from './getAllTargetsExpanded.js';
 
 describe('getAllTargetsExpanded', () => {
   describe('正常系', () => {
-    test('合計62個のターゲットを返す（OUTER_SINGLE 20 + DOUBLE 20 + TRIPLE 20 + BULL 2）', () => {
+    test('合計82個のターゲットを返す（INNER_SINGLE 20 + OUTER_SINGLE 20 + DOUBLE 20 + TRIPLE 20 + BULL 2）', () => {
       // Arrange & Act
       const targets = getAllTargetsExpanded();
 
       // Assert
-      // OUTER_SINGLE 20個 + DOUBLE 20個 + TRIPLE 20個 + INNER_BULL 1個 + OUTER_BULL 1個 = 62個
-      expect(targets).toHaveLength(62);
+      // INNER_SINGLE 20個 + OUTER_SINGLE 20個 + DOUBLE 20個 + TRIPLE 20個 + INNER_BULL 1個 + OUTER_BULL 1個 = 82個
+      expect(targets).toHaveLength(82);
     });
 
     test('OUTER_SINGLE 1-20を20個含む', () => {
@@ -95,15 +94,20 @@ describe('getAllTargetsExpanded', () => {
     });
   });
 
-  describe('INNER_SINGLEの削除確認', () => {
-    test('INNER_SINGLEタイプのターゲットが存在しない', () => {
+  describe('INNER_SINGLEの存在確認', () => {
+    test('INNER_SINGLE 1-20を20個含む', () => {
       // Arrange & Act
       const targets = getAllTargetsExpanded();
 
       // Assert
-      // INNER_SINGLEは型定義から削除されているが、実行時に存在しないことを確認
-      const innerSingleTargets = targets.filter((t) => (t.ringType as string) === 'INNER_SINGLE');
-      expect(innerSingleTargets).toHaveLength(0);
+      const innerSingleTargets = targets.filter((t) => t.ringType === 'INNER_SINGLE');
+      expect(innerSingleTargets).toHaveLength(20);
+
+      // 全てのセグメント番号（1-20）が含まれることを確認
+      const innerSingleNumbers = innerSingleTargets.map((t) => t.number).sort((a, b) => a - b);
+      expect(innerSingleNumbers).toEqual([
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+      ]);
     });
 
     test('OUTER_SINGLEタイプのターゲットが20個存在する', () => {
@@ -158,9 +162,14 @@ describe('getAllTargetsExpanded', () => {
         expect(target).toHaveProperty('score');
 
         // ringType が有効な値である
-        expect(['OUTER_SINGLE', 'DOUBLE', 'TRIPLE', 'INNER_BULL', 'OUTER_BULL']).toContain(
-          target.ringType
-        );
+        expect([
+          'INNER_SINGLE',
+          'OUTER_SINGLE',
+          'DOUBLE',
+          'TRIPLE',
+          'INNER_BULL',
+          'OUTER_BULL',
+        ]).toContain(target.ringType);
 
         // number が数値である
         expect(typeof target.number).toBe('number');
@@ -729,35 +738,46 @@ describe('getAllTargetsExpanded', () => {
       expect(maxScoreTarget.label).toBe('T20');
     });
 
-    test('最低スコアターゲット（OS1: 1点）が存在する', () => {
+    test('最低スコアターゲット（1点）が存在する', () => {
       // Arrange & Act
       const targets = getAllTargetsExpanded();
 
       // Assert
-      // BULLを除く最低スコア
-      const minScoreTarget = targets
-        .filter((t) => t.ringType !== 'INNER_BULL' && t.ringType !== 'OUTER_BULL')
-        .reduce((min, current) => (current.score < min.score ? current : min));
+      // BULLを除く最低スコア（INNER_SINGLEまたはOUTER_SINGLEの1）
+      const minScoreTargets = targets.filter(
+        (t) =>
+          t.score === 1 &&
+          t.ringType !== 'INNER_BULL' &&
+          t.ringType !== 'OUTER_BULL' &&
+          t.number === 1
+      );
 
-      expect(minScoreTarget.score).toBe(1);
-      expect(minScoreTarget.ringType).toBe('OUTER_SINGLE');
-      expect(minScoreTarget.number).toBe(1);
-      expect(minScoreTarget.label).toBe('OS1');
+      // INNER_SINGLE 1とOUTER_SINGLE 1の2つが存在する
+      expect(minScoreTargets).toHaveLength(2);
+      const ringTypes = minScoreTargets.map((t) => t.ringType).sort();
+      expect(ringTypes).toEqual(['INNER_SINGLE', 'OUTER_SINGLE']);
     });
   });
 
   describe('RingType型の整合性', () => {
-    test('OUTER_SINGLEがRingType型として使用されている', () => {
+    test('INNER_SINGLEとOUTER_SINGLEがRingType型として使用されている', () => {
       // Arrange & Act
       const targets = getAllTargetsExpanded();
 
       // Assert
-      const singleTargets = targets.filter((t) => t.ringType === 'OUTER_SINGLE');
+      const innerSingleTargets = targets.filter((t) => t.ringType === 'INNER_SINGLE');
+      const outerSingleTargets = targets.filter((t) => t.ringType === 'OUTER_SINGLE');
 
-      singleTargets.forEach((target) => {
-        // ringTypeが'OUTER_SINGLE'であり、'INNER_SINGLE'ではないことを確認
+      // INNER_SINGLEとOUTER_SINGLEが両方存在する
+      expect(innerSingleTargets.length).toBeGreaterThan(0);
+      expect(outerSingleTargets.length).toBeGreaterThan(0);
+
+      innerSingleTargets.forEach((target) => {
+        expect(target.ringType).toBe('INNER_SINGLE');
+      });
+
+      outerSingleTargets.forEach((target) => {
         expect(target.ringType).toBe('OUTER_SINGLE');
-        expect(target.ringType).not.toBe('INNER_SINGLE');
       });
     });
 
@@ -766,16 +786,22 @@ describe('getAllTargetsExpanded', () => {
       const targets = getAllTargetsExpanded();
 
       // Assert
-      const validRingTypes = ['OUTER_SINGLE', 'DOUBLE', 'TRIPLE', 'INNER_BULL', 'OUTER_BULL'];
+      const validRingTypes = [
+        'INNER_SINGLE',
+        'OUTER_SINGLE',
+        'DOUBLE',
+        'TRIPLE',
+        'INNER_BULL',
+        'OUTER_BULL',
+      ];
       const usedRingTypes = new Set(targets.map((t) => t.ringType));
 
       usedRingTypes.forEach((ringType) => {
         expect(validRingTypes).toContain(ringType);
       });
 
-      // INNER_SINGLEが使用されていないことを確認
-      expect(usedRingTypes.has('INNER_SINGLE' as RingType)).toBe(false);
-      // OUTER_SINGLEが使用されていることを確認
+      // INNER_SINGLEとOUTER_SINGLEが両方使用されていることを確認
+      expect(usedRingTypes.has('INNER_SINGLE')).toBe(true);
       expect(usedRingTypes.has('OUTER_SINGLE')).toBe(true);
     });
   });
