@@ -289,6 +289,124 @@ describe('StatsBar', () => {
     });
   });
 
+  describe('基礎練習モードでの残り点数表示制御（randomizeTarget）', () => {
+    it('randomizeTarget === false かつ startingScore > 0 の場合、残り点数が表示される', () => {
+      // Arrange
+      useGameStore.setState({
+        config: {
+          configId: 'preset-caller-basic',
+          configName: 'コーラー基礎',
+          description: '3投ごとに残り点数を答えるモード',
+          throwUnit: 3,
+          questionType: 'remaining',
+          judgmentTiming: 'independent',
+          startingScore: TEST_CONSTANTS.SCORE.STARTING_501,
+          stdDevMM: TEST_CONSTANTS.STD_DEV.DEFAULT,
+          randomizeTarget: false, // 投擲シミュレーションモード
+          target: undefined,
+          icon: '🎤',
+          isPreset: true,
+        },
+        remainingScore: TEST_CONSTANTS.SCORE.REMAINING_381,
+      });
+
+      // Act
+      render(<StatsBar />);
+
+      // Assert
+      expect(screen.getByText('残り点数')).toBeInTheDocument();
+      expect(screen.getByText('381')).toBeInTheDocument();
+    });
+
+    it('randomizeTarget === true かつ startingScore > 0 の場合、残り点数が非表示になる', () => {
+      // Arrange
+      useGameStore.setState({
+        config: {
+          configId: 'preset-basic-randomize',
+          configName: '基礎練習（ランダム）',
+          description: 'ランダムターゲットで得点を答えるモード',
+          throwUnit: 1,
+          questionType: 'score',
+          judgmentTiming: 'independent',
+          startingScore: TEST_CONSTANTS.SCORE.STARTING_501, // 01モード
+          stdDevMM: TEST_CONSTANTS.STD_DEV.DEFAULT,
+          randomizeTarget: true, // ランダムターゲットモード（基礎練習）
+          useBasicTargets: true,
+          target: undefined,
+          icon: '🎯',
+          isPreset: true,
+        },
+        remainingScore: TEST_CONSTANTS.SCORE.REMAINING_381,
+      });
+
+      // Act
+      render(<StatsBar />);
+
+      // Assert
+      // randomizeTarget === true の場合、startingScore > 0 でも残り点数は表示されない
+      expect(screen.queryByText('残り点数')).not.toBeInTheDocument();
+      expect(screen.queryByText('381')).not.toBeInTheDocument();
+    });
+
+    it('randomizeTarget === undefined かつ startingScore > 0 の場合、残り点数が表示される（従来の動作）', () => {
+      // Arrange
+      useGameStore.setState({
+        config: {
+          configId: 'preset-caller-basic',
+          configName: 'コーラー基礎',
+          description: '3投ごとに残り点数を答えるモード',
+          throwUnit: 3,
+          questionType: 'remaining',
+          judgmentTiming: 'independent',
+          startingScore: TEST_CONSTANTS.SCORE.STARTING_501,
+          stdDevMM: TEST_CONSTANTS.STD_DEV.DEFAULT,
+          randomizeTarget: undefined, // デフォルト値（falseと同様）
+          target: undefined,
+          icon: '🎤',
+          isPreset: true,
+        },
+        remainingScore: TEST_CONSTANTS.SCORE.REMAINING_381,
+      });
+
+      // Act
+      render(<StatsBar />);
+
+      // Assert
+      // randomizeTarget === undefined は従来の動作（false扱い）
+      expect(screen.getByText('残り点数')).toBeInTheDocument();
+      expect(screen.getByText('381')).toBeInTheDocument();
+    });
+
+    it('randomizeTarget === true かつ startingScore === 0 の場合、残り点数が非表示になる', () => {
+      // Arrange
+      useGameStore.setState({
+        config: {
+          configId: 'preset-basic-randomize',
+          configName: '基礎練習（ランダム）',
+          description: 'ランダムターゲットで得点を答えるモード',
+          throwUnit: 1,
+          questionType: 'score',
+          judgmentTiming: 'independent',
+          startingScore: TEST_CONSTANTS.SCORE.STARTING_0, // 01モード以外
+          stdDevMM: TEST_CONSTANTS.STD_DEV.DEFAULT,
+          randomizeTarget: true,
+          useBasicTargets: true,
+          target: undefined,
+          icon: '🎯',
+          isPreset: true,
+        },
+        remainingScore: TEST_CONSTANTS.SCORE.STARTING_0,
+      });
+
+      // Act
+      render(<StatsBar />);
+
+      // Assert
+      // startingScore === 0 なので、randomizeTargetに関わらず残り点数は表示されない
+      expect(screen.queryByText('残り点数')).not.toBeInTheDocument();
+    });
+  });
+
   describe('アクセシビリティ', () => {
     it('role="status"が設定されている', () => {
       render(<StatsBar />);

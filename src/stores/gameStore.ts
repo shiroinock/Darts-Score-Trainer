@@ -722,24 +722,38 @@ export const useGameStore = create<GameStore>()(
         if (!Number.isFinite(answer)) {
           throw new Error('回答は有限の数である必要があります');
         }
-        if (answer < 0) {
-          throw new Error('回答は0以上である必要があります');
-        }
         if (!Number.isInteger(answer)) {
           throw new Error('回答は整数である必要があります');
+        }
+        // randomizeTarget === true の場合は負の値も許容
+        const { config } = get();
+        if (config.randomizeTarget !== true && answer < 0) {
+          throw new Error('回答は0以上である必要があります');
         }
 
         set((state) => {
           const correctAnswer = get().getCurrentCorrectAnswer();
           const isCorrect = answer === correctAnswer;
 
-          // バスト判定と残り点数更新
-          const { isBust, newRemainingScore } = checkAndUpdateBust(
-            state.currentQuestion,
-            state.remainingScore,
-            state.roundStartScore
-          );
-          state.remainingScore = newRemainingScore;
+          let isBust = false;
+
+          // randomizeTarget === true の場合、バスト判定をスキップ
+          if (state.config.randomizeTarget === true) {
+            // バスト判定なし: 通常の減算処理（負の値も許容）
+            if (state.currentQuestion) {
+              const totalScore = state.currentQuestion.throws.reduce((sum, t) => sum + t.score, 0);
+              state.remainingScore = state.remainingScore - totalScore;
+            }
+          } else {
+            // randomizeTarget === false/undefined: 従来のバスト判定を実施
+            const { isBust: bustResult, newRemainingScore } = checkAndUpdateBust(
+              state.currentQuestion,
+              state.remainingScore,
+              state.roundStartScore
+            );
+            isBust = bustResult;
+            state.remainingScore = newRemainingScore;
+          }
 
           // 統計情報を更新
           updateStats(state.stats, isCorrect, isBust);
