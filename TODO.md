@@ -786,10 +786,10 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 **リスク:** 低
 
 #### 9.2.4 基礎練習の問題数制限修正
-- [ ] `src/stores/gameStore.ts` の735-749行目を修正
+- [x] `src/stores/gameStore.ts` の735-749行目を修正
   - `submitAnswer` 内の条件から `randomizeTarget !== true` を削除
   - 基礎練習でも設定した問題数（10/20/50/100）でセッション終了するように修正
-- [ ] 修正後のコード:
+- [x] 修正後のコード:
   ```typescript
   if (
     state.sessionConfig.mode === 'questions' &&
@@ -799,7 +799,8 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
     state.isTimerRunning = false;
   }
   ```
-- [ ] 基礎練習で10問設定時、10問目で終了することを確認
+- [x] 基礎練習で10問設定時、10問目で終了することを確認
+  - テストファイル: `src/stores/gameStore.randomizeTarget.test.ts` (12テスト全て成功)
 
 **リスク:** 低
 
