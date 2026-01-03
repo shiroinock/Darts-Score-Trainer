@@ -5,6 +5,7 @@
  */
 
 export { getAllTargets } from './getAllTargets.js';
-export { type ExpandedTarget, getAllTargetsExpanded } from './getAllTargetsExpanded.js';
+export { getAllTargetsExpanded } from './getAllTargetsExpanded.js';
+export { getBasicPracticeTargets } from './getBasicPracticeTargets.js';
 export { getSegmentAngle } from './getSegmentAngle.js';
 export { getTargetCoordinates } from './getTargetCoordinates.js';

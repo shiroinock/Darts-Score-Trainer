@@ -747,13 +747,211 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 - `grep -r "boardEdge" src/` でboardEdgeの使用箇所を確認
 - `boardEdge`は描画時のボード背景サイズ用であり、判定には使用すべきでない
 
-### 9.2 動作確認（バグフィックス後に実施）
+### 9.2 UI/UX改善（着手すべき項目）
+
+#### 9.2.1 基礎練習の出題削減（82→62種類）✅
+- [x] `src/utils/targetCoordinates/getAllTargetsExpanded.ts` を修正
+  - 基礎練習の出題対象からINNER_SINGLEを除外（OUTER_SINGLEのみ使用）
+  - ゲーム全体ではINNER_SINGLEとOUTER_SINGLEの区別を維持
+  - 実装ファイル: src/utils/targetCoordinates/getAllTargetsExpanded.ts
+  - テストファイル: src/utils/targetCoordinates/getAllTargetsExpanded.test.ts
+- [x] `src/stores/config/presets.ts` の説明文を更新
+  - 「82ターゲット」→「62ターゲット」
+- [x] 関連ドキュメント・テストの更新
+  - src/stores/gameStore.test.ts: 82→62の期待値更新
+  - src/types/PracticeConfig.ts: コメント更新
+- [x] 新構成: SINGLE×20 + DOUBLE×20 + TRIPLE×20 + BULL×2 = **62個**
+  - 期待される配列長を82→62に変更
+  - INNER_SINGLEが含まれないことを確認
+
+**リスク:** 低
+
+#### 9.2.2 デバッグボタンの環境変数制御
+- [ ] `.env.development` を作成し `VITE_ENABLE_DEBUG_MODE=true` を設定
+- [ ] `.env.production` を作成し `VITE_ENABLE_DEBUG_MODE=false` を設定
+- [ ] `src/components/Settings/SettingsPanel.tsx` の23行目を修正
+  - `const ENABLE_DEBUG_MODE = import.meta.env.VITE_ENABLE_DEBUG_MODE === 'true';`
+- [ ] 開発環境でのみデバッグボタンが表示されることを確認
+
+**リスク:** 低
+
+#### 9.2.3 コーラー基礎の投擲単位変更（3投→1投）
+- [ ] `src/stores/config/presets.ts` の47-60行目を修正
+  - `throwUnit: 3` → `throwUnit: 1`
+  - `description` を更新：「1投ごとに残り点数を問う基礎練習」
+- [ ] 既存のlocalStorage設定との互換性確認
+- [ ] コーラー基礎と累積で出題単位が異なることを確認
+
+**リスク:** 低
+
+#### 9.2.4 基礎練習の問題数制限修正
+- [ ] `src/stores/gameStore.ts` の735-749行目を修正
+  - `submitAnswer` 内の条件から `randomizeTarget !== true` を削除
+  - 基礎練習でも設定した問題数（10/20/50/100）でセッション終了するように修正
+- [ ] 修正後のコード:
+  ```typescript
+  if (
+    state.sessionConfig.mode === 'questions' &&
+    state.stats.total >= (state.sessionConfig.questionCount || 0)
+  ) {
+    state.gameState = 'results';
+    state.isTimerRunning = false;
+  }
+  ```
+- [ ] 基礎練習で10問設定時、10問目で終了することを確認
+
+**リスク:** 低
+
+#### 9.2.5 基礎練習の残り点数管理無効化
+- [ ] `src/stores/gameStore.ts` の `submitAnswer` を修正
+  - `randomizeTarget === true` の場合、`checkAndUpdateBust` をスキップ
+  - バスト判定を完全に無効化
+- [ ] 修正コード:
+  ```typescript
+  let isBust = false;
+  let newRemainingScore = state.remainingScore;
+  
+  if (state.config.randomizeTarget !== true) {
+    const bustResult = checkAndUpdateBust(
+      state.currentQuestion,
+      state.remainingScore,
+      state.roundStartScore
+    );
+    isBust = bustResult.isBust;
+    newRemainingScore = bustResult.newRemainingScore;
+  }
+  
+  state.remainingScore = newRemainingScore;
+  ```
+- [ ] 基礎練習でバスト判定が発生しないことを確認
+
+**リスク:** 中（バスト判定ロジックとの依存関係）
+
+#### 9.2.6 基礎練習の詳細設定で選択肢非表示
+- [ ] `src/components/Settings/DetailedSettings.tsx` を修正
+  - 基礎練習時（`config.configId === DEFAULT_PRESET_ID`）、以下を非表示：
+    - 投擲単位の選択
+    - 問う内容の選択
+    - 判定タイミングの選択
+    - 開始点数の選択
+  - 代わりに説明文を表示
+- [ ] CSS追加:
+  ```css
+  .detailed-settings__notice {
+    padding: 1rem;
+    background-color: var(--color-bg-gray-light);
+    border-radius: var(--border-radius-base);
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+  ```
+- [ ] 基礎練習選択時、詳細設定で投擲単位・問う内容が非表示になることを確認
+
+**リスク:** 低
+
+#### 9.2.7 基礎練習の難易度選択スキップ
+- [ ] `src/components/Settings/SettingsPanel.tsx` を修正
+  - 基礎練習選択時、Step 2（難易度選択）をスキップ
+  - Step 1 → Step 3 へ直接遷移
+  - Step 3 → Step 1 へ戻る際もスキップ
+  - 進捗インジケーターでStep 2をグレーアウト表示
+- [ ] ナビゲーションロジックの修正:
+  ```typescript
+  const isBasicMode = config.configId === DEFAULT_PRESET_ID;
+
+  const handleNext = (): void => {
+    let nextStep: WizardStep;
+    if (currentStep === 1 && isBasicMode) {
+      nextStep = 3; // Skip Step 2
+    } else {
+      nextStep = Math.min(currentStep + 1, 4) as WizardStep;
+    }
+    changeStep(nextStep);
+  };
+  ```
+- [ ] CSS追加:
+  ```css
+  .setup-wizard__progress-step--skipped {
+    opacity: 0.3;
+    background-color: var(--color-bg-gray-light);
+  }
+  ```
+- [ ] 基礎練習選択時、Step 2がスキップされることを確認
+
+**リスク:** 中（ウィザードナビゲーションの複雑化）
+
+#### 9.2.8 3投累積時のズームビュー3つ横並び表示
+- [ ] 新規コンポーネント `src/components/DartBoard/ZoomViewMultiple.tsx` を作成
+  - 3つの独立した `SingleZoom` コンポーネントを実装
+  - 各160×160px、p5.jsの独立したSketchインスタンス
+- [ ] 新規CSS `src/components/DartBoard/ZoomViewMultiple.css` を作成
+  - 横並びレイアウト（デスクトップ）
+  - 縦並びレイアウト（モバイル ≤640px、各140×140px）
+- [ ] `src/components/Practice/PracticeScreen.tsx` を修正
+  - 3投累積モード判定: `config.throwUnit === 3 && config.judgmentTiming === 'cumulative'`
+  - 条件に応じて `ZoomViewMultiple` または `ZoomView` を表示
+- [ ] 3投累積時、3つのズームビューが横並びで表示され、全体ビューと干渉しないことを確認
+
+**リスク:** 高（p5.jsの複数インスタンス管理）
+
+#### 9.2.9 総合練習の2つの入力欄実装
+- [ ] 新規コンポーネント `src/components/Practice/DualNumPad.tsx` を作成
+  - 得点用と残り点数用の2つの入力表示エリア
+  - アクティブフィールドの切り替え機能
+  - 数字ボタングリッド（NumPadと同様）
+  - 確定ボタン（両方入力時のみ有効）
+- [ ] 新規CSS `src/components/Practice/DualNumPad.css` を作成
+- [ ] `src/hooks/useFeedback.ts` を修正
+  - `handleDualConfirm(scoreValue, remainingValue)` を追加
+  - `dualAnswer` state を追加（2つの回答情報を保持）
+  - 両方正解の場合のみ正解扱い
+- [ ] `src/stores/gameStore.ts` の `determineQuestionMode` を修正
+  - 'both' モードでランダム選択を廃止
+  - 固定で 'both' を返す（判定はDualNumPad側で実施）
+- [ ] `src/components/Practice/PracticeScreen.tsx` を修正
+  - `questionType === 'both'` の場合、`DualNumPad` を表示
+- [ ] 総合練習で2つの入力欄が表示され、両方正解で正解判定されることを確認
+
+**リスク:** 高（フィードバックロジックとの統合が複雑）
+
+
+#### 9.2.10 テスト戦略
+
+**単体テスト更新:**
+- [ ] `SettingsPanel.test.tsx` - ステップスキップロジック、環境変数制御
+- [ ] `DetailedSettings.test.tsx` - 表示/非表示条件
+- [ ] `getAllTargetsExpanded.test.ts` - 62ターゲット検証
+- [ ] `gameStore.test.ts` - 問題数制限、残り点数管理、determineQuestionMode
+- [ ] `presets.test.ts` - コーラー基礎の投擲単位
+
+**統合テスト:**
+- [ ] 基礎練習フロー全体
+  - 難易度選択スキップ
+  - 62問題のランダム出題
+  - 問題数制限（10/20/50/100問）
+  - 残り点数管理の無効化
+- [ ] 3投累積ズームビュー
+  - 3つのズームビューの表示
+  - レスポンシブレイアウト
+  - 個別ダーツへのフォーカス
+- [ ] 総合練習の2入力欄
+  - 2つの値の同時判定
+  - フィードバック表示
+  - キーボード操作
+
+**Storybook更新:**
+- [ ] `ZoomViewMultiple.stories.tsx`（新規作成）
+- [ ] `DualNumPad.stories.tsx`（新規作成）
+- [ ] 既存ストーリーの更新（SettingsPanel、DetailedSettings）
+
+### 9.3 動作確認（バグフィックス後に実施）
 - [ ] 手動テストチェックリストに従って全項目を確認
   - 詳細: [docs/MANUAL_TEST_CHECKLIST.md](docs/MANUAL_TEST_CHECKLIST.md)
   - 16セクション、約100項目の確認観点
   - ブラウザ互換性（Chrome, Safari, Firefox, モバイル）も含む
 
-### 9.3 追加対応（動作確認で問題が見つかった場合）
+### 9.4 追加対応（動作確認で問題が見つかった場合）
 - [ ] パフォーマンス問題: p5.js描画の最適化、React.memo/useMemo/useCallback適用
   - 判断基準: 60fps未満の描画、100ms超のインタラクション遅延
   - 計測方法: Chrome DevTools Performance タブで確認
@@ -1153,3 +1351,4 @@ src/utils/moduleName/
 - 各ファイルは単一責任を持ち、完全なJSDocを記載
 - テストは実装ファイルと同じディレクトリに配置
 - AI エージェントの実装品質向上を継続的に検証
+

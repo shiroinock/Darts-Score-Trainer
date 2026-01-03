@@ -12,6 +12,7 @@ export type { BustQuestionAnswer } from './BustQuestionAnswer';
 export type { Coordinates } from './Coordinates';
 export type { EndReason } from './EndReason';
 export { END_REASONS } from './EndReason';
+export type { ExpandedTarget } from './ExpandedTarget';
 export type { GameState } from './GameState';
 export type { JudgmentTiming } from './JudgmentTiming';
 export type { PracticeConfig } from './PracticeConfig';

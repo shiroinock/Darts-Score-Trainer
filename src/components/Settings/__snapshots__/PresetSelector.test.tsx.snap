@@ -15,7 +15,7 @@ exports[`PresetSelector > スナップショットテスト > コーラー基礎
     <button
       aria-pressed="false"
       class="preset-button "
-      title="1投単位で得点を問う基本練習（82ターゲットからランダム出題）"
+      title="1投単位で得点を問う基本練習（62ターゲットからランダム出題）"
       type="button"
     >
       <span
@@ -32,7 +32,7 @@ exports[`PresetSelector > スナップショットテスト > コーラー基礎
       <span
         class="preset-button__description"
       >
-        1投単位で得点を問う基本練習（82ターゲットからランダム出題）
+        1投単位で得点を問う基本練習（62ターゲットからランダム出題）
       </span>
     </button>
     <button
@@ -146,7 +146,7 @@ exports[`PresetSelector > スナップショットテスト > コーラー累積
     <button
       aria-pressed="false"
       class="preset-button "
-      title="1投単位で得点を問う基本練習（82ターゲットからランダム出題）"
+      title="1投単位で得点を問う基本練習（62ターゲットからランダム出題）"
       type="button"
     >
       <span
@@ -163,7 +163,7 @@ exports[`PresetSelector > スナップショットテスト > コーラー累積
       <span
         class="preset-button__description"
       >
-        1投単位で得点を問う基本練習（82ターゲットからランダム出題）
+        1投単位で得点を問う基本練習（62ターゲットからランダム出題）
       </span>
     </button>
     <button
@@ -277,7 +277,7 @@ exports[`PresetSelector > スナップショットテスト > デフォルト状
     <button
       aria-pressed="true"
       class="preset-button preset-button--active"
-      title="1投単位で得点を問う基本練習（82ターゲットからランダム出題）"
+      title="1投単位で得点を問う基本練習（62ターゲットからランダム出題）"
       type="button"
     >
       <span
@@ -294,7 +294,7 @@ exports[`PresetSelector > スナップショットテスト > デフォルト状
       <span
         class="preset-button__description"
       >
-        1投単位で得点を問う基本練習（82ターゲットからランダム出題）
+        1投単位で得点を問う基本練習（62ターゲットからランダム出題）
       </span>
     </button>
     <button
@@ -408,7 +408,7 @@ exports[`PresetSelector > スナップショットテスト > プレイヤー練
     <button
       aria-pressed="false"
       class="preset-button "
-      title="1投単位で得点を問う基本練習（82ターゲットからランダム出題）"
+      title="1投単位で得点を問う基本練習（62ターゲットからランダム出題）"
       type="button"
     >
       <span
@@ -425,7 +425,7 @@ exports[`PresetSelector > スナップショットテスト > プレイヤー練
       <span
         class="preset-button__description"
       >
-        1投単位で得点を問う基本練習（82ターゲットからランダム出題）
+        1投単位で得点を問う基本練習（62ターゲットからランダム出題）
       </span>
     </button>
     <button
@@ -539,7 +539,7 @@ exports[`PresetSelector > スナップショットテスト > 総合練習が選
     <button
       aria-pressed="false"
       class="preset-button "
-      title="1投単位で得点を問う基本練習（82ターゲットからランダム出題）"
+      title="1投単位で得点を問う基本練習（62ターゲットからランダム出題）"
       type="button"
     >
       <span
@@ -556,7 +556,7 @@ exports[`PresetSelector > スナップショットテスト > 総合練習が選
       <span
         class="preset-button__description"
       >
-        1投単位で得点を問う基本練習（82ターゲットからランダム出題）
+        1投単位で得点を問う基本練習（62ターゲットからランダム出題）
       </span>
     </button>
     <button

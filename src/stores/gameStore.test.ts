@@ -6069,7 +6069,7 @@ describe('gameStore', () => {
    */
   describe('【RED】シャッフルバッグ方式による問題生成', () => {
     describe('初期化テスト', () => {
-      test('【RED】randomizeTarget: true で startPractice() 時にtargetBagが82要素で初期化される', () => {
+      test('【RED】randomizeTarget: true で startPractice() 時にtargetBagが62要素で初期化される', () => {
         // Arrange
         const { result } = renderHook(() => useGameStore());
 
@@ -6080,6 +6080,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
         });
 
@@ -6090,7 +6091,7 @@ describe('gameStore', () => {
 
         // Assert
         expect(result.current.targetBag).toBeDefined();
-        expect(result.current.targetBag).toHaveLength(82);
+        expect(result.current.targetBag).toHaveLength(62);
       });
 
       test('【RED】randomizeTarget: true で startPractice() 時にtargetBagIndexが0で初期化される', () => {
@@ -6104,6 +6105,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
         });
 
@@ -6177,6 +6179,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6207,6 +6210,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6224,7 +6228,7 @@ describe('gameStore', () => {
         expect(currentQuestion?.throws[0].score).toBe(expectedTarget?.score);
       });
 
-      test('【RED】バッグ内の82問を順次出題後、リシャッフルされる', () => {
+      test('【RED】バッグ内の62問を順次出題後、リシャッフルされる', () => {
         // Arrange
         const { result } = renderHook(() => useGameStore());
 
@@ -6235,13 +6239,14 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
 
         const firstBag = [...(result.current.targetBag ?? [])];
 
-        // Act: 82問を出題（submitAnswer後にnextQuestionを明示的に呼ぶ）
+        // Act: 62問を出題（submitAnswer後にnextQuestionを明示的に呼ぶ）
         for (let i = 0; i < 82; i++) {
           act(() => {
             result.current.simulateNextThrow();
@@ -6250,9 +6255,9 @@ describe('gameStore', () => {
           });
         }
 
-        // Assert: リシャッフル後のバッグも82要素
+        // Assert: リシャッフル後のバッグも62要素
         const secondBag = result.current.targetBag;
-        expect(secondBag).toHaveLength(82);
+        expect(secondBag).toHaveLength(62);
 
         // Assert: バッグの内容が変わっている（順序が異なる）
         // 注: シャッフルのため、必ずしも全て異なるとは限らないが、高い確率で異なる
@@ -6265,7 +6270,7 @@ describe('gameStore', () => {
     });
 
     describe('リシャッフル条件テスト', () => {
-      test('【RED】82問目を出題後、バッグがリシャッフルされる', () => {
+      test('【RED】62問目を出題後、バッグがリシャッフルされる', () => {
         // Arrange
         const { result } = renderHook(() => useGameStore());
 
@@ -6276,6 +6281,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6283,7 +6289,7 @@ describe('gameStore', () => {
         const firstBag = [...(result.current.targetBag ?? [])];
 
         // Act: 81問を出題（インデックス0-80まで）
-        for (let i = 0; i < 81; i++) {
+        for (let i = 0; i < 61; i++) {
           act(() => {
             result.current.simulateNextThrow();
             result.current.submitAnswer(0);
@@ -6291,10 +6297,10 @@ describe('gameStore', () => {
           });
         }
 
-        // この時点でインデックスは81（82問目）
-        expect(result.current.targetBagIndex).toBe(81);
+        // この時点でインデックスは61（62問目）
+        expect(result.current.targetBagIndex).toBe(61);
 
-        // 82問目を出題
+        // 62問目を出題
         act(() => {
           result.current.simulateNextThrow();
           result.current.submitAnswer(0);
@@ -6315,7 +6321,7 @@ describe('gameStore', () => {
         expect(isDifferent).toBe(true);
       });
 
-      test('【RED】リシャッフル後のバッグも82要素', () => {
+      test('【RED】リシャッフル後のバッグも62要素', () => {
         // Arrange
         const { result } = renderHook(() => useGameStore());
 
@@ -6326,11 +6332,12 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
 
-        // Act: 82問を出題してリシャッフル
+        // Act: 62問を出題してリシャッフル
         for (let i = 0; i < 82; i++) {
           act(() => {
             result.current.simulateNextThrow();
@@ -6340,7 +6347,7 @@ describe('gameStore', () => {
         }
 
         // Assert
-        expect(result.current.targetBag).toHaveLength(82);
+        expect(result.current.targetBag).toHaveLength(62);
       });
 
       test('【RED】リシャッフル後、連続性が確保される（前回最後 ≠ 今回最初）', () => {
@@ -6354,12 +6361,13 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
 
         // Act: 81問を出題
-        for (let i = 0; i < 81; i++) {
+        for (let i = 0; i < 61; i++) {
           act(() => {
             result.current.simulateNextThrow();
             result.current.submitAnswer(0);
@@ -6367,10 +6375,10 @@ describe('gameStore', () => {
           });
         }
 
-        // 82問目（最後）のターゲットを記録
-        const lastTargetOfFirstBag = result.current.targetBag?.[81];
+        // 62問目（最後）のターゲットを記録
+        const lastTargetOfFirstBag = result.current.targetBag?.[61];
 
-        // 82問目を出題してリシャッフル
+        // 62問目を出題してリシャッフル
         act(() => {
           result.current.simulateNextThrow();
           result.current.submitAnswer(0);
@@ -6386,7 +6394,7 @@ describe('gameStore', () => {
     });
 
     describe('網羅性テスト', () => {
-      test('【RED】82問出題すると、全82ターゲットが1回ずつ出題される', () => {
+      test('【RED】62問出題すると、全62ターゲットが1回ずつ出題される', () => {
         // Arrange
         const { result } = renderHook(() => useGameStore());
 
@@ -6397,11 +6405,12 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
 
-        // Act: 82問を出題し、各問題のターゲットラベルを記録
+        // Act: 62問を出題し、各問題のターゲットラベルを記録
         const seenLabels = new Set<string>();
 
         for (let i = 0; i < 82; i++) {
@@ -6418,7 +6427,7 @@ describe('gameStore', () => {
         }
 
         // Assert: 82種類全てのターゲットが出題された
-        expect(seenLabels.size).toBe(82);
+        expect(seenLabels.size).toBe(62);
       });
 
       test('【RED】同じターゲットが連続しない', () => {
@@ -6432,6 +6441,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6470,6 +6480,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 50, // 大きな標準偏差
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6495,6 +6506,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6629,6 +6641,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6663,6 +6676,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6697,11 +6711,12 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
 
-        expect(result.current.targetBag).toHaveLength(82);
+        expect(result.current.targetBag).toHaveLength(62);
         expect(result.current.targetBagIndex).toBe(0);
 
         // Act
@@ -6725,6 +6740,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6740,7 +6756,7 @@ describe('gameStore', () => {
         const secondBag = result.current.targetBag;
 
         // Assert: 新しいバッグが生成される（シャッフルにより順序が異なる可能性が高い）
-        expect(secondBag).toHaveLength(82);
+        expect(secondBag).toHaveLength(62);
         const isDifferent = firstBag.some((target, index) => {
           const secondTarget = secondBag?.[index];
           return target.label !== secondTarget?.label;
@@ -6762,6 +6778,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
         });
 
@@ -6788,6 +6805,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6804,7 +6822,7 @@ describe('gameStore', () => {
 
         // Assert: リシャッフルされてインデックスがリセット
         expect(result.current.targetBagIndex).toBe(0);
-        expect(result.current.targetBag).toHaveLength(82);
+        expect(result.current.targetBag).toHaveLength(62);
       });
     });
   });
