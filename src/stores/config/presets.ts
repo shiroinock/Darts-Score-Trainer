@@ -48,9 +48,9 @@ export const PRESETS: Record<string, PresetConfig> = {
   'preset-caller-basic': {
     configId: 'preset-caller-basic',
     configName: 'コーラー基礎',
-    description: '残り点数を問う基礎練習',
+    description: '1投ごとに残り点数を問う基礎練習',
     icon: '📢',
-    throwUnit: 3,
+    throwUnit: 1,
     questionType: 'remaining',
     judgmentTiming: 'independent',
     startingScore: 501,

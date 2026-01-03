@@ -61,7 +61,7 @@ exports[`PresetSelector > スナップショットテスト > コーラー基礎
     <button
       aria-pressed="true"
       class="preset-button preset-button--active"
-      title="残り点数を問う基礎練習"
+      title="1投ごとに残り点数を問う基礎練習"
       type="button"
     >
       <span
@@ -78,7 +78,7 @@ exports[`PresetSelector > スナップショットテスト > コーラー基礎
       <span
         class="preset-button__description"
       >
-        残り点数を問う基礎練習
+        1投ごとに残り点数を問う基礎練習
       </span>
     </button>
     <button
@@ -192,7 +192,7 @@ exports[`PresetSelector > スナップショットテスト > コーラー累積
     <button
       aria-pressed="false"
       class="preset-button "
-      title="残り点数を問う基礎練習"
+      title="1投ごとに残り点数を問う基礎練習"
       type="button"
     >
       <span
@@ -209,7 +209,7 @@ exports[`PresetSelector > スナップショットテスト > コーラー累積
       <span
         class="preset-button__description"
       >
-        残り点数を問う基礎練習
+        1投ごとに残り点数を問う基礎練習
       </span>
     </button>
     <button
@@ -323,7 +323,7 @@ exports[`PresetSelector > スナップショットテスト > デフォルト状
     <button
       aria-pressed="false"
       class="preset-button "
-      title="残り点数を問う基礎練習"
+      title="1投ごとに残り点数を問う基礎練習"
       type="button"
     >
       <span
@@ -340,7 +340,7 @@ exports[`PresetSelector > スナップショットテスト > デフォルト状
       <span
         class="preset-button__description"
       >
-        残り点数を問う基礎練習
+        1投ごとに残り点数を問う基礎練習
       </span>
     </button>
     <button
@@ -454,7 +454,7 @@ exports[`PresetSelector > スナップショットテスト > プレイヤー練
     <button
       aria-pressed="false"
       class="preset-button "
-      title="残り点数を問う基礎練習"
+      title="1投ごとに残り点数を問う基礎練習"
       type="button"
     >
       <span
@@ -471,7 +471,7 @@ exports[`PresetSelector > スナップショットテスト > プレイヤー練
       <span
         class="preset-button__description"
       >
-        残り点数を問う基礎練習
+        1投ごとに残り点数を問う基礎練習
       </span>
     </button>
     <button
@@ -585,7 +585,7 @@ exports[`PresetSelector > スナップショットテスト > 総合練習が選
     <button
       aria-pressed="false"
       class="preset-button "
-      title="残り点数を問う基礎練習"
+      title="1投ごとに残り点数を問う基礎練習"
       type="button"
     >
       <span
@@ -602,7 +602,7 @@ exports[`PresetSelector > スナップショットテスト > 総合練習が選
       <span
         class="preset-button__description"
       >
-        残り点数を問う基礎練習
+        1投ごとに残り点数を問う基礎練習
       </span>
     </button>
     <button
