@@ -289,6 +289,45 @@ Phase 6.4のフィードバックコンポーネントに、バスト表示機�
 - TypeScript Handbook: https://www.typescriptlang.org/docs/handbook/2/template-literal-types.html
 - Branded Types pattern: https://egghead.io/blog/using-branded-types-in-typescript
 
+### 技術的改善（プリセット構造のリファクタリング）
+
+**背景**: 現在、基礎練習モード判定に `config.configId === DEFAULT_PRESET_ID` という文字列比較を使用している。この方式は動作するが、マジックストリング依存により保守性が低下する可能性がある。
+
+**目的**: プリセット定義側にフラグを追加し、文字列比較を排除して型安全性と保守性を向上させる。
+
+#### Phase 1: PresetConfig型の拡張
+- [ ] `src/types/PracticeConfig.ts` に `isBasicMode?: boolean` フラグを追加
+- [ ] 既存のPresetConfig型定義を更新
+- [ ] 型定義のテストを追加
+
+#### Phase 2: プリセット定義の更新
+- [ ] `src/stores/config/presets.ts` の各プリセットに `isBasicMode` フラグを設定
+  - `preset-basic`: `isBasicMode: true`
+  - その他のプリセット: `isBasicMode: false` (または省略)
+- [ ] プリセット定義のテストを更新
+
+#### Phase 3: 判定ロジックの置き換え
+- [ ] `src/components/Settings/DetailedSettings.tsx` の判定を変更
+  - 現状: `const isBasicMode = config.configId === DEFAULT_PRESET_ID;`
+  - 変更後: `const isBasicMode = config.isBasicMode ?? false;`
+- [ ] `src/components/Settings/SettingsPanel.tsx` の判定も同様に変更（9.2.7タスク実装時）
+- [ ] コンポーネントテストを更新
+
+#### Phase 4: 検証
+- [ ] 全テストが通ることを確認
+- [ ] 基礎練習モードの動作確認
+- [ ] 他のプリセットの動作確認
+- [ ] 型チェックの確認（TypeScriptコンパイル）
+
+**利点**:
+- 文字列比較の排除により、タイポによるバグを防止
+- プリセットの意図が型定義から明確になる
+- 将来的に他のフラグ（`isCallerMode`, `isCumulativeMode` など）を追加しやすくなる
+
+**リスク**: 低（既存の機能には影響なし、型定義の拡張のみ）
+
+**関連タスク**: 9.2.6（完了）、9.2.7（未実装）
+
 ---
 
 ## 進捗管理
