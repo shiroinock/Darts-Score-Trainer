@@ -1,15 +1,18 @@
 /**
- * ダーツボードの全82ターゲットを拡張フォーマットで生成
+ * ダーツボードの全62ターゲットを拡張フォーマットで生成（基礎練習用）
  *
- * 82ターゲットの内訳:
- * - INNER_SINGLE 1-20 (20個)
+ * 注: このリストは基礎練習の出題範囲を制限するためのものです。
+ * INNER_SINGLEを除外し、OUTER_SINGLEのみを含めることで出題数を削減しています。
+ * ゲーム全体ではINNER_SINGLEとOUTER_SINGLEの両方が存在し、区別されます。
+ *
+ * 62ターゲットの内訳:
  * - OUTER_SINGLE 1-20 (20個)
  * - DOUBLE 1-20 (20個)
  * - TRIPLE 1-20 (20個)
  * - INNER_BULL (1個)
  * - OUTER_BULL (1個)
  *
- * @returns 全82ターゲットの配列
+ * @returns 全62ターゲットの配列
  */
 
 import type { RingType } from '../../types/RingType.js';
@@ -33,8 +36,6 @@ export interface ExpandedTarget {
  */
 function getLabelPrefix(ringType: RingType): string {
   switch (ringType) {
-    case 'INNER_SINGLE':
-      return 'IS';
     case 'OUTER_SINGLE':
       return 'OS';
     case 'DOUBLE':
@@ -51,8 +52,6 @@ function getLabelPrefix(ringType: RingType): string {
  */
 function getRadius(ringType: RingType): number {
   switch (ringType) {
-    case 'INNER_SINGLE':
-      return TARGET_RADII.SINGLE_INNER;
     case 'OUTER_SINGLE':
       return TARGET_RADII.SINGLE_OUTER;
     case 'TRIPLE':
@@ -72,7 +71,6 @@ function getRadius(ringType: RingType): number {
  */
 function calculateScore(ringType: RingType, number: number): number {
   switch (ringType) {
-    case 'INNER_SINGLE':
     case 'OUTER_SINGLE':
       return number;
     case 'DOUBLE':
@@ -115,13 +113,10 @@ function generateSegmentTargets(ringType: RingType): ExpandedTarget[] {
 }
 
 /**
- * ダーツボードの全82ターゲットを返す
+ * ダーツボードの全62ターゲットを返す
  */
 export function getAllTargetsExpanded(): ExpandedTarget[] {
   const targets: ExpandedTarget[] = [];
-
-  // INNER_SINGLE (20個)
-  targets.push(...generateSegmentTargets('INNER_SINGLE'));
 
   // OUTER_SINGLE (20個)
   targets.push(...generateSegmentTargets('OUTER_SINGLE'));

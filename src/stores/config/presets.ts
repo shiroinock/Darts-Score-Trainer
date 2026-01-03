@@ -18,14 +18,14 @@ export const PRESETS: Record<string, PresetConfig> = {
   [DEFAULT_PRESET_ID]: {
     configId: DEFAULT_PRESET_ID,
     configName: '基礎練習',
-    description: '1投単位で得点を問う基本練習（82ターゲットからランダム出題）',
+    description: '1投単位で得点を問う基本練習（62ターゲットからランダム出題）',
     icon: '📚',
     throwUnit: 1,
     questionType: 'score',
     judgmentTiming: 'independent',
     startingScore: 501,
     stdDevMM: 15,
-    randomizeTarget: true, // 全82ターゲットからランダム出題
+    randomizeTarget: true, // 全62ターゲットからランダム出題
     isPreset: true,
     createdAt: '2025-01-01T00:00:00.000Z',
     lastPlayedAt: undefined,

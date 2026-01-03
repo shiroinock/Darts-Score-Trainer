@@ -316,7 +316,7 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 /**
- * バッグを初期化（82ターゲットをシャッフル）
+ * バッグを初期化（62ターゲットをシャッフル）
  */
 function initializeBag(): ExpandedTarget[] {
   const allTargets = getAllTargetsExpanded();

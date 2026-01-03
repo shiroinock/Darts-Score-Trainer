@@ -36,7 +36,7 @@ export interface PracticeConfig {
   stdDevMM: number;
   /**
    * ランダムターゲットモード（オプショナル、デフォルトfalse）
-   * trueの場合、投擲シミュレーションを行わず、全82ターゲットからランダムに選んで出題
+   * trueの場合、投擲シミュレーションを行わず、全62ターゲットからランダムに選んで出題
    * 注: randomizeTarget: true の場合、stdDevMM は使用されない
    */
   randomizeTarget?: boolean;
