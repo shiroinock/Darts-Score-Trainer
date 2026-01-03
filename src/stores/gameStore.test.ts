@@ -3023,6 +3023,7 @@ describe('gameStore', () => {
             questionType: 'score',
             startingScore: 501,
             target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            stdDevMM: 0, // 完全に正確な投擲（フレーキーテスト対策）
             randomizeTarget: false, // 従来の投擲シミュレーションを使用
           });
           result.current.startPractice();
@@ -3042,6 +3043,7 @@ describe('gameStore', () => {
         });
 
         // Assert: 3投モードではscoreモードでもbustInfoが設定される（bust判定用）
+        // stdDevMM=0により、必ずT20（60点）に命中し、残り10点に対してバストが発生する
         expect(result.current.currentQuestion?.bustInfo).toBeDefined();
       });
     });
