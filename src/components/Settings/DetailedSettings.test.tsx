@@ -11,6 +11,7 @@ import { DetailedSettings } from './DetailedSettings';
 
 // モック用の型定義
 type MockConfig = {
+  configId: string;
   throwUnit: 1 | 3;
   questionType: QuestionType;
   judgmentTiming: JudgmentTiming;
@@ -20,6 +21,7 @@ type MockConfig = {
 
 // 設定モックのファクトリー関数
 const createMockConfig = (overrides?: Partial<MockConfig>): MockConfig => ({
+  configId: 'preset-player', // デフォルトは非基礎練習モード
   throwUnit: 1,
   questionType: 'score',
   judgmentTiming: 'independent',
@@ -790,6 +792,121 @@ describe('DetailedSettings', () => {
     });
   });
 
+  describe('基礎練習モード時の条件付きレンダリング', () => {
+    test('基礎練習モード時に通知メッセージが表示される', async () => {
+      // Arrange
+      mockConfig.configId = 'preset-basic'; // 基礎練習モード
+      const user = userEvent.setup();
+      render(<DetailedSettings />);
+
+      // Act
+      await user.click(screen.getByRole('button', { name: /詳細設定/ }));
+
+      // Assert
+      expect(
+        screen.getByText('基礎練習モードでは設定が固定されています（1投単位、得点のみを問う）')
+      ).toBeInTheDocument();
+    });
+
+    test('基礎練習モード時に投擲単位セクションが非表示', async () => {
+      // Arrange
+      mockConfig.configId = 'preset-basic'; // 基礎練習モード
+      const user = userEvent.setup();
+      render(<DetailedSettings />);
+
+      // Act
+      await user.click(screen.getByRole('button', { name: /詳細設定/ }));
+
+      // Assert
+      expect(screen.queryByText('投擲単位')).not.toBeInTheDocument();
+    });
+
+    test('基礎練習モード時に問う内容セクションが非表示', async () => {
+      // Arrange
+      mockConfig.configId = 'preset-basic'; // 基礎練習モード
+      const user = userEvent.setup();
+      render(<DetailedSettings />);
+
+      // Act
+      await user.click(screen.getByRole('button', { name: /詳細設定/ }));
+
+      // Assert
+      expect(screen.queryByText('問う内容')).not.toBeInTheDocument();
+    });
+
+    test('基礎練習モード時に判定タイミングセクションが非表示', async () => {
+      // Arrange
+      mockConfig.configId = 'preset-basic'; // 基礎練習モード
+      const user = userEvent.setup();
+      render(<DetailedSettings />);
+
+      // Act
+      await user.click(screen.getByRole('button', { name: /詳細設定/ }));
+
+      // Assert
+      expect(screen.queryByText('判定タイミング')).not.toBeInTheDocument();
+    });
+
+    test('基礎練習モード時に開始点数セクションが非表示', async () => {
+      // Arrange
+      mockConfig.configId = 'preset-basic'; // 基礎練習モード
+      const user = userEvent.setup();
+      render(<DetailedSettings />);
+
+      // Act
+      await user.click(screen.getByRole('button', { name: /詳細設定/ }));
+
+      // Assert
+      expect(screen.queryByText('開始点数')).not.toBeInTheDocument();
+    });
+
+    test('基礎練習モード時に通知メッセージのdivがdetailed-settings__noticeクラスを持つ', async () => {
+      // Arrange
+      mockConfig.configId = 'preset-basic'; // 基礎練習モード
+      const user = userEvent.setup();
+      const { container } = render(<DetailedSettings />);
+
+      // Act
+      await user.click(screen.getByRole('button', { name: /詳細設定/ }));
+
+      // Assert
+      const noticeDiv = container.querySelector('.detailed-settings__notice');
+      expect(noticeDiv).toBeInTheDocument();
+      expect(noticeDiv).toHaveTextContent(
+        '基礎練習モードでは設定が固定されています（1投単位、得点のみを問う）'
+      );
+    });
+
+    test('非基礎練習モード時に通知メッセージが非表示', async () => {
+      // Arrange
+      mockConfig.configId = 'preset-player'; // 非基礎練習モード
+      const user = userEvent.setup();
+      render(<DetailedSettings />);
+
+      // Act
+      await user.click(screen.getByRole('button', { name: /詳細設定/ }));
+
+      // Assert
+      expect(
+        screen.queryByText('基礎練習モードでは設定が固定されています（1投単位、得点のみを問う）')
+      ).not.toBeInTheDocument();
+    });
+
+    test('非基礎練習モード時に設定セクションが表示される', async () => {
+      // Arrange
+      mockConfig.configId = 'preset-player'; // 非基礎練習モード
+      const user = userEvent.setup();
+      render(<DetailedSettings />);
+
+      // Act
+      await user.click(screen.getByRole('button', { name: /詳細設定/ }));
+
+      // Assert
+      expect(screen.getByText('投擲単位')).toBeInTheDocument();
+      expect(screen.getByText('問う内容')).toBeInTheDocument();
+    });
+  });
+
   describe('条件付きレンダリング', () => {
     test('1投かつscoreモードの場合、判定タイミングと開始点数が両方非表示', async () => {
       // Arrange
@@ -885,6 +1002,7 @@ describe('DetailedSettings', () => {
   describe('スナップショットテスト', () => {
     test('折りたたみ状態のスナップショット', () => {
       // Arrange
+      mockConfig.configId = 'preset-player';
       mockConfig.throwUnit = 1;
       mockConfig.questionType = 'score';
 
@@ -895,8 +1013,37 @@ describe('DetailedSettings', () => {
       expect(container).toMatchSnapshot();
     });
 
+    test('基礎練習モード時のスナップショット（折りたたみ状態）', () => {
+      // Arrange
+      mockConfig.configId = 'preset-basic';
+      mockConfig.throwUnit = 1;
+      mockConfig.questionType = 'score';
+
+      // Act
+      const { container } = render(<DetailedSettings />);
+
+      // Assert
+      expect(container).toMatchSnapshot();
+    });
+
+    test('基礎練習モード時のスナップショット（展開状態）', async () => {
+      // Arrange
+      mockConfig.configId = 'preset-basic';
+      mockConfig.throwUnit = 1;
+      mockConfig.questionType = 'score';
+      const user = userEvent.setup();
+      const { container } = render(<DetailedSettings />);
+
+      // Act
+      await user.click(screen.getByRole('button', { name: /詳細設定/ }));
+
+      // Assert
+      expect(container).toMatchSnapshot();
+    });
+
     test('展開状態のスナップショット（1投、scoreモード）', async () => {
       // Arrange
+      mockConfig.configId = 'preset-player';
       mockConfig.throwUnit = 1;
       mockConfig.questionType = 'score';
       const user = userEvent.setup();
@@ -911,6 +1058,7 @@ describe('DetailedSettings', () => {
 
     test('3投モード時のスナップショット（判定タイミング表示）', async () => {
       // Arrange
+      mockConfig.configId = 'preset-player';
       mockConfig.throwUnit = 3;
       mockConfig.questionType = 'score';
       mockConfig.judgmentTiming = 'cumulative';
@@ -926,6 +1074,7 @@ describe('DetailedSettings', () => {
 
     test('remainingモード時のスナップショット（開始点数表示）', async () => {
       // Arrange
+      mockConfig.configId = 'preset-caller-basic';
       mockConfig.throwUnit = 1;
       mockConfig.questionType = 'remaining';
       mockConfig.startingScore = 501;
@@ -941,6 +1090,7 @@ describe('DetailedSettings', () => {
 
     test('全フィールド表示時のスナップショット（3投、bothモード）', async () => {
       // Arrange
+      mockConfig.configId = 'preset-comprehensive';
       mockConfig.throwUnit = 3;
       mockConfig.questionType = 'both';
       mockConfig.judgmentTiming = 'independent';
@@ -959,6 +1109,7 @@ describe('DetailedSettings', () => {
 
     test('1投、remainingモード、501点のスナップショット', async () => {
       // Arrange
+      mockConfig.configId = 'preset-caller-basic';
       mockConfig.throwUnit = 1;
       mockConfig.questionType = 'remaining';
       mockConfig.startingScore = 501;
@@ -974,6 +1125,7 @@ describe('DetailedSettings', () => {
 
     test('1投、remainingモード、701点のスナップショット', async () => {
       // Arrange
+      mockConfig.configId = 'preset-caller-basic';
       mockConfig.throwUnit = 1;
       mockConfig.questionType = 'remaining';
       mockConfig.startingScore = 701;
@@ -989,6 +1141,7 @@ describe('DetailedSettings', () => {
 
     test('1投、remainingモード、301点のスナップショット', async () => {
       // Arrange
+      mockConfig.configId = 'preset-caller-basic';
       mockConfig.throwUnit = 1;
       mockConfig.questionType = 'remaining';
       mockConfig.startingScore = 301;
@@ -1004,6 +1157,7 @@ describe('DetailedSettings', () => {
 
     test('1投、bothモード、501点のスナップショット', async () => {
       // Arrange
+      mockConfig.configId = 'preset-comprehensive';
       mockConfig.throwUnit = 1;
       mockConfig.questionType = 'both';
       mockConfig.startingScore = 501;
@@ -1019,6 +1173,7 @@ describe('DetailedSettings', () => {
 
     test('3投、scoreモード、independentのスナップショット', async () => {
       // Arrange
+      mockConfig.configId = 'preset-player';
       mockConfig.throwUnit = 3;
       mockConfig.questionType = 'score';
       mockConfig.judgmentTiming = 'independent';
@@ -1034,6 +1189,7 @@ describe('DetailedSettings', () => {
 
     test('3投、remainingモード、independent、501点のスナップショット', async () => {
       // Arrange
+      mockConfig.configId = 'preset-caller-cumulative';
       mockConfig.throwUnit = 3;
       mockConfig.questionType = 'remaining';
       mockConfig.judgmentTiming = 'independent';
@@ -1050,6 +1206,7 @@ describe('DetailedSettings', () => {
 
     test('3投、remainingモード、cumulative、701点のスナップショット', async () => {
       // Arrange
+      mockConfig.configId = 'preset-caller-cumulative';
       mockConfig.throwUnit = 3;
       mockConfig.questionType = 'remaining';
       mockConfig.judgmentTiming = 'cumulative';
@@ -1066,6 +1223,7 @@ describe('DetailedSettings', () => {
 
     test('3投、remainingモード、cumulative、301点のスナップショット', async () => {
       // Arrange
+      mockConfig.configId = 'preset-caller-cumulative';
       mockConfig.throwUnit = 3;
       mockConfig.questionType = 'remaining';
       mockConfig.judgmentTiming = 'cumulative';
@@ -1082,6 +1240,7 @@ describe('DetailedSettings', () => {
 
     test('3投、bothモード、independent、501点のスナップショット', async () => {
       // Arrange
+      mockConfig.configId = 'preset-comprehensive';
       mockConfig.throwUnit = 3;
       mockConfig.questionType = 'both';
       mockConfig.judgmentTiming = 'independent';
@@ -1098,6 +1257,7 @@ describe('DetailedSettings', () => {
 
     test('3投、bothモード、cumulative、701点のスナップショット', async () => {
       // Arrange
+      mockConfig.configId = 'preset-comprehensive';
       mockConfig.throwUnit = 3;
       mockConfig.questionType = 'both';
       mockConfig.judgmentTiming = 'cumulative';
@@ -1114,6 +1274,7 @@ describe('DetailedSettings', () => {
 
     test('3投、bothモード、cumulative、301点のスナップショット', async () => {
       // Arrange
+      mockConfig.configId = 'preset-comprehensive';
       mockConfig.throwUnit = 3;
       mockConfig.questionType = 'both';
       mockConfig.judgmentTiming = 'cumulative';
