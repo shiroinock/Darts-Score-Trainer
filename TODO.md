@@ -777,11 +777,11 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 **リスク:** 低
 
 #### 9.2.3 コーラー基礎の投擲単位変更（3投→1投）
-- [ ] `src/stores/config/presets.ts` の47-60行目を修正
+- [x] `src/stores/config/presets.ts` の47-60行目を修正
   - `throwUnit: 3` → `throwUnit: 1`
   - `description` を更新：「1投ごとに残り点数を問う基礎練習」
-- [ ] 既存のlocalStorage設定との互換性確認
-- [ ] コーラー基礎と累積で出題単位が異なることを確認
+- [x] 既存のlocalStorage設定との互換性確認
+- [x] コーラー基礎と累積で出題単位が異なることを確認
 
 **リスク:** 低
 

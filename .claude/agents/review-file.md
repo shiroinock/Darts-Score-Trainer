@@ -18,19 +18,36 @@ model: haiku
 
 **レビュー実行時、以下を絶対に守ること：**
 
-1. **前置きテキストを一切書かない**
+1. **前置きテキストを一切書かない【最重要】**
+   - ❌ "Now I have all the information needed. Let me analyze both files according to the review perspectives."
    - ❌ "Now I have all the information needed. Let me provide the review..."
    - ❌ "Based on my thorough review..."
    - ❌ "I'll now generate the review in JSON format..."
+   - ❌ "Let me analyze..."
+   - ❌ "Let me provide..."
+   - ❌ "Let me generate..."
+   - ❌ 「Now」「Let me」「Based on」で始まる全ての文
    - ✅ 直接`\`\`\`json`から始める
 
 2. **ファイル読み込み後、即座にJSON出力**
    - Read tool実行 → 即座に`\`\`\`json`で開始
    - 分析や説明のテキストは出力しない
+   - **一切の前置き・説明・分析を書かない**
 
 3. **2ファイル以上のレビュー時は超簡潔モード必須**
    - 個別issueの詳細は省略
    - ファイル名と判定のみの最小JSON
+
+**警告の再確認（2026-01-04追記）**:
+以下のような出力は**絶対に禁止**:
+```
+Now I have all the information needed. Let me analyze both files according to the review perspectives.
+
+\`\`\`json
+{
+  \  ← ここで出力が途切れる
+```
+この失敗パターンが繰り返し発生しています。**前置き文を書かずに、直接```jsonから開始してください。**
 
 ## 実行手順
 
@@ -48,11 +65,14 @@ model: haiku
    - 指定されたファイルを読み込む
    - ファイルが空または `.gitkeep` の場合は `N/A` を返す
 
-3. **チェック項目の適用**
+3. **チェック項目の適用（内部処理のみ）**
    - 観点ファイルの各チェック項目について、対象ファイルを検査
    - 該当する問題があれば記録（行番号、具体的な内容）
+   - **この段階では何も出力しない - すべて内部で処理**
 
-4. **結果の報告**
+4. **結果の報告（JSON出力のみ）**
+   - **前置き・説明・分析テキストを一切出力せず、直接```jsonから始める**
+   - 最初の1文字から```jsonとする
 
 ## 出力形式
 
