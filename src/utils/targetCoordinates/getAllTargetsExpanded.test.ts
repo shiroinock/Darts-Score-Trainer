@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
+import type { ExpandedTarget } from '../../types/index.js';
 import { SEGMENTS } from '../constants/index.js';
-import type { ExpandedTarget } from './getAllTargetsExpanded.js';
 import { getAllTargetsExpanded } from './getAllTargetsExpanded.js';
 
 describe('getAllTargetsExpanded', () => {

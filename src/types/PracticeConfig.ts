@@ -36,10 +36,17 @@ export interface PracticeConfig {
   stdDevMM: number;
   /**
    * ランダムターゲットモード（オプショナル、デフォルトfalse）
-   * trueの場合、投擲シミュレーションを行わず、全62ターゲットからランダムに選んで出題
+   * trueの場合、投擲シミュレーションを行わず、全ターゲットからランダムに選んで出題
    * 注: randomizeTarget: true の場合、stdDevMM は使用されない
    */
   randomizeTarget?: boolean;
+  /**
+   * 基礎練習用の62ターゲットを使用するか（オプショナル、デフォルトfalse）
+   * - true: 62ターゲット（INNER_SINGLE除外）
+   * - false/undefined: 82ターゲット（全て）
+   * 注: randomizeTarget: true の場合にのみ有効
+   */
+  useBasicTargets?: boolean;
 
   // メタデータ
   /** プリセット設定かどうか */

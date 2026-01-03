@@ -12,21 +12,9 @@
  * @returns 全82ターゲットの配列
  */
 
-import type { RingType } from '../../types/RingType.js';
+import type { ExpandedTarget, RingType } from '../../types/index.js';
 import { TARGET_RADII } from '../constants/index.js';
 import { getSegmentAngle } from './getSegmentAngle.js';
-
-/**
- * 拡張ターゲット情報
- */
-export interface ExpandedTarget {
-  ringType: RingType;
-  number: number;
-  x: number;
-  y: number;
-  label: string;
-  score: number;
-}
 
 /**
  * RingTypeに対応するラベルプレフィックスを取得

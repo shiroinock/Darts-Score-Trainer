@@ -13,4 +13,11 @@ export interface PresetConfig extends PracticeConfig {
   description: string;
   /** プリセット設定フラグ（常にtrue） */
   isPreset: true;
+  /**
+   * 基礎練習用の62ターゲットを使用するか
+   * - true: 62ターゲット（INNER_SINGLE除外）
+   * - false/undefined: 82ターゲット（全て）
+   * @default false
+   */
+  useBasicTargets?: boolean;
 }

@@ -26,6 +26,7 @@ export const PRESETS: Record<string, PresetConfig> = {
     startingScore: 501,
     stdDevMM: 15,
     randomizeTarget: true, // 全62ターゲットからランダム出題
+    useBasicTargets: true, // 62ターゲット（INNER_SINGLE除外）
     isPreset: true,
     createdAt: '2025-01-01T00:00:00.000Z',
     lastPlayedAt: undefined,

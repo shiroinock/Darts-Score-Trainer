@@ -70,11 +70,13 @@ npm run deploy     # ビルドしてGitHub Pagesにデプロイ
 ### プロジェクト構成（2025-12-08更新: 1定義1ファイル原則適用後）
 ```
 src/
-├── types/                          # TypeScript型定義（14ファイル）
+├── types/                          # TypeScript型定義
 │   ├── Coordinates.ts              # 座標インターフェース
 │   ├── RingType.ts                 # リング種別
+│   ├── ExpandedTarget.ts           # 拡張ターゲット情報
 │   ├── Target.ts, ThrowResult.ts   # ターゲット・投擲結果
 │   ├── PracticeConfig.ts           # 練習設定
+│   ├── PresetConfig.ts             # プリセット設定（useBasicTargetsフラグ含む）
 │   └── index.ts                    # 再エクスポート
 ├── components/
 │   ├── DartBoard/                  # p5.jsキャンバスと描画
@@ -106,9 +108,12 @@ src/
     │   ├── isValidSingleThrowScore.ts
     │   ├── isValidRoundScore.ts
     │   └── index.ts
-    ├── targetCoordinates/          # ターゲット座標（3関数）
-    │   ├── getSegmentAngle.ts
-    │   ├── getTargetCoordinates.ts
+    ├── targetCoordinates/          # ターゲット座標
+    │   ├── getAllTargets.ts            # 20セグメント基本情報
+    │   ├── getAllTargetsExpanded.ts    # 82ターゲット（全ゲーム用、INNER_SINGLE含む）
+    │   ├── getBasicPracticeTargets.ts  # 62ターゲット（基礎練習用、INNER_SINGLE除外）
+    │   ├── getSegmentAngle.ts          # セグメント角度計算
+    │   ├── getTargetCoordinates.ts     # ターゲット座標取得
     │   └── index.ts
     ├── throwSimulator/             # 投擲シミュレーション（3関数）
     │   ├── generateNormalDistribution.ts

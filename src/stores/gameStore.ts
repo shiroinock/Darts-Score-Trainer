@@ -11,6 +11,7 @@ import { immer } from 'zustand/middleware/immer';
 import type {
   BustInfo,
   BustQuestionAnswer,
+  ExpandedTarget,
   GameState,
   PracticeConfig,
   Question,
@@ -24,12 +25,11 @@ import { DEFAULT_TARGET, MIN_SCORE, STORAGE_KEY } from '../utils/constants/index
 import { getOptimalTarget } from '../utils/dartStrategy/getOptimalTarget.js';
 import { checkBust, isDoubleRing, isGameFinished } from '../utils/gameLogic/index.js';
 import {
-  type ExpandedTarget,
   getAllTargetsExpanded,
   getBasicPracticeTargets,
 } from '../utils/targetCoordinates/index.js';
 import { executeThrow } from '../utils/throwSimulator/index.js';
-import { DEFAULT_PRESET_ID, getDefaultConfig, PRESETS } from './config/presets.js';
+import { getDefaultConfig, PRESETS } from './config/presets.js';
 import { initialSessionConfig, initialStats } from './session/initialState.js';
 import { isPersistFormat, isPracticeConfigFormat, PERSIST_VERSION } from './utils/typeGuards.js';
 
@@ -321,21 +321,20 @@ function shuffleArray<T>(array: T[]): T[] {
 
 /**
  * バッグを初期化してシャッフル
- * @param configId - 練習設定ID。基礎練習（preset-basic）の場合は62ターゲット、それ以外は82ターゲット
+ * @param config - 練習設定。useBasicTargets=trueの場合は62ターゲット、それ以外は82ターゲット
  */
-function initializeBag(configId: string): ExpandedTarget[] {
-  const allTargets =
-    configId === DEFAULT_PRESET_ID ? getBasicPracticeTargets() : getAllTargetsExpanded();
+function initializeBag(config: PracticeConfig): ExpandedTarget[] {
+  const allTargets = config.useBasicTargets ? getBasicPracticeTargets() : getAllTargetsExpanded();
   return shuffleArray(allTargets);
 }
 
 /**
  * バッグをリシャッフル（前回の最後と今回の最初が同じにならないよう調整）
  * @param lastTarget - 前回のバッグの最後のターゲット
- * @param configId - 練習設定ID
+ * @param config - 練習設定
  */
-function reshuffleBag(lastTarget: ExpandedTarget, configId: string): ExpandedTarget[] {
-  const newBag = initializeBag(configId);
+function reshuffleBag(lastTarget: ExpandedTarget, config: PracticeConfig): ExpandedTarget[] {
+  const newBag = initializeBag(config);
 
   // 新しいバッグの最初が前回の最後と同じ場合は、異なる要素と交換
   if (newBag[0].label === lastTarget.label && newBag.length > 1) {
@@ -361,19 +360,19 @@ interface ShuffleBagState {
  * シャッフルバッグから投擲結果を生成
  * @param bagState - バッグの状態
  * @param throwUnit - 投擲単位（1 or 3）
- * @param configId - 練習設定ID
+ * @param config - 練習設定
  */
 function generateThrowsFromBag(
   bagState: ShuffleBagState,
   throwUnit: 1 | 3,
-  configId: string
+  config: PracticeConfig
 ): { throws: ThrowResult[]; newBagState: ShuffleBagState } {
   let { targetBag, targetBagIndex } = bagState;
 
   // インデックスが範囲外の場合、リシャッフル
   if (targetBagIndex >= targetBag.length) {
     const lastTarget = targetBag[targetBag.length - 1];
-    targetBag = reshuffleBag(lastTarget, configId);
+    targetBag = reshuffleBag(lastTarget, config);
     targetBagIndex = 0;
   }
 
@@ -622,7 +621,7 @@ export const useGameStore = create<GameStore>()(
 
           // シャッフルバッグの初期化
           if (state.config.randomizeTarget === true) {
-            state.targetBag = initializeBag(state.config.configId);
+            state.targetBag = initializeBag(state.config);
             state.targetBagIndex = 0;
           } else {
             // randomizeTargetがfalse/undefinedの場合はクリア
@@ -650,7 +649,7 @@ export const useGameStore = create<GameStore>()(
             const result = generateThrowsFromBag(
               { targetBag: state.targetBag, targetBagIndex: state.targetBagIndex ?? 0 },
               config.throwUnit,
-              config.configId
+              config
             );
             throws = result.throws;
             state.targetBag = result.newBagState.targetBag;

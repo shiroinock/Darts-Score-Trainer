@@ -6080,6 +6080,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
         });
 
@@ -6104,6 +6105,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
         });
 
@@ -6177,6 +6179,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6207,6 +6210,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6235,6 +6239,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6276,6 +6281,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6326,6 +6332,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6354,6 +6361,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6397,6 +6405,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6432,6 +6441,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6470,6 +6480,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 50, // 大きな標準偏差
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6495,6 +6506,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6629,6 +6641,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6663,6 +6676,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6697,6 +6711,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6725,6 +6740,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
@@ -6762,6 +6778,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
         });
 
@@ -6788,6 +6805,7 @@ describe('gameStore', () => {
             startingScore: 501,
             stdDevMM: 15,
             randomizeTarget: true,
+            useBasicTargets: true, // 62ターゲット（基礎練習用）
           });
           result.current.startPractice();
         });
