@@ -28,7 +28,7 @@ const ENABLE_DEBUG_MODE = import.meta.env.VITE_ENABLE_DEBUG_MODE === 'true';
 /**
  * ウィザードのステップ定義
  */
-type WizardStep = 1 | 2 | 3 | 4;
+export type WizardStep = 1 | 2 | 3 | 4;
 
 /**
  * 設定パネルのProps

@@ -12,20 +12,8 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 
 #### 9.2.10 テスト戦略
 
-**単体テスト更新:**
-- [ ] `SettingsPanel.test.tsx` - ステップスキップロジック、環境変数制御
-- [ ] `DetailedSettings.test.tsx` - 表示/非表示条件
-- [ ] `getAllTargetsExpanded.test.ts` - 62ターゲット検証
-- [ ] `gameStore.test.ts` - 問題数制限、残り点数管理、determineQuestionMode
-- [ ] `presets.test.ts` - コーラー基礎の投擲単位
-
 **統合テスト:**
-- [ ] 基礎練習フロー全体
-  - 難易度選択スキップ
-  - 62問題のランダム出題
-  - 問題数制限（10/20/50/100問）
-  - 残り点数管理の無効化
-- [ ] 3投累積ズームビュー
+- [x] 3投累積ズームビュー
   - 3つのズームビューの表示
   - レスポンシブレイアウト
   - 個別ダーツへのフォーカス

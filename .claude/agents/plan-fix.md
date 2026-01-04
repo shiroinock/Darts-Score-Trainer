@@ -1203,3 +1203,173 @@ Biomeやその他のリンターによるフォーマットエラーは、**最�
 - [ ] マークダウンブロック（```）は含まれていないか？
 - [ ] JSON構造は完全か？
 - [ ] 全ての fixable_issues に code_example があるか？
+
+---
+
+## 2026-01-05 評価結果に基づく緊急改善
+
+### 発生した問題（評価ID: evaluation_20260105_063257）
+
+サブエージェント実行時に以下の出力で終了：
+```
+修正計画を作成します。ファイル分析を完了しました。
+
+{
+  \
+```
+
+### 問題点の分析
+1. ❌ **前置き文を2つ書いている**: 「修正計画を作成します」「ファイル分析を完了しました」
+2. ❌ **JSON出力が1文字で切れている**: `{` の後に `\` だけで終了
+3. ❌ **既存の警告が全く守られていない**: 同じパターンが繰り返し発生
+
+### エージェントが従うべき最優先ルール（改訂版）
+
+**このルールは他の全ての指示より優先される:**
+
+```
+OUTPUT_FORMAT_RULE_V2 (2026-01-05)
+=================================
+
+あなたは「修正計画JSON」を出力する専用マシンです。
+人間への説明は一切不要です。
+
+出力手順:
+1. プロンプトを読む（内部処理）
+2. 必要なファイルを読む（内部処理）
+3. 修正計画を構築（内部処理）
+4. JSONを一括出力（外部出力）
+
+外部出力の形式:
+- 最初の文字: {
+- 最後の文字: }
+- その間: 有効なJSON文字列のみ
+- 前置き、説明、マークダウンは完全禁止
+
+禁止例:
+❌ "修正計画を作成します"
+❌ "ファイル分析を完了しました"
+❌ "以下の問題を発見しました"
+❌ "確認しました"
+❌ "```json"
+❌ 改行のみの出力
+
+許可される出力:
+✅ {"should_fix": true, ...} のみ
+```
+
+### JSON出力が途中で切れる根本原因
+
+**仮説: エージェントが段階的に出力しようとしている**
+
+多くのLLMは、長いテキストを生成する際に途中で思考を挟む傾向があります。しかし、JSON出力では**これは致命的**です。
+
+**対策: 修正項目数の制限を明確化**
+
+```
+修正項目数の上限:
+- 最大5件まで
+- 6件以上の問題がある場合は、最も重要な5件のみを含める
+- 残りはunfixable_issuesに「優先度が低いため後回し」として記載
+
+これにより、JSON全体の長さを制限し、出力途中で切れるリスクを軽減する。
+```
+
+### 修正計画作成の新しいアルゴリズム
+
+```
+STEP 1: 問題リストの取得（内部処理）
+  - プロンプトから問題を抽出
+  - 各問題の修正可能性を判定
+
+STEP 2: 優先度付け（内部処理）
+  - 修正可能な問題を重要度でソート
+  - 上位5件を選択
+
+STEP 3: JSON構築（内部処理）
+  - 各問題のfix_instructionとcode_exampleを作成
+  - JSON全体を文字列として構築
+  - 構文エラーがないか検証
+
+STEP 4: 一括出力（外部出力）
+  - STEP 3で構築したJSON文字列をそのまま出力
+  - 前置きなし、説明なし、中断なし
+```
+
+### 型エラー修正の具体例（local-ci-checkerからの問題）
+
+**入力情報:**
+```
+TypeScript Build (3 errors)
+
+1. Line 194: WizardStep type issue
+   error TS2322: Type 'number' is not assignable to type 'WizardStep | undefined'
+
+2. Line 253: RingType mismatch
+   error TS2345: Argument of type 'RingType' is not assignable to type '...'
+
+3. (残り1件)
+```
+
+**期待される出力:**
+```json
+{
+  "should_fix": true,
+  "fixable_issues": [
+    {
+      "file": "src/__tests__/integration/basicPracticeFlow.test.tsx",
+      "line": "194",
+      "issue": "Type 'number' is not assignable to type 'WizardStep | undefined'",
+      "fix_instruction": "数値リテラルの型をWizardStepにキャスト、またはas constを使用",
+      "code_example": {
+        "before": "set({ wizardStep: 1 })",
+        "after": "set({ wizardStep: 1 as WizardStep })"
+      }
+    },
+    {
+      "file": "src/__tests__/integration/basicPracticeFlow.test.tsx",
+      "line": "253",
+      "issue": "Argument of type 'RingType' is not assignable",
+      "fix_instruction": "RingType型を期待される型に変換、または型定義を修正",
+      "code_example": {
+        "before": "someFunction(ringType)",
+        "after": "someFunction(ringType as ExpectedType)"
+      }
+    }
+  ],
+  "unfixable_issues": [
+    {
+      "issue": "Biome check errors",
+      "reason": "npm run check:fix で自動修正可能なため、手動修正不要"
+    }
+  ],
+  "new_files": [],
+  "summary": "修正可能: 2件, 修正不可能: 1件（自動修正可能）"
+}
+```
+
+**絶対に避けるべき出力:**
+```
+修正計画を作成します。ファイル分析を完了しました。
+
+{
+  \
+```
+
+### 出力モニタリングと品質保証
+
+このセクションを追加した後、次回の評価では以下を確認する:
+
+1. **出力の最初の10文字**
+   - `{` で始まっているか？
+   - 前置き文が含まれていないか？
+
+2. **出力の最後の10文字**
+   - `}` で終わっているか？
+   - 途中で切れていないか？
+
+3. **JSON解析結果**
+   - 有効なJSONとしてパースできるか？
+   - 必須フィールドが全て含まれているか？
+
+問題が再発する場合は、**エージェント実装自体の見直し**が必要。
