@@ -8,7 +8,7 @@
  * - ダーツ色の正しい割り当て
  */
 
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ZoomViewMultiple } from '../../components/DartBoard/ZoomViewMultiple';
 import type { Coordinates } from '../../types';
@@ -169,14 +169,15 @@ describe('ZoomViewMultiple - 統合テスト', () => {
       window.dispatchEvent(new Event('resize'));
 
       // 再レンダリング（状態更新を待つため）
-      await new Promise((resolve) => setTimeout(resolve, 50));
       rerender(
         <ZoomViewMultiple coords={dartCoords} dartCount={3} visibleDarts={[true, true, true]} />
       );
 
-      // ズームビューが存在することを確認
-      const singleZooms = container.querySelectorAll('.zoom-view-multiple__single');
-      expect(singleZooms.length).toBeGreaterThan(0);
+      // ズームビューが存在することを確認（waitForで状態更新を待つ）
+      await waitFor(() => {
+        const singleZooms = container.querySelectorAll('.zoom-view-multiple__single');
+        expect(singleZooms.length).toBeGreaterThan(0);
+      });
     });
   });
 
@@ -270,6 +271,11 @@ describe('ZoomViewMultiple - 統合テスト', () => {
 
       singleZooms = container.querySelectorAll('.zoom-view-multiple__single');
       expect(singleZooms).toHaveLength(3);
+
+      // rerender後のDOM整合性確認
+      const zoomSection = container.querySelector('.zoom-view-multiple');
+      expect(zoomSection).toBeInTheDocument();
+      expect(zoomSection?.querySelectorAll('.zoom-view-multiple__single')).toHaveLength(3);
     });
   });
 
@@ -303,6 +309,8 @@ describe('ZoomViewMultiple - 統合テスト', () => {
 
       const singleZooms = container.querySelectorAll('.zoom-view-multiple__single');
       // 実装上、visibleDarts[2] === undefined !== falseなので、3番目も表示される
+      // これは実装の仕様: visibleDarts配列が短い場合、不足分はundefinedとなり、
+      // !== false 比較により true 扱いされるため表示される
       expect(singleZooms).toHaveLength(3);
     });
 
