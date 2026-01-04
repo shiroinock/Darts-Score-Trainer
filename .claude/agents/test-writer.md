@@ -1394,6 +1394,122 @@ useFeedbackのような複雑なフックをテストする場合：
 
 この明示により、レビュー時に期待される状態（Red vs Green）の混乱を防ぎます。
 
+## 追加ガイドライン（2026-01-04 追記 - SettingsPanel Step 2スキップ機能のテスト評価に基づく改善）
+
+### 条件分岐ロジックの網羅的なテスト
+
+条件によって動作が変わる機能（例: 基礎練習モード時のステップスキップ）のテストでは、以下を徹底してください：
+
+1. **条件ごとのdescribeブロック分離**
+   ```typescript
+   describe('基礎練習モード（Step 2スキップ）', () => {
+     beforeEach(async () => {
+       // 基礎練習モード用のモック設定
+       const { useGameStore } = await import('../../stores/gameStore');
+       vi.mocked(useGameStore).mockImplementation((selector) =>
+         selector({
+           config: {
+             configId: 'preset-basic', // 基礎練習モード
+             // ...
+           },
+         } as never)
+       );
+     });
+
+     // 基礎練習モード固有のテストケース
+   });
+
+   describe('非基礎練習モード（通常動作）', () => {
+     beforeEach(async () => {
+       // 非基礎練習モード用のモック設定
+       const { useGameStore } = await import('../../stores/gameStore');
+       vi.mocked(useGameStore).mockImplementation((selector) =>
+         selector({
+           config: {
+             configId: 'preset-player', // 非基礎練習モード
+             // ...
+           },
+         } as never)
+       );
+     });
+
+     // 通常動作のテストケース
+   });
+   ```
+
+2. **両方の条件での挙動検証**
+   - 条件A（例: 基礎練習モード）での動作
+   - 条件B（例: 非基礎練習モード）での動作
+   - 両者の違いが明確にテストされていること
+
+3. **CSS class の状態検証**
+   ```typescript
+   test('基礎練習モードでは、Step 2の進捗インジケーターがスキップ状態（グレーアウト）で表示される', () => {
+     render(<SettingsPanel />);
+
+     // Assert: Step 2がスキップクラスを持つ
+     const step2 = screen.getByTestId('progress-step-2');
+     expect(step2).toHaveClass('setup-wizard__progress-step--skipped');
+     expect(step2).not.toHaveClass('setup-wizard__progress-step--active');
+     expect(step2).not.toHaveClass('setup-wizard__progress-step--completed');
+     expect(step2).not.toHaveClass('setup-wizard__progress-step--pending');
+   });
+   ```
+
+### セマンティックテストの優先順位
+
+component テストでは、以下の優先順位でテストを作成してください：
+
+**優先度1: ユーザー視点の振る舞い検証（セマンティックテスト）**
+- ユーザー操作に対する反応（クリック、遷移など）
+- 条件による表示の変化
+- 状態による動作の違い
+
+**優先度2: 構造・見た目の検証（スナップショットテスト）**
+- 条件ごとの表示状態
+- 各ステップの見た目
+
+この順序により：
+1. テストファイルを読む人が「何を検証しているか」を理解しやすい
+2. 重要な振る舞いのテストが最初に来るため、実装時の指針が明確
+3. スナップショットテストは補完的な位置づけとなる
+
+### beforeEach での条件設定の明示
+
+複数の条件分岐をテストする場合、各 describe ブロックの beforeEach で条件を明示的に設定：
+
+```typescript
+describe('基礎練習モード（Step 2スキップ）', () => {
+  /**
+   * 基礎練習モードでは難易度選択（Step 2）をスキップします。
+   * config.configId === 'preset-basic' の場合：
+   * - Step 1 → Step 3 へ直接遷移
+   * - Step 3 → Step 1 へ直接戻る
+   * - Step 2 の進捗インジケーターがグレーアウト表示
+   */
+
+  beforeEach(async () => {
+    // 基礎練習モードの設定でストアをモック
+    const { useGameStore } = await import('../../stores/gameStore');
+    vi.mocked(useGameStore).mockImplementation((selector) =>
+      selector({
+        config: {
+          configId: 'preset-basic', // 基礎練習モード
+          // ...
+        },
+      } as never)
+    );
+  });
+
+  // テストケース...
+});
+```
+
+このコメントにより：
+- テストの前提条件が明確になる
+- 実装者が期待される動作を理解しやすい
+- レビュー時に仕様の意図を把握しやすい
+
 ## 追加ガイドライン（2026-01-01 追記 - calculateHitProbability関数のテスト評価に基づく改善）
 
 ### 確率関数のテストにおける期待値の明確化

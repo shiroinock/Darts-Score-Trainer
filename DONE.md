@@ -565,6 +565,20 @@
 
 **リスク:** 低
 
+#### 9.2.7 基礎練習の難易度選択スキップ
+- [x] `src/components/Settings/SettingsPanel.tsx` を修正
+  - 基礎練習選択時、Step 2（難易度選択）をスキップ
+  - Step 1 → Step 3 へ直接遷移
+  - Step 3 → Step 1 へ戻る際もスキップ
+  - 進捗インジケーターでStep 2をグレーアウト表示
+- [x] ナビゲーションロジックの修正（isBasicMode判定追加）
+- [x] CSS追加（.setup-wizard__progress-step--skipped）
+- [x] テスト追加（src/components/Settings/SettingsPanel.test.tsx、26テスト追加、計61テスト）
+  - 実装: src/components/Settings/SettingsPanel.tsx, src/components/Settings/SettingsPanel.css
+  - 2026-01-04
+
+**リスク:** 中（ウィザードナビゲーションの複雑化）
+
 
 ---
 

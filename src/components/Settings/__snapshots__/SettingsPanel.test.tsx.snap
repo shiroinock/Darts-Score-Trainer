@@ -365,3 +365,300 @@ exports[`SettingsPanel > スナップショットテスト > 現在の環境変�
   </div>
 </div>
 `;
+
+exports[`SettingsPanel > 基礎練習モード（Step 2スキップ） > スナップショットテスト > 基礎練習モードのStep 1の見た目が一致する 1`] = `
+<div>
+  <div
+    class="settings-panel"
+  >
+    <div
+      class="setup-wizard__progress"
+    >
+      <div
+        class="setup-wizard__progress-bar"
+      >
+        <div
+          class="setup-wizard__progress-fill"
+          data-step="1"
+        />
+      </div>
+      <div
+        class="setup-wizard__progress-steps"
+      >
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--active"
+          data-testid="progress-step-1"
+        >
+          1
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--skipped"
+          data-testid="progress-step-2"
+        >
+          2
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--pending"
+          data-testid="progress-step-3"
+        >
+          3
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--pending"
+          data-testid="progress-step-4"
+        >
+          4
+        </div>
+      </div>
+    </div>
+    <div
+      class="setup-wizard__content"
+    >
+      <div
+        data-testid="step1-preset"
+      >
+        Step 1: Preset Selection
+      </div>
+    </div>
+    <div
+      class="setup-wizard__navigation"
+    >
+      <button
+        aria-label="次のステップへ進む"
+        class="setup-wizard__button setup-wizard__button--next"
+        type="button"
+      >
+        次へ →
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SettingsPanel > 基礎練習モード（Step 2スキップ） > スナップショットテスト > 基礎練習モードのStep 3（Step 2スキップ後）の見た目が一致する 1`] = `
+<div>
+  <div
+    class="settings-panel"
+  >
+    <div
+      class="setup-wizard__progress"
+    >
+      <div
+        class="setup-wizard__progress-bar"
+      >
+        <div
+          class="setup-wizard__progress-fill"
+          data-step="3"
+        />
+      </div>
+      <div
+        class="setup-wizard__progress-steps"
+      >
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--completed"
+          data-testid="progress-step-1"
+        >
+          1
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--skipped"
+          data-testid="progress-step-2"
+        >
+          2
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--active"
+          data-testid="progress-step-3"
+        >
+          3
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--pending"
+          data-testid="progress-step-4"
+        >
+          4
+        </div>
+      </div>
+    </div>
+    <div
+      class="setup-wizard__content"
+    >
+      <div
+        data-testid="step3-session"
+      >
+        Step 3: Session Configuration
+      </div>
+    </div>
+    <div
+      class="setup-wizard__navigation"
+    >
+      <button
+        aria-label="前のステップに戻る"
+        class="setup-wizard__button setup-wizard__button--back"
+        type="button"
+      >
+        ← 戻る
+      </button>
+      <button
+        aria-label="次のステップへ進む"
+        class="setup-wizard__button setup-wizard__button--next"
+        type="button"
+      >
+        次へ →
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SettingsPanel > 基礎練習モード（Step 2スキップ） > スナップショットテスト > 基礎練習モードのStep 4の見た目が一致する 1`] = `
+<div>
+  <div
+    class="settings-panel"
+  >
+    <div
+      class="setup-wizard__progress"
+    >
+      <div
+        class="setup-wizard__progress-bar"
+      >
+        <div
+          class="setup-wizard__progress-fill"
+          data-step="4"
+        />
+      </div>
+      <div
+        class="setup-wizard__progress-steps"
+      >
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--completed"
+          data-testid="progress-step-1"
+        >
+          1
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--skipped"
+          data-testid="progress-step-2"
+        >
+          2
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--completed"
+          data-testid="progress-step-3"
+        >
+          3
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--active"
+          data-testid="progress-step-4"
+        >
+          4
+        </div>
+      </div>
+    </div>
+    <div
+      class="setup-wizard__content"
+    >
+      <div
+        data-testid="step4-confirm"
+      >
+        Step 4: Confirmation
+      </div>
+    </div>
+    <div
+      class="setup-wizard__navigation"
+    >
+      <button
+        aria-label="前のステップに戻る"
+        class="setup-wizard__button setup-wizard__button--back"
+        type="button"
+      >
+        ← 戻る
+      </button>
+      <button
+        aria-label="練習を開始"
+        class="setup-wizard__button setup-wizard__button--start"
+        type="button"
+      >
+        練習を開始
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SettingsPanel > 非基礎練習モード（通常動作） > スナップショットテスト > 非基礎練習モードのStep 2の見た目が一致する 1`] = `
+<div>
+  <div
+    class="settings-panel"
+  >
+    <div
+      class="setup-wizard__progress"
+    >
+      <div
+        class="setup-wizard__progress-bar"
+      >
+        <div
+          class="setup-wizard__progress-fill"
+          data-step="2"
+        />
+      </div>
+      <div
+        class="setup-wizard__progress-steps"
+      >
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--completed"
+          data-testid="progress-step-1"
+        >
+          1
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--active"
+          data-testid="progress-step-2"
+        >
+          2
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--pending"
+          data-testid="progress-step-3"
+        >
+          3
+        </div>
+        <div
+          class="setup-wizard__progress-step setup-wizard__progress-step--pending"
+          data-testid="progress-step-4"
+        >
+          4
+        </div>
+      </div>
+    </div>
+    <div
+      class="setup-wizard__content"
+    >
+      <div
+        data-testid="step2-difficulty"
+      >
+        Step 2: Difficulty Selection
+      </div>
+    </div>
+    <div
+      class="setup-wizard__navigation"
+    >
+      <button
+        aria-label="前のステップに戻る"
+        class="setup-wizard__button setup-wizard__button--back"
+        type="button"
+      >
+        ← 戻る
+      </button>
+      <button
+        aria-label="次のステップへ進む"
+        class="setup-wizard__button setup-wizard__button--next"
+        type="button"
+      >
+        次へ →
+      </button>
+    </div>
+  </div>
+</div>
+`;

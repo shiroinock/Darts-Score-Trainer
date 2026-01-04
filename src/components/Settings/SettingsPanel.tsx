@@ -10,6 +10,7 @@
 
 import { useState } from 'react';
 import './SettingsPanel.css';
+import { DEFAULT_PRESET_ID } from '../../stores/config/presets';
 import { useGameStore } from '../../stores/gameStore';
 import { Step1Preset } from './SetupWizard/Step1Preset';
 import { Step2Difficulty } from './SetupWizard/Step2Difficulty';
@@ -55,10 +56,14 @@ export function SettingsPanel({
   const [internalStep, setInternalStep] = useState<WizardStep>(1);
   const startPractice = useGameStore((state) => state.startPractice);
   const goToDebugScreen = useGameStore((state) => state.goToDebugScreen);
+  const config = useGameStore((state) => state.config);
 
   // Controlled/Uncontrolledモードの判定
   const isControlled = controlledStep !== undefined;
   const currentStep = isControlled ? controlledStep : internalStep;
+
+  // 基礎練習モードかどうか（Step 2をスキップする）
+  const isBasicMode = config.configId === DEFAULT_PRESET_ID;
 
   /**
    * ステップを変更する（Controlled/Uncontrolled両対応）
@@ -74,7 +79,13 @@ export function SettingsPanel({
    * 次のステップへ進む
    */
   const handleNext = (): void => {
-    const nextStep = Math.min(currentStep + 1, 4) as WizardStep;
+    let nextStep = Math.min(currentStep + 1, 4) as WizardStep;
+
+    // 基礎練習モードの場合、Step 1 → Step 3 へスキップ
+    if (isBasicMode && currentStep === 1) {
+      nextStep = 3;
+    }
+
     changeStep(nextStep);
   };
 
@@ -82,7 +93,13 @@ export function SettingsPanel({
    * 前のステップに戻る
    */
   const handleBack = (): void => {
-    const prevStep = Math.max(currentStep - 1, 1) as WizardStep;
+    let prevStep = Math.max(currentStep - 1, 1) as WizardStep;
+
+    // 基礎練習モードの場合、Step 3 → Step 1 へスキップ
+    if (isBasicMode && currentStep === 3) {
+      prevStep = 1;
+    }
+
     changeStep(prevStep);
   };
 
@@ -98,6 +115,12 @@ export function SettingsPanel({
    */
   const getStepClassName = (step: number): string => {
     const baseClass = 'setup-wizard__progress-step';
+
+    // 基礎練習モードの場合、Step 2をスキップ表示
+    if (isBasicMode && step === 2) {
+      return `${baseClass} setup-wizard__progress-step--skipped`;
+    }
+
     if (step === currentStep) {
       return `${baseClass} setup-wizard__progress-step--active`;
     } else if (step < currentStep) {

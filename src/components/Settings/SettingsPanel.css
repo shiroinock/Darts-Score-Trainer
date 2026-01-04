@@ -101,6 +101,12 @@
   color: #999;
 }
 
+.setup-wizard__progress-step--skipped {
+  background-color: #f5f5f5;
+  color: #ccc;
+  opacity: 0.5;
+}
+
 /* ウィザードコンテンツエリア - flex: 1で残りスペースを占有 */
 .setup-wizard__content {
   width: 100%;
