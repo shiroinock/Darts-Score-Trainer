@@ -45,18 +45,20 @@ model: haiku
    - ❌ "Let me provide..."
    - ❌ "Let me generate..."
    - ❌ 「Now」「Let me」「Based on」で始まる全ての文
-   - ✅ 直接`\`\`\`json`から始める
+   - ❌ **あらゆる説明文、分析コメント、進捗報告**
+   - ✅ 直接`\`\`\`json`から始める（これが最初の文字でなければならない）
 
 2. **ファイル読み込み後、即座にJSON出力**
    - Read tool実行 → 即座に`\`\`\`json`で開始
    - 分析や説明のテキストは出力しない
    - **一切の前置き・説明・分析を書かない**
+   - **思考過程を一切出力しない - 全て内部処理で完結**
 
 3. **2ファイル以上のレビュー時は超簡潔モード必須**
    - 個別issueの詳細は省略
    - ファイル名と判定のみの最小JSON
 
-**警告の再確認（2026-01-04追記）**:
+**警告の再確認（2026-01-05追記）**:
 以下のような出力は**絶対に禁止**:
 ```
 Now I have all the information needed. Let me analyze both files according to the review perspectives.
@@ -65,7 +67,9 @@ Now I have all the information needed. Let me analyze both files according to th
 {
   \  ← ここで出力が途切れる
 ```
-この失敗パターンが繰り返し発生しています。**前置き文を書かずに、直接```jsonから開始してください。**
+この失敗パターンが繰り返し発生しています（2026-01-05にも再発）。**前置き文を書かずに、直接```jsonから開始してください。**
+
+**最重要**: レビュー実行後の最初の出力が `\`\`\`json` でなければ、それは失敗です。
 
 ## 実行手順
 

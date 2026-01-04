@@ -579,6 +579,56 @@
 
 **リスク:** 中（ウィザードナビゲーションの複雑化）
 
+#### 9.2.10 テスト戦略 - 単体テスト更新
+- [x] `SettingsPanel.test.tsx` - ステップスキップロジック、環境変数制御
+  - 既存テストで完全にカバー済み（60テスト成功、1スキップ）
+  - ステップスキップロジック: 行739-992（基礎練習モードのテスト）
+  - 環境変数制御: 行536-605（デバッグボタンの表示制御テスト）
+  - 2026-01-05
+
+- [x] `DetailedSettings.test.tsx` - 表示/非表示条件
+  - 既存テストで完全にカバー済み（89テスト成功）
+  - 基礎練習モード時の条件付きレンダリング: 行795-908
+    - 通知メッセージ表示
+    - 投擲単位/問う内容/判定タイミング/開始点数セクションの非表示
+    - 非基礎練習モード時の通常表示
+  - 複雑な条件付きレンダリング: 行910-
+  - 2026-01-05
+
+- [x] `getAllTargetsExpanded.test.ts` と `getBasicPracticeTargets.test.ts` - 62ターゲット検証
+  - 既存テストで完全にカバー済み
+  - `getAllTargetsExpanded.test.ts`: 82ターゲット（INNER_SINGLE含む）の検証（54テスト成功）
+  - `getBasicPracticeTargets.test.ts`: 62ターゲット（INNER_SINGLE除外）の検証（27テスト成功）
+    - 合計62個のターゲット: OUTER_SINGLE 20 + DOUBLE 20 + TRIPLE 20 + BULL 2
+    - INNER_SINGLEが含まれないことを確認
+    - 各リングタイプの個数検証
+  - 2026-01-05
+
+- [x] `gameStore.test.ts` - 問題数制限、残り点数管理、determineQuestionMode
+  - 既存テストで完全にカバー済み
+  - **問題数制限**: `gameStore.randomizeTarget.test.ts`（12テスト成功）
+    - 基礎練習モードで10/20/50/100問の各設定でセッション終了を検証
+    - randomizeTarget: trueでの問題数制限動作確認
+  - **残り点数管理無効化**: `gameStore.bustSkip.test.ts`（17テスト成功）
+    - randomizeTarget: trueでバスト判定スキップを検証
+    - オーバー、1点残し、シングルフィニッシュの各ケース
+  - **determineQuestionMode**: `gameStore.test.ts`（3テスト）
+    - bothモードで固定的に'both'を返すことを検証
+    - 1投/3投、remainingScore=0の各ケース
+  - 2026-01-05
+
+- [x] `presets.test.ts` - コーラー基礎の投擲単位
+  - 既存テストで完全にカバー済み（61テスト成功）
+  - `src/stores/config/presets.test.ts`（行175-254）
+    - preset-caller-basic（コーラー基礎）の全プロパティを検証
+    - `throwUnit: 1` が正しく設定されていることを確認（行208-214）
+    - description: "1投ごとに残り点数を問う基礎練習"（行192-198）
+  - 実装: `src/stores/config/presets.ts`
+    - throwUnit: 1（3投から1投に変更済み）
+  - 2026-01-05
+
+**リスク:** なし（既存テストで対応済み）
+
 #### 9.2.8 3投累積時のズームビュー3つ横並び表示
 - [x] 新規コンポーネント `src/components/DartBoard/ZoomViewMultiple.tsx` を作成
   - 3つの独立した `SingleZoom` コンポーネントを実装
@@ -626,7 +676,34 @@
 
 **リスク:** 高（フィードバックロジックとの統合が複雑） → 実装完了、全テスト成功
 
+#### 9.2.10 テスト戦略 - 基礎練習フロー統合テスト
+- [x] 基礎練習フロー全体の統合テスト作成
+  - 難易度選択スキップの検証
+  - 62問題のランダム出題（useBasicTargets: true）
+  - 問題数制限（10/20/50/100問）の動作確認
+  - 残り点数管理の無効化検証
+  - 実装: src/__tests__/integration/basicPracticeFlow.test.tsx (31テスト)
+  - test-later, integration, separated
+  - 全テスト成功、Biome check/Build 成功
+  - 2026-01-05
+
+**リスク:** 低（既存実装に対する統合テスト追加） → 実装完了、全テスト成功
+
+#### 9.2.10 テスト戦略 - 3投累積ズームビュー統合テスト
+- [x] 3投累積時のズームビュー統合テスト作成
+  - 複数ダーツの同時表示検証
+  - レスポンシブレイアウト検証（デスクトップ/モバイル）
+  - ダーツ表示制御（visibleDarts フラグ）
+  - ダーツ色の正しい割り当て（赤、青、緑）
+  - エッジケース処理（未投擲時、空配列）
+  - 実装: src/__tests__/integration/zoom-view-multiple-integration.test.tsx (23テスト)
+  - test-later, integration, separated
+  - Biome check ✓、Test ✓ (2,637テスト)、Build ✓
+  - 2026-01-05
+
+**リスク:** 低（既存実装に対する統合テスト追加） → 実装完了、全テスト成功
+
 
 ---
 
-**最終更新**: 2026-01-05
+**最終更新**: 2026-01-05 (3投累積ズームビュー統合テスト完了)

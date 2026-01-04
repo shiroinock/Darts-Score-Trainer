@@ -1,0 +1,69 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ZoomViewMultiple - 統合テスト > スナップショットテスト > 1投が表示される場合のスナップショット 1`] = `
+<section
+  aria-label="3投のダーツ着地点のズームビュー"
+  class="zoom-view-multiple"
+>
+  <div
+    class="zoom-view-multiple__single"
+  >
+    <div
+      class="sketch-mock"
+    />
+  </div>
+</section>
+`;
+
+exports[`ZoomViewMultiple - 統合テスト > スナップショットテスト > 2投が表示される場合のスナップショット 1`] = `
+<section
+  aria-label="3投のダーツ着地点のズームビュー"
+  class="zoom-view-multiple"
+>
+  <div
+    class="zoom-view-multiple__single"
+  >
+    <div
+      class="sketch-mock"
+    />
+  </div>
+  <div
+    class="zoom-view-multiple__single"
+  >
+    <div
+      class="sketch-mock"
+    />
+  </div>
+</section>
+`;
+
+exports[`ZoomViewMultiple - 統合テスト > スナップショットテスト > 3投全てが表示される場合のスナップショット 1`] = `
+<section
+  aria-label="3投のダーツ着地点のズームビュー"
+  class="zoom-view-multiple"
+>
+  <div
+    class="zoom-view-multiple__single"
+  >
+    <div
+      class="sketch-mock"
+    />
+  </div>
+  <div
+    class="zoom-view-multiple__single"
+  >
+    <div
+      class="sketch-mock"
+    />
+  </div>
+  <div
+    class="zoom-view-multiple__single"
+  >
+    <div
+      class="sketch-mock"
+    />
+  </div>
+</section>
+`;
+
+exports[`ZoomViewMultiple - 統合テスト > スナップショットテスト > ダーツが投擲されていない場合のスナップショット 1`] = `null`;
