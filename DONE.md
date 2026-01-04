@@ -579,6 +579,21 @@
 
 **リスク:** 中（ウィザードナビゲーションの複雑化）
 
+#### 9.2.8 3投累積時のズームビュー3つ横並び表示
+- [x] 新規コンポーネント `src/components/DartBoard/ZoomViewMultiple.tsx` を作成
+  - 3つの独立した `SingleZoom` コンポーネントを実装
+  - 各160×160px（デスクトップ）、140×140px（モバイル）、p5.jsの独立したSketchインスタンス
+  - 実装: src/components/DartBoard/ZoomViewMultiple.tsx
+  - CSS: src/components/DartBoard/ZoomViewMultiple.css
+  - Storybook: src/components/DartBoard/ZoomViewMultiple.stories.tsx
+  - テスト: src/components/DartBoard/ZoomViewMultiple.test.tsx (34テスト)
+  - レスポンシブ対応（デスクトップ: 横並び160px、モバイル≤640px: 縦並び140px）
+  - 各SingleZoomコンポーネントが独立したCoordinateTransformインスタンスを持つ
+  - ダーツ色の正しい割り当て（Dart 1: 赤、Dart 2: 青、Dart 3: 緑）
+  - 2026-01-04
+
+**リスク:** 高（p5.jsの複数インスタンス管理） → 完了、問題なし
+
 
 ---
 

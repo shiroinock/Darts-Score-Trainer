@@ -91,11 +91,17 @@ vi.mock('../DartBoard/P5Canvas', () => ({
   ),
 }));
 
-// ZoomViewコンポーネントをモック化
-vi.mock('../DartBoard/ZoomView', () => ({
-  ZoomView: ({ dartCount }: { coords: unknown; dartCount: number; visibleDarts: unknown }) => (
-    <div data-testid="mock-zoom-view" data-dart-count={dartCount}>
-      Mock ZoomView ({dartCount} darts)
+// ZoomViewMultipleコンポーネントをモック化
+vi.mock('../DartBoard/ZoomViewMultiple', () => ({
+  ZoomViewMultiple: ({
+    dartCount,
+  }: {
+    coords: unknown;
+    dartCount: number;
+    visibleDarts: unknown;
+  }) => (
+    <div data-testid="mock-zoom-view-multiple" data-dart-count={dartCount}>
+      Mock ZoomViewMultiple ({dartCount} darts)
     </div>
   ),
 }));

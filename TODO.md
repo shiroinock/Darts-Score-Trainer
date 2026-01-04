@@ -8,20 +8,6 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 
 ### 9.2 UI/UX改善（着手すべき項目）
 
-#### 9.2.8 3投累積時のズームビュー3つ横並び表示
-- [ ] 新規コンポーネント `src/components/DartBoard/ZoomViewMultiple.tsx` を作成
-  - 3つの独立した `SingleZoom` コンポーネントを実装
-  - 各160×160px、p5.jsの独立したSketchインスタンス
-- [ ] 新規CSS `src/components/DartBoard/ZoomViewMultiple.css` を作成
-  - 横並びレイアウト（デスクトップ）
-  - 縦並びレイアウト（モバイル ≤640px、各140×140px）
-- [ ] `src/components/Practice/PracticeScreen.tsx` を修正
-  - 3投累積モード判定: `config.throwUnit === 3 && config.judgmentTiming === 'cumulative'`
-  - 条件に応じて `ZoomViewMultiple` または `ZoomView` を表示
-- [ ] 3投累積時、3つのズームビューが横並びで表示され、全体ビューと干渉しないことを確認
-
-**リスク:** 高（p5.jsの複数インスタンス管理）
-
 #### 9.2.9 総合練習の2つの入力欄実装
 - [ ] 新規コンポーネント `src/components/Practice/DualNumPad.tsx` を作成
   - 得点用と残り点数用の2つの入力表示エリア

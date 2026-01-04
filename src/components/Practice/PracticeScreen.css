@@ -33,15 +33,37 @@
   overflow: hidden;
 }
 
-/* ボードセクション - アスペクト比を維持 */
+/* ボードセクション - 縦並びレイアウト */
 .practice-screen__board-section {
-  position: relative; /* ZoomViewの絶対配置の基準 */
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0; /* Flexboxの縮小を許可 */
+  min-height: 0; /* Flexboxの縮小を許可 */
+  overflow: hidden;
+}
+
+/* ボードエリア - メインのダーツボード表示 */
+.practice-screen__board-area {
+  flex: 7; /* 全体の70% */
+  min-height: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-width: 0; /* Flexboxの縮小を許可 */
-  min-height: 0; /* Flexboxの縮小を許可 */
+  overflow: hidden;
+}
+
+/* ズームエリア - ズームビュー専用スペース */
+.practice-screen__zoom-area {
+  flex: 3; /* 全体の30% */
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: var(--color-bg-light);
+  border-radius: 8px;
   overflow: hidden;
 }
 
@@ -145,7 +167,12 @@
 
   .practice-screen__board-section {
     flex: 0 0 auto; /* ボードは縮小せずに必要な高さを確保 */
-    max-height: 40vh; /* 最大高さを制限 */
+    max-height: 50vh; /* 最大高さを制限（ZoomViewMultiple分を考慮） */
+    gap: 0.5rem;
+  }
+
+  .practice-screen__zoom-area {
+    padding: 0.25rem;
   }
 
   .practice-screen__interaction-section {
@@ -187,7 +214,12 @@
 
   .practice-screen__board-section {
     flex: 0 0 auto;
-    max-height: 50vh;
+    max-height: 55vh; /* ZoomViewMultiple分を考慮 */
+    gap: 0.75rem;
+  }
+
+  .practice-screen__zoom-area {
+    padding: 0.375rem;
   }
 
   .practice-screen__interaction-section {
