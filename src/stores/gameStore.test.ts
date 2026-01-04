@@ -3229,10 +3229,9 @@ describe('gameStore', () => {
 
     // 'both'モード関連テスト（3個）
     describe('bothモードのバリデーション', () => {
-      test('bothモード: scoreモードが選択される場合', () => {
+      test('bothモード: 固定で"both"が返される', () => {
         // Arrange
         const { result } = renderHook(() => useGameStore());
-        const mathRandomSpy = vi.spyOn(Math, 'random').mockReturnValue(0.3);
 
         act(() => {
           result.current.setConfig({
@@ -3243,51 +3242,46 @@ describe('gameStore', () => {
           result.current.startPractice();
         });
 
-        // Act: Math.random()をモックしてscoreモードが選択されるようにする
+        // Act: 問題を生成
         act(() => {
           result.current.generateQuestion();
         });
 
-        // Assert: scoreモードが選択されている
+        // Assert: bothモードが選択されている
         expect(result.current.currentQuestion).not.toBeNull();
         if (result.current.currentQuestion) {
-          expect(result.current.currentQuestion.mode).toBe('score');
+          expect(result.current.currentQuestion.mode).toBe('both');
           expect(result.current.currentQuestion.correctAnswer).toBeGreaterThanOrEqual(0);
         }
-
-        mathRandomSpy.mockRestore();
       });
 
-      test('bothモード: remainingモードが選択される場合', () => {
+      test('bothモード: 1投単位でも"both"が返される', () => {
         // Arrange
         const { result } = renderHook(() => useGameStore());
-        const mathRandomSpy = vi.spyOn(Math, 'random').mockReturnValue(0.7);
 
         act(() => {
           result.current.setConfig({
-            throwUnit: 3,
+            throwUnit: 1,
             questionType: 'both',
             startingScore: 501,
           });
           result.current.startPractice();
         });
 
-        // Act: Math.random()をモックしてremainingモードが選択されるようにする
+        // Act: 問題を生成
         act(() => {
           result.current.generateQuestion();
         });
 
-        // Assert: remainingモードが選択されている
+        // Assert: bothモードが選択されている
         expect(result.current.currentQuestion).not.toBeNull();
         if (result.current.currentQuestion) {
-          expect(result.current.currentQuestion.mode).toBe('remaining');
+          expect(result.current.currentQuestion.mode).toBe('both');
           expect(result.current.currentQuestion.correctAnswer).toBeGreaterThanOrEqual(0);
         }
-
-        mathRandomSpy.mockRestore();
       });
 
-      test('bothモード + remainingScore=0 の場合、scoreモードが強制される', () => {
+      test('bothモード: remainingScore=0 でも"both"が返される', () => {
         // Arrange
         const { result } = renderHook(() => useGameStore());
 
@@ -3312,10 +3306,10 @@ describe('gameStore', () => {
           result.current.generateQuestion();
         });
 
-        // Assert: modeがscoreに強制されている
+        // Assert: modeが"both"である
         expect(result.current.currentQuestion).not.toBeNull();
         if (result.current.currentQuestion) {
-          expect(result.current.currentQuestion.mode).toBe('score');
+          expect(result.current.currentQuestion.mode).toBe('both');
         }
       });
     });

@@ -19,6 +19,17 @@ interface ScoreAnswer {
 }
 
 /**
+ * Dual回答の情報（総合練習用）
+ */
+interface DualAnswer {
+  scoreValue: number;
+  remainingValue: number;
+  scoreIsCorrect: boolean;
+  remainingIsCorrect: boolean;
+  isCorrect: boolean; // 両方正解の場合のみtrue
+}
+
+/**
  * useFeedbackフックの戻り値
  */
 interface UseFeedbackResult {
@@ -28,10 +39,14 @@ interface UseFeedbackResult {
   lastAnswer: ScoreAnswer | null;
   /** バスト判定の回答（バストフェーズ用） */
   bustAnswer: BustQuestionAnswer | null;
+  /** Dual回答情報（総合練習用） */
+  dualAnswer: DualAnswer | null;
   /** スコア回答のハンドラー */
   handleConfirm: (value: number) => void;
   /** バスト判定回答のハンドラー */
   handleBustAnswer: (answer: BustQuestionAnswer) => void;
+  /** Dual回答のハンドラー（総合練習用） */
+  handleDualConfirm: (scoreValue: number, remainingValue: number) => void;
   /** バストフィードバック完了後のハンドラー */
   handleBustFeedbackComplete: () => void;
 }
@@ -46,9 +61,11 @@ export function useFeedback(): UseFeedbackResult {
   const [showFeedback, setShowFeedback] = useState(false);
   const [lastAnswer, setLastAnswer] = useState<ScoreAnswer | null>(null);
   const [bustAnswer, setBustAnswer] = useState<BustQuestionAnswer | null>(null);
+  const [dualAnswer, setDualAnswer] = useState<DualAnswer | null>(null);
 
   // ストアからアクションを取得
   const currentQuestion = useGameStore((state) => state.currentQuestion);
+  const remainingScore = useGameStore((state) => state.remainingScore);
   const submitAnswer = useGameStore((state) => state.submitAnswer);
   const simulateNextThrow = useGameStore((state) => state.simulateNextThrow);
   const getCurrentCorrectAnswer = useGameStore((state) => state.getCurrentCorrectAnswer);
@@ -63,6 +80,7 @@ export function useFeedback(): UseFeedbackResult {
       setShowFeedback(false);
       setLastAnswer(null);
       setBustAnswer(null);
+      setDualAnswer(null);
     }
     prevQuestionRef.current = currentQuestion;
   }, [currentQuestion, showFeedback]);
@@ -106,6 +124,45 @@ export function useFeedback(): UseFeedbackResult {
   );
 
   /**
+   * Dual回答のハンドラー（総合練習用）
+   *
+   * 得点と残り点数の両方を受け取り、両方の正誤判定を行う。
+   * 両方正解の場合のみ、正解として扱う。
+   */
+  const handleDualConfirm = useCallback(
+    (scoreValue: number, remainingValue: number): void => {
+      if (!currentQuestion) {
+        return;
+      }
+
+      // 得点の正誤判定
+      const correctScore = getCurrentCorrectAnswer();
+      const scoreIsCorrect = scoreValue === correctScore;
+
+      // 残り点数の正誤判定（現在の残り点数から得点を引いた値が正解）
+      const correctRemaining = remainingScore - correctScore;
+      const remainingIsCorrect = remainingValue === correctRemaining;
+
+      // 両方正解の場合のみtrue
+      const isCorrect = scoreIsCorrect && remainingIsCorrect;
+
+      // 回答を提出（得点を使用）
+      submitAnswer(scoreValue);
+
+      // フィードバック表示用の情報を保存
+      setDualAnswer({
+        scoreValue,
+        remainingValue,
+        scoreIsCorrect,
+        remainingIsCorrect,
+        isCorrect,
+      });
+      setShowFeedback(true);
+    },
+    [currentQuestion, getCurrentCorrectAnswer, remainingScore, submitAnswer]
+  );
+
+  /**
    * バストフィードバック完了後のハンドラー
    *
    * 正解に応じて以下の処理を行う:
@@ -136,8 +193,10 @@ export function useFeedback(): UseFeedbackResult {
     showFeedback,
     lastAnswer,
     bustAnswer,
+    dualAnswer,
     handleConfirm,
     handleBustAnswer,
+    handleDualConfirm,
     handleBustFeedbackComplete,
   };
 }

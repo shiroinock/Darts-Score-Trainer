@@ -1394,6 +1394,100 @@ useFeedbackのような複雑なフックをテストする場合：
 
 この明示により、レビュー時に期待される状態（Red vs Green）の混乱を防ぎます。
 
+## 追加ガイドライン（2026-01-05 追記 - DualNumPad.test.tsx の評価に基づく改善）
+
+### ダーツ得点の有効性検証時の必須手順
+
+ダーツの得点（1投または3投合計）の有効性をテストする場合、以下の手順を**必ず実行**してください：
+
+1. **darts-domain skill の参照義務**
+
+   テスト作成前に必ずdarts-domain skillを参照し、有効/無効な得点の正確な知識を得てください：
+
+   ```
+   Use the darts-domain skill to load comprehensive darts scoring rules before creating tests.
+   ```
+
+2. **無効な得点例の選定方法**
+
+   無効な得点をテストに使用する場合、以下の方法で確実に無効な値を選んでください：
+
+   ```typescript
+   // ❌ 避けるべき（163点は実際には T20+T20+T13 で有効）
+   test('無効な得点（取りえない値）は確定できない', () => {
+     fireEvent.click(screen.getByRole('button', { name: '1' }));
+     fireEvent.click(screen.getByRole('button', { name: '6' }));
+     fireEvent.click(screen.getByRole('button', { name: '3' }));
+     expect(confirmButton).toBeDisabled();
+   });
+
+   // ✅ 推奨（確実に無効な値）
+   test('無効な得点（取りえない値）は確定できない', () => {
+     // 163より大きく、180より小さい値で確実に無効な値: 181, 182, 184, 185, 188, ...
+     // または小さい値で確実に無効: 23, 29, 31, 35, 37, 41, 43, 44, 46, 47, 49, 52, 53, 55, 56, 58, 59
+     fireEvent.click(screen.getByRole('button', { name: '2' }));
+     fireEvent.click(screen.getByRole('button', { name: '3' })); // 23点（無効）
+     expect(confirmButton).toBeDisabled();
+   });
+   ```
+
+3. **有効な得点範囲の正確な理解**
+
+   以下を理解した上でテストを作成してください：
+
+   - **1投の得点範囲**: 0, 1-20（シングル）, 2-40（ダブル）, 3-60（トリプル）, 25（アウターブル）, 50（インナーブル）
+   - **3投の合計範囲**: 0-180（最大はT20×3）
+   - **確実に無効な値（3投）**: 23, 29, 31, 35, 37, 41, 43, 44, 46, 47, 49, 52, 53, 55, 56, 58, 59, 61, 62, 64, 65, 67, 68, 69, 71, 73, 74, 76, 77, 78, 79, 82, 83, 85, 86, 87, 88, 89, 92, 93, 94, 95, 97, 98, 99, ...
+   - **注意**: 100-180の範囲で無効な値はほとんどない（3投でトリプルを組み合わせれば大抵到達可能）
+
+4. **テストコメントでの根拠明示**
+
+   無効な値を使用する場合、なぜその値が無効かをコメントで説明：
+
+   ```typescript
+   test('無効な得点（取りえない値）は確定できない', () => {
+     // 23点: 1投では不可能（最大20点）、2投でも不可能（最小22点）、3投でも到達不可
+     // （1+1+1=3点が最小、次に到達可能な3投合計は24点）
+     fireEvent.click(screen.getByRole('button', { name: '2' }));
+     fireEvent.click(screen.getByRole('button', { name: '3' }));
+     expect(confirmButton).toBeDisabled();
+   });
+   ```
+
+5. **有効な得点での動作確認も含める**
+
+   無効な値だけでなく、有効な値で正しく動作することも検証：
+
+   ```typescript
+   test('有効な3投合計得点が入力可能', () => {
+     const { container } = render(<DualNumPad onConfirm={vi.fn()} />);
+     const confirmButton = screen.getByRole('button', { name: 'Confirm' });
+     const displays = container.querySelectorAll('.dual-num-pad__display');
+
+     // 163点はT20+T20+T13で有効な3投合計
+     fireEvent.click(screen.getByRole('button', { name: '1' }));
+     fireEvent.click(screen.getByRole('button', { name: '6' }));
+     fireEvent.click(screen.getByRole('button', { name: '3' }));
+
+     // 残り点数に適当な値を入力
+     fireEvent.click(displays[1]);
+     fireEvent.click(screen.getByRole('button', { name: '1' }));
+     fireEvent.click(screen.getByRole('button', { name: '0' }));
+     fireEvent.click(screen.getByRole('button', { name: '0' }));
+
+     // 確定ボタンが有効になる
+     expect(confirmButton).not.toBeDisabled();
+   });
+   ```
+
+### 重要な注意事項
+
+- **直感に頼らない**: 「163点は大きいから無効だろう」という推測でテストを書かない
+- **ドメイン知識を確認**: 必ずdarts-domain skillを参照して正確な知識を得る
+- **既存のバリデーション関数を確認**: `isValidSingleThrowScore()`, `isValidRoundScore()` の実装を確認し、どの値が有効/無効か理解する
+
+この改善により、ダーツドメイン固有の制約を正確に反映したテストが作成できます。
+
 ## 追加ガイドライン（2026-01-04 追記 - SettingsPanel Step 2スキップ機能のテスト評価に基づく改善）
 
 ### 条件分岐ロジックの網羅的なテスト

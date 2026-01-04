@@ -73,24 +73,11 @@ function determineQuestionMode(
     };
   }
 
-  // 両方モード: ランダムに選択（残り点数が0以下の場合はスコアモード）
-  const mode: QuestionType =
-    remainingScore <= 0 ? 'score' : Math.random() < 0.5 ? 'score' : 'remaining';
-
-  if (mode === 'score') {
-    return {
-      mode: 'score',
-      correctAnswer: totalScore,
-      questionText: throwUnit === 1 ? 'この投擲の得点は？' : '3投の合計得点は？',
-    };
-  }
-
-  // バスト発生時は正解をroundStartScoreにする
-  const correctAnswer = bustInfo?.isBust ? roundStartScore : remainingScore - totalScore;
+  // 両方モード: 固定で'both'を返す（判定はDualNumPad側で実施）
   return {
-    mode: 'remaining',
-    correctAnswer,
-    questionText: '残り点数は？',
+    mode: 'both',
+    correctAnswer: totalScore, // 得点を返す（残り点数の計算はuseFeedback側で行う）
+    questionText: throwUnit === 1 ? 'この投擲の得点と残り点数は？' : '3投の合計得点と残り点数は？',
   };
 }
 

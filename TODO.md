@@ -8,25 +8,6 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 
 ### 9.2 UI/UX改善（着手すべき項目）
 
-#### 9.2.9 総合練習の2つの入力欄実装
-- [ ] 新規コンポーネント `src/components/Practice/DualNumPad.tsx` を作成
-  - 得点用と残り点数用の2つの入力表示エリア
-  - アクティブフィールドの切り替え機能
-  - 数字ボタングリッド（NumPadと同様）
-  - 確定ボタン（両方入力時のみ有効）
-- [ ] 新規CSS `src/components/Practice/DualNumPad.css` を作成
-- [ ] `src/hooks/useFeedback.ts` を修正
-  - `handleDualConfirm(scoreValue, remainingValue)` を追加
-  - `dualAnswer` state を追加（2つの回答情報を保持）
-  - 両方正解の場合のみ正解扱い
-- [ ] `src/stores/gameStore.ts` の `determineQuestionMode` を修正
-  - 'both' モードでランダム選択を廃止
-  - 固定で 'both' を返す（判定はDualNumPad側で実施）
-- [ ] `src/components/Practice/PracticeScreen.tsx` を修正
-  - `questionType === 'both'` の場合、`DualNumPad` を表示
-- [ ] 総合練習で2つの入力欄が表示され、両方正解で正解判定されることを確認
-
-**リスク:** 高（フィードバックロジックとの統合が複雑）
 
 
 #### 9.2.10 テスト戦略

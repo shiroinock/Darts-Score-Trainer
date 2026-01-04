@@ -594,7 +594,39 @@
 
 **リスク:** 高（p5.jsの複数インスタンス管理） → 完了、問題なし
 
+#### 9.2.9 総合練習の2つの入力欄実装
+- [x] 新規コンポーネント `src/components/Practice/DualNumPad.tsx` を作成
+  - 得点用と残り点数用の2つの入力表示エリア
+  - アクティブフィールドの切り替え機能（Tabキーまたはクリック）
+  - 数字ボタングリッド（NumPadと同様の3x4レイアウト）
+  - 確定ボタン（両方入力時のみ有効）
+  - 実装: src/components/Practice/DualNumPad.tsx
+  - テスト: src/components/Practice/DualNumPad.test.tsx (46テスト)
+  - test-later, component, colocated
+- [x] 新規CSS `src/components/Practice/DualNumPad.css` を作成
+  - 2つの入力表示エリアのレイアウト
+  - アクティブフィールドの視覚的区別
+  - レスポンシブ対応（モバイル/タブレット/デスクトップ）
+- [x] `src/hooks/useFeedback.ts` を修正
+  - `handleDualConfirm(scoreValue, remainingValue)` を追加
+  - `dualAnswer` state を追加（2つの回答情報を保持）
+  - 両方正解の場合のみ正解扱い
+- [x] `src/stores/gameStore.ts` の `determineQuestionMode` を修正
+  - 'both' モードでランダム選択を廃止
+  - 固定で 'both' を返す（判定はDualNumPad側で実施）
+- [x] `src/components/Practice/PracticeScreen.tsx` を修正
+  - `questionType === 'both'` の場合、`DualNumPad` を表示
+  - DualNumPad用のフィードバック表示を追加
+- [x] テスト修正: `src/stores/gameStore.test.ts`
+  - bothモード関連の3テストを修正（ランダム選択 → 固定'both'）
+- [x] 総合練習で2つの入力欄が表示され、両方正解で正解判定されることを確認
+  - 全テスト成功: 72テストファイル、2554テスト
+  - ビルド成功
+  - 2026-01-05
+
+**リスク:** 高（フィードバックロジックとの統合が複雑） → 実装完了、全テスト成功
+
 
 ---
 
-**最終更新**: 2026-01-04
+**最終更新**: 2026-01-05
