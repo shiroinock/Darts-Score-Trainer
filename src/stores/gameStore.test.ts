@@ -3023,6 +3023,7 @@ describe('gameStore', () => {
             questionType: 'score',
             startingScore: 501,
             target: { type: 'TRIPLE', number: 20, label: 'T20' },
+            stdDevMM: 0, // 完全に正確な投擲（フレーキーテスト対策）
             randomizeTarget: false, // 従来の投擲シミュレーションを使用
           });
           result.current.startPractice();
@@ -3042,6 +3043,7 @@ describe('gameStore', () => {
         });
 
         // Assert: 3投モードではscoreモードでもbustInfoが設定される（bust判定用）
+        // stdDevMM=0により、必ずT20（60点）に命中し、残り10点に対してバストが発生する
         expect(result.current.currentQuestion?.bustInfo).toBeDefined();
       });
     });
@@ -5653,7 +5655,8 @@ describe('gameStore', () => {
             throwUnit: 3,
             questionType: 'score',
             startingScore: 501,
-            stdDevMM: 15,
+            target: { type: 'SINGLE', number: 5, label: '5' }, // 低得点ターゲット（5点×3=15点/ラウンド）
+            stdDevMM: 0, // 完全に正確な投擲（フレーキーテスト対策）
           });
           result.current.startPractice();
         });
@@ -5667,10 +5670,8 @@ describe('gameStore', () => {
           const roundScore = question?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
           totalScoreSum += roundScore;
 
-          act(() => {
-            result.current.simulateNextThrow();
-            result.current.simulateNextThrow();
-          });
+          // 3投モードでは generateQuestion() で既に3投がシミュレートされているため
+          // simulateNextThrow() は不要（呼ぶと余分な投擲が追加されてしまう）
 
           const correctAnswer = result.current.getCurrentCorrectAnswer();
 
@@ -5704,7 +5705,8 @@ describe('gameStore', () => {
             throwUnit: 3,
             questionType: 'score',
             startingScore: 100, // バストが発生しやすい値
-            stdDevMM: 15,
+            target: { type: 'TRIPLE', number: 20, label: 'T20' }, // 高得点ターゲット（60点×3=180点 > 100点でバスト確定）
+            stdDevMM: 0, // 完全に正確な投擲（フレーキーテスト対策）
           });
           result.current.startPractice();
         });
@@ -5715,10 +5717,8 @@ describe('gameStore', () => {
         const question1 = result.current.currentQuestion;
         const totalScore1 = question1?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
 
-        act(() => {
-          result.current.simulateNextThrow();
-          result.current.simulateNextThrow();
-        });
+        // 3投モードでは generateQuestion() で既に3投がシミュレートされているため
+        // simulateNextThrow() は不要（呼ぶと余分な投擲が追加されてしまう）
 
         const lastThrow1 = question1?.throws[question1.throws.length - 1];
         const isLastThrowDouble1 =
@@ -5748,10 +5748,8 @@ describe('gameStore', () => {
         const question2 = result.current.currentQuestion;
         const totalScore2 = question2?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
 
-        act(() => {
-          result.current.simulateNextThrow();
-          result.current.simulateNextThrow();
-        });
+        // 3投モードでは generateQuestion() で既に3投がシミュレートされているため
+        // simulateNextThrow() は不要（呼ぶと余分な投擲が追加されてしまう）
 
         const correctAnswer2 = result.current.getCurrentCorrectAnswer();
 
@@ -5869,7 +5867,7 @@ describe('gameStore', () => {
             questionType: 'score',
             startingScore: 501,
             target: { type: 'TRIPLE', number: 20, label: 'T20' }, // T20を狙う
-            stdDevMM: 0.01, // ほぼ確実にT20に当たる
+            stdDevMM: 0, // 完全に正確な投擲（フレーキーテスト対策）
           });
           result.current.startPractice();
         });
@@ -5878,10 +5876,8 @@ describe('gameStore', () => {
         const question = result.current.currentQuestion;
         const totalScore = question?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
 
-        act(() => {
-          result.current.simulateNextThrow();
-          result.current.simulateNextThrow();
-        });
+        // 3投モードでは generateQuestion() で既に3投がシミュレートされているため
+        // simulateNextThrow() は不要（呼ぶと余分な投擲が追加されてしまう）
 
         const correctAnswer = result.current.getCurrentCorrectAnswer();
 
@@ -5891,13 +5887,10 @@ describe('gameStore', () => {
         });
 
         // Assert: 高得点でも正しく減算される
+        // stdDevMM=0により、必ずT20（60点）に命中 → 60点×3投=180点
         const newRemainingScore = result.current.remainingScore;
         expect(newRemainingScore).toBe(initialRemainingScore - totalScore);
-
-        // T20x3なら180点のはず（stdDevが極小なので）
-        if (totalScore >= 150) {
-          expect(newRemainingScore).toBe(initialRemainingScore - totalScore);
-        }
+        expect(totalScore).toBe(180); // T20×3 = 180点
       });
 
       test('【RED】初期残り点数が異なる値（301, 701）でも正しく減算される', () => {
