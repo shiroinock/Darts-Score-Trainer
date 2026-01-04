@@ -5867,7 +5867,7 @@ describe('gameStore', () => {
             questionType: 'score',
             startingScore: 501,
             target: { type: 'TRIPLE', number: 20, label: 'T20' }, // T20を狙う
-            stdDevMM: 0.01, // ほぼ確実にT20に当たる
+            stdDevMM: 0, // 完全に正確な投擲（フレーキーテスト対策）
           });
           result.current.startPractice();
         });
@@ -5876,10 +5876,8 @@ describe('gameStore', () => {
         const question = result.current.currentQuestion;
         const totalScore = question?.throws.reduce((sum, t) => sum + t.score, 0) ?? 0;
 
-        act(() => {
-          result.current.simulateNextThrow();
-          result.current.simulateNextThrow();
-        });
+        // 3投モードでは generateQuestion() で既に3投がシミュレートされているため
+        // simulateNextThrow() は不要（呼ぶと余分な投擲が追加されてしまう）
 
         const correctAnswer = result.current.getCurrentCorrectAnswer();
 
@@ -5889,13 +5887,10 @@ describe('gameStore', () => {
         });
 
         // Assert: 高得点でも正しく減算される
+        // stdDevMM=0により、必ずT20（60点）に命中 → 60点×3投=180点
         const newRemainingScore = result.current.remainingScore;
         expect(newRemainingScore).toBe(initialRemainingScore - totalScore);
-
-        // T20x3なら180点のはず（stdDevが極小なので）
-        if (totalScore >= 150) {
-          expect(newRemainingScore).toBe(initialRemainingScore - totalScore);
-        }
+        expect(totalScore).toBe(180); // T20×3 = 180点
       });
 
       test('【RED】初期残り点数が異なる値（301, 701）でも正しく減算される', () => {
