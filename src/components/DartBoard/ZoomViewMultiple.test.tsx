@@ -107,17 +107,6 @@ describe('ZoomViewMultiple', () => {
       });
       expect(container).toBeInTheDocument();
     });
-
-    test('親要素にaria-live="polite"が設定されている', () => {
-      // Arrange & Act
-      render(
-        <ZoomViewMultiple coords={TEST_COORDS} dartCount={3} visibleDarts={[true, true, true]} />
-      );
-
-      // Assert
-      const container = screen.getByRole('region');
-      expect(container).toHaveAttribute('aria-live', 'polite');
-    });
   });
 
   describe('セマンティックテスト - visibleDarts による表示制御', () => {

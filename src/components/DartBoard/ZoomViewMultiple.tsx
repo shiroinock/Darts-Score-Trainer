@@ -176,8 +176,8 @@ export function ZoomViewMultiple({
 
   // 表示するダーツのインデックスを収集（最大3つ）
   const visibleIndices = coords
-    .map((_, index) => (visibleDarts[index] !== false ? index : -1))
-    .filter((index) => index !== -1)
+    .map((_, index) => index)
+    .filter((index) => visibleDarts[index] !== false)
     .slice(0, 3);
 
   // 表示するダーツがない場合は何も表示しない
@@ -186,11 +186,7 @@ export function ZoomViewMultiple({
   }
 
   return (
-    <section
-      className="zoom-view-multiple"
-      aria-label="3投のダーツ着地点のズームビュー"
-      aria-live="polite"
-    >
+    <section className="zoom-view-multiple" aria-label="3投のダーツ着地点のズームビュー">
       {visibleIndices.map((index) => (
         <SingleZoom
           key={index}
