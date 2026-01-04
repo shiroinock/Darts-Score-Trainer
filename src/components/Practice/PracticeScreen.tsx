@@ -22,6 +22,7 @@ import { isGameFinished } from '../../utils/gameLogic';
 import { DartBoard } from '../DartBoard/DartBoard';
 import { ZoomViewMultiple } from '../DartBoard/ZoomViewMultiple';
 import { BustQuestion } from './BustQuestion';
+import { DualNumPad } from './DualNumPad';
 import { Feedback } from './Feedback';
 import { NumPad } from './NumPad';
 import { QuestionDisplay } from './QuestionDisplay';
@@ -53,8 +54,10 @@ export function PracticeScreen(): JSX.Element {
     showFeedback,
     lastAnswer,
     bustAnswer,
+    dualAnswer,
     handleConfirm,
     handleBustAnswer,
+    handleDualConfirm,
     handleBustFeedbackComplete,
   } = useFeedback();
 
@@ -111,8 +114,8 @@ export function PracticeScreen(): JSX.Element {
         if (isBustPhase && bustAnswer !== null) {
           handleBustFeedbackComplete();
         }
-        // スコアフェーズの場合
-        else if (!isBustPhase && lastAnswer) {
+        // スコアフェーズの場合（lastAnswer または dualAnswer があれば）
+        else if (!isBustPhase && (lastAnswer || dualAnswer)) {
           nextQuestion();
         }
       }
@@ -127,6 +130,7 @@ export function PracticeScreen(): JSX.Element {
     isBustPhase,
     bustAnswer,
     lastAnswer,
+    dualAnswer,
     questionType,
     remainingScore,
     startingScore,
@@ -225,9 +229,17 @@ export function PracticeScreen(): JSX.Element {
               {showFeedback && lastAnswer && (
                 <Feedback userAnswer={lastAnswer.value} isCorrect={lastAnswer.isCorrect} />
               )}
+              {showFeedback && dualAnswer && (
+                <Feedback userAnswer={dualAnswer.scoreValue} isCorrect={dualAnswer.isCorrect} />
+              )}
 
               {/* テンキー入力（フィードバック非表示時のみ） */}
-              {!showFeedback && <NumPad questionType={questionType} onConfirm={handleConfirm} />}
+              {!showFeedback && questionType !== 'both' && (
+                <NumPad questionType={questionType} onConfirm={handleConfirm} />
+              )}
+              {!showFeedback && questionType === 'both' && (
+                <DualNumPad onConfirm={handleDualConfirm} />
+              )}
             </>
           )}
         </section>

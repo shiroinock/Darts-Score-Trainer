@@ -1,0 +1,834 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DualNumPad > スナップショットテスト > maxValue制約が設定された状態の描画結果が一致する 1`] = `
+<div>
+  <div
+    class="dual-num-pad"
+  >
+    <div
+      class="dual-num-pad__displays"
+    >
+      <button
+        class="dual-num-pad__display dual-num-pad__display--active"
+        type="button"
+      >
+        <div
+          class="dual-num-pad__input-value"
+        >
+          0
+        </div>
+        <div
+          class="dual-num-pad__label"
+        >
+          点
+        </div>
+      </button>
+      <button
+        class="dual-num-pad__display "
+        type="button"
+      >
+        <div
+          class="dual-num-pad__input-value"
+        >
+          0
+        </div>
+        <div
+          class="dual-num-pad__label"
+        >
+          残り
+        </div>
+      </button>
+    </div>
+    <div
+      class="dual-num-pad__grid"
+    >
+      <button
+        aria-label="1"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        1
+      </button>
+      <button
+        aria-label="2"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        2
+      </button>
+      <button
+        aria-label="3"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        3
+      </button>
+      <button
+        aria-label="4"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        4
+      </button>
+      <button
+        aria-label="5"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        5
+      </button>
+      <button
+        aria-label="6"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        6
+      </button>
+      <button
+        aria-label="7"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        7
+      </button>
+      <button
+        aria-label="8"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        8
+      </button>
+      <button
+        aria-label="9"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        9
+      </button>
+      <button
+        aria-label="Clear"
+        class="dual-num-pad__button dual-num-pad__button--clear"
+        type="button"
+      >
+        C
+      </button>
+      <button
+        aria-label="0"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        0
+      </button>
+      <button
+        aria-label="Backspace"
+        class="dual-num-pad__button dual-num-pad__button--backspace"
+        type="button"
+      >
+        ⌫
+      </button>
+    </div>
+    <button
+      aria-label="Confirm"
+      class="dual-num-pad__confirm"
+      disabled=""
+      type="button"
+    >
+      確定
+    </button>
+  </div>
+</div>
+`;
+
+exports[`DualNumPad > スナップショットテスト > デフォルト状態の描画結果が一致する 1`] = `
+<div>
+  <div
+    class="dual-num-pad"
+  >
+    <div
+      class="dual-num-pad__displays"
+    >
+      <button
+        class="dual-num-pad__display dual-num-pad__display--active"
+        type="button"
+      >
+        <div
+          class="dual-num-pad__input-value"
+        >
+          0
+        </div>
+        <div
+          class="dual-num-pad__label"
+        >
+          点
+        </div>
+      </button>
+      <button
+        class="dual-num-pad__display "
+        type="button"
+      >
+        <div
+          class="dual-num-pad__input-value"
+        >
+          0
+        </div>
+        <div
+          class="dual-num-pad__label"
+        >
+          残り
+        </div>
+      </button>
+    </div>
+    <div
+      class="dual-num-pad__grid"
+    >
+      <button
+        aria-label="1"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        1
+      </button>
+      <button
+        aria-label="2"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        2
+      </button>
+      <button
+        aria-label="3"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        3
+      </button>
+      <button
+        aria-label="4"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        4
+      </button>
+      <button
+        aria-label="5"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        5
+      </button>
+      <button
+        aria-label="6"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        6
+      </button>
+      <button
+        aria-label="7"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        7
+      </button>
+      <button
+        aria-label="8"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        8
+      </button>
+      <button
+        aria-label="9"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        9
+      </button>
+      <button
+        aria-label="Clear"
+        class="dual-num-pad__button dual-num-pad__button--clear"
+        type="button"
+      >
+        C
+      </button>
+      <button
+        aria-label="0"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        0
+      </button>
+      <button
+        aria-label="Backspace"
+        class="dual-num-pad__button dual-num-pad__button--backspace"
+        type="button"
+      >
+        ⌫
+      </button>
+    </div>
+    <button
+      aria-label="Confirm"
+      class="dual-num-pad__confirm"
+      disabled=""
+      type="button"
+    >
+      確定
+    </button>
+  </div>
+</div>
+`;
+
+exports[`DualNumPad > スナップショットテスト > 両方のフィールドに入力値があり、確定ボタンが有効な状態の描画結果が一致する 1`] = `
+<div>
+  <div
+    class="dual-num-pad"
+  >
+    <div
+      class="dual-num-pad__displays"
+    >
+      <button
+        class="dual-num-pad__display "
+        type="button"
+      >
+        <div
+          class="dual-num-pad__input-value"
+        >
+          60
+        </div>
+        <div
+          class="dual-num-pad__label"
+        >
+          点
+        </div>
+      </button>
+      <button
+        class="dual-num-pad__display dual-num-pad__display--active"
+        type="button"
+      >
+        <div
+          class="dual-num-pad__input-value"
+        >
+          441
+        </div>
+        <div
+          class="dual-num-pad__label"
+        >
+          残り
+        </div>
+      </button>
+    </div>
+    <div
+      class="dual-num-pad__grid"
+    >
+      <button
+        aria-label="1"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        1
+      </button>
+      <button
+        aria-label="2"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        2
+      </button>
+      <button
+        aria-label="3"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        3
+      </button>
+      <button
+        aria-label="4"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        4
+      </button>
+      <button
+        aria-label="5"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        5
+      </button>
+      <button
+        aria-label="6"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        6
+      </button>
+      <button
+        aria-label="7"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        7
+      </button>
+      <button
+        aria-label="8"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        8
+      </button>
+      <button
+        aria-label="9"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        9
+      </button>
+      <button
+        aria-label="Clear"
+        class="dual-num-pad__button dual-num-pad__button--clear"
+        type="button"
+      >
+        C
+      </button>
+      <button
+        aria-label="0"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        0
+      </button>
+      <button
+        aria-label="Backspace"
+        class="dual-num-pad__button dual-num-pad__button--backspace"
+        type="button"
+      >
+        ⌫
+      </button>
+    </div>
+    <button
+      aria-label="Confirm"
+      class="dual-num-pad__confirm"
+      type="button"
+    >
+      確定
+    </button>
+  </div>
+</div>
+`;
+
+exports[`DualNumPad > スナップショットテスト > 得点フィールドがアクティブで入力値がある状態の描画結果が一致する 1`] = `
+<div>
+  <div
+    class="dual-num-pad"
+  >
+    <div
+      class="dual-num-pad__displays"
+    >
+      <button
+        class="dual-num-pad__display dual-num-pad__display--active"
+        type="button"
+      >
+        <div
+          class="dual-num-pad__input-value"
+        >
+          60
+        </div>
+        <div
+          class="dual-num-pad__label"
+        >
+          点
+        </div>
+      </button>
+      <button
+        class="dual-num-pad__display "
+        type="button"
+      >
+        <div
+          class="dual-num-pad__input-value"
+        >
+          0
+        </div>
+        <div
+          class="dual-num-pad__label"
+        >
+          残り
+        </div>
+      </button>
+    </div>
+    <div
+      class="dual-num-pad__grid"
+    >
+      <button
+        aria-label="1"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        1
+      </button>
+      <button
+        aria-label="2"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        2
+      </button>
+      <button
+        aria-label="3"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        3
+      </button>
+      <button
+        aria-label="4"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        4
+      </button>
+      <button
+        aria-label="5"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        5
+      </button>
+      <button
+        aria-label="6"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        6
+      </button>
+      <button
+        aria-label="7"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        7
+      </button>
+      <button
+        aria-label="8"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        8
+      </button>
+      <button
+        aria-label="9"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        9
+      </button>
+      <button
+        aria-label="Clear"
+        class="dual-num-pad__button dual-num-pad__button--clear"
+        type="button"
+      >
+        C
+      </button>
+      <button
+        aria-label="0"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        0
+      </button>
+      <button
+        aria-label="Backspace"
+        class="dual-num-pad__button dual-num-pad__button--backspace"
+        type="button"
+      >
+        ⌫
+      </button>
+    </div>
+    <button
+      aria-label="Confirm"
+      class="dual-num-pad__confirm"
+      disabled=""
+      type="button"
+    >
+      確定
+    </button>
+  </div>
+</div>
+`;
+
+exports[`DualNumPad > スナップショットテスト > 得点フィールドに無効な値が入力され、確定ボタンが無効な状態の描画結果が一致する 1`] = `
+<div>
+  <div
+    class="dual-num-pad"
+  >
+    <div
+      class="dual-num-pad__displays"
+    >
+      <button
+        class="dual-num-pad__display "
+        type="button"
+      >
+        <div
+          class="dual-num-pad__input-value"
+        >
+          163
+        </div>
+        <div
+          class="dual-num-pad__label"
+        >
+          点
+        </div>
+      </button>
+      <button
+        class="dual-num-pad__display dual-num-pad__display--active"
+        type="button"
+      >
+        <div
+          class="dual-num-pad__input-value"
+        >
+          441
+        </div>
+        <div
+          class="dual-num-pad__label"
+        >
+          残り
+        </div>
+      </button>
+    </div>
+    <div
+      class="dual-num-pad__grid"
+    >
+      <button
+        aria-label="1"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        1
+      </button>
+      <button
+        aria-label="2"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        2
+      </button>
+      <button
+        aria-label="3"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        3
+      </button>
+      <button
+        aria-label="4"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        4
+      </button>
+      <button
+        aria-label="5"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        5
+      </button>
+      <button
+        aria-label="6"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        6
+      </button>
+      <button
+        aria-label="7"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        7
+      </button>
+      <button
+        aria-label="8"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        8
+      </button>
+      <button
+        aria-label="9"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        9
+      </button>
+      <button
+        aria-label="Clear"
+        class="dual-num-pad__button dual-num-pad__button--clear"
+        type="button"
+      >
+        C
+      </button>
+      <button
+        aria-label="0"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        0
+      </button>
+      <button
+        aria-label="Backspace"
+        class="dual-num-pad__button dual-num-pad__button--backspace"
+        type="button"
+      >
+        ⌫
+      </button>
+    </div>
+    <button
+      aria-label="Confirm"
+      class="dual-num-pad__confirm"
+      disabled=""
+      type="button"
+    >
+      確定
+    </button>
+  </div>
+</div>
+`;
+
+exports[`DualNumPad > スナップショットテスト > 残り点数フィールドがアクティブで入力値がある状態の描画結果が一致する 1`] = `
+<div>
+  <div
+    class="dual-num-pad"
+  >
+    <div
+      class="dual-num-pad__displays"
+    >
+      <button
+        class="dual-num-pad__display "
+        type="button"
+      >
+        <div
+          class="dual-num-pad__input-value"
+        >
+          0
+        </div>
+        <div
+          class="dual-num-pad__label"
+        >
+          点
+        </div>
+      </button>
+      <button
+        class="dual-num-pad__display dual-num-pad__display--active"
+        type="button"
+      >
+        <div
+          class="dual-num-pad__input-value"
+        >
+          441
+        </div>
+        <div
+          class="dual-num-pad__label"
+        >
+          残り
+        </div>
+      </button>
+    </div>
+    <div
+      class="dual-num-pad__grid"
+    >
+      <button
+        aria-label="1"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        1
+      </button>
+      <button
+        aria-label="2"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        2
+      </button>
+      <button
+        aria-label="3"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        3
+      </button>
+      <button
+        aria-label="4"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        4
+      </button>
+      <button
+        aria-label="5"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        5
+      </button>
+      <button
+        aria-label="6"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        6
+      </button>
+      <button
+        aria-label="7"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        7
+      </button>
+      <button
+        aria-label="8"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        8
+      </button>
+      <button
+        aria-label="9"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        9
+      </button>
+      <button
+        aria-label="Clear"
+        class="dual-num-pad__button dual-num-pad__button--clear"
+        type="button"
+      >
+        C
+      </button>
+      <button
+        aria-label="0"
+        class="dual-num-pad__button dual-num-pad__button--number"
+        type="button"
+      >
+        0
+      </button>
+      <button
+        aria-label="Backspace"
+        class="dual-num-pad__button dual-num-pad__button--backspace"
+        type="button"
+      >
+        ⌫
+      </button>
+    </div>
+    <button
+      aria-label="Confirm"
+      class="dual-num-pad__confirm"
+      disabled=""
+      type="button"
+    >
+      確定
+    </button>
+  </div>
+</div>
+`;
