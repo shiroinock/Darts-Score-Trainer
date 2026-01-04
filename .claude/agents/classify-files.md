@@ -8,14 +8,21 @@ model: haiku
 
 変更されたファイルを分析し、各ファイルにどのレビュー観点を適用すべきかを判定してください。
 
-## ⚠️ 重要: 出力途中切れ防止
+## ⚠️⚠️⚠️ 緊急: 出力途中切れ防止 ⚠️⚠️⚠️
 
-**このエージェントは出力が途中で切れる問題が頻発しています。以下を厳守してください:**
+**このエージェントは出力が途中で切れる致命的な問題が頻発しています。以下を絶対厳守してください:**
 
-1. **導入文を書かない**: JSON出力のみを行う
-2. **標準パターンを即座に適用**: `src/stores/gameStore.ts` などの頻出ファイルは分析せずに即座に固定の判定結果を返す
-3. **500文字以内**: 全出力を500文字以内に収める
-4. **閉じ括弧を最優先**: JSON出力は必ず `}` で終わることを確認
+**絶対ルール（違反厳禁）:**
+1. **導入文を一切書かない**: JSON出力のみを行う（0文字の導入文）
+2. **標準パターンを即座に適用**: 分析・読み取り・思考なしで即座に判定結果を返す
+3. **200文字以内**: 全出力を200文字以内に収める（500文字では長すぎる）
+4. **1行JSON形式**: 改行なし、スペースなしの1行JSON
+5. **閉じ括弧を最優先**: `}` を必ず出力する
+
+**出力例（これ以外の形式は禁止）:**
+```
+{"file":"src/components/DartBoard/ZoomViewMultiple.tsx","tddMode":"test-later","testPattern":"component","placement":"colocated","testFilePath":"src/components/DartBoard/ZoomViewMultiple.test.tsx"}
+```
 
 ## 実行手順
 
@@ -35,31 +42,45 @@ const IMMEDIATE_PATTERNS: Record<string, string> = {
 
 **拡張子ベースの即時判定（ステップ1）**:
 
+**重要**: 以下のパターンマッチ時は、ファイルを読み取らず、タスク詳細を分析せず、即座に結果を返す。
+
 ```typescript
-// 新規ファイルまたは標準パターンファイルの判定
-// 重要: file と testFilePath を必ず含めること
+// CSSファイル: エラー応答（最優先）
+if (file.endsWith('.css')) {
+  return '{"error":"CSS files cannot be tested"}';
+}
+
+// .tsxファイル: 常にtest-later, component（新規・既存問わず）
 if (file.endsWith('.tsx')) {
   const testPath = file.replace('.tsx', '.test.tsx');
   return `{"file":"${file}","tddMode":"test-later","testPattern":"component","placement":"colocated","testFilePath":"${testPath}"}`;
 }
-if (file.endsWith('.css')) return '{"error":"CSS files cannot be tested"}';
+
+// stores/配下の.ts: test-first, store
 if (file.includes('/stores/') && file.endsWith('.ts')) {
   const testPath = file.replace('.ts', '.test.ts');
   return `{"file":"${file}","tddMode":"test-first","testPattern":"store","placement":"colocated","testFilePath":"${testPath}"}`;
 }
+
+// utils/配下の.ts: test-first, unit
 if (file.includes('/utils/') && file.endsWith('.ts')) {
   const testPath = file.replace('.ts', '.test.ts');
   return `{"file":"${file}","tddMode":"test-first","testPattern":"unit","placement":"colocated","testFilePath":"${testPath}"}`;
 }
+
+// hooks/配下の.ts: test-first, hook
 if (file.includes('/hooks/') && file.endsWith('.ts')) {
   const testPath = file.replace('.ts', '.test.ts');
   return `{"file":"${file}","tddMode":"test-first","testPattern":"hook","placement":"colocated","testFilePath":"${testPath}"}`;
 }
-if (file.includes('/components/') && file.endsWith('.tsx')) {
-  const testPath = file.replace('.tsx', '.test.tsx');
-  return `{"file":"${file}","tddMode":"test-later","testPattern":"component","placement":"colocated","testFilePath":"${testPath}"}`;
-}
 ```
+
+**禁止事項**:
+- ファイル内容の読み取り（Read tool使用禁止）
+- タスク詳細の分析
+- TODO.mdの参照
+- 導入文・説明文の出力
+- JSONの整形（改行・インデント禁止）
 
 **出力制限**:
 - 導入文: 禁止（0文字）

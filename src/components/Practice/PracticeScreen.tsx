@@ -20,7 +20,7 @@ import { END_REASONS } from '../../types';
 import { ONE_DART_FINISHABLE } from '../../utils/constants';
 import { isGameFinished } from '../../utils/gameLogic';
 import { DartBoard } from '../DartBoard/DartBoard';
-import { ZoomView } from '../DartBoard/ZoomView';
+import { ZoomViewMultiple } from '../DartBoard/ZoomViewMultiple';
 import { BustQuestion } from './BustQuestion';
 import { Feedback } from './Feedback';
 import { NumPad } from './NumPad';
@@ -176,8 +176,16 @@ export function PracticeScreen(): JSX.Element {
       <main className="practice-screen__main">
         {/* 左カラム: ダーツボード */}
         <section className="practice-screen__board-section">
-          <DartBoard coords={dartCoords} dartCount={dartCount} />
-          <ZoomView coords={dartCoords} dartCount={dartCount} visibleDarts={visibleDarts} />
+          <div className="practice-screen__board-area">
+            <DartBoard coords={dartCoords} dartCount={dartCount} />
+          </div>
+          <div className="practice-screen__zoom-area">
+            <ZoomViewMultiple
+              coords={dartCoords}
+              dartCount={dartCount}
+              visibleDarts={visibleDarts}
+            />
+          </div>
         </section>
 
         {/* 右カラム: 問題とインタラクション */}

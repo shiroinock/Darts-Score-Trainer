@@ -1,0 +1,40 @@
+/**
+ * ZoomViewMultiple スタイル定義
+ */
+
+.zoom-view-multiple {
+  display: flex;
+  flex-direction: row;
+  gap: var(--spacing-sm);
+  justify-content: center;
+  align-items: center;
+}
+
+/* 個別のズームビュー */
+.zoom-view-multiple__single {
+  width: 160px;
+  height: 160px;
+  border: var(--border-width-md) solid var(--color-bg-white);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  background-color: #000000;
+  transition: all var(--transition-base);
+}
+
+.zoom-view-multiple__single:hover {
+  box-shadow: var(--shadow-xl);
+  border-color: var(--color-primary);
+}
+
+/* モバイル対応: 640px以下で縦並び、サイズ縮小 */
+@media (max-width: 640px) {
+  .zoom-view-multiple {
+    flex-direction: column;
+  }
+
+  .zoom-view-multiple__single {
+    width: 140px;
+    height: 140px;
+  }
+}

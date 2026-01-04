@@ -1,0 +1,217 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ZoomViewMultiple > スナップショットテスト > 1投のダーツ表示状態のスナップショット 1`] = `
+<div>
+  <section
+    aria-label="3投のダーツ着地点のズームビュー"
+    class="zoom-view-multiple"
+  >
+    <div
+      class="zoom-view-multiple__single"
+    >
+      <div
+        data-has-draw="true"
+        data-has-setup="true"
+        data-testid="mock-sketch"
+      >
+        Mock Sketch
+      </div>
+    </div>
+  </section>
+</div>
+`;
+
+exports[`ZoomViewMultiple > スナップショットテスト > 2投のダーツ表示状態のスナップショット 1`] = `
+<div>
+  <section
+    aria-label="3投のダーツ着地点のズームビュー"
+    class="zoom-view-multiple"
+  >
+    <div
+      class="zoom-view-multiple__single"
+    >
+      <div
+        data-has-draw="true"
+        data-has-setup="true"
+        data-testid="mock-sketch"
+      >
+        Mock Sketch
+      </div>
+    </div>
+    <div
+      class="zoom-view-multiple__single"
+    >
+      <div
+        data-has-draw="true"
+        data-has-setup="true"
+        data-testid="mock-sketch"
+      >
+        Mock Sketch
+      </div>
+    </div>
+  </section>
+</div>
+`;
+
+exports[`ZoomViewMultiple > スナップショットテスト > カスタムzoomFactor（4.0）の状態のスナップショット 1`] = `
+<div>
+  <section
+    aria-label="3投のダーツ着地点のズームビュー"
+    class="zoom-view-multiple"
+  >
+    <div
+      class="zoom-view-multiple__single"
+    >
+      <div
+        data-has-draw="true"
+        data-has-setup="true"
+        data-testid="mock-sketch"
+      >
+        Mock Sketch
+      </div>
+    </div>
+    <div
+      class="zoom-view-multiple__single"
+    >
+      <div
+        data-has-draw="true"
+        data-has-setup="true"
+        data-testid="mock-sketch"
+      >
+        Mock Sketch
+      </div>
+    </div>
+    <div
+      class="zoom-view-multiple__single"
+    >
+      <div
+        data-has-draw="true"
+        data-has-setup="true"
+        data-testid="mock-sketch"
+      >
+        Mock Sketch
+      </div>
+    </div>
+  </section>
+</div>
+`;
+
+exports[`ZoomViewMultiple > スナップショットテスト > ダーツなし（dartCount=0）の状態のスナップショット 1`] = `<div />`;
+
+exports[`ZoomViewMultiple > スナップショットテスト > モバイルサイズ（640px）でのスナップショット 1`] = `
+<div>
+  <section
+    aria-label="3投のダーツ着地点のズームビュー"
+    class="zoom-view-multiple"
+  >
+    <div
+      class="zoom-view-multiple__single"
+    >
+      <div
+        data-has-draw="true"
+        data-has-setup="true"
+        data-testid="mock-sketch"
+      >
+        Mock Sketch
+      </div>
+    </div>
+    <div
+      class="zoom-view-multiple__single"
+    >
+      <div
+        data-has-draw="true"
+        data-has-setup="true"
+        data-testid="mock-sketch"
+      >
+        Mock Sketch
+      </div>
+    </div>
+    <div
+      class="zoom-view-multiple__single"
+    >
+      <div
+        data-has-draw="true"
+        data-has-setup="true"
+        data-testid="mock-sketch"
+      >
+        Mock Sketch
+      </div>
+    </div>
+  </section>
+</div>
+`;
+
+exports[`ZoomViewMultiple > スナップショットテスト > 一部のダーツのみ表示する状態のスナップショット 1`] = `
+<div>
+  <section
+    aria-label="3投のダーツ着地点のズームビュー"
+    class="zoom-view-multiple"
+  >
+    <div
+      class="zoom-view-multiple__single"
+    >
+      <div
+        data-has-draw="true"
+        data-has-setup="true"
+        data-testid="mock-sketch"
+      >
+        Mock Sketch
+      </div>
+    </div>
+    <div
+      class="zoom-view-multiple__single"
+    >
+      <div
+        data-has-draw="true"
+        data-has-setup="true"
+        data-testid="mock-sketch"
+      >
+        Mock Sketch
+      </div>
+    </div>
+  </section>
+</div>
+`;
+
+exports[`ZoomViewMultiple > スナップショットテスト > 基本的なレンダリング結果が一致する（3投、全て表示） 1`] = `
+<div>
+  <section
+    aria-label="3投のダーツ着地点のズームビュー"
+    class="zoom-view-multiple"
+  >
+    <div
+      class="zoom-view-multiple__single"
+    >
+      <div
+        data-has-draw="true"
+        data-has-setup="true"
+        data-testid="mock-sketch"
+      >
+        Mock Sketch
+      </div>
+    </div>
+    <div
+      class="zoom-view-multiple__single"
+    >
+      <div
+        data-has-draw="true"
+        data-has-setup="true"
+        data-testid="mock-sketch"
+      >
+        Mock Sketch
+      </div>
+    </div>
+    <div
+      class="zoom-view-multiple__single"
+    >
+      <div
+        data-has-draw="true"
+        data-has-setup="true"
+        data-testid="mock-sketch"
+      >
+        Mock Sketch
+      </div>
+    </div>
+  </section>
+</div>
+`;

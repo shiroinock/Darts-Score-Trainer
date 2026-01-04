@@ -1602,6 +1602,126 @@ Local CI Checks Complete
 - [ ] Next Steps セクションが完結しているか
 - [ ] 出力の総文字数が4000文字以下か（推奨: 3000文字以下）
 
+## スナップショットテスト失敗の適切な報告（2026-01-04追加）
+
+### 評価結果: スナップショット失敗の報告が不明瞭（evaluation_20260104_093221.md）
+
+サブエージェントがスナップショットテストの失敗を報告しましたが、以下の点が不明瞭でした：
+
+**検出された問題**:
+- 新規コンポーネントに対するスナップショット作成が「失敗」として報告されている
+- これは失敗ではなく、新規コンポーネント追加時の**正常な動作**です
+- ユーザーは「何かが壊れた」と誤解する可能性があります
+
+### 強制要件（必須）
+
+1. **スナップショット失敗の分類**
+   - 新規スナップショット作成: "新規コンポーネントのスナップショット作成が必要"
+   - 既存スナップショット不一致: "既存スナップショットとの不一致（意図的な変更か確認が必要）"
+   - この2つを明確に区別して報告してください
+
+2. **新規スナップショット作成時の報告**
+   ```
+   ## Test Results
+
+   ⚠️ **Snapshot Creation Required** (6 new snapshots)
+
+   新規コンポーネント `ZoomViewMultiple` に対するスナップショットがまだ作成されていません。
+   これは新規コンポーネント追加時の正常な動作です。
+
+   影響を受けるテスト:
+   - src/components/DartBoard/ZoomViewMultiple.test.tsx (6 tests)
+
+   次のステップ:
+   1. スナップショットを作成:
+      ```bash
+      npm run test:run -- src/components/DartBoard/ZoomViewMultiple.test.tsx -u
+      ```
+
+   2. 作成されたスナップショットを確認:
+      ```bash
+      git diff src/components/DartBoard/__snapshots__/ZoomViewMultiple.test.tsx.snap
+      ```
+
+   3. 問題なければコミット:
+      ```bash
+      git add src/components/DartBoard/__snapshots__/ZoomViewMultiple.test.tsx.snap
+      ```
+   ```
+
+3. **既存スナップショット不一致時の報告**
+   ```
+   ## Test Results
+
+   ❌ **Snapshot Mismatch** (3 tests)
+
+   既存のスナップショットと現在の出力が一致しません。
+   意図的な変更の場合はスナップショットを更新してください。
+
+   影響を受けるテスト:
+   - src/components/DartBoard/DartBoard.test.tsx (3 tests)
+
+   次のステップ:
+   1. 差分を確認:
+      ```bash
+      npm run test:run -- src/components/DartBoard/DartBoard.test.tsx --reporter=verbose
+      ```
+
+   2. 変更が意図的な場合、スナップショットを更新:
+      ```bash
+      npm run test:run -- src/components/DartBoard/DartBoard.test.tsx -u
+      ```
+   ```
+
+4. **サマリー表での表示**
+   - 新規スナップショット作成: `Tests: ⚠️ SNAPSHOT CREATION` (FAILEDではなく)
+   - 既存スナップショット不一致: `Tests: ❌ FAILED (snapshot mismatch)`
+
+### 実装例（正しい報告）
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Local CI Checks Complete
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+| Check       | Result              | Details                                      |
+|-------------|---------------------|----------------------------------------------|
+| Biome check | ✓ PASSED            | No issues found                              |
+| Tests       | ⚠️ SNAPSHOT CREATION | 6 new snapshots needed (ZoomViewMultiple)    |
+| Build       | ✓ PASSED            | Built successfully (chunk size warning only) |
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## Next Steps
+
+1. **Create snapshots for new component (required)**
+
+   新規コンポーネント `ZoomViewMultiple` のスナップショットを作成してください:
+
+   ```bash
+   npm run test:run -- src/components/DartBoard/ZoomViewMultiple.test.tsx -u
+   ```
+
+2. **Verify snapshots**
+
+   作成されたスナップショットを確認:
+
+   ```bash
+   git diff src/components/DartBoard/__snapshots__/ZoomViewMultiple.test.tsx.snap
+   ```
+
+3. **Commit snapshots**
+
+   問題なければスナップショットをコミット:
+
+   ```bash
+   git add src/components/DartBoard/__snapshots__/ZoomViewMultiple.test.tsx.snap
+   git commit -m "test: ZoomViewMultiple コンポーネントのスナップショット追加"
+   ```
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
 ## プロンプト解釈の明確化（2026-01-04追加）
 
 ### 評価結果: CIチェックが実行されていない（evaluation_20260104_041615.md）

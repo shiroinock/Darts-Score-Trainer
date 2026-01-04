@@ -83,28 +83,36 @@ exports[`PracticeScreen > スナップショットテスト > Feedback表示中�
         class="practice-screen__board-section"
       >
         <div
-          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
+          class="practice-screen__board-area"
         >
           <div
-            style="width: 688px; height: 688px;"
+            style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
           >
             <div
-              data-dart-count="1"
-              data-testid="mock-p5-canvas"
+              style="width: 688px; height: 688px;"
             >
-              Mock P5Canvas (
-              1
-               darts)
+              <div
+                data-dart-count="1"
+                data-testid="mock-p5-canvas"
+              >
+                Mock P5Canvas (
+                1
+                 darts)
+              </div>
             </div>
           </div>
         </div>
         <div
-          data-dart-count="1"
-          data-testid="mock-zoom-view"
+          class="practice-screen__zoom-area"
         >
-          Mock ZoomView (
-          1
-           darts)
+          <div
+            data-dart-count="1"
+            data-testid="mock-zoom-view-multiple"
+          >
+            Mock ZoomViewMultiple (
+            1
+             darts)
+          </div>
         </div>
       </section>
       <section
@@ -314,28 +322,36 @@ exports[`PracticeScreen > スナップショットテスト > displayedDartsが0
         class="practice-screen__board-section"
       >
         <div
-          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
+          class="practice-screen__board-area"
         >
           <div
-            style="width: 688px; height: 688px;"
+            style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
           >
             <div
-              data-dart-count="0"
-              data-testid="mock-p5-canvas"
+              style="width: 688px; height: 688px;"
             >
-              Mock P5Canvas (
-              0
-               darts)
+              <div
+                data-dart-count="0"
+                data-testid="mock-p5-canvas"
+              >
+                Mock P5Canvas (
+                0
+                 darts)
+              </div>
             </div>
           </div>
         </div>
         <div
-          data-dart-count="0"
-          data-testid="mock-zoom-view"
+          class="practice-screen__zoom-area"
         >
-          Mock ZoomView (
-          0
-           darts)
+          <div
+            data-dart-count="0"
+            data-testid="mock-zoom-view-multiple"
+          >
+            Mock ZoomViewMultiple (
+            0
+             darts)
+          </div>
         </div>
       </section>
       <section
@@ -576,28 +592,36 @@ exports[`PracticeScreen > スナップショットテスト > displayedDartsが3
         class="practice-screen__board-section"
       >
         <div
-          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
+          class="practice-screen__board-area"
         >
           <div
-            style="width: 688px; height: 688px;"
+            style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
           >
             <div
-              data-dart-count="3"
-              data-testid="mock-p5-canvas"
+              style="width: 688px; height: 688px;"
             >
-              Mock P5Canvas (
-              3
-               darts)
+              <div
+                data-dart-count="3"
+                data-testid="mock-p5-canvas"
+              >
+                Mock P5Canvas (
+                3
+                 darts)
+              </div>
             </div>
           </div>
         </div>
         <div
-          data-dart-count="3"
-          data-testid="mock-zoom-view"
+          class="practice-screen__zoom-area"
         >
-          Mock ZoomView (
-          3
-           darts)
+          <div
+            data-dart-count="3"
+            data-testid="mock-zoom-view-multiple"
+          >
+            Mock ZoomViewMultiple (
+            3
+             darts)
+          </div>
         </div>
       </section>
       <section
@@ -838,28 +862,36 @@ exports[`PracticeScreen > スナップショットテスト > gameState="practic
         class="practice-screen__board-section"
       >
         <div
-          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
+          class="practice-screen__board-area"
         >
           <div
-            style="width: 688px; height: 688px;"
+            style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
           >
             <div
-              data-dart-count="1"
-              data-testid="mock-p5-canvas"
+              style="width: 688px; height: 688px;"
             >
-              Mock P5Canvas (
-              1
-               darts)
+              <div
+                data-dart-count="1"
+                data-testid="mock-p5-canvas"
+              >
+                Mock P5Canvas (
+                1
+                 darts)
+              </div>
             </div>
           </div>
         </div>
         <div
-          data-dart-count="1"
-          data-testid="mock-zoom-view"
+          class="practice-screen__zoom-area"
         >
-          Mock ZoomView (
-          1
-           darts)
+          <div
+            data-dart-count="1"
+            data-testid="mock-zoom-view-multiple"
+          >
+            Mock ZoomViewMultiple (
+            1
+             darts)
+          </div>
         </div>
       </section>
       <section
@@ -1124,28 +1156,36 @@ exports[`PracticeScreen > スナップショットテスト > 問題数モード
         class="practice-screen__board-section"
       >
         <div
-          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
+          class="practice-screen__board-area"
         >
           <div
-            style="width: 688px; height: 688px;"
+            style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
           >
             <div
-              data-dart-count="1"
-              data-testid="mock-p5-canvas"
+              style="width: 688px; height: 688px;"
             >
-              Mock P5Canvas (
-              1
-               darts)
+              <div
+                data-dart-count="1"
+                data-testid="mock-p5-canvas"
+              >
+                Mock P5Canvas (
+                1
+                 darts)
+              </div>
             </div>
           </div>
         </div>
         <div
-          data-dart-count="1"
-          data-testid="mock-zoom-view"
+          class="practice-screen__zoom-area"
         >
-          Mock ZoomView (
-          1
-           darts)
+          <div
+            data-dart-count="1"
+            data-testid="mock-zoom-view-multiple"
+          >
+            Mock ZoomViewMultiple (
+            1
+             darts)
+          </div>
         </div>
       </section>
       <section
@@ -1386,28 +1426,36 @@ exports[`PracticeScreen > スナップショットテスト > 時間制限モー
         class="practice-screen__board-section"
       >
         <div
-          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
+          class="practice-screen__board-area"
         >
           <div
-            style="width: 688px; height: 688px;"
+            style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
           >
             <div
-              data-dart-count="1"
-              data-testid="mock-p5-canvas"
+              style="width: 688px; height: 688px;"
             >
-              Mock P5Canvas (
-              1
-               darts)
+              <div
+                data-dart-count="1"
+                data-testid="mock-p5-canvas"
+              >
+                Mock P5Canvas (
+                1
+                 darts)
+              </div>
             </div>
           </div>
         </div>
         <div
-          data-dart-count="1"
-          data-testid="mock-zoom-view"
+          class="practice-screen__zoom-area"
         >
-          Mock ZoomView (
-          1
-           darts)
+          <div
+            data-dart-count="1"
+            data-testid="mock-zoom-view-multiple"
+          >
+            Mock ZoomViewMultiple (
+            1
+             darts)
+          </div>
         </div>
       </section>
       <section
@@ -1660,28 +1708,36 @@ exports[`PracticeScreen > スナップショットテスト > 時間制限モー
         class="practice-screen__board-section"
       >
         <div
-          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
+          class="practice-screen__board-area"
         >
           <div
-            style="width: 688px; height: 688px;"
+            style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
           >
             <div
-              data-dart-count="1"
-              data-testid="mock-p5-canvas"
+              style="width: 688px; height: 688px;"
             >
-              Mock P5Canvas (
-              1
-               darts)
+              <div
+                data-dart-count="1"
+                data-testid="mock-p5-canvas"
+              >
+                Mock P5Canvas (
+                1
+                 darts)
+              </div>
             </div>
           </div>
         </div>
         <div
-          data-dart-count="1"
-          data-testid="mock-zoom-view"
+          class="practice-screen__zoom-area"
         >
-          Mock ZoomView (
-          1
-           darts)
+          <div
+            data-dart-count="1"
+            data-testid="mock-zoom-view-multiple"
+          >
+            Mock ZoomViewMultiple (
+            1
+             darts)
+          </div>
         </div>
       </section>
       <section
@@ -1934,28 +1990,36 @@ exports[`PracticeScreen > スナップショットテスト > 時間制限モー
         class="practice-screen__board-section"
       >
         <div
-          style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
+          class="practice-screen__board-area"
         >
           <div
-            style="width: 688px; height: 688px;"
+            style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"
           >
             <div
-              data-dart-count="1"
-              data-testid="mock-p5-canvas"
+              style="width: 688px; height: 688px;"
             >
-              Mock P5Canvas (
-              1
-               darts)
+              <div
+                data-dart-count="1"
+                data-testid="mock-p5-canvas"
+              >
+                Mock P5Canvas (
+                1
+                 darts)
+              </div>
             </div>
           </div>
         </div>
         <div
-          data-dart-count="1"
-          data-testid="mock-zoom-view"
+          class="practice-screen__zoom-area"
         >
-          Mock ZoomView (
-          1
-           darts)
+          <div
+            data-dart-count="1"
+            data-testid="mock-zoom-view-multiple"
+          >
+            Mock ZoomViewMultiple (
+            1
+             darts)
+          </div>
         </div>
       </section>
       <section
