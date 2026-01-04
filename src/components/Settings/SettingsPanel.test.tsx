@@ -40,12 +40,23 @@ describe('SettingsPanel', () => {
     mockStartPractice.mockReset();
     mockGoToDebugScreen.mockReset();
 
-    // useGameStore のモック実装
+    // useGameStore のモック実装（デフォルトは非基礎練習モード）
     const { useGameStore } = await import('../../stores/gameStore');
     vi.mocked(useGameStore).mockImplementation((selector) =>
       selector({
         startPractice: mockStartPractice,
         goToDebugScreen: mockGoToDebugScreen,
+        config: {
+          configId: 'preset-player', // 非基礎練習モード
+          configName: 'プレイヤー練習',
+          throwUnit: 3,
+          questionType: 'score',
+          judgmentTiming: 'independent',
+          startingScore: 501,
+          stdDevMM: 15,
+          isPreset: true,
+          createdAt: '2025-01-01T00:00:00.000Z',
+        },
       } as never)
     );
   });
@@ -722,6 +733,398 @@ describe('SettingsPanel', () => {
       rerender(<SettingsPanel currentStep={4} onStepChange={handleStepChange} />);
       expect(screen.getByTestId('step4-confirm')).toBeInTheDocument();
       expect(screen.queryByTestId('step2-difficulty')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('基礎練習モード（Step 2スキップ）', () => {
+    /**
+     * 基礎練習モードでは難易度選択（Step 2）をスキップします。
+     * config.configId === 'preset-basic' の場合：
+     * - Step 1 → Step 3 へ直接遷移
+     * - Step 3 → Step 1 へ直接戻る
+     * - Step 2 の進捗インジケーターがグレーアウト表示
+     */
+
+    beforeEach(async () => {
+      // 基礎練習モードの設定でストアをモック
+      const { useGameStore } = await import('../../stores/gameStore');
+      vi.mocked(useGameStore).mockImplementation((selector) =>
+        selector({
+          startPractice: mockStartPractice,
+          goToDebugScreen: mockGoToDebugScreen,
+          config: {
+            configId: 'preset-basic', // 基礎練習モード
+            configName: '基礎練習',
+            description: '1投単位で得点を問う基本練習（62ターゲットからランダム出題）',
+            icon: '📚',
+            throwUnit: 1,
+            questionType: 'score',
+            judgmentTiming: 'independent',
+            startingScore: 501,
+            stdDevMM: 15,
+            randomizeTarget: true,
+            useBasicTargets: true,
+            isPreset: true,
+            createdAt: '2025-01-01T00:00:00.000Z',
+          },
+        } as never)
+      );
+    });
+
+    describe('ステップスキップの動作', () => {
+      test('Step 1で「次へ」をクリックすると、Step 2をスキップしてStep 3に直接遷移する', async () => {
+        // Arrange
+        const user = userEvent.setup();
+        render(<SettingsPanel />);
+
+        // Assert: 初期状態でStep 1が表示
+        expect(screen.getByTestId('step1-preset')).toBeInTheDocument();
+        expect(screen.queryByTestId('step2-difficulty')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('step3-session')).not.toBeInTheDocument();
+
+        // Act: 次へボタンをクリック
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+
+        // Assert: Step 2をスキップしてStep 3が表示される
+        expect(screen.queryByTestId('step1-preset')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('step2-difficulty')).not.toBeInTheDocument();
+        expect(screen.getByTestId('step3-session')).toBeInTheDocument();
+      });
+
+      test('Step 3で「戻る」をクリックすると、Step 2をスキップしてStep 1に直接戻る', async () => {
+        // Arrange
+        const user = userEvent.setup();
+        render(<SettingsPanel />);
+
+        // Step 3まで進める（Step 1 → Step 3）
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+        expect(screen.getByTestId('step3-session')).toBeInTheDocument();
+
+        // Act: 戻るボタンをクリック
+        await user.click(screen.getByRole('button', { name: '前のステップに戻る' }));
+
+        // Assert: Step 2をスキップしてStep 1に戻る
+        expect(screen.getByTestId('step1-preset')).toBeInTheDocument();
+        expect(screen.queryByTestId('step2-difficulty')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('step3-session')).not.toBeInTheDocument();
+      });
+
+      test('Step 1 → Step 3 → Step 4 → Step 1 の遷移が正しく動作する', async () => {
+        // Arrange
+        const user = userEvent.setup();
+        render(<SettingsPanel />);
+
+        // Act & Assert: Step 1 → Step 3
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+        expect(screen.getByTestId('step3-session')).toBeInTheDocument();
+
+        // Act & Assert: Step 3 → Step 4
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+        expect(screen.getByTestId('step4-confirm')).toBeInTheDocument();
+
+        // Act & Assert: Step 4 → Step 3
+        await user.click(screen.getByRole('button', { name: '前のステップに戻る' }));
+        expect(screen.getByTestId('step3-session')).toBeInTheDocument();
+
+        // Act & Assert: Step 3 → Step 1
+        await user.click(screen.getByRole('button', { name: '前のステップに戻る' }));
+        expect(screen.getByTestId('step1-preset')).toBeInTheDocument();
+      });
+    });
+
+    describe('進捗インジケーターの表示', () => {
+      test('基礎練習モードでは、Step 2の進捗インジケーターがスキップ状態（グレーアウト）で表示される', () => {
+        // Arrange & Act
+        render(<SettingsPanel />);
+
+        // Assert: Step 2がスキップクラスを持つ
+        const step2 = screen.getByTestId('progress-step-2');
+        expect(step2).toHaveClass('setup-wizard__progress-step--skipped');
+        expect(step2).not.toHaveClass('setup-wizard__progress-step--active');
+        expect(step2).not.toHaveClass('setup-wizard__progress-step--completed');
+        expect(step2).not.toHaveClass('setup-wizard__progress-step--pending');
+      });
+
+      test('Step 1では、Step 1がアクティブ、Step 2がスキップ、Step 3-4が保留状態', () => {
+        // Arrange & Act
+        render(<SettingsPanel />);
+
+        // Assert
+        expect(screen.getByTestId('progress-step-1')).toHaveClass(
+          'setup-wizard__progress-step--active'
+        );
+        expect(screen.getByTestId('progress-step-2')).toHaveClass(
+          'setup-wizard__progress-step--skipped'
+        );
+        expect(screen.getByTestId('progress-step-3')).toHaveClass(
+          'setup-wizard__progress-step--pending'
+        );
+        expect(screen.getByTestId('progress-step-4')).toHaveClass(
+          'setup-wizard__progress-step--pending'
+        );
+      });
+
+      test('Step 3では、Step 1が完了、Step 2がスキップ、Step 3がアクティブ、Step 4が保留状態', async () => {
+        // Arrange
+        const user = userEvent.setup();
+        render(<SettingsPanel />);
+
+        // Act: Step 1 → Step 3
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+
+        // Assert
+        expect(screen.getByTestId('progress-step-1')).toHaveClass(
+          'setup-wizard__progress-step--completed'
+        );
+        expect(screen.getByTestId('progress-step-2')).toHaveClass(
+          'setup-wizard__progress-step--skipped'
+        );
+        expect(screen.getByTestId('progress-step-3')).toHaveClass(
+          'setup-wizard__progress-step--active'
+        );
+        expect(screen.getByTestId('progress-step-4')).toHaveClass(
+          'setup-wizard__progress-step--pending'
+        );
+      });
+
+      test('Step 4では、Step 1-3が完了、Step 2がスキップかつ完了、Step 4がアクティブ', async () => {
+        // Arrange
+        const user = userEvent.setup();
+        render(<SettingsPanel />);
+
+        // Act: Step 1 → Step 3 → Step 4
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+
+        // Assert
+        expect(screen.getByTestId('progress-step-1')).toHaveClass(
+          'setup-wizard__progress-step--completed'
+        );
+        expect(screen.getByTestId('progress-step-2')).toHaveClass(
+          'setup-wizard__progress-step--skipped'
+        );
+        expect(screen.getByTestId('progress-step-3')).toHaveClass(
+          'setup-wizard__progress-step--completed'
+        );
+        expect(screen.getByTestId('progress-step-4')).toHaveClass(
+          'setup-wizard__progress-step--active'
+        );
+      });
+    });
+
+    describe('ボタン表示の確認', () => {
+      test('Step 1では「戻る」ボタンが表示されない', () => {
+        // Arrange & Act
+        render(<SettingsPanel />);
+
+        // Assert
+        expect(
+          screen.queryByRole('button', { name: '前のステップに戻る' })
+        ).not.toBeInTheDocument();
+        expect(screen.getByRole('button', { name: '次のステップへ進む' })).toBeInTheDocument();
+      });
+
+      test('Step 3では「戻る」ボタンと「次へ」ボタンが両方表示される', async () => {
+        // Arrange
+        const user = userEvent.setup();
+        render(<SettingsPanel />);
+
+        // Act: Step 1 → Step 3
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+
+        // Assert
+        expect(screen.getByRole('button', { name: '前のステップに戻る' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: '次のステップへ進む' })).toBeInTheDocument();
+      });
+
+      test('Step 4では「戻る」ボタンと「練習を開始」ボタンが表示される', async () => {
+        // Arrange
+        const user = userEvent.setup();
+        render(<SettingsPanel />);
+
+        // Act: Step 1 → Step 3 → Step 4
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+
+        // Assert
+        expect(screen.getByRole('button', { name: '前のステップに戻る' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: '練習を開始' })).toBeInTheDocument();
+        expect(
+          screen.queryByRole('button', { name: '次のステップへ進む' })
+        ).not.toBeInTheDocument();
+      });
+    });
+
+    describe('スナップショットテスト', () => {
+      test('基礎練習モードのStep 1の見た目が一致する', () => {
+        // Arrange & Act
+        const { container } = render(<SettingsPanel />);
+
+        // Assert
+        expect(container).toMatchSnapshot();
+      });
+
+      test('基礎練習モードのStep 3（Step 2スキップ後）の見た目が一致する', async () => {
+        // Arrange
+        const user = userEvent.setup();
+        const { container } = render(<SettingsPanel />);
+
+        // Act: Step 1 → Step 3
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+
+        // Assert
+        expect(container).toMatchSnapshot();
+      });
+
+      test('基礎練習モードのStep 4の見た目が一致する', async () => {
+        // Arrange
+        const user = userEvent.setup();
+        const { container } = render(<SettingsPanel />);
+
+        // Act: Step 1 → Step 3 → Step 4
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+
+        // Assert
+        expect(container).toMatchSnapshot();
+      });
+    });
+  });
+
+  describe('非基礎練習モード（通常動作）', () => {
+    /**
+     * 非基礎練習モード（preset-basic以外）では、
+     * 全てのステップ（Step 1 → Step 2 → Step 3 → Step 4）を通常通り遷移します。
+     */
+
+    beforeEach(async () => {
+      // 非基礎練習モードの設定でストアをモック（beforeEachで既に設定されているが、明示的に再定義）
+      const { useGameStore } = await import('../../stores/gameStore');
+      vi.mocked(useGameStore).mockImplementation((selector) =>
+        selector({
+          startPractice: mockStartPractice,
+          goToDebugScreen: mockGoToDebugScreen,
+          config: {
+            configId: 'preset-player', // 非基礎練習モード
+            configName: 'プレイヤー練習',
+            throwUnit: 3,
+            questionType: 'score',
+            judgmentTiming: 'independent',
+            startingScore: 501,
+            stdDevMM: 15,
+            isPreset: true,
+            createdAt: '2025-01-01T00:00:00.000Z',
+          },
+        } as never)
+      );
+    });
+
+    describe('通常のステップ遷移', () => {
+      test('Step 1 → Step 2 → Step 3 → Step 4 の順序で遷移する', async () => {
+        // Arrange
+        const user = userEvent.setup();
+        render(<SettingsPanel />);
+
+        // Assert: 初期状態（Step 1）
+        expect(screen.getByTestId('step1-preset')).toBeInTheDocument();
+
+        // Act & Assert: Step 1 → Step 2
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+        expect(screen.getByTestId('step2-difficulty')).toBeInTheDocument();
+
+        // Act & Assert: Step 2 → Step 3
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+        expect(screen.getByTestId('step3-session')).toBeInTheDocument();
+
+        // Act & Assert: Step 3 → Step 4
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+        expect(screen.getByTestId('step4-confirm')).toBeInTheDocument();
+      });
+
+      test('Step 4 → Step 3 → Step 2 → Step 1 の順序で戻る', async () => {
+        // Arrange
+        const user = userEvent.setup();
+        render(<SettingsPanel />);
+
+        // Step 4まで進める
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+        expect(screen.getByTestId('step4-confirm')).toBeInTheDocument();
+
+        // Act & Assert: Step 4 → Step 3
+        await user.click(screen.getByRole('button', { name: '前のステップに戻る' }));
+        expect(screen.getByTestId('step3-session')).toBeInTheDocument();
+
+        // Act & Assert: Step 3 → Step 2
+        await user.click(screen.getByRole('button', { name: '前のステップに戻る' }));
+        expect(screen.getByTestId('step2-difficulty')).toBeInTheDocument();
+
+        // Act & Assert: Step 2 → Step 1
+        await user.click(screen.getByRole('button', { name: '前のステップに戻る' }));
+        expect(screen.getByTestId('step1-preset')).toBeInTheDocument();
+      });
+    });
+
+    describe('進捗インジケーターの表示', () => {
+      test('非基礎練習モードでは、Step 2がスキップクラスを持たない', () => {
+        // Arrange & Act
+        render(<SettingsPanel />);
+
+        // Assert: Step 2はpendingクラスを持ち、skippedクラスを持たない
+        const step2 = screen.getByTestId('progress-step-2');
+        expect(step2).toHaveClass('setup-wizard__progress-step--pending');
+        expect(step2).not.toHaveClass('setup-wizard__progress-step--skipped');
+      });
+
+      test('Step 2がアクティブ状態になる', async () => {
+        // Arrange
+        const user = userEvent.setup();
+        render(<SettingsPanel />);
+
+        // Act: Step 1 → Step 2
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+
+        // Assert: Step 2がアクティブ
+        expect(screen.getByTestId('progress-step-2')).toHaveClass(
+          'setup-wizard__progress-step--active'
+        );
+        expect(screen.getByTestId('progress-step-2')).not.toHaveClass(
+          'setup-wizard__progress-step--skipped'
+        );
+      });
+
+      test('Step 2を通過後は完了状態になる', async () => {
+        // Arrange
+        const user = userEvent.setup();
+        render(<SettingsPanel />);
+
+        // Act: Step 1 → Step 2 → Step 3
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+
+        // Assert: Step 2が完了状態
+        expect(screen.getByTestId('progress-step-2')).toHaveClass(
+          'setup-wizard__progress-step--completed'
+        );
+        expect(screen.getByTestId('progress-step-2')).not.toHaveClass(
+          'setup-wizard__progress-step--skipped'
+        );
+      });
+    });
+
+    describe('スナップショットテスト', () => {
+      test('非基礎練習モードのStep 2の見た目が一致する', async () => {
+        // Arrange
+        const user = userEvent.setup();
+        const { container } = render(<SettingsPanel />);
+
+        // Act: Step 1 → Step 2
+        await user.click(screen.getByRole('button', { name: '次のステップへ進む' }));
+
+        // Assert
+        expect(container).toMatchSnapshot();
+      });
     });
   });
 });

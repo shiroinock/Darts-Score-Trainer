@@ -8,37 +8,6 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 
 ### 9.2 UI/UX改善（着手すべき項目）
 
-#### 9.2.7 基礎練習の難易度選択スキップ
-- [ ] `src/components/Settings/SettingsPanel.tsx` を修正
-  - 基礎練習選択時、Step 2（難易度選択）をスキップ
-  - Step 1 → Step 3 へ直接遷移
-  - Step 3 → Step 1 へ戻る際もスキップ
-  - 進捗インジケーターでStep 2をグレーアウト表示
-- [ ] ナビゲーションロジックの修正:
-  ```typescript
-  const isBasicMode = config.configId === DEFAULT_PRESET_ID;
-
-  const handleNext = (): void => {
-    let nextStep: WizardStep;
-    if (currentStep === 1 && isBasicMode) {
-      nextStep = 3; // Skip Step 2
-    } else {
-      nextStep = Math.min(currentStep + 1, 4) as WizardStep;
-    }
-    changeStep(nextStep);
-  };
-  ```
-- [ ] CSS追加:
-  ```css
-  .setup-wizard__progress-step--skipped {
-    opacity: 0.3;
-    background-color: var(--color-bg-gray-light);
-  }
-  ```
-- [ ] 基礎練習選択時、Step 2がスキップされることを確認
-
-**リスク:** 中（ウィザードナビゲーションの複雑化）
-
 #### 9.2.8 3投累積時のズームビュー3つ横並び表示
 - [ ] 新規コンポーネント `src/components/DartBoard/ZoomViewMultiple.tsx` を作成
   - 3つの独立した `SingleZoom` コンポーネントを実装

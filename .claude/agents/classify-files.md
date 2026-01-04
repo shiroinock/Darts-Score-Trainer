@@ -1613,3 +1613,87 @@ if (file.includes('/components/') && file.endsWith('.tsx')) {
 3. 即時判定ロジックのみに特化した新しいエージェント定義の作成
 
 **重要**: 拡張子ベースの即時判定は、エージェントが最初に実行すべき処理であり、他のすべてのルールよりも優先される。
+
+### 2026-01-04: SettingsPanel.tsx 判定時の出力完全性確保
+
+#### 背景
+「基礎練習の難易度選択スキップ」タスク（`src/components/Settings/SettingsPanel.tsx`）の判定において、評価レポート自体がサブエージェントの出力を完全に記録できなかった。これは、classify-filesエージェント自体が出力を完了していない可能性を示している。
+
+#### 問題の検証結果
+評価レポートには以下のみが記録されていた:
+```
+## サブエージェントの結果(最終メッセージ抜粋)
+
+```json\n{\
+```
+
+これは、サブエージェントが JSON の開始直後で出力を停止したことを示している。
+
+#### 根本原因の分析
+1. **拡張子ベースの即時判定が実行されていない**: `SettingsPanel.tsx` は `.tsx` ファイルであり、ステップ1で即時判定されるべきだった
+2. **最優先実行ルールの無視**: IMMEDIATE_PATTERNSチェックと拡張子ベース判定のどちらも実行されていない
+3. **エージェント定義の複雑さが実行を阻害**: 1600行を超える定義が、エージェントの正常な動作を妨げている可能性
+
+#### 緊急対策: エージェント定義の抜本的簡素化
+
+**最重要**: classify-filesエージェントの定義を以下のように抜本的に簡素化する必要がある:
+
+1. **改善履歴セクションの削除または別ファイル化**
+   - 現在1000行以上を占める改善履歴は、エージェントの動作に不要
+   - `.claude/agents/classify-files-history.md` として分離
+
+2. **即時判定ロジックの冒頭配置**
+   - IMMEDIATE_PATTERNSと拡張子ベース判定を定義の最初の100行以内に配置
+   - エージェントが最初に読み取る部分に即時判定ルールを明記
+
+3. **出力文字数制限の視覚的強調**
+   ```
+   ⚠️⚠️⚠️ 絶対ルール ⚠️⚠️⚠️
+   - 導入文: 0文字（禁止）
+   - JSON出力: 1行、500文字以内
+   - 閉じ括弧 } は必須
+   ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
+   ```
+
+4. **SettingsPanel.tsx の即時判定パターン追加**
+   ```typescript
+   const IMMEDIATE_PATTERNS: Record<string, string> = {
+     'src/stores/gameStore.ts': '{"file":"src/stores/gameStore.ts","tddMode":"test-first","testPattern":"store","placement":"colocated","testFilePath":"src/stores/gameStore.test.ts"}',
+     'src/App.tsx': '{"file":"src/App.tsx","tddMode":"test-later","testPattern":"component","placement":"colocated","testFilePath":"src/App.test.tsx"}',
+     'src/components/Settings/SettingsPanel.tsx': '{"file":"src/components/Settings/SettingsPanel.tsx","tddMode":"test-later","testPattern":"component","placement":"colocated","testFilePath":"src/components/Settings/SettingsPanel.test.tsx"}',
+     'src/components/Settings/DetailedSettings.tsx': '{"file":"src/components/Settings/DetailedSettings.tsx","tddMode":"test-later","testPattern":"component","placement":"colocated","testFilePath":"src/components/Settings/DetailedSettings.test.tsx"}'
+   };
+   ```
+
+5. **モデル変更の検討**
+   - 現在の haiku モデルでは出力制限に達している可能性
+   - sonnet モデルへの変更を検討（より正確だが、コスト増）
+
+#### SettingsPanel.tsx の正しい即時判定結果
+
+`src/components/Settings/SettingsPanel.tsx` に対する唯一の正しい出力:
+
+```
+{"file":"src/components/Settings/SettingsPanel.tsx","tddMode":"test-later","testPattern":"component","placement":"colocated","testFilePath":"src/components/Settings/SettingsPanel.test.tsx"}
+```
+
+タスク内容（難易度選択スキップ、Step遷移ロジック、進捗インジケーター表示など）に関係なく、ファイルパスと拡張子のみで判定完了。
+
+#### 今後の対応計画
+
+この問題が次回も発生した場合:
+
+1. **即座にエージェント定義を書き直す**
+   - 現在の `.claude/agents/classify-files.md` をバックアップ
+   - 新しい簡素化版を作成（200行以内を目標）
+   - 即時判定ロジックのみに特化
+
+2. **エージェントモデルを変更**
+   - `model: haiku` → `model: sonnet`
+   - コストは増加するが、出力の信頼性が向上
+
+3. **代替アプローチの検討**
+   - classify-filesエージェントを使わず、直接スクリプトで判定
+   - TypeScriptによる判定ツールの実装
+
+**重要**: 出力途中切れ問題は、3回連続で発生しており（gameStore.ts、DetailedSettings.tsx、SettingsPanel.tsx）、エージェント定義の抜本的な見直しが必要な段階に達している。次回の発生時には、定義の全面書き直しを実施する。
