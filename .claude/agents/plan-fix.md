@@ -253,8 +253,8 @@ model: opus
      test:
        steps:
          - biome check
-         - npm test
-         - npm build
+         - pnpm test
+         - pnpm build
    
    # 修正後: 責務ごとに分割
    jobs:
@@ -535,10 +535,10 @@ const toleranceRatio = 0.1; // 10%の誤差を許容
       "issue": "単一ジョブで全てのチェックを実行しており、失敗原因の特定が困難",
       "fix_instruction": "ジョブを lint, test, build の3つに分割。各ジョブに明確な責務を持たせ、needs で依存関係を定義。Node.js依存関係のキャッシュを各ジョブで共有。",
       "code_example": {
-        "before": "jobs:\n  test:\n    steps:\n      - biome check\n      - npm test\n      - npm build",
-        "after": "jobs:\n  lint:\n    name: 'Lint (Biome)'\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 20\n          cache: 'npm'\n      - run: npm ci\n      - run: npm run biome:check\n\n  test:\n    name: 'Test'\n    needs: lint\n    runs-on: ubuntu-latest\n    # 以下略"
+        "before": "jobs:\n  test:\n    steps:\n      - biome check\n      - pnpm test\n      - ppnpm build",
+        "after": "jobs:\n  lint:\n    name: 'Lint (Biome)'\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 20\n          cache: 'pnpm'\n      - run: pnpm install --frozen-lockfile\n      - run: pnpm run biome:check\n\n  test:\n    name: 'Test'\n    needs: lint\n    runs-on: ubuntu-latest\n    # 以下略"
       },
-      "dependencies": ["npm キャッシュの設定", "ジョブ間の依存関係"],
+      "dependencies": ["pnpm キャッシュの設定", "ジョブ間の依存関係"],
       "impact": "CI実行時間は若干増加するが、問題の特定が容易になる"
     }
   ],
@@ -1091,7 +1091,7 @@ Biomeやその他のリンターによるフォーマットエラーは、**最�
 
 2. **スナップショット不一致の特殊処理**
    - スナップショット問題は「テストの期待値更新」として扱う
-   - `npm test -- -u` で自動更新可能なため、修正指示は簡潔にする
+   - `pnpm test -- -u` で自動更新可能なため、修正指示は簡潔にする
    - ファイル読み取りは必要最小限に
 
 3. **JSON出力の事前構築**
@@ -1111,7 +1111,7 @@ Biomeやその他のリンターによるフォーマットエラーは、**最�
       "file": "src/components/Settings/PresetSelector.test.tsx",
       "line": "該当テスト行",
       "issue": "スナップショット不一致: コーラー基礎の説明文更新による差分",
-      "fix_instruction": "npm test -- -u でスナップショットを更新。変更内容が意図通りか確認後、更新されたスナップショットをコミット。",
+      "fix_instruction": "pnpm test -- -u でスナップショットを更新。変更内容が意図通りか確認後、更新されたスナップショットをコミット。",
       "code_example": {
         "before": "// 古いスナップショット",
         "after": "// 新しいスナップショット（descriptionフィールドの更新を反映）"
@@ -1354,7 +1354,7 @@ TypeScript Build (3 errors)
   "unfixable_issues": [
     {
       "issue": "Biome check errors",
-      "reason": "npm run check:fix で自動修正可能なため、手動修正不要"
+      "reason": "pnpm run check:fix で自動修正可能なため、手動修正不要"
     }
   ],
   "new_files": [],

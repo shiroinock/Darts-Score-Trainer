@@ -24,17 +24,17 @@ description: remote CI (GitHub Actions) 相当のチェックをローカルで�
 以下の3つのチェックを**並列**実行します：
 
 ### 1. Biome Check
-- **コマンド**: `npm run check`
+- **コマンド**: `pnpm run check`
 - **目的**: コードスタイル、リント、フォーマットのチェック
-- **失敗時の対応**: エラー内容を表示し、`npm run check:fix`で自動修正可能な旨を伝える
+- **失敗時の対応**: エラー内容を表示し、`pnpm run check:fix`で自動修正可能な旨を伝える
 
 ### 2. Test
-- **コマンド**: `npm run test:run`
+- **コマンド**: `pnpm run test:run`
 - **目的**: 全テストスイートの実行
 - **失敗時の対応**: テストエラーを表示
 
 ### 3. Build
-- **コマンド**: `npm run build`
+- **コマンド**: `pnpm run build`
 - **目的**: TypeScriptコンパイル + Viteビルド
 - **失敗時の対応**: 型エラーやビルドエラーを表示
 
@@ -46,7 +46,7 @@ description: remote CI (GitHub Actions) 相当のチェックをローカルで�
 ### remote CI (GitHub Actions) との違い
 
 **含まれていないチェック**:
-- **Security Audit** (`npm audit`, `secretlint`)
+- **Security Audit** (`pnpm audit`, `secretlint`)
   - **除外理由**:
     - セキュリティチェックは依存関係の脆弱性を検出するため、コード変更のたびに実行する必要性は低い
     - 実行時間は通常30秒以内と高速だが、頻繁に実行する価値は低い
@@ -56,8 +56,8 @@ description: remote CI (GitHub Actions) 相当のチェックをローカルで�
     - security-audit ジョブとして独立して実行され、失敗時は PR マージがブロックされます
   - **ローカルでの手動実行**（必要に応じて）:
     ```bash
-    npm audit --audit-level=moderate
-    npm run secretlint
+    pnpm audit --audit-level=moderate
+    pnpm run secretlint
     ```
 
 **設計方針**:
@@ -85,17 +85,17 @@ local-ci-checker サブエージェントは、さらに**3つの専用サブエ
 
 1. **biome-check** (`.claude/agents/biome-check.md`)
    - 役割: Biome check を実行
-   - コマンド: `npm run check`
+   - コマンド: `pnpm run check`
    - タイムアウト: 2分
 
 2. **test-check** (`.claude/agents/test-check.md`)
    - 役割: テストを実行
-   - コマンド: `npm run test:run`
+   - コマンド: `pnpm run test:run`
    - タイムアウト: 5分
 
 3. **build-check** (`.claude/agents/build-check.md`)
    - 役割: ビルドを実行
-   - コマンド: `npm run build`
+   - コマンド: `pnpm run build`
    - タイムアウト: 3分
 
 **重要**: これらはBashコマンドを直接実行するのではなく、**個別のエージェント定義ファイル**として存在します。各エージェントは構造化されたJSON形式で結果を返します。
@@ -145,7 +145,7 @@ Fix the issues above and re-run the checks.
 
 - 各チェックは並列実行されるため、すべてのチェックが完了するまで待つ
 - 失敗したチェックがある場合、全ての失敗内容を一度に表示する
-- Biome checkが失敗した場合は`npm run check:fix`で自動修正可能な旨を伝える
+- Biome checkが失敗した場合は`pnpm run check:fix`で自動修正可能な旨を伝える
 - 複数のチェックが失敗した場合、全ての修正方法をまとめて提示する
 
 ### 並列実行の再実行コスト
@@ -153,7 +153,7 @@ Fix the issues above and re-run the checks.
 **部分的失敗時の修正フロー**:
 1. 失敗したチェックのエラーを全て確認
 2. 全ての問題を修正
-3. `npm run check`、`npm run test:run`、`npm run build`を再度並列実行
+3. `pnpm run check`、`pnpm run test:run`、`pnpm run build`を再度並列実行
 
 **コスト比較**（典型的な実行時間）:
 - **逐次実行（従来）**: Biome失敗 → 修正 → Biome実行（10秒）→ Test実行（2分）→ Build実行（1分） = 合計 3分10秒
@@ -226,7 +226,7 @@ Fix the issues above and re-run the checks.
 - remote CI と完全に同じ環境ではないため、local CI で成功しても remote CI で失敗する可能性はある
 - ただし、ほとんどの問題は事前に検出できる
 - 実行時間は環境によって異なるが、通常3-5分程度
-- `npm ci` は実行しない（依存関係は既にインストール済みと仮定）
+- `pnpm install --frozen-lockfile` は実行しない（依存関係は既にインストール済みと仮定）
 
 ## 使い方
 

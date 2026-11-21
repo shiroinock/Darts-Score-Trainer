@@ -9,6 +9,7 @@
       "Bash(apt-get install:*)",
       "Bash(yum install:*)",
       "Bash(npm install -g:*)",
+      "Bash(pnpm add -g:*)",
       "Bash(chmod 777:*)",
       "Bash(chmod -R 777:*)",
       "Bash(chown:*)",

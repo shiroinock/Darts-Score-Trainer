@@ -19,7 +19,7 @@ high
 ## チェックコマンド
 ```bash
 # TypeScriptコンパイルチェック
-npx tsc --noEmit
+pnpm exec tsc --noEmit
 
 # any型の検索
 grep -r "any" src/ --include="*.ts" --include="*.tsx"

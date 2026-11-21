@@ -37,13 +37,13 @@ COMPLETE_SPECIFICATION.md に基づく実装計画です。
 ## Phase 10: デプロイ
 
 ### 10.1 ビルド確認
-- [ ] `npm run build` でエラーなくビルド
-- [ ] `npm run preview` でローカル確認
+- [ ] `pnpm run build` でエラーなくビルド
+- [ ] `pnpm run preview` でローカル確認
 - [ ] TypeScriptエラーがないこと確認
 
 ### 10.2 GitHub Pages設定
 - [ ] リポジトリ Settings → Pages で gh-pages ブランチを設定
-- [ ] `npm run deploy` で初回デプロイ
+- [ ] `pnpm run deploy` で初回デプロイ
 - [ ] デプロイされたURLで動作確認
 
 ### 10.3 最終確認

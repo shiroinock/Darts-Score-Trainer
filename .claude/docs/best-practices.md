@@ -502,7 +502,7 @@ cat .claude/reports/test-writer/evaluation_*.md
 
 ```bash
 # カバレッジレポートを生成
-npm test -- --coverage
+pnpm test -- --coverage
 
 # カバレッジを確認
 cat coverage/coverage-summary.json

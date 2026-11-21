@@ -24,9 +24,9 @@ TDD パイプライン完了後、PR作成前に**ローカルマシン上**で 
 
 `.claude/skills/local-ci/SKILL.md` の手順に従い、以下の3つのチェックを**並列**実行します：
 
-1. **Biome Check** (`npm run check`) - タイムアウト: 2分
-2. **Test** (`npm run test:run`) - タイムアウト: 5分
-3. **Build** (`npm run build`) - タイムアウト: 3分
+1. **Biome Check** (`pnpm run check`) - タイムアウト: 2分
+2. **Test** (`pnpm run test:run`) - タイムアウト: 5分
+3. **Build** (`pnpm run build`) - タイムアウト: 3分
 
 ## タイムアウト設定
 
@@ -57,8 +57,8 @@ TDD パイプライン完了後、PR作成前に**ローカルマシン上**で 
    - External service timeout (if tests depend on external APIs)
 
    Debugging steps:
-   1. Run tests locally: npm run test:run
-   2. Check for slow tests: npm run test:run -- --reporter=verbose
+   1. Run tests locally: pnpm run test:run
+   2. Check for slow tests: pnpm run test:run -- --reporter=verbose
    3. Increase timeout if necessary (in .claude/agents/local-ci-checker.md)
    ```
 
@@ -103,10 +103,10 @@ TDD パイプライン完了後、PR作成前に**ローカルマシン上**で 
 1. **パフォーマンス分析**
    ```bash
    # テストの実行時間を詳細に確認
-   npm run test:run -- --reporter=verbose
+   pnpm run test:run -- --reporter=verbose
 
    # 遅いテストを特定
-   npm run test:run -- --reporter=verbose | grep -E "SLOW|[0-9]{4,}ms"
+   pnpm run test:run -- --reporter=verbose | grep -E "SLOW|[0-9]{4,}ms"
    ```
 
 2. **テストの最適化**
@@ -123,9 +123,9 @@ TDD パイプライン完了後、PR作成前に**ローカルマシン上**で 
 
 1. **現在の実行時間を測定**
    ```bash
-   time npm run check      # Biome check
-   time npm run test:run   # Test
-   time npm run build      # Build
+   time pnpm run check      # Biome check
+   time pnpm run test:run   # Test
+   time pnpm run build      # Build
    ```
 
 2. **タイムアウト値を計算**
@@ -139,7 +139,7 @@ TDD パイプライン完了後、PR作成前に**ローカルマシン上**で 
      "subagent_type": "test-check",
      "model": "haiku",
      "description": "Run tests",
-     "prompt": "npm run test:run を実行し、結果を報告してください。",
+     "prompt": "pnpm run test:run を実行し、結果を報告してください。",
      "timeout": 540000  // 9分（540秒）← ここを変更
    })
    ```
@@ -155,9 +155,9 @@ TDD パイプライン完了後、PR作成前に**ローカルマシン上**で 
 1. **複数回実行して確認**
    ```bash
    # 3回実行してタイムアウトが発生しないことを確認
-   npm run test:run
-   npm run test:run
-   npm run test:run
+   pnpm run test:run
+   pnpm run test:run
+   pnpm run test:run
    ```
 
 2. **CI でも確認**
@@ -204,17 +204,17 @@ TDD パイプライン完了後、PR作成前に**ローカルマシン上**で 
 
 1. **biome-check** (`.claude/agents/biome-check.md`)
    - 役割: Biome check を実行し、構造化されたJSON形式で結果を返す
-   - コマンド: `npm run check`
+   - コマンド: `pnpm run check`
    - タイムアウト: 2分
 
 2. **test-check** (`.claude/agents/test-check.md`)
    - 役割: テストを実行し、構造化されたJSON形式で結果を返す
-   - コマンド: `npm run test:run`
+   - コマンド: `pnpm run test:run`
    - タイムアウト: 5分
 
 3. **build-check** (`.claude/agents/build-check.md`)
    - 役割: ビルドを実行し、構造化されたJSON形式で結果を返す
-   - コマンド: `npm run build`
+   - コマンド: `pnpm run build`
    - タイムアウト: 3分
 
 **重要**: これらはBashコマンドを直接実行するのではなく、**個別のエージェント定義ファイル**（`.claude/agents/`配下）として存在します。各エージェントの詳細な仕様は各mdファイルを参照してください。
@@ -236,7 +236,7 @@ Task({
   "subagent_type": "biome-check",
   "model": "haiku",
   "description": "Run Biome check",
-  "prompt": "npm run check を実行し、結果を報告してください。",
+  "prompt": "pnpm run check を実行し、結果を報告してください。",
   "timeout": 120000  // 2分（120秒）
 })
 ```
@@ -246,7 +246,7 @@ Task({
   "subagent_type": "test-check",
   "model": "haiku",
   "description": "Run tests",
-  "prompt": "npm run test:run を実行し、結果を報告してください。",
+  "prompt": "pnpm run test:run を実行し、結果を報告してください。",
   "timeout": 300000  // 5分（300秒）
 })
 ```
@@ -256,7 +256,7 @@ Task({
   "subagent_type": "build-check",
   "model": "haiku",
   "description": "Run build",
-  "prompt": "npm run build を実行し、結果を報告してください。",
+  "prompt": "pnpm run build を実行し、結果を報告してください。",
   "timeout": 180000  // 3分（180秒）
 })
 ```
@@ -401,7 +401,7 @@ Fix the issues above and re-run the checks.
 
 1. **biome-check失敗**:
    - エラー内容を表示
-   - `npm run check:fix` で自動修正可能な旨を伝える
+   - `pnpm run check:fix` で自動修正可能な旨を伝える
 
 2. **test-check失敗**:
    - テストエラーを表示
@@ -657,7 +657,7 @@ Fix the issues above and re-run the checks.
 - **3つのサブエージェントを必ず並列実行する**（単一メッセージで3つのTaskツール呼び出し）
 - 全てのサブエージェントの完了を待ってからサマリーを表示する
 - 複数のチェックが失敗した場合、全ての問題を一度に確認できる
-- `npm ci` は実行しない（依存関係は既にインストール済みと仮定）
+- `pnpm install --frozen-lockfile` は実行しない（依存関係は既にインストール済みと仮定）
 
 ## 親エージェントへの要求事項（2026-01-01追加）
 
@@ -677,9 +677,9 @@ TDDパイプラインが完了しました。local-ci スキルに従って、Bi
 修正後のコードがすべてのCIチェックを通過することを確認してください。
 
 実行すべきコマンド:
-1. npx biome check .
-2. npm run test:run
-3. npm run build
+1. pnpm exec biome check .
+2. pnpm run test:run
+3. pnpm run build
 ```
 
 ### 問題点
@@ -713,7 +713,7 @@ Task({
 
 2. **コードの自動修正は絶対に行わない**（2025-12-31追加、2026-01-01強化）
    - このエージェントは**検出のみ**を行います
-   - Biome check が失敗しても `npm run check:fix` を**実行しないでください**
+   - Biome check が失敗しても `pnpm run check:fix` を**実行しないでください**
    - 複雑性エラー（cognitive complexity）が検出されても**リファクタリングしないでください**
    - コードの修正、コミット、プッシュは**全て禁止**です
    - 問題を検出したら、**報告のみ**を行い、修正はユーザーに任せてください
@@ -764,7 +764,7 @@ TDDパイプラインが完了しました。local-ci スキルに従って、Bi
 
 - 失敗したステップ（Biome/Test/Build）を記録
 - エラー内容をユーザーに報告
-- 修正方法の提案（Biomeの場合は `npm run check:fix`）
+- 修正方法の提案（Biomeの場合は `pnpm run check:fix`）
 
 ## トラブルシューティング
 
@@ -798,7 +798,7 @@ PresetSelector.tsxのCSS分離が完了しました。local-ci スキルに従�
 
 2. **具体的なコマンド指定**
    ```
-   npm run check、npm run test:run、npm run build を実行し、
+   pnpm run check、pnpm run test:run、pnpm run build を実行し、
    全てのチェックが成功することを確認してください。
    ```
 
@@ -921,7 +921,7 @@ local-ci スキルで定義された3つのチェック（Biome check、テス�
    - 例:
      ```
      Suggested Actions:
-     - For timeout issues: Run tests individually with `npm test -- src/components/Practice/NumPad.test.tsx`
+     - For timeout issues: Run tests individually with `pnpm test -- src/components/Practice/NumPad.test.tsx`
      - For ResizeObserver errors: Add ResizeObserver mock in test setup
      ```
 
@@ -958,9 +958,9 @@ local-ci スキルで定義された3つのチェック（Biome check、テス�
    ```
    推奨アクション:
    - 個別にテストを実行して問題を特定: 
-     npm test -- src/components/Practice/NumPad.test.tsx
+     pnpm test -- src/components/Practice/NumPad.test.tsx
    - タイムアウト値を増やす（一時的な対処）:
-     npm test -- --testTimeout=10000
+     pnpm test -- --testTimeout=10000
    - テストの非同期処理を確認
    ```
 
@@ -978,7 +978,7 @@ local-ci スキルで定義された3つのチェック（Biome check、テス�
      
      1. **Biome format (高優先度)** - 自動修正可能
         ```bash
-        npm run check:fix
+        pnpm run check:fix
         ```
      
      2. **ResizeObserver テストエラー (高優先度)** - DartBoard.test.tsxでのモック設定が不十分
@@ -1137,7 +1137,7 @@ local-ci スキルで定義された3つのチェック（Biome check、テス�
 
      1. **Biomeフォーマットエラー（自動修正可能）**
         ```bash
-        npm run check:fix
+        pnpm run check:fix
         ```
 
      2. **TypeScript型エラー（手動修正必要）**
@@ -1158,7 +1158,7 @@ local-ci スキルで定義された3つのチェック（Biome check、テス�
      **Biome check: ❌ FAILED**
 
      - ✅ 自動修正可能: 1件（フォーマット違反）
-       → `npm run check:fix` で修正可能
+       → `pnpm run check:fix` で修正可能
 
      - ⚠️ 手動修正必要: 1件（複雑性超過）
        → `simulateNextThrow`メソッドのリファクタリングが必要
@@ -1254,12 +1254,12 @@ Local CI Checks Complete
 
 1. **Fix Biome format errors (required)**
    ```bash
-   npm run check:fix
+   pnpm run check:fix
    ```
 
 2. **Verify fixes**
    ```bash
-   npm run check
+   pnpm run check
    ```
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1389,7 +1389,7 @@ Local CI Checks Complete
 
 1. **最優先の修正項目（具体的なコマンドを含む）**
    ```bash
-   npm run check:fix
+   pnpm run check:fix
    ```
 
 2. **次の修正項目**
@@ -1401,9 +1401,9 @@ Local CI Checks Complete
 
 （詳細な出力は省略されました。個別に以下のコマンドを実行して確認してください）
 
-- Biome: `npm run check`
-- Tests: `npm run test:run`
-- Build: `npm run build`
+- Biome: `pnpm run check`
+- Tests: `pnpm run test:run`
+- Build: `pnpm run build`
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
@@ -1441,7 +1441,7 @@ Local CI Checks Complete
 1. **サブエージェントの責務は「検出のみ」**
    - Biome check、Test、Build を実行し、**結果を報告するだけ**
    - エラーが検出されても、**絶対に修正しない**
-   - `npm run check:fix` などの自動修正コマンドを**実行しない**
+   - `pnpm run check:fix` などの自動修正コマンドを**実行しない**
    - ファイルの編集、コミット、プッシュは**全て禁止**
 
 2. **失敗時の正しい動作**
@@ -1450,7 +1450,7 @@ Local CI Checks Complete
    - ユーザーに次のステップを示す（ユーザーが手動で実行する前提）
 
 3. **禁止されている行動**
-   - ❌ `npm run check:fix` の実行
+   - ❌ `pnpm run check:fix` の実行
    - ❌ ファイルの編集（Edit ツールの使用）
    - ❌ コードの自動フォーマット
    - ❌ コミットの作成
@@ -1458,9 +1458,9 @@ Local CI Checks Complete
    - ❌ どのような形式のコード修正も禁止
 
 4. **許可されている行動**
-   - ✅ `npm run check` の実行
-   - ✅ `npm run test:run` の実行
-   - ✅ `npm run build` の実行
+   - ✅ `pnpm run check` の実行
+   - ✅ `pnpm run test:run` の実行
+   - ✅ `pnpm run build` の実行
    - ✅ エラーの検出と報告
    - ✅ 修正方法の提案（実行は禁止）
 
@@ -1483,14 +1483,14 @@ Local CI Checks Complete
 
 1. **Fix Biome format errors (required)**
    ```bash
-   npm run check:fix
+   pnpm run check:fix
    ```
 
    [注意] このコマンドは**ユーザーが手動で実行**してください。
 
 2. **Verify fixes**
    ```bash
-   npm run check
+   pnpm run check
    ```
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1517,7 +1517,7 @@ Local CI Checks Complete
 
 ```
 重要: コードの自動修正は絶対に禁止です。
-- `npm run check:fix` などの修正コマンドを実行しないでください
+- `pnpm run check:fix` などの修正コマンドを実行しないでください
 - ファイルの編集は一切行わないでください
 - エラーを検出したら、報告のみを行ってください
 ```
@@ -1581,13 +1581,13 @@ Local CI Checks Complete
    - Timeout: 5000ms
 
    ```bash
-   npm test -- src/components/Practice/NumPad.test.tsx
+   pnpm test -- src/components/Practice/NumPad.test.tsx
    ```
 
 2. **Verify all checks pass**
 
    ```bash
-   npm run check && npm run test:run && npm run build
+   pnpm run check && pnpm run test:run && pnpm run build
    ```
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1635,7 +1635,7 @@ Local CI Checks Complete
    次のステップ:
    1. スナップショットを作成:
       ```bash
-      npm run test:run -- src/components/DartBoard/ZoomViewMultiple.test.tsx -u
+      pnpm run test:run -- src/components/DartBoard/ZoomViewMultiple.test.tsx -u
       ```
 
    2. 作成されたスナップショットを確認:
@@ -1664,12 +1664,12 @@ Local CI Checks Complete
    次のステップ:
    1. 差分を確認:
       ```bash
-      npm run test:run -- src/components/DartBoard/DartBoard.test.tsx --reporter=verbose
+      pnpm run test:run -- src/components/DartBoard/DartBoard.test.tsx --reporter=verbose
       ```
 
    2. 変更が意図的な場合、スナップショットを更新:
       ```bash
-      npm run test:run -- src/components/DartBoard/DartBoard.test.tsx -u
+      pnpm run test:run -- src/components/DartBoard/DartBoard.test.tsx -u
       ```
    ```
 
@@ -1699,7 +1699,7 @@ Local CI Checks Complete
    新規コンポーネント `ZoomViewMultiple` のスナップショットを作成してください:
 
    ```bash
-   npm run test:run -- src/components/DartBoard/ZoomViewMultiple.test.tsx -u
+   pnpm run test:run -- src/components/DartBoard/ZoomViewMultiple.test.tsx -u
    ```
 
 2. **Verify snapshots**

@@ -1680,7 +1680,7 @@ interface PracticeStats {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "predeploy": "npm run build",
+    "predeploy": "pnpm run build",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
@@ -1887,7 +1887,7 @@ git push -u origin main
 ### 2. GitHub Pagesにデプロイ
 
 ```bash
-npm run deploy
+pnpm run deploy
 ```
 
 ### 3. 設定確認
