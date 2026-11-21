@@ -58,7 +58,7 @@ TDD パイプライン完了後、PR作成前に**ローカルマシン上**で 
 
    Debugging steps:
    1. Run tests locally: pnpm run test:run
-   2. Check for slow tests: pnpm run test:run -- --reporter=verbose
+   2. Check for slow tests: pnpm run test:run --reporter=verbose
    3. Increase timeout if necessary (in .claude/agents/local-ci-checker.md)
    ```
 
@@ -103,10 +103,10 @@ TDD パイプライン完了後、PR作成前に**ローカルマシン上**で 
 1. **パフォーマンス分析**
    ```bash
    # テストの実行時間を詳細に確認
-   pnpm run test:run -- --reporter=verbose
+   pnpm run test:run --reporter=verbose
 
    # 遅いテストを特定
-   pnpm run test:run -- --reporter=verbose | grep -E "SLOW|[0-9]{4,}ms"
+   pnpm run test:run --reporter=verbose | grep -E "SLOW|[0-9]{4,}ms"
    ```
 
 2. **テストの最適化**
@@ -537,7 +537,7 @@ JSONパースエラーが発生した場合、以下の対応を検討してく�
 
 ### ファイルシステムの競合
 以下の共有リソースへの同時アクセスは問題ありません：
-- **package-lock.json**: 読み取りのみ
+- **pnpm-lock.yaml**: 読み取りのみ
 - **node_modules**: インストール済み、読み取りのみ
 - **dist ディレクトリ**: Build のみが書き込み（他は読み取らない）
 
@@ -921,7 +921,7 @@ local-ci スキルで定義された3つのチェック（Biome check、テス�
    - 例:
      ```
      Suggested Actions:
-     - For timeout issues: Run tests individually with `pnpm test -- src/components/Practice/NumPad.test.tsx`
+     - For timeout issues: Run tests individually with `pnpm test src/components/Practice/NumPad.test.tsx`
      - For ResizeObserver errors: Add ResizeObserver mock in test setup
      ```
 
@@ -958,9 +958,9 @@ local-ci スキルで定義された3つのチェック（Biome check、テス�
    ```
    推奨アクション:
    - 個別にテストを実行して問題を特定: 
-     pnpm test -- src/components/Practice/NumPad.test.tsx
+     pnpm test src/components/Practice/NumPad.test.tsx
    - タイムアウト値を増やす（一時的な対処）:
-     pnpm test -- --testTimeout=10000
+     pnpm test --testTimeout=10000
    - テストの非同期処理を確認
    ```
 
@@ -1581,7 +1581,7 @@ Local CI Checks Complete
    - Timeout: 5000ms
 
    ```bash
-   pnpm test -- src/components/Practice/NumPad.test.tsx
+   pnpm test src/components/Practice/NumPad.test.tsx
    ```
 
 2. **Verify all checks pass**
@@ -1635,7 +1635,7 @@ Local CI Checks Complete
    次のステップ:
    1. スナップショットを作成:
       ```bash
-      pnpm run test:run -- src/components/DartBoard/ZoomViewMultiple.test.tsx -u
+      pnpm run test:run src/components/DartBoard/ZoomViewMultiple.test.tsx -u
       ```
 
    2. 作成されたスナップショットを確認:
@@ -1664,12 +1664,12 @@ Local CI Checks Complete
    次のステップ:
    1. 差分を確認:
       ```bash
-      pnpm run test:run -- src/components/DartBoard/DartBoard.test.tsx --reporter=verbose
+      pnpm run test:run src/components/DartBoard/DartBoard.test.tsx --reporter=verbose
       ```
 
    2. 変更が意図的な場合、スナップショットを更新:
       ```bash
-      pnpm run test:run -- src/components/DartBoard/DartBoard.test.tsx -u
+      pnpm run test:run src/components/DartBoard/DartBoard.test.tsx -u
       ```
    ```
 
@@ -1699,7 +1699,7 @@ Local CI Checks Complete
    新規コンポーネント `ZoomViewMultiple` のスナップショットを作成してください:
 
    ```bash
-   pnpm run test:run -- src/components/DartBoard/ZoomViewMultiple.test.tsx -u
+   pnpm run test:run src/components/DartBoard/ZoomViewMultiple.test.tsx -u
    ```
 
 2. **Verify snapshots**

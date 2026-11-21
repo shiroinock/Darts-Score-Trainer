@@ -142,7 +142,7 @@ export const useStore = create(/* ... */);
    ```
 
 3. **スナップショット更新**
-   - `pnpm run test:run -- --update` を使用
+   - `pnpm run test:run --update` を使用
    - 更新されたスナップショットの数を確認
    - 更新後にテストが成功することを確認
 
