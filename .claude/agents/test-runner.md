@@ -68,7 +68,7 @@ test-check: 全テストスイートを実行
 
 ## 責務
 
-1. **テスト実行**: `npm test` または `vitest run` でテストスイートを実行
+1. **テスト実行**: `pnpm test` または `vitest run` でテストスイートを実行
 2. **TDDサイクルの状態判定**: テスト結果から Red/Green/Partial 状態を判定し、期待する状態と比較
 3. **成功/失敗の判定**: 期待する状態と実際の状態の一致を判定（SUCCESS / FAILURE）
 4. **結果報告**: 成功/失敗数、エラーメッセージ、判定結果を親エージェントに報告
@@ -86,27 +86,27 @@ test-check: 全テストスイートを実行
 
 ### 全テスト実行
 ```bash
-npm test -- --run
+pnpm test --run
 ```
 
 ### 特定ファイルのみ実行
 ```bash
-npm test -- --run src/utils/scoreCalculator.test.ts
+pnpm test --run src/utils/scoreCalculator.test.ts
 ```
 
 **注意**: ファイル名のみでテストを実行する場合は、正確なパスを指定してください：
 ```bash
 # 正しい例
-npm test -- --run src/utils/validation.test.ts
-npm test -- --run ./src/utils/validation.test.ts
+pnpm test --run src/utils/validation.test.ts
+pnpm test --run ./src/utils/validation.test.ts
 
 # 間違った例（動作しない可能性）
-npm test -- validation.test.ts
+pnpm test validation.test.ts
 ```
 
 ### カバレッジ付き実行
 ```bash
-npm run test:coverage -- --run
+pnpm run test:coverage --run
 ```
 
 ## 状態判定ロジック
@@ -267,7 +267,7 @@ distance === 225 の場合の条件分岐を確認してください（`>` vs `>
 **目的**: テストが適切に失敗することを確認
 
 ```bash
-npm test -- --run
+pnpm test --run
 ```
 
 **期待する状態**: `RED_EXPECTED`
@@ -282,7 +282,7 @@ npm test -- --run
 **目的**: 実装によってテストが通ることを確認
 
 ```bash
-npm test -- --run
+pnpm test --run
 ```
 
 **期待する状態**: `GREEN_EXPECTED`
@@ -297,7 +297,7 @@ npm test -- --run
 **目的**: リファクタリング後もテストが通ることを確認
 
 ```bash
-npm test -- --run
+pnpm test --run
 ```
 
 **期待する状態**: `GREEN_EXPECTED`
@@ -362,7 +362,7 @@ npm test -- --run
 
 1. **Bash ツールでテスト実行**
    ```bash
-   npm test -- --run
+   pnpm test --run
    ```
 
 2. **出力のパース**
@@ -390,19 +390,19 @@ npm test -- --run
 長時間実行されるテストの場合、適切にタイムアウトを設定：
 
 ```bash
-npm test -- --run --testTimeout=10000
+pnpm test --run --testTimeout=10000
 ```
 
 ### Watch モードは使用しない
 
-このエージェントは自動実行のため、watch モード（`npm test`）ではなく、一度だけ実行する `--run` オプションを使用してください。
+このエージェントは自動実行のため、watch モード（`pnpm test`）ではなく、一度だけ実行する `--run` オプションを使用してください。
 
 ### 並列実行の制御
 
 テストが互いに影響し合う場合、シーケンシャル実行：
 
 ```bash
-npm test -- --run --no-threads
+pnpm test --run --no-threads
 ```
 
 ## 完了報告
@@ -432,7 +432,7 @@ npm test -- --run --no-threads
 ```markdown
 ## テスト実行結果
 
-実行コマンド: `npm test -- --run src/utils/scoreCalculator.test.ts`
+実行コマンド: `pnpm test --run src/utils/scoreCalculator.test.ts`
 
 ### サマリー
 - 実行: 15 tests
@@ -458,7 +458,7 @@ implement エージェントが `src/utils/scoreCalculator.ts` を実装して�
 ```markdown
 ## テスト実行結果
 
-実行コマンド: `npm test -- --run src/utils/scoreCalculator.test.ts`
+実行コマンド: `pnpm test --run src/utils/scoreCalculator.test.ts`
 
 ### サマリー
 - 実行: 15 tests
@@ -494,7 +494,7 @@ Refactor フェーズに進む準備ができています。
 
 ```bash
 # 基本パターンでも動作する場合がある
-npm test -- validation.test.ts --run
+pnpm test validation.test.ts --run
 ```
 
 ただし、確実性を保つため、フルパスまたは相対パスを推奨します。
@@ -1017,7 +1017,7 @@ Error: Failed to resolve import "./storage" from "src/utils/storage.test.ts". Di
    ```markdown
    ## テスト実行結果
    
-   実行コマンド: `npm test -- --run src/hooks/useTimer.test.ts`
+   実行コマンド: `pnpm test --run src/hooks/useTimer.test.ts`
    
    ### サマリー
    - **テストスイート**: 1 failed
@@ -1198,14 +1198,14 @@ TypeScript の型チェックエラーと Vitest のテスト実行結果が異�
    ```markdown
    ### 実行状況
    
-   **npm test**（Vitest）での実行結果：
+   **pnpm test**（Vitest）での実行結果：
    ```
    ✓ src/types/Question.test.ts (15 tests) 3ms
    Test Files: 1 passed (1)
    Tests: 15 passed (15)
    ```
    
-   **TypeScript 型チェック**（npx tsc --noEmit）での結果：
+   **TypeScript 型チェック**（pnpm exec tsc --noEmit）での結果：
    ```
    error TS2339: Property 'bustInfo' does not exist on type 'Question'
    ```
@@ -1245,10 +1245,10 @@ TypeScript の型チェックエラーと Vitest のテスト実行結果が異�
 
 ```bash
 # テストファイルの型チェックのみ
-npx tsc --noEmit src/types/Question.test.ts
+pnpm exec tsc --noEmit src/types/Question.test.ts
 
 # プロジェクト全体の型チェック（推奨しない - 範囲が広すぎる）
-npx tsc --noEmit
+pnpm exec tsc --noEmit
 ```
 
 注意: 型チェックは対象ファイルに限定し、プロジェクト全体の型エラーに惑わされないようにしてください。
@@ -1310,7 +1310,7 @@ CSS分離などの視覚的な変更を伴うリファクタリングでは、�
    この差分は CSS分離に伴う**意図的な変更**と考えられます。
    スナップショットの更新が必要です：
    ```bash
-   npm test -- --run -u src/components/Settings/SettingsPanel.test.tsx
+   pnpm test --run -u src/components/Settings/SettingsPanel.test.tsx
    ```
    ```
 
@@ -1353,7 +1353,7 @@ CSS分離などの視覚的な変更を伴うリファクタリングでは、�
 
 1. **テスト出力の再確認**
    - 実際のテスト出力から正確な行番号を取得
-   - `npm test -- --run` の出力をそのまま参照
+   - `pnpm test --run` の出力をそのまま参照
 
 2. **混乱を避ける報告形式**
    - 各テストに一意の識別子（テスト名 + 行番号）を付与
@@ -1469,7 +1469,7 @@ CSS分離などの視覚的な変更を伴うリファクタリングでは、�
    ## テスト実行結果: RED
 
    ### 実行コマンド
-   `npm run test:run -- src/stores/gameStore.test.ts`
+   `pnpm run test:run src/stores/gameStore.test.ts`
 
    ### サマリー
    - 実行: XX tests
@@ -1487,7 +1487,7 @@ CSS分離などの視覚的な変更を伴うリファクタリングでは、�
 
 4. **避けるべきパターン**
    - コードブロック内に未完了のコマンドライン引数を含めない
-   - 例: ` ```bash\nnpm run test:run -- src/stores/gameStore.test.ts --testNamePattern=\` のような未完了の引用
+   - 例: ` ```bash\npnpm run test:run src/stores/gameStore.test.ts --testNamePattern=\` のような未完了の引用
 
 ## testNamePattern の引用符処理
 
@@ -1498,24 +1498,24 @@ CSS分離などの視覚的な変更を伴うリファクタリングでは、�
 1. **推奨されるコマンド形式**
    ```bash
    # 正しい例 - シングルクォートで囲む
-   npm run test:run -- src/stores/gameStore.test.ts --testNamePattern='シャッフルバッグ'
+   pnpm run test:run src/stores/gameStore.test.ts --testNamePattern='シャッフルバッグ'
 
    # または、ダブルクォートでエスケープ
-   npm run test:run -- src/stores/gameStore.test.ts --testNamePattern="シャッフルバッグ"
+   pnpm run test:run src/stores/gameStore.test.ts --testNamePattern="シャッフルバッグ"
    ```
 
 2. **避けるべきパターン**
    ```bash
    # 間違った例 - 引用符なし（特殊文字で問題が発生）
-   npm run test:run -- src/stores/gameStore.test.ts --testNamePattern=シャッフルバッグ
+   pnpm run test:run src/stores/gameStore.test.ts --testNamePattern=シャッフルバッグ
 
    # 間違った例 - バックスラッシュエスケープ（Bashで解釈される）
-   npm run test:run -- src/stores/gameStore.test.ts --testNamePattern=\シャッフルバッグ
+   pnpm run test:run src/stores/gameStore.test.ts --testNamePattern=\シャッフルバッグ
    ```
 
 3. **レポートでのコマンド表示**
    - 実行コマンドをレポートに記載する際は、引用符を含む完全な形式で記載
-   - 例: `npm run test:run -- src/stores/gameStore.test.ts --testNamePattern='シャッフルバッグ'`
+   - 例: `pnpm run test:run src/stores/gameStore.test.ts --testNamePattern='シャッフルバッグ'`
 
 4. **プロンプト解析時の注意**
    - 親エージェントのプロンプトで `--testNamePattern=\` のように途中で切れている場合、適切にパターンを補完

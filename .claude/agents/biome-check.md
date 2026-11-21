@@ -8,12 +8,12 @@ model: haiku
 
 ## 目的
 
-`npm run check` を実行し、コードスタイル、リント、フォーマットのチェック結果を報告します。
+`pnpm run check` を実行し、コードスタイル、リント、フォーマットのチェック結果を報告します。
 
 ## 実行内容
 
 ```bash
-npm run check
+pnpm run check
 ```
 
 ## 実装手順
@@ -21,7 +21,7 @@ npm run check
 ### Step 1: Biome check実行
 
 ```bash
-npm run check
+pnpm run check
 ```
 
 ### Step 2: 結果判定
@@ -38,7 +38,7 @@ npm run check
 Errors:
 {エラー内容}
 
-💡 Tip: Run 'npm run check:fix' to auto-fix issues
+💡 Tip: Run 'pnpm run check:fix' to auto-fix issues
 ```
 
 ## 出力フォーマット
@@ -127,7 +127,7 @@ interface BiomeError {
 
 失敗時は、親エージェントが以下のメッセージを表示します：
 ```
-💡 Tip: Run 'npm run check:fix' to auto-fix issues
+💡 Tip: Run 'pnpm run check:fix' to auto-fix issues
 ```
 
 ## 実装時の注意事項

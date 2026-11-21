@@ -452,7 +452,7 @@ test('トリプルリング中心（r=103mm）は物理座標で検証', () => {
 - 作成したテストファイルのパス
 - テストケース数（describe/test の数）
 - カバーしたシナリオ（正常系、異常系、境界値など）
-- 実行コマンド（`npm test <filename>`）
+- 実行コマンド（`pnpm test <filename>`）
 
 ## 禁止事項
 
@@ -1090,7 +1090,7 @@ expect(packageJson.devDependencies['simple-git-hooks']).toMatch(/^\^?2\.13\.1$/)
 
 2. **実行可能性の検証**
    ```typescript
-   test('npm run checkコマンドが実行可能である', () => {
+   test('pnpm run checkコマンドが実行可能である', () => {
      expect(packageJson.scripts.check).toBeDefined();
      expect(packageJson.scripts.check).toContain('biome');
    });
@@ -1316,7 +1316,7 @@ Red フェーズ完了時の報告フォーマット：
 ### 実行コマンド
 
 ```bash
-npm test [ファイルパス]
+pnpm test [ファイルパス]
 ```
 
 ### Red フェーズ確認

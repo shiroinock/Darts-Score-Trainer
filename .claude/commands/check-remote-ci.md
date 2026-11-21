@@ -59,7 +59,7 @@ gh run view <run-id> --log-failed
 3. エラーメッセージの内容
 
 **エラーパターンマッチング:**
-- `npm ci` + `lock file` → package-lock.json不整合
+- `pnpm install --frozen-lockfile` + `ERR_PNPM_OUTDATED_LOCKFILE` → pnpm-lock.yaml不整合
 - `biome check` + `fixed` → コードスタイル違反
 - `test` + `FAIL` → テスト失敗
 - `error TS` + 行番号 → TypeScript型エラー
@@ -154,9 +154,9 @@ gh run view <run-id>
 
 | パターン | 原因 | 修正コマンド |
 |---------|------|------------|
-| `npm ci` + `EUSAGE` + `lock file` | package-lock.json不整合 | `rm -rf node_modules package-lock.json && npm install` |
-| `biome check` + `fixed` | コードスタイル違反 | `npm run check` |
-| `test` + `FAIL` + ファイル名 | テスト失敗 | `npm run test` で確認して修正 |
+| `ERR_PNPM_OUTDATED_LOCKFILE` | pnpm-lock.yaml不整合 | `pnpm install` でロックファイルを更新 |
+| `biome check` + `fixed` | コードスタイル違反 | `pnpm run check` |
+| `test` + `FAIL` + ファイル名 | テスト失敗 | `pnpm run test` で確認して修正 |
 | `error TS2322` / `TS2564` など | TypeScript型エラー | 該当ファイルを修正 |
 | `exclude` + テストファイル | tsconfig.json設定不足 | tsconfig.jsonにexclude追加 |
 

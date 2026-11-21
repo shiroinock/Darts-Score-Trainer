@@ -8,12 +8,12 @@ model: haiku
 
 ## 目的
 
-`npm run test:run` を実行し、全テストスイートの実行結果を報告します。
+`pnpm run test:run` を実行し、全テストスイートの実行結果を報告します。
 
 ## 実行内容
 
 ```bash
-npm run test:run
+pnpm run test:run
 ```
 
 ## 実装手順
@@ -21,7 +21,7 @@ npm run test:run
 ### Step 1: テスト実行
 
 ```bash
-npm run test:run
+pnpm run test:run
 ```
 
 ### Step 2: 結果判定

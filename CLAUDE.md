@@ -20,10 +20,10 @@ Darts Score Trainer - プレイヤーの実力（標準偏差）に基づいて�
 ## よく使うコマンド
 
 ```bash
-npm run dev        # 開発サーバー起動
-npm run build      # TypeScriptコンパイル + Viteビルド
-npm run preview    # 本番ビルドのプレビュー
-npm run deploy     # ビルドしてGitHub Pagesにデプロイ
+pnpm run dev        # 開発サーバー起動
+pnpm run build      # TypeScriptコンパイル + Viteビルド
+pnpm run preview    # 本番ビルドのプレビュー
+pnpm run deploy     # ビルドしてGitHub Pagesにデプロイ
 ```
 
 ## アーキテクチャ

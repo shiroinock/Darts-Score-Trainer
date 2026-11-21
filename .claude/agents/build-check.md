@@ -8,12 +8,12 @@ model: haiku
 
 ## 目的
 
-`npm run build` を実行し、TypeScriptコンパイル + Viteビルドの結果を報告します。
+`pnpm run build` を実行し、TypeScriptコンパイル + Viteビルドの結果を報告します。
 
 ## 実行内容
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 ## 実装手順
@@ -21,7 +21,7 @@ npm run build
 ### Step 1: ビルド実行
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 ### Step 2: 結果判定

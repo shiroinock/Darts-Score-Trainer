@@ -138,7 +138,7 @@ Task(test-writer)
 
 1. **テスト失敗の詳細を確認**
    ```bash
-   npm test src/utils/scoreCalculator.test.ts 2>&1 | grep "Error:"
+   pnpm test src/utils/scoreCalculator.test.ts 2>&1 | grep "Error:"
    ```
 
 2. **plan-fix エージェントで修正計画を作成**
@@ -505,7 +505,7 @@ Error: Input must be provided either through stdin or as a prompt argument when 
 3. **手動で実装**
    - テストファイルを手動作成
    - 実装ファイルを手動作成
-   - `npm test` で確認
+   - `pnpm test` で確認
 
 4. **GitHub Issue に報告**
    - エラーログを添付
