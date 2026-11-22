@@ -1,6 +1,9 @@
 name: CI
 
 on:
+  # main への push(人のマージ)でも走らせる。deploy.yml はこの CI の完了で起動する。
+  push:
+    branches: [main]
   workflow_dispatch:
   pull_request:
     types: [opened, synchronize, reopened]

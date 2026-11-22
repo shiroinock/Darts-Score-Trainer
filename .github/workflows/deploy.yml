@@ -1,15 +1,18 @@
 name: Deploy to GitHub Pages
 
-on:
-  push:
-    branches:
-      - main
+# dangerous-triggers を抑える理由: workflow_run は、この repo の main で push か dispatch から走った CI だけを受け(latest の if)、
+# そのコミットを checkout する。フォークのコードも artifact も使わない。
+on: # zizmor: ignore[dangerous-triggers]
+  # CI が main で通ったら出す。GITHUB_TOKEN のマージ(マージ予約)は push イベントを出さないので、
+  # push で起動すると、そのマージのあとに出なかった。マージ予約はマージのあとで main に CI を
+  # 走らせ直し(workflow_dispatch)、人のマージでは push で CI が走るので、どちらもここに来る。
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
 
-# GitHub Pagesへのデプロイに必要な権限
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 # 同時実行を防ぐ（デプロイの競合を避ける）
 concurrency:
@@ -17,12 +20,51 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  # CI の完了は順番どおりとは限らない(古いコミットの CI があとで終わる、走らせ直す)。
+  # コミットがまだ main の先頭のときだけ出す。新しい先頭は、その CI の完了で出る。
+  # このリポジトリの main で、push か dispatch で走って通った CI だけを受ける
+  # (フォークの PR のブランチも main という名前になりうるが、その run の event は pull_request)。
+  latest:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      (github.event.workflow_run.event == 'push' || github.event.workflow_run.event == 'workflow_dispatch')
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      current: ${{ steps.tip.outputs.current }}
+    steps:
+      - name: main の先頭か確かめる
+        id: tip
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          tip=$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)
+          if [ "$tip" = "$SHA" ]; then
+            echo "current=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "main の先頭は $tip。$SHA は古いので出さない(新しい先頭は、その CI の完了で出る)"
+            echo "current=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    needs: latest
+    if: needs.latest.outputs.current == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # CI が通ったコミット。いまの main ではない。
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
 
       - name: Setup pnpm
         uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
@@ -53,6 +95,9 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      pages: write
+      id-token: write
 
     steps:
       - name: Deploy to GitHub Pages
