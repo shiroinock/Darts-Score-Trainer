@@ -1,5 +1,7 @@
 # Darts-Score-Trainer
 
+[![dept](https://raw.githubusercontent.com/shiroinock/Darts-Score-Trainer/dept-badge/dept.svg)](https://github.com/shiroinock/Darts-Score-Trainer/blob/dept-badge/dept.md)
+
 プレイヤーの実力（標準偏差）に基づいてダーツの投擲をシミュレーションし、点数計算をクイズ形式で出題する練習アプリ。
 
 ## セットアップ
