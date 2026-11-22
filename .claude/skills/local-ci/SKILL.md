@@ -56,7 +56,7 @@ description: remote CI (GitHub Actions) 相当のチェックをローカルで�
     - security-audit ジョブとして独立して実行され、失敗時は PR マージがブロックされます
   - **ローカルでの手動実行**（必要に応じて）:
     ```bash
-    pnpm audit --audit-level=moderate
+    pnpm audit --prod --audit-level=high
     pnpm run secretlint
     ```
 
