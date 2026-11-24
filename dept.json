@@ -1,0 +1,497 @@
+{
+  "lockfile": "./pnpm-lock.yaml",
+  "format": "pnpm-lock.yaml",
+  "weights": {
+    "major": 30,
+    "minor": 3,
+    "patch": 1
+  },
+  "total": 1320,
+  "lag": {
+    "major": 29,
+    "minor": 51,
+    "patch": 297
+  },
+  "packages": 34,
+  "outdated": 19,
+  "errors": 0,
+  "libyear": 14.15945192283317,
+  "rows": [
+    {
+      "name": "jsdom",
+      "package": "jsdom",
+      "kind": "dev",
+      "current": "27.4.0",
+      "latest": "31.0.1",
+      "lag": {
+        "major": 4,
+        "minor": 3,
+        "patch": 8
+      },
+      "score": 137,
+      "libyear": 0.8810938727913403
+    },
+    {
+      "name": "@secretlint/secretlint-rule-no-homedir",
+      "package": "@secretlint/secretlint-rule-no-homedir",
+      "kind": "dev",
+      "current": "11.7.1",
+      "latest": "14.1.0",
+      "lag": {
+        "major": 3,
+        "minor": 5,
+        "patch": 9
+      },
+      "score": 114,
+      "libyear": 0.6108845412832408
+    },
+    {
+      "name": "secretlint",
+      "package": "secretlint",
+      "kind": "dev",
+      "current": "11.7.1",
+      "latest": "14.1.0",
+      "lag": {
+        "major": 3,
+        "minor": 5,
+        "patch": 9
+      },
+      "score": 114,
+      "libyear": 0.6108824815575329
+    },
+    {
+      "name": "@vitejs/plugin-react",
+      "package": "@vitejs/plugin-react",
+      "kind": "dev",
+      "current": "4.7.0",
+      "latest": "6.3.0",
+      "lag": {
+        "major": 2,
+        "minor": 5,
+        "patch": 16
+      },
+      "score": 91,
+      "libyear": 1.3117347326792912
+    },
+    {
+      "name": "@types/react",
+      "package": "@types/react",
+      "kind": "dev",
+      "current": "18.3.31",
+      "latest": "19.3.1",
+      "lag": {
+        "major": 1,
+        "minor": 3,
+        "patch": 51
+      },
+      "score": 90,
+      "libyear": 0.4707860547063148
+    },
+    {
+      "name": "@secretlint/secretlint-rule-preset-recommend",
+      "package": "@secretlint/secretlint-rule-preset-recommend",
+      "kind": "dev",
+      "current": "11.7.1",
+      "latest": "13.1.0",
+      "lag": {
+        "major": 2,
+        "minor": 4,
+        "patch": 8
+      },
+      "score": 80,
+      "libyear": 0.5366276903186554
+    },
+    {
+      "name": "vite",
+      "package": "vite",
+      "kind": "dev",
+      "current": "7.3.8",
+      "latest": "8.3.8",
+      "lag": {
+        "major": 1,
+        "minor": 3,
+        "patch": 35
+      },
+      "score": 74,
+      "libyear": 0.0045398889649403
+    },
+    {
+      "name": "react",
+      "package": "react",
+      "kind": "prod",
+      "current": "18.3.1",
+      "latest": "19.3.1",
+      "lag": {
+        "major": 1,
+        "minor": 3,
+        "patch": 29
+      },
+      "score": 68,
+      "libyear": 2.466812685375314
+    },
+    {
+      "name": "react-dom",
+      "package": "react-dom",
+      "kind": "prod",
+      "current": "18.3.1",
+      "latest": "19.3.1",
+      "lag": {
+        "major": 1,
+        "minor": 3,
+        "patch": 29
+      },
+      "score": 68,
+      "libyear": 2.466815600679393
+    },
+    {
+      "name": "@testing-library/jest-dom",
+      "package": "@testing-library/jest-dom",
+      "kind": "dev",
+      "current": "6.9.1",
+      "latest": "8.0.0",
+      "lag": {
+        "major": 2,
+        "minor": 1,
+        "patch": 1
+      },
+      "score": 64,
+      "libyear": 1.1315407698937816
+    },
+    {
+      "name": "@types/react-dom",
+      "package": "@types/react-dom",
+      "kind": "dev",
+      "current": "18.3.7",
+      "latest": "19.3.0",
+      "lag": {
+        "major": 1,
+        "minor": 3,
+        "patch": 24
+      },
+      "score": 63,
+      "libyear": 1.361567799832687
+    },
+    {
+      "name": "typescript",
+      "package": "typescript",
+      "kind": "dev",
+      "current": "5.9.3",
+      "latest": "7.0.2",
+      "lag": {
+        "major": 2,
+        "minor": 0,
+        "patch": 1
+      },
+      "score": 61,
+      "libyear": 0.7687193893071717
+    },
+    {
+      "name": "@chromatic-com/storybook",
+      "package": "@chromatic-com/storybook",
+      "kind": "dev",
+      "current": "4.1.4",
+      "latest": "5.6.0",
+      "lag": {
+        "major": 1,
+        "minor": 6,
+        "patch": 7
+      },
+      "score": 55,
+      "libyear": 0.02097117651532436
+    },
+    {
+      "name": "@biomejs/biome",
+      "package": "@biomejs/biome",
+      "kind": "dev",
+      "current": "2.3.10",
+      "latest": "2.6.9",
+      "lag": {
+        "major": 0,
+        "minor": 3,
+        "patch": 45
+      },
+      "score": 54,
+      "libyear": 0.9364210206099323
+    },
+    {
+      "name": "@vitest/browser-playwright",
+      "package": "@vitest/browser-playwright",
+      "kind": "dev",
+      "current": "4.1.12",
+      "latest": "5.1.1",
+      "lag": {
+        "major": 1,
+        "minor": 1,
+        "patch": 6
+      },
+      "score": 39,
+      "libyear": 0.0922770426141405
+    },
+    {
+      "name": "@vitest/coverage-v8",
+      "package": "@vitest/coverage-v8",
+      "kind": "dev",
+      "current": "4.1.12",
+      "latest": "5.1.1",
+      "lag": {
+        "major": 1,
+        "minor": 1,
+        "patch": 6
+      },
+      "score": 39,
+      "libyear": 0.09227935584455092
+    },
+    {
+      "name": "@vitest/ui",
+      "package": "@vitest/ui",
+      "kind": "dev",
+      "current": "4.1.12",
+      "latest": "5.1.1",
+      "lag": {
+        "major": 1,
+        "minor": 1,
+        "patch": 6
+      },
+      "score": 39,
+      "libyear": 0.09228100362511725
+    },
+    {
+      "name": "vitest",
+      "package": "vitest",
+      "kind": "dev",
+      "current": "4.1.12",
+      "latest": "5.1.1",
+      "lag": {
+        "major": 1,
+        "minor": 1,
+        "patch": 6
+      },
+      "score": 39,
+      "libyear": 0.09225796638527645
+    },
+    {
+      "name": "@storybook/test-runner",
+      "package": "@storybook/test-runner",
+      "kind": "dev",
+      "current": "0.24.5",
+      "latest": "0.26.1",
+      "lag": {
+        "major": 1,
+        "minor": 0,
+        "patch": 1
+      },
+      "score": 31,
+      "libyear": 0.21095884984916471
+    },
+    {
+      "name": "@storybook/addon-a11y",
+      "package": "@storybook/addon-a11y",
+      "kind": "dev",
+      "current": "10.6.8",
+      "latest": "10.6.8",
+      "lag": {
+        "major": 0,
+        "minor": 0,
+        "patch": 0
+      },
+      "score": 0,
+      "libyear": 0.0
+    },
+    {
+      "name": "@storybook/addon-docs",
+      "package": "@storybook/addon-docs",
+      "kind": "dev",
+      "current": "10.6.8",
+      "latest": "10.6.8",
+      "lag": {
+        "major": 0,
+        "minor": 0,
+        "patch": 0
+      },
+      "score": 0,
+      "libyear": 0.0
+    },
+    {
+      "name": "@storybook/addon-onboarding",
+      "package": "@storybook/addon-onboarding",
+      "kind": "dev",
+      "current": "10.6.8",
+      "latest": "10.6.8",
+      "lag": {
+        "major": 0,
+        "minor": 0,
+        "patch": 0
+      },
+      "score": 0,
+      "libyear": 0.0
+    },
+    {
+      "name": "@storybook/react-vite",
+      "package": "@storybook/react-vite",
+      "kind": "dev",
+      "current": "10.6.8",
+      "latest": "10.6.8",
+      "lag": {
+        "major": 0,
+        "minor": 0,
+        "patch": 0
+      },
+      "score": 0,
+      "libyear": 0.0
+    },
+    {
+      "name": "@testing-library/react",
+      "package": "@testing-library/react",
+      "kind": "dev",
+      "current": "16.3.3",
+      "latest": "16.3.3",
+      "lag": {
+        "major": 0,
+        "minor": 0,
+        "patch": 0
+      },
+      "score": 0,
+      "libyear": 0.0
+    },
+    {
+      "name": "@testing-library/user-event",
+      "package": "@testing-library/user-event",
+      "kind": "dev",
+      "current": "14.6.13",
+      "latest": "14.6.13",
+      "lag": {
+        "major": 0,
+        "minor": 0,
+        "patch": 0
+      },
+      "score": 0,
+      "libyear": 0.0
+    },
+    {
+      "name": "@types/jest-image-snapshot",
+      "package": "@types/jest-image-snapshot",
+      "kind": "dev",
+      "current": "6.4.2",
+      "latest": "6.4.2",
+      "lag": {
+        "major": 0,
+        "minor": 0,
+        "patch": 0
+      },
+      "score": 0,
+      "libyear": 0.0
+    },
+    {
+      "name": "@types/p5",
+      "package": "@types/p5",
+      "kind": "dev",
+      "current": "1.7.7",
+      "latest": "1.7.7",
+      "lag": {
+        "major": 0,
+        "minor": 0,
+        "patch": 0
+      },
+      "score": 0,
+      "libyear": 0.0
+    },
+    {
+      "name": "immer",
+      "package": "immer",
+      "kind": "dev",
+      "current": "11.2.10",
+      "latest": "11.2.10",
+      "lag": {
+        "major": 0,
+        "minor": 0,
+        "patch": 0
+      },
+      "score": 0,
+      "libyear": 0.0
+    },
+    {
+      "name": "jest-image-snapshot",
+      "package": "jest-image-snapshot",
+      "kind": "dev",
+      "current": "6.5.2",
+      "latest": "6.5.2",
+      "lag": {
+        "major": 0,
+        "minor": 0,
+        "patch": 0
+      },
+      "score": 0,
+      "libyear": 0.0
+    },
+    {
+      "name": "playwright",
+      "package": "playwright",
+      "kind": "dev",
+      "current": "1.65.1",
+      "latest": "1.65.1",
+      "lag": {
+        "major": 0,
+        "minor": 0,
+        "patch": 0
+      },
+      "score": 0,
+      "libyear": 0.0
+    },
+    {
+      "name": "react-p5",
+      "package": "react-p5",
+      "kind": "prod",
+      "current": "1.4.1",
+      "latest": "1.4.1",
+      "lag": {
+        "major": 0,
+        "minor": 0,
+        "patch": 0
+      },
+      "score": 0,
+      "libyear": 0.0
+    },
+    {
+      "name": "simple-git-hooks",
+      "package": "simple-git-hooks",
+      "kind": "dev",
+      "current": "2.14.0",
+      "latest": "2.14.0",
+      "lag": {
+        "major": 0,
+        "minor": 0,
+        "patch": 0
+      },
+      "score": 0,
+      "libyear": 0.0
+    },
+    {
+      "name": "storybook",
+      "package": "storybook",
+      "kind": "dev",
+      "current": "10.6.8",
+      "latest": "10.6.8",
+      "lag": {
+        "major": 0,
+        "minor": 0,
+        "patch": 0
+      },
+      "score": 0,
+      "libyear": 0.0
+    },
+    {
+      "name": "zustand",
+      "package": "zustand",
+      "kind": "prod",
+      "current": "5.1.0",
+      "latest": "5.1.0",
+      "lag": {
+        "major": 0,
+        "minor": 0,
+        "patch": 0
+      },
+      "score": 0,
+      "libyear": 0.0
+    }
+  ]
+}
