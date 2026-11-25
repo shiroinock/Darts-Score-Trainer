@@ -320,11 +320,17 @@ select:focus-visible {
 .app {
   width: 100vw;
   height: 100vh;
-  height: 100dvh; /* iOS Safari対応: 動的ビューポート */
   display: flex;
   flex-direction: column;
   overflow: hidden;
   background-color: var(--color-bg-lightest);
+}
+
+/* iOS Safari対応: 動的ビューポート（対応ブラウザのみ 100vh を上書き） */
+@supports (height: 100dvh) {
+  .app {
+    height: 100dvh;
+  }
 }
 
 /* モバイル対応 */

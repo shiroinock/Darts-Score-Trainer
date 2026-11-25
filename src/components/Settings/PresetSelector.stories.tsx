@@ -18,7 +18,7 @@ const withMockStore =
         return () => {
           useGameStore.setState({ config: getDefaultConfig() });
         };
-      }, [configId]);
+      }, []);
 
       return <Story />;
     }

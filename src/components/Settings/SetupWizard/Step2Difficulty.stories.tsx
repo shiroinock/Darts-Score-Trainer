@@ -24,7 +24,7 @@ const withMockStore =
             },
           });
         };
-      }, [stdDevMM]);
+      }, []);
 
       return <Story />;
     }

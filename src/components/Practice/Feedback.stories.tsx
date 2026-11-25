@@ -47,7 +47,7 @@ const withMockStore = (options: MockOptions) => (Story: React.ComponentType) => 
           currentQuestion: null,
         });
       };
-    }, [options]);
+    }, []);
 
     return <Story />;
   }

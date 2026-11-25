@@ -20,7 +20,7 @@ const withStdDev = (stdDevMM: number) => (Story: React.ComponentType) => {
           config: { ...state.config, stdDevMM: 30 },
         }));
       };
-    }, [stdDevMM]);
+    }, []);
 
     return <Story />;
   }

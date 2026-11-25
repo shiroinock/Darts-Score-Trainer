@@ -40,7 +40,7 @@ const withMockStore =
             },
           });
         };
-      }, [configOptions]);
+      }, []);
 
       return <Story />;
     }

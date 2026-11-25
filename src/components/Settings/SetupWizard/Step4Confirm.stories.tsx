@@ -28,7 +28,7 @@ const withMockStore =
             sessionConfig: { mode: 'questions', questionCount: 10 },
           });
         };
-      }, [options]);
+      }, []);
 
       return <Story />;
     }

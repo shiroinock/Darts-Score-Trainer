@@ -79,7 +79,7 @@ const withMockStore =
             gameState: 'setup',
           });
         };
-      }, [options]);
+      }, []);
 
       return <Story />;
     }
