@@ -12,7 +12,7 @@ Darts Score Trainer - プレイヤーの実力（標準偏差）に基づいて�
 ## 技術スタック
 
 - **React 18.2.0** + TypeScript
-- **Vite 5.0** - ビルドツール
+- **Vite 8** - ビルドツール
 - **p5.js**（react-p5 1.3.35経由） - ダーツボード描画
 - **Zustand 4.4.0** - 状態管理
 - **gh-pages** - デプロイ
