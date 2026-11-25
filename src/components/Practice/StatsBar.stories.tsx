@@ -47,7 +47,7 @@ const withMockStore =
             stats: { correct: 0, total: 0, currentStreak: 0, bestStreak: 0 },
           });
         };
-      }, [options]);
+      }, []);
 
       return <Story />;
     }

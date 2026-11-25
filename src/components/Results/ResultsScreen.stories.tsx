@@ -40,7 +40,7 @@ const withMockStore = (options: MockOptions) => (Story: React.ComponentType) => 
           gameState: 'setup',
         });
       };
-    }, [options]);
+    }, []);
 
     return <Story />;
   }

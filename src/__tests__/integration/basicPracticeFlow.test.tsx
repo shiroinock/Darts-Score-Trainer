@@ -348,28 +348,29 @@ describe('基礎練習モード統合テスト', () => {
   });
 
   describe('問題数制限の動作', () => {
-    test.each(
-      TEST_CONSTANTS.SESSION.QUESTION_COUNTS
-    )('%i問モードで%i問解答すると、セッションが終了する', (questionCount) => {
-      // Arrange
-      useGameStore.getState().setSessionConfig({
-        mode: 'questions',
-        questionCount,
-      });
-      useGameStore.getState().startPractice();
+    test.each(TEST_CONSTANTS.SESSION.QUESTION_COUNTS)(
+      '%i問モードで%i問解答すると、セッションが終了する',
+      (questionCount) => {
+        // Arrange
+        useGameStore.getState().setSessionConfig({
+          mode: 'questions',
+          questionCount,
+        });
+        useGameStore.getState().startPractice();
 
-      // Act: 指定問題数を解答
-      for (let i = 0; i < questionCount; i++) {
-        useGameStore.getState().submitAnswer(0);
-        if (i < questionCount - 1) {
-          useGameStore.getState().nextQuestion();
+        // Act: 指定問題数を解答
+        for (let i = 0; i < questionCount; i++) {
+          useGameStore.getState().submitAnswer(0);
+          if (i < questionCount - 1) {
+            useGameStore.getState().nextQuestion();
+          }
         }
-      }
 
-      // Assert: gameStateがresultsに遷移
-      const gameState = useGameStore.getState().gameState;
-      expect(gameState).toBe('results');
-    });
+        // Assert: gameStateがresultsに遷移
+        const gameState = useGameStore.getState().gameState;
+        expect(gameState).toBe('results');
+      }
+    );
 
     test('10問モードで9問解答した時点では、セッションは継続する', () => {
       // Arrange

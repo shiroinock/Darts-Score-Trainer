@@ -48,7 +48,7 @@ const withMockStore =
             currentQuestion: null,
           });
         };
-      }, [options]);
+      }, []);
 
       return <Story />;
     }

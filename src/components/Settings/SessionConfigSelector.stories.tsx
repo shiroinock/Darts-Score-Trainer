@@ -16,7 +16,7 @@ const withMockStore = (sessionConfig: SessionConfig) => (Story: React.ComponentT
       return () => {
         useGameStore.setState({ sessionConfig: initialSessionConfig });
       };
-    }, [sessionConfig]);
+    }, []);
 
     return <Story />;
   }
